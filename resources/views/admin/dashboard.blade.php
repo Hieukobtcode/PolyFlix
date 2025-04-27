@@ -505,7 +505,7 @@
                       <tbody>
                         <tr class="align-middle">
                           <td class="text-center">
-                            <div class="avatar avatar-md"><img class="avatar-img" src="assets/img/avatars/1.jpg" alt="user@email.com"><span class="avatar-status bg-success"></span></div>
+                            <div class="avatar avatar-md"><img class="avatar-img" src="{{ asset('dist/assets/img/avatars/1.jpg') }}" alt="user@email.com"><span class="avatar-status bg-success"></span></div>
                           </td>
                           <td>
                             <div class="text-nowrap">Yiorgos Avraamu</div>
@@ -550,7 +550,7 @@
                         </tr>
                         <tr class="align-middle">
                           <td class="text-center">
-                            <div class="avatar avatar-md"><img class="avatar-img" src="assets/img/avatars/2.jpg" alt="user@email.com"><span class="avatar-status bg-danger"></span></div>
+                            <div class="avatar avatar-md"><img class="avatar-img" src="{{ asset('dist/assets/img/avatars/2.jpg') }}" alt="user@email.com"><span class="avatar-status bg-danger"></span></div>
                           </td>
                           <td>
                             <div class="text-nowrap">Avram Tarasios</div>
@@ -595,7 +595,7 @@
                         </tr>
                         <tr class="align-middle">
                           <td class="text-center">
-                            <div class="avatar avatar-md"><img class="avatar-img" src="assets/img/avatars/3.jpg" alt="user@email.com"><span class="avatar-status bg-warning"></span></div>
+                            <div class="avatar avatar-md"><img class="avatar-img" src="{{ asset('dist/assets/img/avatars/3.jpg') }}" alt="user@email.com"><span class="avatar-status bg-warning"></span></div>
                           </td>
                           <td>
                             <div class="text-nowrap">Quintin Ed</div>
@@ -640,7 +640,7 @@
                         </tr>
                         <tr class="align-middle">
                           <td class="text-center">
-                            <div class="avatar avatar-md"><img class="avatar-img" src="assets/img/avatars/4.jpg" alt="user@email.com"><span class="avatar-status bg-secondary"></span></div>
+                            <div class="avatar avatar-md"><img class="avatar-img" src="{{ asset('dist/assets/img/avatars/4.jpg') }}" alt="user@email.com"><span class="avatar-status bg-secondary"></span></div>
                           </td>
                           <td>
                             <div class="text-nowrap">Enéas Kwadwo</div>
@@ -685,7 +685,7 @@
                         </tr>
                         <tr class="align-middle">
                           <td class="text-center">
-                            <div class="avatar avatar-md"><img class="avatar-img" src="assets/img/avatars/5.jpg" alt="user@email.com"><span class="avatar-status bg-success"></span></div>
+                            <div class="avatar avatar-md"><img class="avatar-img" src="{{ asset('dist/assets/img/avatars/5.jpg') }}" alt="user@email.com"><span class="avatar-status bg-success"></span></div>
                           </td>
                           <td>
                             <div class="text-nowrap">Agapetus Tadeáš</div>
@@ -730,7 +730,7 @@
                         </tr>
                         <tr class="align-middle">
                           <td class="text-center">
-                            <div class="avatar avatar-md"><img class="avatar-img" src="assets/img/avatars/6.jpg" alt="user@email.com"><span class="avatar-status bg-danger"></span></div>
+                            <div class="avatar avatar-md"><img class="avatar-img" src="{{ asset('dist/assets/img/avatars/6.jpg') }}" alt="user@email.com"><span class="avatar-status bg-danger"></span></div>
                           </td>
                           <td>
                             <div class="text-nowrap">Friderik Dávid</div>
@@ -766,7 +766,7 @@
                               <button class="btn btn-transparent p-0" type="button" data-coreui-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <svg class="icon">
                                   <use xlink:href="{{ asset('dist/vendors/@coreui/icons/svg/free.svg#cil-options') }}">
-</use>
+                                  </use>
                                 </svg>
                               </button>
                               <div class="dropdown-menu dropdown-menu-end"><a class="dropdown-item" href="#">Info</a><a class="dropdown-item" href="#">Edit</a><a class="dropdown-item text-danger" href="#">Delete</a></div>
