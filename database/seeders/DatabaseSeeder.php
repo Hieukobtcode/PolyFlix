@@ -19,5 +19,10 @@ class DatabaseSeeder extends Seeder
             'name' => 'Test User',
             'email' => 'test@example.com',
         ]);
+
+        // Gọi LienHeSeeder để tạo dữ liệu mẫu cho bảng liên hệ
+        $this->call([
+            LienHeSeeder::class,
+        ]);
     }
 }
