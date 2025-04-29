@@ -81,27 +81,15 @@
                                 class="nav-icon-bullet"></span></span> Tooltips</a></li>
             </ul>
         </li>
-        <li class="nav-group"><a class="nav-link nav-group-toggle" href="#">
-                <svg class="nav-icon">
-                    <use xlink:href="{{ asset('dist/vendors/@coreui/icons/svg/free.svg#cil-cursor') }}">
-                    </use>
-                </svg> Buttons</a>
-            <ul class="nav-group-items compact">
-                <li class="nav-item"><a class="nav-link" href="buttons/buttons.html"><span class="nav-icon"><span
-                                class="nav-icon-bullet"></span></span> Buttons</a></li>
-                <li class="nav-item"><a class="nav-link" href="buttons/button-group.html"><span class="nav-icon"><span
-                                class="nav-icon-bullet"></span></span> Buttons Group</a></li>
-                <li class="nav-item"><a class="nav-link" href="buttons/dropdowns.html"><span class="nav-icon"><span
-                                class="nav-icon-bullet"></span></span> Dropdowns</a></li>
-                <li class="nav-item"><a class="nav-link"
-                        href="https://coreui.io/bootstrap/docs/components/loading-buttons/" target="_blank"><span
-                            class="nav-icon"><span class="nav-icon-bullet"></span></span> Loading Buttons
-                        <svg class="icon icon-sm ms-2">
-                            <use xlink:href="{{ asset('dist/vendors/@coreui/icons/svg/free.svg#cil-external-link') }}">
-                            </use>
-                        </svg><span class="badge badge-sm bg-danger ms-auto">PRO</span></a></li>
-            </ul>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('admin.bai-viet.index') }}">
+                <span class="nav-icon">
+                    <i class="fas fa-newspaper"></i> <!-- Biểu tượng bài viết -->
+                </span>
+                <span class="nav-text">Quản lý Bài viết</span>
+            </a>
         </li>
+        
         <li class="nav-item"><a class="nav-link" href="charts.html">
                 <svg class="nav-icon">
                     <use xlink:href="{{ asset('dist/vendors/@coreui/icons/svg/free.svg#cil-chart-pie') }}">

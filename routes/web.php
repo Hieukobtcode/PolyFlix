@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\LienHeController;
 use App\Http\Controllers\Admin\TheLoaiPhimController;
 use App\Http\Controllers\Admin\PhimController;
+use App\Http\Controllers\Admin\BaiVietController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -40,4 +41,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     // Quản lý thể loại phim & phim
     Route::resource('the-loai-phim', TheLoaiPhimController::class);
     Route::resource('phim', PhimController::class);
+
+    // Quản lý bài viết
+    Route::resource('bai-viet', BaiVietController::class);
 });
