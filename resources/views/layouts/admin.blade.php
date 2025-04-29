@@ -1,12 +1,13 @@
 <!DOCTYPE html><!--
-* CoreUI - Free Bootstrap Admin Template
-* @version v5.2.0
-* @link https://coreui.io/product/free-bootstrap-admin-template/
-* Copyright (c) 2025 creativeLabs Łukasz Holeczek
-* Licensed under MIT (https://github.com/coreui/coreui-free-bootstrap-admin-template/blob/main/LICENSE)
--->
+    * CoreUI - Free Bootstrap Admin Template
+    * @version v5.2.0
+    * @link https://coreui.io/product/free-bootstrap-admin-template/
+    * Copyright (c) 2025 creativeLabs Łukasz Holeczek
+    * Licensed under MIT (https://github.com/coreui/coreui-free-bootstrap-admin-template/blob/main/LICENSE)
+    -->
 <html lang="en">
-  <head>
+
+<head>
     <base href="./">
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -24,7 +25,8 @@
     <link rel="apple-touch-icon" sizes="144x144" href="{{ asset('dist/assets/favicon/apple-icon-144x144.png') }}">
     <link rel="apple-touch-icon" sizes="152x152" href="{{ asset('dist/assets/favicon/apple-icon-152x152.png') }}">
     <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('dist/assets/favicon/apple-icon-180x180.png') }}">
-    <link rel="icon" type="image/png" sizes="192x192" href="{{ asset('dist/assets/favicon/android-icon-192x192.png') }}">
+    <link rel="icon" type="image/png" sizes="192x192"
+        href="{{ asset('dist/assets/favicon/android-icon-192x192.png') }}">
     <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('dist/assets/favicon/favicon-32x32.png') }}">
     <link rel="icon" type="image/png" sizes="96x96" href="{{ asset('dist/assets/favicon/favicon-96x96.png') }}">
     <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('dist/assets/favicon/favicon-16x16.png') }}">
@@ -42,34 +44,80 @@
     <script src="{{ asset('dist/js/config.js') }}"></script>
     <script src="{{ asset('dist/js/color-modes.js') }}"></script>
     <link href="{{ asset('dist/vendors/@coreui/chartjs/css/coreui-chartjs.css') }}" rel="stylesheet">
+    <!-- Quản lý -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <style>
+        .required::after {
+            content: ' *';
+            color: red;
+        }
 
-  </head>
-  <body>
-        <!-- SidebarSidebar -->
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        .btn-action {
+            margin-right: 5px;
+        }
+
+        .alert-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+        }
+    </style>
+    @yield('styles')
+</head>
+
+<body>
+    <!-- SidebarSidebar -->
     @include('admin.blocks.sidebar')
     <div class="wrapper d-flex flex-column min-vh-100">
-          <!-- Header -->
+        <!-- Header -->
         @include('admin.blocks.header')
+
+        <!-- Flash messages -->
+        @if(session('success') || session('error'))
+            <div class="alert-container">
+                @if(session('success'))
+                    <div class="alert alert-success alert-dismissible fade show">
+                        {{ session('success') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                @endif
+                @if(session('error'))
+                    <div class="alert alert-danger alert-dismissible fade show">
+                        {{ session('error') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                @endif
+            </div>
+        @endif
 
         <!-- Main Content -->
         @yield('content')
 
-
-
-          <!-- Header -->
+        <!-- Footer -->
         @include('admin.blocks.footer')
     </div>
     <!-- CoreUI and necessary plugins-->
     <script src="{{ asset('dist/vendors/@coreui/coreui/js/coreui.bundle.min.js')}}"></script>
     <script src="{{asset('dist/vendors/simplebar/js/simplebar.min.js')}}"></script>
     <script>
-      const header = document.querySelector('header.header');
+        const header = document.querySelector('header.header');
 
-      document.addEventListener('scroll', () => {
-        if (header) {
-          header.classList.toggle('shadow-sm', document.documentElement.scrollTop > 0);
-        }
-      });
+        document.addEventListener('scroll', () => {
+            if (header) {
+                header.classList.toggle('shadow-sm', document.documentElement.scrollTop > 0);
+            }
+        });
     </script>
     <!-- Plugins and scripts required by this view-->
     <script src="{{ asset('dist/vendors/chart.js/js/chart.umd.js') }}"></script>
@@ -79,5 +127,28 @@
     <script>
     </script>
 
-  </body>
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        // Auto-hide alerts after 5 seconds
+        $(document).ready(function () {
+            setTimeout(function () {
+                $('.alert').alert('close');
+            }, 5000);
+
+            // Confirm delete
+            $('.delete-form').on('submit', function (e) {
+                if (!confirm('Bạn có chắc chắn muốn xóa mục này?')) {
+                    e.preventDefault();
+                }
+            });
+        });
+    </script>
+
+    @yield('scripts')
+</body>
+
 </html>
