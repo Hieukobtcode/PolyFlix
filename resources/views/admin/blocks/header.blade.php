@@ -7,9 +7,8 @@
             </svg>
           </button>
           <ul class="header-nav d-none d-lg-flex">
-            <li class="nav-item"><a class="nav-link" href="#">Dashboard</a></li>
-            <li class="nav-item"><a class="nav-link" href="#">Users</a></li>
-            <li class="nav-item"><a class="nav-link" href="#">Settings</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ route('admin.lien-he.index') }}">Dashboard</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ route('admin.lien-he.index') }}">Danh sách liên hệ</a></li>
           </ul>
           <ul class="header-nav ms-auto">
             <li class="nav-item"><a class="nav-link" href="#">
@@ -125,9 +124,9 @@
         <div class="container-fluid px-4">
           <nav aria-label="breadcrumb">
             <ol class="breadcrumb my-0">
-              <li class="breadcrumb-item"><a href="#">Home</a>
+              <li class="breadcrumb-item"><a href="{{ route('admin.lien-he.index') }}">Home</a>
               </li>
-              <li class="breadcrumb-item active"><span>Dashboard</span>
+              <li class="breadcrumb-item active"><span>Quản lý liên hệ</span>
               </li>
             </ol>
           </nav>
