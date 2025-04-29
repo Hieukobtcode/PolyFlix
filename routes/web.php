@@ -12,20 +12,18 @@ Route::get('/', function () {
 
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/', function () {
-        // Bạn có thể chọn redirect hoặc hiển thị dashboard
-        return redirect()->route('admin.lien-he.index');
-        // return view('admin.dashboard');
+        return view('admin.dashboard');
     })->name('dashboard');
 
     // Quản lý liên hệ
     Route::resource('lien-he', LienHeController::class)->names([
-        'index' => 'admin.lien-he.index',
-        'create' => 'admin.lien-he.create',
-        'store' => 'admin.lien-he.store',
-        'show' => 'admin.lien-he.show',
-        'edit' => 'admin.lien-he.edit',
-        'update' => 'admin.lien-he.update',
-        'destroy' => 'admin.lien-he.destroy',
+        'index' => 'lien-he.index',
+        'create' => 'lien-he.create',
+        'store' => 'lien-he.store',
+        'show' => 'lien-he.show',
+        'edit' => 'lien-he.edit',
+        'update' => 'lien-he.update',
+        'destroy' => 'lien-he.destroy',
     ]);
 
     // Các chức năng bổ sung cho quản lý liên hệ
