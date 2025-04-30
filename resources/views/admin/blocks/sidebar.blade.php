@@ -41,6 +41,19 @@
                 </li>
             </ul>
         </li>
+        <li class="nav-group"><a class="nav-link nav-group-toggle" href="#">
+                <span class="nav-icon">
+                    <i class="fa-solid fa-user-tie"></i> <!-- Biểu tượng bài viết -->
+                </span>
+                <span class="nav-text">Quản lý người dùng</span>
+
+            </a>
+            <ul class="nav-group-items compact">
+                <li class="nav-item"><a class="nav-link" href="{{ route('admin.vai-tro.index') }}">
+                        <span class="nav-icon"><span class="nav-icon-bullet"></span></span> Quản lý vai trò</a>
+                </li>
+            </ul>
+        </li>
         <li class="nav-item">
             <a class="nav-link" href="{{ route('admin.bai-viet.index') }}">
                 <span class="nav-icon">
