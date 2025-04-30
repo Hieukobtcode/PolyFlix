@@ -49,6 +49,14 @@
                 <span class="nav-text">Quản lý bài viết</span>
             </a>
         </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('admin.chi-nhanh.index') }}">
+                <span class="nav-icon">
+                    <i class="fas fa-building"></i> <!-- Biểu tượng bài viết -->
+                </span>
+                <span class="nav-text">Quản lý chi nhánh</span>
+            </a>
+        </li>
         <li class="nav-title">Theme</li>
         <li class="nav-item"><a class="nav-link" href="colors.html">
                 <svg class="nav-icon">

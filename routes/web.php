@@ -1,16 +1,17 @@
 <?php
-
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\LienHeController;
 use App\Http\Controllers\Admin\TheLoaiPhimController;
 use App\Http\Controllers\Admin\PhimController;
 use App\Http\Controllers\Admin\BaiVietController;
+use App\Http\Controllers\Admin\ChiNhanhController;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
 Route::prefix('admin')->name('admin.')->group(function () {
+    // Trang dashboard của admin
     Route::get('/', function () {
         return view('admin.dashboard');
     })->name('dashboard');
@@ -36,10 +37,15 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('bulk-action', [LienHeController::class, 'bulkAction'])->name('bulk-action');
     });
 
-    // Quản lý thể loại phim & phim
+    // Quản lý thể loại phim
     Route::resource('the-loai-phim', TheLoaiPhimController::class);
+
+    // Quản lý phim
     Route::resource('phim', PhimController::class);
 
     // Quản lý bài viết
     Route::resource('bai-viet', BaiVietController::class);
+
+    // Quản lý chi nhánh
+    Route::resource('chi-nhanh', ChiNhanhController::class);
 });
