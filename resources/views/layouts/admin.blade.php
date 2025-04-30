@@ -15,6 +15,10 @@
     <meta name="description" content="CoreUI - Open Source Bootstrap Admin Template">
     <meta name="author" content="Łukasz Holeczek">
     <meta name="keyword" content="Bootstrap,Admin,Template,Open,Source,jQuery,CSS,HTML,RWD,Dashboard">
+    <title>@yield('title', 'Admin Panel')</title>
+
+    <link rel="icon" type="image/png" sizes="192x192" href="{{ asset('logo/polyflix_title.png') }}">
+
     <title>CoreUI Free Bootstrap Admin Template</title>
     <link rel="apple-touch-icon" sizes="57x57" href="{{ asset('dist/assets/favicon/apple-icon-57x57.png') }}">
     <link rel="apple-touch-icon" sizes="60x60" href="{{ asset('dist/assets/favicon/apple-icon-60x60.png') }}">
@@ -32,7 +36,7 @@
     <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('dist/assets/favicon/favicon-16x16.png') }}">
     <link rel="manifest" href="{{ asset('dist/assets/favicon/manifest.json') }}">
     <meta name="msapplication-TileColor" content="#ffffff">
-    <meta name="msapplication-TileImage" content="assets/favicon/ms-icon-144x144.png">
+    <meta name="msapplication-TileImage" content="{{ asset('logo/polyflix_title.png') }}">
     <meta name="theme-color" content="#ffffff">
     <!-- Vendors styles-->
     <link rel="stylesheet" href="{{ asset('dist/vendors/simplebar/css/simplebar.css') }}">
@@ -57,7 +61,6 @@
             content: ' *';
             color: red;
         }
-
         .table-responsive {
             overflow-x: auto;
         }
@@ -104,12 +107,13 @@
         <!-- Main Content -->
         @yield('content')
 
+        <!-- Header -->
         <!-- Footer -->
         @include('admin.blocks.footer')
     </div>
     <!-- CoreUI and necessary plugins-->
-    <script src="{{ asset('dist/vendors/@coreui/coreui/js/coreui.bundle.min.js')}}"></script>
-    <script src="{{asset('dist/vendors/simplebar/js/simplebar.min.js')}}"></script>
+    <script src="{{ asset('dist/vendors/@coreui/coreui/js/coreui.bundle.min.js') }}"></script>
+    <script src="{{ asset('dist/vendors/simplebar/js/simplebar.min.js') }}"></script>
     <script>
         const header = document.querySelector('header.header');
 
@@ -121,11 +125,15 @@
     </script>
     <!-- Plugins and scripts required by this view-->
     <script src="{{ asset('dist/vendors/chart.js/js/chart.umd.js') }}"></script>
-    <script src="{{ asset('dist/vendors/@coreui/chartjs/js/coreui-chartjs.js')}}"></script>
+    <script src="{{ asset('dist/vendors/@coreui/chartjs/js/coreui-chartjs.js') }}"></script>
     <script src="{{ asset('dist/vendors/@coreui/utils/js/index.js') }}"></script>
     <script src="{{ asset('dist/js/main.js') }}"></script>
-    <script>
-    </script>
+    <script></script>
+
+</body>
+
+
+</html>
 
     <!-- Bootstrap JS Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
