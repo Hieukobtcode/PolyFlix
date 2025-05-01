@@ -2,7 +2,7 @@
 
 @section('title', 'Quản lý Phim')
 @section('page-title', 'Quản lý Phim')
-
+@section('breadcrumb', 'Danh sách Phim')
 @section('styles')
     <style>
         .card {
