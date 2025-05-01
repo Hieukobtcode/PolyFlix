@@ -61,6 +61,7 @@
             content: ' *';
             color: red;
         }
+
         .table-responsive {
             overflow-x: auto;
         }
@@ -87,15 +88,15 @@
         @include('admin.blocks.header')
 
         <!-- Flash messages -->
-        @if(session('success') || session('error'))
+        @if (session('success') || session('error'))
             <div class="alert-container">
-                @if(session('success'))
+                @if (session('success'))
                     <div class="alert alert-success alert-dismissible fade show">
                         {{ session('success') }}
                         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
                 @endif
-                @if(session('error'))
+                @if (session('error'))
                     <div class="alert alert-danger alert-dismissible fade show">
                         {{ session('error') }}
                         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
@@ -135,28 +136,28 @@
 
 </html>
 
-    <!-- Bootstrap JS Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Bootstrap JS Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    <script>
-        // Auto-hide alerts after 5 seconds
-        $(document).ready(function () {
-            setTimeout(function () {
-                $('.alert').alert('close');
-            }, 5000);
+<script>
+    // Auto-hide alerts after 5 seconds
+    $(document).ready(function() {
+        setTimeout(function() {
+            $('.alert').alert('close');
+        }, 5000);
 
-            // Confirm delete
-            $('.delete-form').on('submit', function (e) {
-                if (!confirm('Bạn có chắc chắn muốn xóa mục này?')) {
-                    e.preventDefault();
-                }
-            });
+        // Confirm delete
+        $('.delete-form').on('submit', function(e) {
+            if (!confirm('Bạn có chắc chắn muốn xóa mục này?')) {
+                e.preventDefault();
+            }
         });
-    </script>
+    });
+</script>
 
-    @yield('scripts')
+@yield('scripts')
 </body>
 
 </html>
