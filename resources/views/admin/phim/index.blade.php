@@ -121,9 +121,9 @@
                                             <span class="badge bg-secondary rounded-pill">
                                                 {{ ucfirst($phim->trang_thai) }}
                                             </span>
-                                        @elseif ($phim->trang_thai === 'bị hủy' || $phim->trang_thai === 'bị huỷ')
+                                        @elseif ($phim->trang_thai === 'bị hủy')
                                             <span class="badge bg-danger rounded-pill">
-                                                Bị hủy
+                                                {{ ucfirst($phim->trang_thai) }}
                                             </span>
                                         @else
                                             <span class="badge bg-dark rounded-pill">
@@ -240,10 +240,10 @@
                         const newEmptyRow = document.createElement('tr');
                         newEmptyRow.id = 'emptyFilterRow';
                         newEmptyRow.innerHTML = `
-                                                    <td colspan="8" class="text-center text-muted py-3">
-                                                        <i class="fas fa-search me-1"></i> Không tìm thấy kết quả phù hợp
-                                                    </td>
-                                                `;
+                                <td colspan="8" class="text-center text-muted py-3">
+                                    <i class="fas fa-search me-1"></i> Không tìm thấy kết quả phù hợp
+                                </td>
+                            `;
                         tableBody.appendChild(newEmptyRow);
                     }
                 } else if (existingEmptyRow) {
