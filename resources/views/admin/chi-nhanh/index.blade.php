@@ -2,7 +2,7 @@
 
 @section('title', 'Quản lý Chi Nhánh')
 @section('page-title', 'Quản lý Chi Nhánh')
-
+@section('breadcrumb', 'Danh sách Chi Nhánh')
 @section('styles')
     <style>
         .card {

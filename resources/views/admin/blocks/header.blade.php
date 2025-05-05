@@ -142,6 +142,10 @@
                 </li>
                 <li class="breadcrumb-item active"><span>@yield('title')</span>
                 </li>
+              <li class="breadcrumb-item"><a href="{{ route('admin.lien-he.index') }}">Home</a></li>
+              <li class="breadcrumb-item active">
+                <span>@yield('breadcrumb')</span>
+              </li>
             </ol>
         </nav>
     </div>

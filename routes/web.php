@@ -1,10 +1,12 @@
 <?php
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Admin\LienHeController;
-use App\Http\Controllers\Admin\TheLoaiPhimController;
+use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\PhimController;
+use App\Http\Controllers\Admin\LienHeController;
+use App\Http\Controllers\Admin\VaiTroController;
 use App\Http\Controllers\Admin\BaiVietController;
 use App\Http\Controllers\Admin\ChiNhanhController;
+use App\Http\Controllers\Admin\TheLoaiPhimController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -48,4 +50,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     // Quản lý chi nhánh
     Route::resource('chi-nhanh', ChiNhanhController::class);
+
+    // Quản lý vai trò
+    Route::resource('vai-tro', VaiTroController::class);
+    
+    // Quản lý banners
+    Route::resource('banners', BannerController::class);
 });

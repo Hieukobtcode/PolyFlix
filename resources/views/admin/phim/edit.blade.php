@@ -2,7 +2,7 @@
 
 @section('title', 'Chỉnh sửa phim')
 @section('page-title', 'Chỉnh sửa phim')
-
+@section('breadcrumb', 'Chỉnh sửa phim')
 @section('styles')
     <style>
         .card {

@@ -2,6 +2,7 @@
 
 @section('title', 'Quản lý bài viết')
 @section('page-title', 'Quản lý bài viết')
+@section('breadcrumb', 'Danh sách bài viết')
 
 @section('styles')
     <style>
