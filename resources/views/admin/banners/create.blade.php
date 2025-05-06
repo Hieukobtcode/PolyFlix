@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Thêm banner')
+@section('title', 'Quản lý banner')
 @section('page-title', 'Thêm banner')
 @section('breadcrumb', 'Thêm banner')
 
@@ -37,7 +37,7 @@
                         @enderror
                     </div>
 
-                   
+
 
                     {{-- Trạng thái --}}
                     <div class="mb-4">

@@ -9,9 +9,7 @@
             </svg>
         </button>
         <ul class="header-nav d-none d-lg-flex">
-            <li class="nav-item"><a class="nav-link" href="{{ route('admin.lien-he.index') }}">Dashboard</a></li>
-            <li class="nav-item"><a class="nav-link" href="{{ route('admin.lien-he.index') }}">Danh sách liên hệ</a>
-            </li>
+            <li class="nav-item"><a class="nav-link" href="{{ route('admin.dashboard') }}">Dashboard</a></li>
         </ul>
         <ul class="header-nav ms-auto">
             <li class="nav-item"><a class="nav-link" href="#">
@@ -142,10 +140,9 @@
                 </li>
                 <li class="breadcrumb-item active"><span>@yield('title')</span>
                 </li>
-              <li class="breadcrumb-item"><a href="{{ route('admin.lien-he.index') }}">Home</a></li>
-              <li class="breadcrumb-item active">
-                <span>@yield('breadcrumb')</span>
-              </li>
+                <li class="breadcrumb-item active">
+                    <span>@yield('breadcrumb')</span>
+                </li>
             </ol>
         </nav>
     </div>

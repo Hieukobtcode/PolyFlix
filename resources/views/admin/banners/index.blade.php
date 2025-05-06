@@ -6,13 +6,35 @@
 
 @section('styles')
     <style>
-        .card { border-radius: 10px; }
-        .table th, .table td { vertical-align: middle; }
-        .btn-group .btn { border-radius: 5px; }
-        .badge { font-size: 0.9em; padding: 0.5em 1em; }
-        .pagination { justify-content: end; }
-        .table-dark { background-color: #343a40; }
-        .text-break { word-break: break-word; }
+        .card {
+            border-radius: 10px;
+        }
+
+        .table th,
+        .table td {
+            vertical-align: middle;
+        }
+
+        .btn-group .btn {
+            border-radius: 5px;
+        }
+
+        .badge {
+            font-size: 0.9em;
+            padding: 0.5em 1em;
+        }
+
+        .pagination {
+            justify-content: end;
+        }
+
+        .table-dark {
+            background-color: #343a40;
+        }
+
+        .text-break {
+            word-break: break-word;
+        }
     </style>
 @endsection
 
@@ -31,7 +53,8 @@
                     <div class="col-md-4 mb-2">
                         <div class="input-group">
                             <span class="input-group-text bg-light"><i class="fas fa-search"></i></span>
-                            <input type="text" name="keyword" class="form-control" value="{{ request('keyword') }}" placeholder="Tìm theo vị trí hoặc đường dẫn...">
+                            <input type="text" name="keyword" class="form-control" value="{{ request('keyword') }}"
+                                placeholder="Tìm theo vị trí hoặc đường dẫn...">
                         </div>
                     </div>
                     <div class="col-md-3 mb-2">
@@ -64,7 +87,8 @@
                                     <td class="text-center">{{ $loop->iteration }}</td>
                                     <td class="text-center">
                                         @if ($banner->hinh_anh)
-                                            <img src="{{ asset('storage/' . $banner->hinh_anh) }}" alt="Banner" style="width: 100px;">
+                                            <img src="{{ asset('storage/' . $banner->hinh_anh) }}" alt="Banner"
+                                                style="width: 100px;">
                                         @else
                                             <span class="text-muted">Chưa có</span>
                                         @endif
@@ -78,10 +102,13 @@
                                     </td>
                                     <td class="text-center">
                                         <div class="btn-group">
-                                            <a href="{{ route('admin.banners.edit', $banner->id) }}" class="btn btn-sm btn-outline-primary" title="Chỉnh sửa">
+                                            <a href="{{ route('admin.banners.edit', $banner->id) }}"
+                                                class="btn btn-sm btn-outline-primary" title="Chỉnh sửa">
                                                 <i class="fas fa-edit"></i>
                                             </a>
-                                            <form action="{{ route('admin.banners.destroy', $banner->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Bạn có chắc chắn muốn xóa banner này?')">
+                                            <form action="{{ route('admin.banners.destroy', $banner->id) }}" method="POST"
+                                                class="d-inline"
+                                                onsubmit="return confirm('Bạn có chắc chắn muốn xóa banner này?')">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" class="btn btn-sm btn-outline-danger" title="Xóa">

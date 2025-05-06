@@ -1,8 +1,9 @@
 @extends('layouts.admin')
 
-@section('title', 'Chi tiết bài viết')
+@section('title', 'Quản lý bài viết')
 @section('page-title', 'Chi tiết bài viết')
 @section('breadcrumb', 'Chi tiết bài viết')
+
 @section('styles')
     <style>
         .card {
@@ -52,11 +53,12 @@
                     <span class="badge {{ $baiViet->status === 'published' ? 'bg-success' : 'bg-secondary' }}">
                         {{ $baiViet->status === 'published' ? 'Xuất bản' : 'Bản nháp' }}
                     </span>
-                    
+
                 </p>
 
                 @if($baiViet->hinh_anh)
-                    <img width="200px" src="{{ asset('storage/' . $baiViet->hinh_anh) }}" alt="Hình ảnh bài viết" class="feature-image">
+                    <img width="200px" src="{{ asset('storage/' . $baiViet->hinh_anh) }}" alt="Hình ảnh bài viết"
+                        class="feature-image">
                 @endif
 
                 <p class="text-muted"><i class="far fa-calendar-alt me-1"></i> Ngày tạo:

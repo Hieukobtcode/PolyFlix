@@ -1,16 +1,32 @@
 @extends('layouts.admin')
 
-@section('title', 'Chỉnh sửa banner')
+@section('title', 'Quản lý banner')
 @section('page-title', 'Chỉnh sửa banner')
 @section('breadcrumb', 'Chỉnh sửa banner')
 
 @section('styles')
     <style>
-        .card { border-radius: 10px; }
-        .form-control, .form-select { border-radius: 8px; }
-        .form-label { margin-bottom: 0.5rem; }
-        .btn { border-radius: 8px; }
-        .invalid-feedback { font-size: 0.9em; }
+        .card {
+            border-radius: 10px;
+        }
+
+        .form-control,
+        .form-select {
+            border-radius: 8px;
+        }
+
+        .form-label {
+            margin-bottom: 0.5rem;
+        }
+
+        .btn {
+            border-radius: 8px;
+        }
+
+        .invalid-feedback {
+            font-size: 0.9em;
+        }
+
         .img-preview {
             max-height: 200px;
             margin-top: 10px;
@@ -36,7 +52,8 @@
                     {{-- Hình ảnh --}}
                     <div class="mb-4">
                         <label for="hinh_anh" class="form-label fw-semibold">Hình ảnh</label>
-                        <input type="file" class="form-control @error('hinh_anh') is-invalid @enderror" id="hinh_anh" name="hinh_anh">
+                        <input type="file" class="form-control @error('hinh_anh') is-invalid @enderror" id="hinh_anh"
+                            name="hinh_anh">
                         @if ($banner->hinh_anh)
                             <img src="{{ asset('storage/' . $banner->hinh_anh) }}" alt="Hình hiện tại" class="img-preview">
                         @endif
@@ -45,15 +62,17 @@
                         @enderror
                     </div>
 
-                   
+
                     {{-- Trạng thái --}}
                     <div class="mb-4">
                         <label for="trang_thai" class="form-label fw-semibold">Trạng thái</label>
-                        <select class="form-select @error('trang_thai') is-invalid @enderror"
-                                id="trang_thai" name="trang_thai">
+                        <select class="form-select @error('trang_thai') is-invalid @enderror" id="trang_thai"
+                            name="trang_thai">
                             <option value="">-- Chọn trạng thái --</option>
-                            <option value="1" {{ old('trang_thai', $banner->trang_thai) == '1' ? 'selected' : '' }}>Hiển thị</option>
-                            <option value="0" {{ old('trang_thai', $banner->trang_thai) == '0' ? 'selected' : '' }}>Ẩn</option>
+                            <option value="1" {{ old('trang_thai', $banner->trang_thai) == '1' ? 'selected' : '' }}>Hiển thị
+                            </option>
+                            <option value="0" {{ old('trang_thai', $banner->trang_thai) == '0' ? 'selected' : '' }}>Ẩn
+                            </option>
                         </select>
                         @error('trang_thai')
                             <div class="invalid-feedback">{{ $message }}</div>

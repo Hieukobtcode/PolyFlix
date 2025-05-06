@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Chi tiết phim')
+@section('title', 'Quản lý Phim')
 @section('page-title', 'Chi tiết phim')
 @section('breadcrumb', 'Chi tiết phim')
 @section('styles')
@@ -99,7 +99,7 @@
         $phim->trang_thai === 'đang chiếu' ? 'bg-success' :
         ($phim->trang_thai === 'sắp chiếu' ? 'bg-warning' :
             ($phim->trang_thai === 'đã kết thúc' ? 'bg-secondary' : 'bg-danger'))
-                                                                                                                                                                        }}">
+                                                                                                                                                                            }}">
                                         {{ ucfirst($phim->trang_thai) }}
                                     </span>
                                 </li>
