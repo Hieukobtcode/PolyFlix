@@ -15,8 +15,6 @@ class Banner extends Model
     protected $fillable = [
         
         'hinh_anh',
-        'duong_dan',
-        'vi_tri',
         'trang_thai'
     ];
     protected $dates = ['delete_at'];// đảm bảo laravel hiểu đây là kiểu ngày tháng
