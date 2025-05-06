@@ -45,34 +45,7 @@
                         @enderror
                     </div>
 
-                    {{-- Đường dẫn --}}
-                    <div class="mb-4">
-                        <label for="duong_dan" class="form-label fw-semibold">Đường dẫn (URL)</label>
-                        <input type="text"
-                               class="form-control @error('duong_dan') is-invalid @enderror"
-                               id="duong_dan"
-                               name="duong_dan"
-                               value="{{ old('duong_dan', $banner->duong_dan) }}"
-                               placeholder="https://example.com/">
-                        @error('duong_dan')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    {{-- Vị trí --}}
-                    <div class="mb-4">
-                        <label for="vi_tri" class="form-label fw-semibold">Vị trí</label>
-                        <select class="form-select @error('vi_tri') is-invalid @enderror" name="vi_tri" id="vi_tri">
-                            <option value="">-- Chọn vị trí --</option>
-                            <option value="trang_chu_top" {{ old('vi_tri', $banner->vi_tri) == 'trang_chu_top' ? 'selected' : '' }}>Trang chủ - Trên cùng</option>
-                            <option value="trang_chu_mid" {{ old('vi_tri', $banner->vi_tri) == 'trang_chu_mid' ? 'selected' : '' }}>Trang chủ - Giữa</option>
-                            <option value="footer" {{ old('vi_tri', $banner->vi_tri) == 'footer' ? 'selected' : '' }}>Cuối trang</option>
-                        </select>
-                        @error('vi_tri')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
+                   
                     {{-- Trạng thái --}}
                     <div class="mb-4">
                         <label for="trang_thai" class="form-label fw-semibold">Trạng thái</label>

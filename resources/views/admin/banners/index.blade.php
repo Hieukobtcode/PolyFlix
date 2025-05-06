@@ -54,8 +54,6 @@
                             <tr>
                                 <th class="text-center" style="width: 5%">#</th>
                                 <th>Hình ảnh</th>
-                                <th class="text-center">Vị trí</th>
-                                <th>Đường dẫn</th>
                                 <th class="text-center">Trạng thái</th>
                                 <th class="text-center" style="width: 15%">Thao tác</th>
                             </tr>
@@ -71,8 +69,6 @@
                                             <span class="text-muted">Chưa có</span>
                                         @endif
                                     </td>
-                                    <td class="text-center">{{ $banner->vi_tri ?? '-' }}</td>
-                                    <td class="text-break">{{ $banner->duong_dan }}</td>
                                     <td class="text-center">
                                         @if ($banner->trang_thai == 1)
                                             <span class="badge bg-success">Hiển thị</span>

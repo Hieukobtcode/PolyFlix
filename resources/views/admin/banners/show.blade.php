@@ -53,18 +53,7 @@
                     <img src="{{ asset('storage/' . $banner->hinh_anh) }}" alt="Hình banner" class="feature-image" width="300px">
                 @endif
 
-                <p class="mb-2">
-                    <span class="info-label">Vị trí:</span> {{ $banner->vi_tri ?? '-' }}
-                </p>
-
-                <p class="mb-2">
-                    <span class="info-label">Đường dẫn:</span>
-                    @if($banner->duong_dan)
-                        <a href="{{ $banner->duong_dan }}" target="_blank">{{ $banner->duong_dan }}</a>
-                    @else
-                        <span class="text-muted">Không có</span>
-                    @endif
-                </p>
+                
 
                 <p class="mb-2">
                     <span class="info-label">Trạng thái:</span>
