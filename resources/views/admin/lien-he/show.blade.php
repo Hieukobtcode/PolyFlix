@@ -1,5 +1,9 @@
 @extends('layouts.admin')
 
+@section('title', 'Quản lý liên hệ')
+@section('page-title', 'Chi tiết liên hệ')
+@section('breadcrumb', 'Chi tiết liên hệ')
+
 @section('content')
 <div class="body flex-grow-1">
     <div class="container-lg px-4">
@@ -22,18 +26,6 @@
                 </div>
             </div>
             <div class="card-body">
-                @if(session('success'))
-                    <div class="alert alert-success">
-                        {{ session('success') }}
-                    </div>
-                @endif
-
-                @if(session('error'))
-                    <div class="alert alert-danger">
-                        {{ session('error') }}
-                    </div>
-                @endif
-
                 <div class="row">
                     <!-- Thông tin liên hệ -->
                     <div class="col-md-8">

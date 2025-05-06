@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Chỉnh sửa vai trò')
+@section('title', 'Quản lý Vai trò')
 @section('page-title', 'Chỉnh sửa vai trò')
 @section('breadcrumb', 'Chỉnh sửa vai trò')
 @section('styles')
@@ -45,13 +45,10 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="mb-4">
-                                <label for="ten" class="form-label fw-semibold">Tên vai trò <span class="text-danger">*</span></label>
-                                <input type="text"
-                                    class="form-control @error('ten') is-invalid @enderror"
-                                    id="ten"
-                                    name="ten"
-                                    value="{{ old('ten', $vaiTro->ten) }}"
-                                    placeholder="Nhập tên vai trò">
+                                <label for="ten" class="form-label fw-semibold">Tên vai trò <span
+                                        class="text-danger">*</span></label>
+                                <input type="text" class="form-control @error('ten') is-invalid @enderror" id="ten"
+                                    name="ten" value="{{ old('ten', $vaiTro->ten) }}" placeholder="Nhập tên vai trò">
                                 @error('ten')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -62,8 +59,8 @@
 
                     <div class="mb-4">
                         <label for="mo_ta" class="form-label fw-semibold">Mô tả</label>
-                        <textarea class="form-control @error('mo_ta') is-invalid @enderror" id="mo_ta" name="mo_ta"
-                            rows="4" placeholder="Nhập mô tả vai trò">{{ old('mo_ta', $vaiTro->mo_ta) }}</textarea>
+                        <textarea class="form-control @error('mo_ta') is-invalid @enderror" id="mo_ta" name="mo_ta" rows="4"
+                            placeholder="Nhập mô tả vai trò">{{ old('mo_ta', $vaiTro->mo_ta) }}</textarea>
                         @error('mo_ta')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror

@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('title', 'Quản lý Phim')
-@section('page-title', 'Quản lý Phim')
+@section('page-title', 'Danh sách Phim')
 @section('breadcrumb', 'Danh sách Phim')
 
 @section('styles')

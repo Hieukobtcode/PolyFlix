@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('title', 'Quản lý Vai trò')
-@section('page-title', 'Quản lý Vai trò')
+@section('page-title', 'Danh sách vai trò')
 @section('breadcrumb', 'Danh sách vai trò')
 @section('styles')
     <style>
@@ -129,7 +129,7 @@
 
 @section('scripts')
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const searchInput = document.getElementById('searchInput');
             const resetBtn = document.getElementById('resetFilter');
             const rows = document.querySelectorAll('#categoryTable tr');
@@ -159,10 +159,10 @@
                         const newEmptyRow = document.createElement('tr');
                         newEmptyRow.id = 'emptyRow';
                         newEmptyRow.innerHTML = `
-                    <td colspan="6" class="text-center text-muted py-3">
-                        <i class="fas fa-search me-1"></i> Không tìm thấy kết quả phù hợp
-                    </td>
-                `;
+                                <td colspan="6" class="text-center text-muted py-3">
+                                    <i class="fas fa-search me-1"></i> Không tìm thấy kết quả phù hợp
+                                </td>
+                            `;
                         document.getElementById('categoryTable').appendChild(newEmptyRow);
                     }
                 } else if (emptyRow) {
@@ -180,7 +180,7 @@
             }
 
             searchInput.addEventListener('input', filterTable);
-            resetBtn.addEventListener('click', function() {
+            resetBtn.addEventListener('click', function () {
                 searchInput.value = '';
                 filterTable();
             });

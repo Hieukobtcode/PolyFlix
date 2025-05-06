@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Thêm thể loại phim')
+@section('title', 'Quản lý Thể loại phim')
 @section('page-title', 'Thêm thể loại phim')
 @section('breadcrumb', 'Thêm thể loại phim')
 @section('styles')

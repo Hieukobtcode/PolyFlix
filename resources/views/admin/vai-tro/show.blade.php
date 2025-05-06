@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Chi tiết vai trò')
+@section('title', 'Quản lý Vai trò')
 @section('page-title', 'Chi tiết vai trò')
 @section('breadcrumb', 'Chi tiết vai trò')
 @section('styles')
@@ -94,7 +94,8 @@
                                     <td>{{ $nguoiDung->ho_ten }}</td>
                                     <td>{{ $nguoiDung->email }}</td>
                                     <td class="text-center">
-                                        <span class="badge rounded-pill {{ $nguoiDung->trang_thai === 'hoạt động' ? 'bg-success' : 'bg-secondary' }}">
+                                        <span
+                                            class="badge rounded-pill {{ $nguoiDung->trang_thai === 'hoạt động' ? 'bg-success' : 'bg-secondary' }}">
                                             {{ ucfirst($nguoiDung->trang_thai) }}
                                         </span>
                                     </td>
@@ -104,7 +105,7 @@
                                         </a>
                                     </td>
                                 </tr>
-                            @empty --}}
+                                @empty --}}
                                 <tr>
                                     <td colspan="5" class="text-center text-muted py-3">
                                         <i class="fas fa-users-slash me-1"></i> Không có người dùng nào thuộc vai trò này

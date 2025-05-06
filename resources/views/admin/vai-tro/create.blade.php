@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Thêm vai trò')
+@section('title', 'Quản lý Vai trò')
 @section('page-title', 'Thêm vai trò')
 @section('breadcrumb', 'Thêm vai trò')
 @section('styles')
@@ -44,10 +44,10 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="mb-4">
-                                <label for="ten" class="form-label fw-semibold">Tên vai trò <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control rounded @error('ten') is-invalid @enderror"
-                                    id="ten" name="ten" value="{{ old('ten') }}"
-                                    placeholder="Nhập tên vai trò">
+                                <label for="ten" class="form-label fw-semibold">Tên vai trò <span
+                                        class="text-danger">*</span></label>
+                                <input type="text" class="form-control rounded @error('ten') is-invalid @enderror" id="ten"
+                                    name="ten" value="{{ old('ten') }}" placeholder="Nhập tên vai trò">
                                 @error('ten')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror

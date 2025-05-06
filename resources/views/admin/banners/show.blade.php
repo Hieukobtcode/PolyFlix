@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Chi tiết banner')
+@section('title', 'Danh sách banner')
 @section('page-title', 'Chi tiết banner')
 @section('breadcrumb', 'Chi tiết banner')
 
@@ -50,10 +50,11 @@
 
             <div class="card-body p-4">
                 @if($banner->hinh_anh)
-                    <img src="{{ asset('storage/' . $banner->hinh_anh) }}" alt="Hình banner" class="feature-image" width="300px">
+                    <img src="{{ asset('storage/' . $banner->hinh_anh) }}" alt="Hình banner" class="feature-image"
+                        width="300px">
                 @endif
 
-                
+
 
                 <p class="mb-2">
                     <span class="info-label">Trạng thái:</span>
