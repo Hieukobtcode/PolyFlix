@@ -25,6 +25,7 @@ return new class extends Migration
             $table->string('quoc_gia', 50)->nullable();
             $table->string('do_tuoi', 50)->nullable();
             $table->enum('trang_thai', ['đang chiếu', 'sắp chiếu', 'đã kết thúc', 'bị hủy']);
+            $table->softDeletes();
             $table->timestamp('create_at');
             $table->timestamp('update_at')->nullable();
         });

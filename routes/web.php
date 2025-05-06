@@ -1,4 +1,5 @@
 <?php
+
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\LienHeController;
 use App\Http\Controllers\Admin\TheLoaiPhimController;
@@ -39,6 +40,13 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     // Quản lý thể loại phim
     Route::resource('the-loai-phim', TheLoaiPhimController::class);
+
+    // Các chức năng xóa mềm cho quản lý phim
+    Route::prefix('phim')->name('phim.')->group(function () {
+        Route::get('trash', [PhimController::class, 'trash'])->name('trash');
+        Route::patch('{phim}/restore', [PhimController::class, 'restore'])->name('restore');
+        Route::delete('{phim}/force-delete', [PhimController::class, 'forceDelete'])->name('force-delete');
+    });
 
     // Quản lý phim
     Route::resource('phim', PhimController::class);
