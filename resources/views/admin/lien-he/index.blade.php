@@ -1,7 +1,8 @@
 @extends('layouts.admin')
 
 @section('title', 'Quản lý liên hệ')
-
+@section('page-title', 'Quản lý liên hệ')
+@section('breadcrumb', 'Danh sách liên hệ')
 @section('styles')
 <style>
     .card {

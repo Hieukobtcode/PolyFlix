@@ -99,7 +99,7 @@
         $phim->trang_thai === 'đang chiếu' ? 'bg-success' :
         ($phim->trang_thai === 'sắp chiếu' ? 'bg-warning' :
             ($phim->trang_thai === 'đã kết thúc' ? 'bg-secondary' : 'bg-danger'))
-                                                                                                                                                            }}">
+                                                                                                                                                                        }}">
                                         {{ ucfirst($phim->trang_thai) }}
                                     </span>
                                 </li>
