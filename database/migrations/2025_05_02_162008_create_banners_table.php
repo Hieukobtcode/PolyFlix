@@ -14,9 +14,7 @@ return new class extends Migration
         Schema::create('banners', function (Blueprint $table) {
             $table->id();
             $table->string('hinh_anh')->nullable();
-            $table->string('duong_dan')->nullable();
-            $table->string('vi_tri', 100);
-            $table->boolean('trang_thai')->default(1);
+           $table->boolean('trang_thai')->default(1);
             $table->softDeletes(); // hỗ trợ soft delete
   
             $table->timestamps();

@@ -14,9 +14,7 @@ class BannerController extends Controller
     {
         $query = Banner::query();
 
-        if ($request->filled('vi_tri')) {
-            $query->where('vi_tri', $request->vi_tri);
-        }
+       
         if ($request->filled('trang_thai')) {
             $query->where('trang_thai', $request->trang_thai);
         }
@@ -34,9 +32,7 @@ class BannerController extends Controller
     {
         $data = $request->validate([
             'hinh_anh' => 'nullable|image|mimes:jpg,png,jpeg,gif',
-            'duong_dan' => 'nullable|url|max:255',
-            'vi_tri' => 'required|string|max:100',
-            'trang_thai' => 'required|boolean',
+             'trang_thai' => 'required|boolean',
         ]);
 
         if ($request->hasFile('hinh_anh')) {
@@ -60,9 +56,7 @@ class BannerController extends Controller
 
         $data = $request->validate([
             'hinh_anh' => 'nullable|image|mimes:jpg,png,jpeg,gif',
-            'duong_dan' => 'nullable|url|max:255',
-            'vi_tri' => 'required|string|max:100',
-            'trang_thai' => 'required|boolean',
+           'trang_thai' => 'required|boolean',
         ]);
 
         if ($request->hasFile('hinh_anh')) {
