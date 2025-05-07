@@ -18,12 +18,12 @@
     <meta name="keyword" content="Bootstrap,Admin,Template,Open,Source,jQuery,CSS,HTML,RWD,Dashboard">
     <title>@yield('page-title', 'Admin Panel')</title>
 
-    <link rel="icon" type="image/png" sizes="192x192" href="{{ asset('logo/polyflix_title.png') }}">
+    <link rel="icon" type="image/png" sizes="192x192" href="{{ asset('logo/IconPolyFlixAdmin.png') }}">
 
     <title>Admin Panel</title>
     <link rel="manifest" href="{{ asset('dist/assets/favicon/manifest.json') }}">
     <meta name="msapplication-TileColor" content="#ffffff">
-    <meta name="msapplication-TileImage" content="{{ asset('logo/polyflix_title.png') }}">
+    <meta name="msapplication-TileImage" content="{{ asset('logo/IconPolyFlixAdmin.png') }}">
     <meta name="theme-color" content="#ffffff">
     <!-- Vendors styles-->
     <link rel="stylesheet" href="{{ asset('dist/vendors/simplebar/css/simplebar.css') }}">
