@@ -1,8 +1,8 @@
 <div class="sidebar sidebar-dark sidebar-fixed border-end" id="sidebar">
     <div class="sidebar-header border-bottom d-flex justify-content-center align-items-center">
         <div class="sidebar-brand">
-            <img src="{{ asset('logo/ploy_flix.png') }}" class="sidebar-brand-full" style="width: 250px; height: auto;"
-                alt="PolyFlix Logo">
+            <img src="{{ asset('logo/LogoPolyFlixAdmin.png') }}" class="sidebar-brand-full"
+                style="width: 150px; height: auto;" alt="PolyFlix Logo">
         </div>
         <button class="btn-close d-lg-none" type="button" data-coreui-theme="dark" aria-label="Close"
             onclick="coreui.Sidebar.getInstance(document.querySelector('#sidebar')).toggle()"></button>

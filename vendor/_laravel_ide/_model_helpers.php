@@ -315,6 +315,18 @@ namespace App\Models {
     /**
      * App\Models\Banner
      *
+     * @property \Illuminate\Support\Carbon|null $updated_at
+     * @property \Illuminate\Support\Carbon|null $created_at
+     * @property \Illuminate\Support\Carbon|null $deleted_at
+     * @property bool $trang_thai
+     * @property string|null $hinh_anh
+     * @property int $id
+     * @method static \Illuminate\Database\Eloquent\Builder<Banner>|Banner whereId($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Banner>|Banner whereHinhAnh($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Banner>|Banner whereTrangThai($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Banner>|Banner whereDeletedAt($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Banner>|Banner whereCreatedAt($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Banner>|Banner whereUpdatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Banner>|Banner newModelQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<Banner>|Banner newQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<Banner>|Banner query()
@@ -3162,6 +3174,16 @@ namespace App\Models {
     /**
      * App\Models\VaiTro
      *
+     * @property \Illuminate\Support\Carbon|null $updated_at
+     * @property \Illuminate\Support\Carbon|null $created_at
+     * @property string|null $mo_ta
+     * @property string $ten
+     * @property int $id
+     * @method static \Illuminate\Database\Eloquent\Builder<VaiTro>|VaiTro whereId($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<VaiTro>|VaiTro whereTen($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<VaiTro>|VaiTro whereMoTa($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<VaiTro>|VaiTro whereCreatedAt($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<VaiTro>|VaiTro whereUpdatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<VaiTro>|VaiTro newModelQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<VaiTro>|VaiTro newQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<VaiTro>|VaiTro query()
