@@ -1,8 +1,8 @@
 @extends('layouts.admin')
 
 @section('title', 'Quản lý Thể loại phim')
-@section('page-title', 'Quản lý Thể loại phim')
-
+@section('page-title', 'Danh sách thể loại phim')
+@section('breadcrumb', 'Danh sách thể loại phim')
 @section('styles')
     <style>
         .card {
@@ -130,25 +130,25 @@
             const filterForm = document.createElement('div');
             filterForm.className = 'row mb-4';
             filterForm.innerHTML = `
-                        <div class="col-md-4 mb-2">
-                            <div class="input-group">
-                                <span class="input-group-text bg-light"><i class="fas fa-search"></i></span>
-                                <input type="text" id="searchInput" class="form-control" placeholder="Tìm kiếm theo tên...">
-                            </div>
-                        </div>
-                        <div class="col-md-3 mb-2">
-                            <select id="statusFilter" class="form-select">
-                                <option value="">Tất cả trạng thái</option>
-                                <option value="hoạt động">Hoạt động</option>
-                                <option value="không hoạt động">Không hoạt động</option>
-                            </select>
-                        </div>
-                        <div class="col-md-2 mb-2">
-                            <button id="resetFilter" class="btn btn-outline-secondary w-100">
-                                <i class="fas fa-sync-alt me-1"></i> Đặt lại
-                            </button>
-                        </div>
-                    `;
+                              <div class="col-md-4 mb-2">
+                                  <div class="input-group">
+                                      <span class="input-group-text bg-light"><i class="fas fa-search"></i></span>
+                                      <input type="text" id="searchInput" class="form-control" placeholder="Tìm kiếm theo tên...">
+                                  </div>
+                              </div>
+                              <div class="col-md-3 mb-2">
+                                  <select id="statusFilter" class="form-select">
+                                      <option value="">Tất cả trạng thái</option>
+                                      <option value="hoạt động">Hoạt động</option>
+                                      <option value="không hoạt động">Không hoạt động</option>
+                                  </select>
+                              </div>
+                              <div class="col-md-2 mb-2">
+                                  <button id="resetFilter" class="btn btn-outline-secondary w-100">
+                                      <i class="fas fa-sync-alt me-1"></i> Đặt lại
+                                  </button>
+                              </div>
+                          `;
             tableContainer.parentNode.insertBefore(filterForm, tableContainer);
 
             // Lấy tất cả các hàng trong bảng
@@ -202,10 +202,10 @@
                         const newEmptyRow = document.createElement('tr');
                         newEmptyRow.id = 'emptyRow';
                         newEmptyRow.innerHTML = `
-                                    <td colspan="6" class="text-center text-muted py-3">
-                                        <i class="fas fa-search me-1"></i> Không tìm thấy kết quả phù hợp
-                                    </td>
-                                `;
+                                                                                                                                                            <td colspan="6" class="text-center text-muted py-3">
+                                                                                                                                                                <i class="fas fa-search me-1"></i> Không tìm thấy kết quả phù hợp
+                                                                                                                                                            </td>
+                                                                                                                                                        `;
                         document.getElementById('categoryTable').appendChild(newEmptyRow);
                     }
                 } else if (emptyRow) {

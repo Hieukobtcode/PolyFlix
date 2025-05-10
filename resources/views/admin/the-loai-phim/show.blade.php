@@ -1,8 +1,8 @@
 @extends('layouts.admin')
 
-@section('title', 'Chi tiết thể loại phim')
+@section('title', 'Quản lý Thể loại phim')
 @section('page-title', 'Chi tiết thể loại phim')
-
+@section('breadcrumb', 'Chi tiết thể loại phim')
 @section('styles')
 <style>
     .card {

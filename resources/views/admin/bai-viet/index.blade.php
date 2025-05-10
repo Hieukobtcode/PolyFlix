@@ -2,6 +2,7 @@
 
 @section('title', 'Quản lý bài viết')
 @section('page-title', 'Quản lý bài viết')
+@section('breadcrumb', 'Danh sách bài viết')
 
 @section('styles')
     <style>
@@ -40,9 +41,9 @@
                 <h5 class="mb-0 fw-bold">Danh sách bài viết</h5>
 
                 <a href="{{ route('admin.bai-viet.create') }}" class="btn btn-light btn-sm">
-                    <i class="fas fa-plus me-1"></i> Thêm bài viết 
+                    <i class="fas fa-plus me-1"></i> Thêm bài viết
                 </a>
-                
+
             </div>
             <div class="card-body p-4">
                 <form method="GET" action="{{ route('admin.bai-viet.index') }}" class="row mb-4">
@@ -64,9 +65,9 @@
                             <i class="fas fa-filter me-1"></i> Lọc
                         </button>
                     </div>
-                    
+
                 </form>
-                
+
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered align-middle">
                         <thead class="table-dark">

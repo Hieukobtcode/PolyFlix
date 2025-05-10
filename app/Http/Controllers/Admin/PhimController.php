@@ -110,14 +110,46 @@ class PhimController extends Controller
     {
         $phim = Phim::findOrFail($id);
 
+        // Sử dụng xóa mềm thay vì xóa hoàn toàn
+        $phim->delete();
+
+        return redirect()->route('admin.phim.index')
+            ->with('success', 'Phim đã được xóa mềm thành công!');
+    }
+
+    // Thêm các phương thức mới để quản lý phim đã xóa mềm
+
+    public function trash()
+    {
+        $trashedPhims = Phim::onlyTrashed()->orderBy('deleted_at', 'desc')->paginate(10);
+        return view('admin.phim.trash', compact('trashedPhims'));
+    }
+
+    public function restore($id)
+    {
+        $phim = Phim::onlyTrashed()->findOrFail($id);
+        $phim->restore();
+
+        return redirect()->route('admin.phim.trash')
+            ->with('success', 'Phim đã được khôi phục thành công!');
+    }
+
+    public function forceDelete($id)
+    {
+        $phim = Phim::onlyTrashed()->findOrFail($id);
+
+        // Xóa poster nếu có
         if ($phim->poster) {
             Storage::disk('public')->delete($phim->poster);
         }
 
+        // Xóa quan hệ với thể loại
         $phim->theLoais()->detach();
-        $phim->delete();
 
-        return redirect()->route('admin.phim.index')
-            ->with('success', 'Phim đã được xóa thành công!');
+        // Xóa vĩnh viễn
+        $phim->forceDelete();
+
+        return redirect()->route('admin.phim.trash')
+            ->with('success', 'Phim đã được xóa vĩnh viễn!');
     }
 }
