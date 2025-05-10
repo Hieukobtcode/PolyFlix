@@ -75,10 +75,11 @@ class BaiVietController extends Controller
     // Cập nhật bài viết
     public function update(BaiVietRequest $request, $id)
 {
+    
     $baiViet = BaiViet::findOrFail($id);
-
+    $data['ngay_cap_nhat'] = now(); 
     $data = $request->only(['tieu_de', 'noi_dung', 'status']);
-
+    
     // Nếu có file mới được upload
     if ($request->hasFile('hinh_anh')) {
         if ($baiViet->hinh_anh) {

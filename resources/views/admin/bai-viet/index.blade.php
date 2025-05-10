@@ -74,9 +74,10 @@
                             <tr>
                                 <th scope="col" class="text-center" style="width: 5%">#</th>
                                 <th scope="col">Tiêu đề</th>
-                                <th scope="col">Nội dung</th>
+                               
                                 <th scope="col" class="text-center" style="width: 15%">Hình ảnh</th>
                                 <th scope="col" class="text-center" style="width: 15%">Ngày tạo</th>
+                                <th scope="col" class="text-center" style="width: 15%">ngày cập nhật</th>
                                 <th scope="col" class="text-center" style="width: 15%">Trạng thái</th>
                                 <th scope="col" class="text-center" style="width: 15%">Thao tác</th>
                             </tr>
@@ -86,7 +87,7 @@
                                 <tr>
                                     <td class="text-center">{{ $index + 1 }}</td>
                                     <td>{{ $baiViet->tieu_de }}</td>
-                                    <td>{{ Str::limit(strip_tags($baiViet->noi_dung), 50) }}</td>
+                                   
                                     <td class="text-center">
                                         @if ($baiViet->hinh_anh)
                                             <img src="{{ asset('storage/' . $baiViet->hinh_anh) }}" alt="" style="width: 100px">
@@ -94,7 +95,16 @@
                                             <span class="text-muted">Chưa có</span>
                                         @endif
                                     </td>
+                                    
                                     <td class="text-center">{{ \Carbon\Carbon::parse($baiViet->ngay_tao)->format('d/m/Y H:i') }}</td>
+                                    <td class="text-center">
+                                        @if ($baiViet->ngay_cap_nhat)
+                                            {{ \Carbon\Carbon::parse($baiViet->ngay_cap_nhat)->format('d/m/Y H:i') }}
+                                        @else
+                                            <span class="text-muted">Chưa cập nhật</span>
+                                        @endif
+                                    </td>
+                                    
                                     <td class="text-center">
                                         @if ($baiViet->status === 'published')
                                             <span class="badge bg-success">Xuất bản</span>
@@ -110,6 +120,7 @@
                                             <a href="{{ route('admin.bai-viet.edit', $baiViet->id) }}" class="btn btn-sm btn-outline-primary">
                                                 <i class="fas fa-edit"></i>
                                             </a>
+
                                             <form action="{{ route('admin.bai-viet.destroy', $baiViet->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Bạn có chắc chắn muốn xóa bài viết này?')">
                                                 @csrf
                                                 @method('DELETE')

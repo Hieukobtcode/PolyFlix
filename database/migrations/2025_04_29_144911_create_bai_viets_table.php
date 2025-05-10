@@ -17,6 +17,7 @@ return new class extends Migration
             $table->text('noi_dung');
             $table->string('hinh_anh', 255)->nullable();
             $table->dateTime('ngay_tao')->useCurrent();
+            $table->dateTime('ngay_cap_nhat')->useCurrent()->useCurrentOnUpdate();
         });
     }
 

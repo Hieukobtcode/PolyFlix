@@ -16,6 +16,7 @@ class BaiViet extends Model
         'noi_dung',
         'hinh_anh',
         'ngay_tao',
+        'ngay_cap_nhat',
         'status',
     ];
 }

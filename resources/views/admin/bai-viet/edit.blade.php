@@ -65,8 +65,7 @@
                         <label for="noi_dung" class="form-label fw-semibold">Nội dung <span
                                 class="text-danger">*</span></label>
                         <textarea class="form-control @error('noi_dung') is-invalid @enderror" id="noi_dung" name="noi_dung"
-                            rows="6"
-                            placeholder="Nhập nội dung bài viết">{{ old('noi_dung', $baiViet->noi_dung) }}</textarea>
+                                  rows="10"  placeholder="Nhập nội dung bài viết">{{ old('noi_dung', $baiViet->noi_dung) }}</textarea>
                         @error('noi_dung')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -122,4 +121,24 @@
             }
         });
     </script>
+   
+    <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
+    <script>
+        ClassicEditor
+            .create(document.querySelector('#noi_dung'), {
+                toolbar: [
+                    'heading', '|',
+                    'bold', 'italic', 'underline', 'strikethrough', '|',
+                    'link', 'imageUpload', 'blockQuote', 'insertTable', 'mediaEmbed', '|',
+                    'bulletedList', 'numberedList', 'outdent', 'indent', '|',
+                    'undo', 'redo'
+                ],
+                language: 'vi',
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    </script>
+
+
 @endsection
