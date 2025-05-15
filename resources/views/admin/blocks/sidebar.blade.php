@@ -75,6 +75,15 @@
                 <span class="nav-text">Quản lý banners</span>
             </a>
         </li>
+        <li class="nav-item">
+    <a class="nav-link" href="{{ route('admin.cau-hinh.index') }}">
+        <span class="nav-icon">
+            <i class="fas fa-cogs"></i> <!-- Biểu tượng cấu hình -->
+        </span>
+        <span class="nav-text">Quản lý cấu hình</span>
+    </a>
+</li>
+
         <li class="nav-title">Theme</li>
         <li class="nav-item"><a class="nav-link" href="colors.html">
                 <svg class="nav-icon">
