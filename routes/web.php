@@ -1,11 +1,12 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\PhimController;
+use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\LienHeController;
 use App\Http\Controllers\Admin\VaiTroController;
 use App\Http\Controllers\Admin\BaiVietController;
+use App\Http\Controllers\Admin\RapPhimController;
 use App\Http\Controllers\Admin\ChiNhanhController;
 use App\Http\Controllers\Admin\TheLoaiPhimController;
 
@@ -64,4 +65,13 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     // Quản lý banners
     Route::resource('banners', BannerController::class);
+
+// Các chức năng xóa mềm cho quản lý phim
+Route::prefix('rap-phim')->name('rap-phim.')->group(function () {
+    Route::get('trash', [RapPhimController::class, 'trash'])->name('trash');
+    Route::patch('{id}/restore', [RapPhimController::class, 'restore'])->name('restore');
+    Route::delete('{id}/force-delete', [RapPhimController::class, 'forceDelete'])->name('force-delete');
+});
+// quản lý rạp phim
+Route::resource('rap-phim', RapPhimController::class);
 });

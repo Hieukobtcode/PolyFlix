@@ -17,4 +17,9 @@ class ChiNhanh extends Model
         'quan_ly_id',
         'trang_thai',
     ];
+public function RapPhim()
+{
+    return $this->hasMany(RapPhim::class, 'chi_nhanh_id');
+}
+
 }
