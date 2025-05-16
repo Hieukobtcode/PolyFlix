@@ -20,9 +20,9 @@ class DatabaseSeeder extends Seeder
             'email' => 'test@example.com',
         ]);
 
-        // Gọi LienHeSeeder để tạo dữ liệu mẫu cho bảng liên hệ
+        // Gọi các seeder để tạo dữ liệu mẫu
         $this->call([
-            LienHeSeeder::class,
+            BannerSeeder::class,
         ]);
     }
 }

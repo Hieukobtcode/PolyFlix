@@ -27,6 +27,31 @@
             </li>
           </ul>
         </li>
+        <li class="nav-group">
+            <a class="nav-link nav-group-toggle" href="#">
+                <span class="nav-icon">
+                    <i class="fas fa-tags"></i> <!-- Biểu tượng khuyến mãi -->
+                </span>
+                <span class="nav-text">Quản lý khuyến mãi</span>
+            </a>
+            <ul class="nav-group-items compact">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('admin.khuyen-mai.index') }}">
+                        <span class="nav-icon"><span class="nav-icon-bullet"></span></span> Danh sách khuyến mãi
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('admin.khuyen-mai.create') }}">
+                        <span class="nav-icon"><span class="nav-icon-bullet"></span></span> Thêm khuyến mãi
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('admin.khuyen-mai.thong-ke-su-dung') }}">
+                        <span class="nav-icon"><span class="nav-icon-bullet"></span></span> Thống kê sử dụng
+                    </a>
+                </li>
+            </ul>
+        </li>
         <li class="nav-title">Theme</li>
         <li class="nav-item"><a class="nav-link" href="colors.html">
                 <svg class="nav-icon">
