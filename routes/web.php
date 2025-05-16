@@ -36,13 +36,13 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     // Quản lý liên hệ
     Route::resource('lien-he', LienHeController::class)->names([
-        'index' => 'admin.lien-he.index',
-        'create' => 'admin.lien-he.create',
-        'store' => 'admin.lien-he.store',
-        'show' => 'admin.lien-he.show',
-        'edit' => 'admin.lien-he.edit',
-        'update' => 'admin.lien-he.update',
-        'destroy' => 'admin.lien-he.destroy',
+        'index' => 'lien-he.index',
+        'create' => 'lien-he.create',
+        'store' => 'lien-he.store',
+        'show' => 'lien-he.show',
+        'edit' => 'lien-he.edit',
+        'update' => 'lien-he.update',
+        'destroy' => 'lien-he.destroy',
     ]);
 
     Route::prefix('lien-he')->name('lien-he.')->group(function () {
