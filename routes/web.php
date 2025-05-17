@@ -74,11 +74,7 @@
         //Quản lý rạp phim
         Route::resource('rap-phim', RapphimController::class);
 
-        // Quản lý banners
-        Route::resource('banners', BannerController::class);
-
-        // cấu hình web
-
+        //Quản lý cấu hình
         Route::get('cau-hinh', [CauHinhController::class, 'index'])->name('cau-hinh.index');
         Route::get('cau-hinh/edit', [CauHinhController::class, 'edit'])->name('cau-hinh.edit');
         Route::post('cau-hinh/update', [CauHinhController::class, 'update'])->name('cau-hinh.update');
