@@ -22,7 +22,7 @@
             <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                 <h5 class="mb-0 fw-bold">Danh sách rạp phim</h5>
                 <div class="btn-group gap-2">
-                    <a href="{{ route('admin.rap-phim.trash') }}" class="btn btn-outline-light btn-sm">
+                    <a href="" class="btn btn-outline-light btn-sm">
                         <i class="fas fa-trash me-1"></i> Thùng rác
                     </a>
                     <a href="{{ route('admin.rap-phim.create') }}" class="btn btn-light btn-sm">

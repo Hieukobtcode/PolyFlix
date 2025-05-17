@@ -8,6 +8,9 @@
     use App\Http\Controllers\Admin\BaiVietController;
     use App\Http\Controllers\Admin\ChiNhanhController;
     use App\Http\Controllers\Admin\TheLoaiPhimController;
+    use App\Http\Controllers\Admin\LoaiPhongController;
+    use App\Http\Controllers\Admin\RapphimController;
+    use App\Http\Controllers\Admin\CauHinhController;
 
     Route::get('/', function () {
         return view('welcome');
@@ -65,4 +68,14 @@
         // Quản lý banners
         Route::resource('banners', BannerController::class);
 
+        //Quản lý loại phòng
+        Route::resource('loai-phong', LoaiPhongController::class);
+
+        //Quản lý rạp phim
+        Route::resource('rap-phim', RapphimController::class);
+
+        //Quản lý cấu hình
+        Route::get('cau-hinh', [CauHinhController::class, 'index'])->name('cau-hinh.index');
+        Route::get('cau-hinh/edit', [CauHinhController::class, 'edit'])->name('cau-hinh.edit');
+        Route::post('cau-hinh/update', [CauHinhController::class, 'update'])->name('cau-hinh.update');
     });
