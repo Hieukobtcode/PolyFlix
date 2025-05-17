@@ -1,12 +1,14 @@
     <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Admin\BannerController;
-use App\Http\Controllers\Admin\PhimController;
-use App\Http\Controllers\Admin\LienHeController;
-use App\Http\Controllers\Admin\VaiTroController;
-use App\Http\Controllers\Admin\BaiVietController;
-use App\Http\Controllers\Admin\ChiNhanhController;
+    use Illuminate\Support\Facades\Route;
+    use App\Http\Controllers\Admin\BannerController;
+    use App\Http\Controllers\Admin\PhimController;
+    use App\Http\Controllers\Admin\LienHeController;
+    use App\Http\Controllers\Admin\VaiTroController;
+    use App\Http\Controllers\Admin\BaiVietController;
+    use App\Http\Controllers\Admin\ChiNhanhController;
+    use App\Http\Controllers\Admin\LoaiPhongController;
+use App\Http\Controllers\Admin\RapphimController;
 use App\Http\Controllers\Admin\TheLoaiPhimController;
 
     Route::get('/', function () {
@@ -62,6 +64,12 @@ use App\Http\Controllers\Admin\TheLoaiPhimController;
         // Quản lý vai trò
         Route::resource('vai-tro', VaiTroController::class);
 
-    // Quản lý banners
-    Route::resource('banners', BannerController::class);
-});
+        // Quản lý banners
+        Route::resource('banners', BannerController::class);
+
+        //Quản lý loại phòng
+        Route::resource('loai-phong', LoaiPhongController::class);
+
+        //Quản lý rạp phim
+        Route::resource('rap-phim', RapphimController::class);
+    });
