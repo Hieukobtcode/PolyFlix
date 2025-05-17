@@ -75,6 +75,14 @@
                 <span class="nav-text">Quản lý banners</span>
             </a>
         </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('admin.loai-phong.index') }}">
+                <span class="nav-icon">
+                    <i class="fas fa-tags"></i>
+                </span>
+                <span class="nav-text">Quản lý loại phòng</span>
+            </a>
+        </li>
         <li class="nav-title">Theme</li>
         <li class="nav-item"><a class="nav-link" href="colors.html">
                 <svg class="nav-icon">
@@ -107,29 +115,32 @@
                         target="_blank"><span class="nav-icon"><span class="nav-icon-bullet"></span></span> Multi
                         Select
                         <svg class="icon icon-sm ms-2">
-                            <use xlink:href="{{ asset('dist/vendors/@coreui/icons/svg/free.svg#cil-external-link') }}">
+                            <use
+                                xlink:href="{{ asset('dist/vendors/@coreui/icons/svg/free.svg#cil-external-link') }}">
                             </use>
                         </svg><span class="badge badge-sm bg-danger ms-auto">PRO</span></a></li>
-                <li class="nav-item"><a class="nav-link" href="forms/checks-radios.html"><span class="nav-icon"><span
-                                class="nav-icon-bullet"></span></span> Checks and radios</a></li>
+                <li class="nav-item"><a class="nav-link" href="forms/checks-radios.html"><span
+                            class="nav-icon"><span class="nav-icon-bullet"></span></span> Checks and radios</a></li>
                 <li class="nav-item"><a class="nav-link" href="forms/range.html"><span class="nav-icon"><span
                                 class="nav-icon-bullet"></span></span> Range</a></li>
                 <li class="nav-item"><a class="nav-link" href="https://coreui.io/bootstrap/docs/forms/range-slider/"
                         target="_blank"><span class="nav-icon"><span class="nav-icon-bullet"></span></span> Range
                         Slider
                         <svg class="icon icon-sm ms-2">
-                            <use xlink:href="{{ asset('dist/vendors/@coreui/icons/svg/free.svg#cil-external-link') }}">
+                            <use
+                                xlink:href="{{ asset('dist/vendors/@coreui/icons/svg/free.svg#cil-external-link') }}">
                             </use>
                         </svg><span class="badge badge-sm bg-danger ms-auto">PRO</span></a></li>
                 <li class="nav-item"><a class="nav-link" href="forms/input-group.html"><span class="nav-icon"><span
                                 class="nav-icon-bullet"></span></span> Input group</a></li>
-                <li class="nav-item"><a class="nav-link" href="forms/floating-labels.html"><span class="nav-icon"><span
-                                class="nav-icon-bullet"></span></span> Floating labels</a></li>
+                <li class="nav-item"><a class="nav-link" href="forms/floating-labels.html"><span
+                            class="nav-icon"><span class="nav-icon-bullet"></span></span> Floating labels</a></li>
                 <li class="nav-item"><a class="nav-link" href="https://coreui.io/bootstrap/docs/forms/date-picker/"
                         target="_blank"><span class="nav-icon"><span class="nav-icon-bullet"></span></span> Date
                         Picker
                         <svg class="icon icon-sm ms-2">
-                            <use xlink:href="{{ asset('dist/vendors/@coreui/icons/svg/free.svg#cil-external-link') }}">
+                            <use
+                                xlink:href="{{ asset('dist/vendors/@coreui/icons/svg/free.svg#cil-external-link') }}">
                             </use>
                         </svg><span class="badge badge-sm bg-danger ms-auto">PRO</span></a></li>
                 <li class="nav-item"><a class="nav-link"
@@ -139,14 +150,16 @@
                 <li class="nav-item"><a class="nav-link" href="https://coreui.io/bootstrap/docs/forms/rating/"
                         target="_blank"><span class="nav-icon"><span class="nav-icon-bullet"></span></span> Rating
                         <svg class="icon icon-sm ms-2">
-                            <use xlink:href="{{ asset('dist/vendors/@coreui/icons/svg/free.svg#cil-external-link') }}">
+                            <use
+                                xlink:href="{{ asset('dist/vendors/@coreui/icons/svg/free.svg#cil-external-link') }}">
                             </use>
                         </svg><span class="badge badge-sm bg-danger ms-auto">PRO</span></a></li>
                 <li class="nav-item"><a class="nav-link" href="https://coreui.io/bootstrap/docs/forms/time-picker/"
                         target="_blank"><span class="nav-icon"><span class="nav-icon-bullet"></span></span> Time
                         Picker
                         <svg class="icon icon-sm ms-2">
-                            <use xlink:href="{{ asset('dist/vendors/@coreui/icons/svg/free.svg#cil-external-link') }}">
+                            <use
+                                xlink:href="{{ asset('dist/vendors/@coreui/icons/svg/free.svg#cil-external-link') }}">
                             </use>
                         </svg><span class="badge badge-sm bg-danger ms-auto">PRO</span></a></li>
                 <li class="nav-item"><a class="nav-link" href="forms/layout.html"><span class="nav-icon"><span
@@ -177,14 +190,14 @@
                     </use>
                 </svg> Notifications</a>
             <ul class="nav-group-items compact">
-                <li class="nav-item"><a class="nav-link" href="notifications/alerts.html"><span class="nav-icon"><span
-                                class="nav-icon-bullet"></span></span> Alerts</a></li>
-                <li class="nav-item"><a class="nav-link" href="notifications/badge.html"><span class="nav-icon"><span
-                                class="nav-icon-bullet"></span></span> Badge</a></li>
-                <li class="nav-item"><a class="nav-link" href="notifications/modals.html"><span class="nav-icon"><span
-                                class="nav-icon-bullet"></span></span> Modals</a></li>
-                <li class="nav-item"><a class="nav-link" href="notifications/toasts.html"><span class="nav-icon"><span
-                                class="nav-icon-bullet"></span></span> Toasts</a></li>
+                <li class="nav-item"><a class="nav-link" href="notifications/alerts.html"><span
+                            class="nav-icon"><span class="nav-icon-bullet"></span></span> Alerts</a></li>
+                <li class="nav-item"><a class="nav-link" href="notifications/badge.html"><span
+                            class="nav-icon"><span class="nav-icon-bullet"></span></span> Badge</a></li>
+                <li class="nav-item"><a class="nav-link" href="notifications/modals.html"><span
+                            class="nav-icon"><span class="nav-icon-bullet"></span></span> Modals</a></li>
+                <li class="nav-item"><a class="nav-link" href="notifications/toasts.html"><span
+                            class="nav-icon"><span class="nav-icon-bullet"></span></span> Toasts</a></li>
             </ul>
         </li>
         <li class="nav-item"><a class="nav-link" href="widgets.html">
@@ -202,12 +215,14 @@
             <ul class="nav-group-items compact">
                 <li class="nav-item"><a class="nav-link" href="login.html" target="_top">
                         <svg class="nav-icon">
-                            <use xlink:href="{{ asset('dist/vendors/@coreui/icons/svg/free.svg#cil-account-logout') }}">
+                            <use
+                                xlink:href="{{ asset('dist/vendors/@coreui/icons/svg/free.svg#cil-account-logout') }}">
                             </use>
                         </svg> Login</a></li>
                 <li class="nav-item"><a class="nav-link" href="register.html" target="_top">
                         <svg class="nav-icon">
-                            <use xlink:href="{{ asset('dist/vendors/@coreui/icons/svg/free.svg#cil-account-logout') }}">
+                            <use
+                                xlink:href="{{ asset('dist/vendors/@coreui/icons/svg/free.svg#cil-account-logout') }}">
                             </use>
                         </svg> Register</a></li>
                 <li class="nav-item"><a class="nav-link" href="404.html" target="_top">
