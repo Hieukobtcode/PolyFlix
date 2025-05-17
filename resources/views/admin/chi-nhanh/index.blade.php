@@ -105,6 +105,10 @@
                                     </td>
                                     <td class="text-center">
                                         <div class="btn-group" role="group">
+                                             <a href="{{ route('admin.chi-nhanh.show', $chiNhanh->id) }}"
+                                                class="btn btn-sm btn-outline-info">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
                                             <a href="{{ route('admin.chi-nhanh.edit', $chiNhanh->id) }}"
                                                 class="btn btn-sm btn-outline-primary">
                                                 <i class="fas fa-edit"></i>
