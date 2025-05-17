@@ -7,29 +7,143 @@
 @section('styles')
     <style>
         .card {
-            border-radius: 10px;
+            border-radius: 15px;
+            border: none;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12);
+            transform: translateY(-3px);
+        }
+
+        .card-header {
+            border-radius: 15px 15px 0 0 !important;
+            border-bottom: none;
+        }
+
+        .table {
+            border-collapse: separate;
+            border-spacing: 0;
+            border-radius: 8px;
+            overflow: hidden;
         }
 
         .table th,
         .table td {
             vertical-align: middle;
+            padding: 12px 18px;
+            transition: all 0.2s;
+        }
+
+        .table tbody tr {
+            transition: all 0.2s;
+        }
+
+        .table tbody tr:hover {
+            background-color: #f8f9fa;
+            transform: scale(1.01);
         }
 
         .btn-group .btn {
-            border-radius: 5px;
+            border-radius: 6px;
+            margin: 0 2px;
+            padding: 0.375rem 0.75rem;
+            transition: all 0.2s;
+        }
+
+        .btn-group .btn:hover {
+            transform: translateY(-2px);
         }
 
         .badge {
-            font-size: 0.9em;
-            padding: 0.5em 1em;
+            font-size: 0.85em;
+            padding: 0.55em 1.2em;
+            font-weight: 500;
+            border-radius: 30px;
         }
 
         .pagination {
             justify-content: end;
         }
 
+        .pagination .page-item .page-link {
+            border-radius: 8px;
+            margin: 0 3px;
+            color: #6c757d;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .pagination .page-item.active .page-link {
+            background-color: var(--bs-primary);
+            border-color: var(--bs-primary);
+            box-shadow: 0 5px 12px rgba(var(--bs-primary-rgb), 0.3);
+        }
+
         .table-dark {
-            background-color: #343a40;
+            background-color: #212529;
+        }
+
+        .table-dark th {
+            border-bottom: none;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+        }
+
+        .input-group {
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .input-group-text {
+            border: none;
+            background-color: #f8f9fa;
+            padding-left: 15px;
+        }
+
+        .form-control {
+            border: none;
+            padding: 12px 15px;
+            font-size: 0.95rem;
+        }
+
+        .form-control:focus {
+            box-shadow: none;
+        }
+
+        .btn {
+            border-radius: 10px;
+            padding: 10px 18px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            box-shadow: 0 5px 15px rgba(var(--bs-primary-rgb), 0.3);
+        }
+
+        .btn-outline-secondary:hover {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .btn i {
+            transition: all 0.3s;
+        }
+
+        .btn:hover i {
+            transform: rotate(15deg);
+        }
+
+        #emptyRow td {
+            padding: 30px;
+            font-size: 1.1rem;
+            color: #6c757d;
         }
     </style>
 @endsection
@@ -111,20 +225,20 @@
 
 @section('scripts')
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             const tableContainer = document.querySelector('.table-responsive');
             const filterForm = document.createElement('div');
             filterForm.className = 'row mb-4';
             filterForm.innerHTML = `
                 <div class="col-md-6 mb-2">
                     <div class="input-group">
-                        <span class="input-group-text bg-light"><i class="fas fa-search"></i></span>
+                        <span class="input-group-text"><i class="fas fa-search"></i></span>
                         <input type="text" id="searchInput" class="form-control" placeholder="Tìm theo tên loại phòng...">
                     </div>
                 </div>
                 <div class="col-md-3 mb-2">
                     <button id="resetFilter" class="btn btn-outline-secondary w-100">
-                        <i class="fas fa-sync-alt me-1"></i> Đặt lại
+                        <i class="fas fa-sync-alt me-2"></i> Đặt lại
                     </button>
                 </div>
             `;
@@ -160,8 +274,11 @@
                         const newEmptyRow = document.createElement('tr');
                         newEmptyRow.id = 'emptyRow';
                         newEmptyRow.innerHTML = `
-                            <td colspan="5" class="text-center text-muted py-3">
-                                <i class="fas fa-search me-1"></i> Không tìm thấy kết quả phù hợp
+                            <td colspan="5" class="text-center text-muted py-4">
+                                <div class="py-3">
+                                    <i class="fas fa-search fa-2x mb-3"></i>
+                                    <p class="mb-0">Không tìm thấy kết quả phù hợp</p>
+                                </div>
                             </td>`;
                         document.getElementById('roomTypeTable').appendChild(newEmptyRow);
                     }
@@ -182,7 +299,24 @@
             }
 
             document.getElementById('searchInput').addEventListener('input', filterTable);
-            document.getElementById('resetFilter').addEventListener('click', resetFilters);
+            document.getElementById('resetFilter').addEventListener('click', function() {
+                resetFilters();
+                this.classList.add('animate-spin');
+                setTimeout(() => this.classList.remove('animate-spin'), 300);
+            });
+
+            // Add animation classes
+            document.head.insertAdjacentHTML('beforeend', `
+                <style>
+                    @keyframes spin {
+                        0% { transform: rotate(0deg); }
+                        100% { transform: rotate(360deg); }
+                    }
+                    .animate-spin i {
+                        animation: spin 0.5s linear;
+                    }
+                </style>
+            `);
         });
     </script>
 @endsection

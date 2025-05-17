@@ -7,9 +7,9 @@
     use App\Http\Controllers\Admin\VaiTroController;
     use App\Http\Controllers\Admin\BaiVietController;
     use App\Http\Controllers\Admin\ChiNhanhController;
+    use App\Http\Controllers\Admin\TheLoaiPhimController;
     use App\Http\Controllers\Admin\LoaiPhongController;
     use App\Http\Controllers\Admin\RapphimController;
-    use App\Http\Controllers\Admin\TheLoaiPhimController;
     use App\Http\Controllers\Admin\CauHinhController;
 
     Route::get('/', function () {
