@@ -22,7 +22,8 @@ class DatabaseSeeder extends Seeder
 
         // Gọi LienHeSeeder để tạo dữ liệu mẫu cho bảng liên hệ
         $this->call([
-            BannerSeeder::class,
+            CauHinhSeeder::class,
+
         ]);
     }
 }

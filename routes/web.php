@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\VaiTroController;
 use App\Http\Controllers\Admin\BaiVietController;
 use App\Http\Controllers\Admin\ChiNhanhController;
 use App\Http\Controllers\Admin\TheLoaiPhimController;
+use App\Http\Controllers\Admin\CauHinhController;
 
     Route::get('/', function () {
         return view('welcome');
@@ -64,4 +65,12 @@ use App\Http\Controllers\Admin\TheLoaiPhimController;
 
     // Quản lý banners
     Route::resource('banners', BannerController::class);
+
+    // cấu hình web
+
+    Route::get('cau-hinh', [CauHinhController::class, 'index'])->name('cau-hinh.index');
+    Route::get('cau-hinh/edit', [CauHinhController::class, 'edit'])->name('cau-hinh.edit');
+    Route::post('cau-hinh/update', [CauHinhController::class, 'update'])->name('cau-hinh.update');
+
+
 });
