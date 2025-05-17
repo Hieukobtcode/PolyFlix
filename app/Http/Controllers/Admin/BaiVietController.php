@@ -53,7 +53,7 @@ class BaiVietController extends Controller
         return redirect()->route('admin.bai-viet.index')
             ->with('success', 'Bài viết đã được tạo thành công!');
     } catch (\Exception $e) {
-        \Log::error('Lỗi khi tạo bài viết: ' . $e->getMessage());
+        // \Log::error('Lỗi khi tạo bài viết: ' . $e->getMessage());
         return back()->withInput()->with('error', 'Đã xảy ra lỗi, vui lòng thử lại.');
     }
 }
