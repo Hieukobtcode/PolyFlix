@@ -11,6 +11,9 @@
     use App\Http\Controllers\Admin\LoaiPhongController;
     use App\Http\Controllers\Admin\RapphimController;
     use App\Http\Controllers\Admin\CauHinhController;
+    use App\Http\Controllers\Admin\PhongChieuController;
+    use App\Http\Controllers\Admin\LoaiGheController;
+    
 
     Route::get('/', function () {
         return view('welcome');
@@ -78,4 +81,10 @@
         Route::get('cau-hinh', [CauHinhController::class, 'index'])->name('cau-hinh.index');
         Route::get('cau-hinh/edit', [CauHinhController::class, 'edit'])->name('cau-hinh.edit');
         Route::post('cau-hinh/update', [CauHinhController::class, 'update'])->name('cau-hinh.update');
+
+        //Quản lý phòng chiếu
+        Route::resource('phong-chieu', PhongChieuController::class);
+
+        //Quản lý loại ghế
+        Route::resource('loai-ghe', LoaiGheController::class);
     });
