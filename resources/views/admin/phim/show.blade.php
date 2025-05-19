@@ -1,8 +1,8 @@
 @extends('layouts.admin')
 
-@section('title', 'Chi tiết phim')
+@section('title', 'Quản lý Phim')
 @section('page-title', 'Chi tiết phim')
-
+@section('breadcrumb', 'Chi tiết phim')
 @section('styles')
     <style>
         .card {
@@ -99,7 +99,7 @@
         $phim->trang_thai === 'đang chiếu' ? 'bg-success' :
         ($phim->trang_thai === 'sắp chiếu' ? 'bg-warning' :
             ($phim->trang_thai === 'đã kết thúc' ? 'bg-secondary' : 'bg-danger'))
-                                                                                                                        }}">
+                                                                                                                                                                            }}">
                                         {{ ucfirst($phim->trang_thai) }}
                                     </span>
                                 </li>
@@ -127,29 +127,29 @@
                         </div>
 
                         @if($phim->trailer)
-                                            <div class="mb-4">
-                                                <h5 class="fw-bold">Trailer</h5>
-                                                <div class="ratio ratio-16x9">
-                                                    @php
-                                                        // Chuyển đổi URL YouTube thành embed URL
-                                                        $trailerUrl = $phim->trailer;
-                                                        if (strpos($trailerUrl, 'youtube.com/watch?v=') !== false) {
-                                                            $videoId = substr($trailerUrl, strpos($trailerUrl, 'v=') + 2);
-                                                            if (strpos($videoId, '&') !== false) {
-                                                                $videoId = substr($videoId, 0, strpos($videoId, '&'));
-                                                            }
-                                                            $embedUrl = "https://www.youtube.com/embed/$videoId";
-                                                        } elseif (strpos($trailerUrl, 'youtu.be/') !== false) {
-                                                            $videoId = substr($trailerUrl, strrpos($trailerUrl, '/') + 1);
-                                                            $embedUrl = "https://www.youtube.com/embed/$videoId";
-                                                        } else {
-                                                            $embedUrl = $trailerUrl;
-                                                        }
-                                                    @endphp
-                                                    <iframe src="{{ $embedUrl }}" title="Trailer {{ $phim->ten_phim }}" class="rounded"
-                                                        allowfullscreen></iframe>
-                                                </div>
-                                            </div>
+                            <div class="mb-4">
+                                <h5 class="fw-bold">Trailer</h5>
+                                <div class="ratio ratio-16x9">
+                                    @php
+                                        // Chuyển đổi URL YouTube thành embed URL
+                                        $trailerUrl = $phim->trailer;
+                                        if (strpos($trailerUrl, 'youtube.com/watch?v=') !== false) {
+                                            $videoId = substr($trailerUrl, strpos($trailerUrl, 'v=') + 2);
+                                            if (strpos($videoId, '&') !== false) {
+                                                $videoId = substr($videoId, 0, strpos($videoId, '&'));
+                                            }
+                                            $embedUrl = "https://www.youtube.com/embed/$videoId";
+                                        } elseif (strpos($trailerUrl, 'youtu.be/') !== false) {
+                                            $videoId = substr($trailerUrl, strrpos($trailerUrl, '/') + 1);
+                                            $embedUrl = "https://www.youtube.com/embed/$videoId";
+                                        } else {
+                                            $embedUrl = $trailerUrl;
+                                        }
+                                    @endphp
+                                    <iframe src="{{ $embedUrl }}" title="Trailer {{ $phim->ten_phim }}" class="rounded"
+                                        allowfullscreen></iframe>
+                                </div>
+                            </div>
                         @endif
 
                         <div class="row mb-4">

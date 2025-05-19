@@ -1,37 +1,36 @@
 @extends('layouts.admin')
 
 @section('title', 'Quản lý Phim')
-@section('page-title', 'Quản lý Phim')
+@section('page-title', 'Danh sách Phim')
+@section('breadcrumb', 'Danh sách Phim')
 
 @section('styles')
     <style>
         .card {
             border-radius: 10px;
         }
-
         .table th,
         .table td {
             vertical-align: middle;
         }
-
         .badge {
             font-size: 0.9em;
             padding: 0.5em 1em;
         }
-
         .btn-group .btn {
             border-radius: 5px;
         }
-
         .pagination {
             justify-content: end;
         }
-
         .table-dark {
             background-color: #343a40;
         }
-
         .img-thumbnail {
+            border-radius: 8px;
+        }
+        .form-control,
+        .form-select {
             border-radius: 8px;
         }
     </style>
@@ -42,9 +41,14 @@
         <div class="card shadow-sm border-0">
             <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                 <h5 class="mb-0 fw-bold">Danh sách phim</h5>
-                <a href="{{ route('admin.phim.create') }}" class="btn btn-light btn-sm" title="Thêm phim mới">
-                    <i class="fas fa-plus me-1"></i> Thêm phim
-                </a>
+                <div class="btn-group gap-2">
+                    <a href="{{ route('admin.phim.trash') }}" class="btn btn-outline-light btn-sm" title="Thùng rác">
+                        <i class="fas fa-trash me-1"></i> Thùng rác
+                    </a>
+                    <a href="{{ route('admin.phim.create') }}" class="btn btn-light btn-sm" title="Thêm phim mới">
+                        <i class="fas fa-plus me-1"></i> Thêm phim
+                    </a>
+                </div>
             </div>
             <div class="card-body p-4">
                 <!-- Bộ lọc tìm kiếm -->
@@ -52,11 +56,12 @@
                     <div class="col-md-4 mb-2">
                         <div class="input-group">
                             <span class="input-group-text bg-light"><i class="fas fa-search"></i></span>
-                            <input type="text" id="searchInput" class="form-control" placeholder="Tìm kiếm theo tên...">
+                            <input type="text" id="searchInput" class="form-control rounded"
+                                placeholder="Tìm kiếm theo tên...">
                         </div>
                     </div>
                     <div class="col-md-3 mb-2">
-                        <select id="statusFilter" class="form-select">
+                        <select id="statusFilter" class="form-select rounded">
                             <option value="">Tất cả trạng thái</option>
                             <option value="đang chiếu">Đang chiếu</option>
                             <option value="sắp chiếu">Sắp chiếu</option>
@@ -65,7 +70,7 @@
                         </select>
                     </div>
                     <div class="col-md-2 mb-2">
-                        <button id="resetFilter" class="btn btn-outline-secondary w-100">
+                        <button id="resetFilter" class="btn btn-outline-secondary w-100 rounded">
                             <i class="fas fa-sync-alt me-1"></i> Đặt lại
                         </button>
                     </div>
@@ -91,10 +96,11 @@
                                 <tr>
                                     <td class="text-center">{{ $index + 1 }}</td>
                                     <td class="text-center">
-                                        <img src="{{ $phim->poster ? asset('storage/' . $phim->poster) : '' }}"
-                                            alt="{{ $phim->ten_phim }}" class="img-thumbnail rounded"
-                                            style="width: 60px; height: 80px; object-fit: cover;">
-                                        @if(!$phim->poster)
+                                        @if($phim->poster)
+                                            <img src="{{ asset('storage/' . $phim->poster) }}"
+                                                alt="{{ $phim->ten_phim }}" class="img-thumbnail rounded"
+                                                style="width: 60px; height: 80px; object-fit: cover;">
+                                        @else
                                             <span class="badge bg-secondary rounded-pill">Không có ảnh</span>
                                         @endif
                                     </td>
@@ -105,31 +111,16 @@
                                         @endforeach
                                     </td>
                                     <td class="text-center">{{ $phim->thoi_luong ? $phim->thoi_luong . ' phút' : 'N/A' }}</td>
-                                    <td class="text-center">
-                                        {{ $phim->ngay_phat_hanh ? $phim->ngay_phat_hanh->format('d/m/Y') : 'N/A' }}
-                                    </td>
+                                    <td class="text-center">{{ $phim->ngay_phat_hanh ? $phim->ngay_phat_hanh->format('d/m/Y') : 'N/A' }}</td>
                                     <td class="text-center" data-status="{{ strtolower($phim->trang_thai) }}">
-                                        @if ($phim->trang_thai === 'đang chiếu')
-                                            <span class="badge bg-success rounded-pill">
-                                                {{ ucfirst($phim->trang_thai) }}
-                                            </span>
-                                        @elseif ($phim->trang_thai === 'sắp chiếu')
-                                            <span class="badge bg-warning rounded-pill">
-                                                {{ ucfirst($phim->trang_thai) }}
-                                            </span>
-                                        @elseif ($phim->trang_thai === 'đã kết thúc')
-                                            <span class="badge bg-secondary rounded-pill">
-                                                {{ ucfirst($phim->trang_thai) }}
-                                            </span>
-                                        @elseif ($phim->trang_thai === 'bị hủy' || $phim->trang_thai === 'bị huỷ')
-                                            <span class="badge bg-danger rounded-pill">
-                                                Bị hủy
-                                            </span>
-                                        @else
-                                            <span class="badge bg-dark rounded-pill">
-                                                {{ ucfirst($phim->trang_thai) }}
-                                            </span>
-                                        @endif
+                                        <span class="badge rounded-pill {{
+                                            $phim->trang_thai === 'đang chiếu' ? 'bg-success' :
+                                            ($phim->trang_thai === 'sắp chiếu' ? 'bg-warning' :
+                                                ($phim->trang_thai === 'đã kết thúc' ? 'bg-secondary' :
+                                                    ($phim->trang_thai === 'bị hủy' ? 'bg-danger' : 'bg-dark')))
+                                        }}">
+                                            {{ ucfirst($phim->trang_thai) }}
+                                        </span>
                                     </td>
                                     <td class="text-center">
                                         <div class="btn-group" role="group">
@@ -143,10 +134,10 @@
                                             </a>
                                             <form action="{{ route('admin.phim.destroy', $phim->id) }}" method="POST"
                                                 class="d-inline"
-                                                onsubmit="return confirm('Bạn có chắc chắn muốn xóa phim này?')">
+                                                onsubmit="return confirm('Bạn có chắc chắn muốn xóa mềm phim này? Phim sẽ được chuyển vào thùng rác.')">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Xóa">
+                                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Xóa mềm">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
                                             </form>
@@ -167,8 +158,7 @@
                 <!-- Phân trang -->
                 <div class="d-flex justify-content-between align-items-center mt-4">
                     <div>
-                        <small class="text-muted">Hiển thị {{ $phims->count() }} trong tổng số {{ $phims->total() }}
-                            phim</small>
+                        <small class="text-muted">Hiển thị {{ $phims->count() }} trong tổng số {{ $phims->total() }} phim</small>
                     </div>
                     <div>
                         {{ $phims->links('pagination::bootstrap-5') }}
@@ -184,42 +174,31 @@
         document.addEventListener('DOMContentLoaded', function () {
             // Lấy tất cả các hàng trong bảng
             const rows = document.querySelectorAll('#movieTable tr:not(#emptyRow)');
+            const tableBody = document.getElementById('movieTable');
+            const infoText = document.querySelector('.text-muted');
 
             // Hàm lọc bảng
             function filterTable() {
                 const searchText = document.getElementById('searchInput').value.toLowerCase();
                 const statusFilter = document.getElementById('statusFilter').value.toLowerCase();
-
                 let visibleCount = 0;
 
                 rows.forEach(row => {
                     if (row.querySelector('td')) { // Kiểm tra xem có phải là hàng dữ liệu không
                         const nameCell = row.querySelector('td:nth-child(3)');
                         const statusCell = row.querySelector('td:nth-child(7)');
-                        const statusBadge = statusCell.querySelector('.badge');
 
-                        if (!nameCell || !statusBadge) return;
+                        if (!nameCell || !statusCell) return;
 
                         const name = nameCell.textContent.toLowerCase();
-                        const status = statusBadge.textContent.toLowerCase().trim();
-
-                        // Lấy giá trị trạng thái từ thuộc tính data nếu có
-                        const dataStatus = statusCell.getAttribute('data-status');
+                        const status = statusCell.getAttribute('data-status') || '';
 
                         const nameMatch = name.includes(searchText);
-
-                        // Kiểm tra trạng thái
-                        let statusMatch = true;
-                        if (statusFilter !== '') {
-                            // Kiểm tra cả văn bản hiển thị và giá trị data
-                            statusMatch = status.includes(statusFilter) ||
-                                (dataStatus && dataStatus.includes(statusFilter));
-                        }
+                        const statusMatch = statusFilter === '' || status.includes(statusFilter);
 
                         if (nameMatch && statusMatch) {
                             row.style.display = '';
                             visibleCount++;
-
                             // Cập nhật số thứ tự
                             const indexCell = row.querySelector('td:first-child');
                             if (indexCell) {
@@ -231,22 +210,18 @@
                     }
                 });
 
-                // Hiển thị thông báo nếu không có kết quả
-                const tableBody = document.getElementById('movieTable');
+                // Xử lý thông báo không có kết quả
                 const existingEmptyRow = document.getElementById('emptyFilterRow');
-
-                if (visibleCount === 0) {
-                    if (!existingEmptyRow) {
-                        const newEmptyRow = document.createElement('tr');
-                        newEmptyRow.id = 'emptyFilterRow';
-                        newEmptyRow.innerHTML = `
-                                                    <td colspan="8" class="text-center text-muted py-3">
-                                                        <i class="fas fa-search me-1"></i> Không tìm thấy kết quả phù hợp
-                                                    </td>
-                                                `;
-                        tableBody.appendChild(newEmptyRow);
-                    }
-                } else if (existingEmptyRow) {
+                if (visibleCount === 0 && !existingEmptyRow) {
+                    const newEmptyRow = document.createElement('tr');
+                    newEmptyRow.id = 'emptyFilterRow';
+                    newEmptyRow.innerHTML = `
+                        <td colspan="8" class="text-center text-muted py-3">
+                            <i class="fas fa-search me-1"></i> Không tìm thấy kết quả phù hợp
+                        </td>
+                    `;
+                    tableBody.appendChild(newEmptyRow);
+                } else if (visibleCount > 0 && existingEmptyRow) {
                     existingEmptyRow.remove();
                 }
 
@@ -256,7 +231,6 @@
 
             // Cập nhật thông tin hiển thị
             function updateDisplayInfo(visibleCount) {
-                const infoText = document.querySelector('.text-muted');
                 if (infoText) {
                     const totalCount = {{ $phims->total() }};
                     infoText.textContent = `Hiển thị ${visibleCount} trong tổng số ${totalCount} phim`;

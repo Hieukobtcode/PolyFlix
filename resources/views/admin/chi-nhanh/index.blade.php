@@ -2,7 +2,7 @@
 
 @section('title', 'Quản lý Chi Nhánh')
 @section('page-title', 'Quản lý Chi Nhánh')
-
+@section('breadcrumb', 'Danh sách Chi Nhánh')
 @section('styles')
     <style>
         .card {
@@ -40,35 +40,37 @@
                 <h5 class="mb-0 fw-bold">Danh sách Chi Nhánh</h5>
 
                 <a href="{{ route('admin.chi-nhanh.create') }}" class="btn btn-light btn-sm">
-                    <i class="fas fa-plus me-1"></i> Thêm chi nhánh 
+                    <i class="fas fa-plus me-1"></i> Thêm chi nhánh
                 </a>
-                
+
             </div>
             <div class="card-body p-4">
                 <form method="GET" action="{{ route('admin.chi-nhanh.index') }}" class="row mb-4">
                     <div class="col-md-4 mb-2">
                         <div class="input-group">
                             <span class="input-group-text bg-light"><i class="fas fa-search"></i></span>
-                            <input type="text" name="keyword" class="form-control" value="{{ request('keyword') }}" placeholder="Tìm theo tên chi nhánh...">
+                            <input type="text" name="keyword" class="form-control" value="{{ request('keyword') }}"
+                                placeholder="Tìm theo tên chi nhánh...">
                         </div>
                     </div>
                     <div class="col-md-3 mb-2">
                         <select name="status" class="form-select">
                             <option value="">Tất cả trạng thái</option>
-                            <option value="hoat_dong" {{ request('status') == 'hoat_dong' ? 'selected' : '' }}>Hoạt động</option>
+                            <option value="hoat_dong" {{ request('status') == 'hoat_dong' ? 'selected' : '' }}>Hoạt động
+                            </option>
                             <option value="tam_dung" {{ request('status') == 'tam_dung' ? 'selected' : '' }}>Tạm dừng</option>
                             <option value="dong_cua" {{ request('status') == 'dong_cua' ? 'selected' : '' }}>Đóng cửa</option>
                         </select>
                     </div>
-                    
+
                     <div class="col-md-2 mb-2">
                         <button type="submit" class="btn btn-primary w-100">
                             <i class="fas fa-filter me-1"></i> Lọc
                         </button>
                     </div>
-                    
+
                 </form>
-                
+
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered align-middle">
                         <thead class="table-dark">
@@ -89,7 +91,9 @@
                                     <td>{{ $chiNhanh->ten_chi_nhanh }}</td>
                                     <td>{{ $chiNhanh->dia_chi }}</td>
                                     <td class="text-center">{{ $chiNhanh->quan_ly_id }}</td>
-                                    <td class="text-center">{{ \Carbon\Carbon::parse($chiNhanh->created_at)->format('d/m/Y H:i') }}</td>
+                                    <td class="text-center">
+                                        {{ \Carbon\Carbon::parse($chiNhanh->created_at)->format('d/m/Y H:i') }}
+                                    </td>
                                     <td class="text-center">
                                         @if ($chiNhanh->trang_thai === 'hoat_dong')
                                             <span class="badge bg-success">Hoạt động</span>
@@ -101,10 +105,17 @@
                                     </td>
                                     <td class="text-center">
                                         <div class="btn-group" role="group">
-                                            <a href="{{ route('admin.chi-nhanh.edit', $chiNhanh->id) }}" class="btn btn-sm btn-outline-primary">
+                                             <a href="{{ route('admin.chi-nhanh.show', $chiNhanh->id) }}"
+                                                class="btn btn-sm btn-outline-info">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="{{ route('admin.chi-nhanh.edit', $chiNhanh->id) }}"
+                                                class="btn btn-sm btn-outline-primary">
                                                 <i class="fas fa-edit"></i>
                                             </a>
-                                            <form action="{{ route('admin.chi-nhanh.destroy', $chiNhanh->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Bạn có chắc chắn muốn xóa chi nhánh này?')">
+                                            <form action="{{ route('admin.chi-nhanh.destroy', $chiNhanh->id) }}" method="POST"
+                                                class="d-inline"
+                                                onsubmit="return confirm('Bạn có chắc chắn muốn xóa chi nhánh này?')">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" class="btn btn-sm btn-outline-danger">
@@ -127,7 +138,8 @@
 
                 <div class="d-flex justify-content-between align-items-center mt-4">
                     <div>
-                        <small class="text-muted">Hiển thị {{ $chiNhanhs->count() }} trong tổng số {{ $chiNhanhs->total() }} chi nhánh</small>
+                        <small class="text-muted">Hiển thị {{ $chiNhanhs->count() }} trong tổng số {{ $chiNhanhs->total() }}
+                            chi nhánh</small>
                     </div>
                     <div>
                         {{ $chiNhanhs->links('pagination::bootstrap-5') }}
