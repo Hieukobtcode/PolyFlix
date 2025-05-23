@@ -10,13 +10,17 @@ class SoDoGhe extends Model
 
     protected $fillable = [
         'ten_so_do',
-        'so_hang',
-        'so_cot',
-        'cau_truc',
+        'cau_truc_ghe',
+        'so_hang_thuong',
+        'so_hang_vip',
+        'so_hang_doi',
+        'mo_ta',
+        'trang_thai',
     ];
 
     protected $casts = [
-        'cau_truc' => 'array',
+        'cau_truc_ghe' => 'array',
+        'trang_thai'   => 'boolean',
     ];
 
     public function phongChieus()

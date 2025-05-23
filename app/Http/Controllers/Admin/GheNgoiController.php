@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\GheNgoi;
-use App\Models\PhongChieu;
 use App\Models\LoaiGhe;
+use App\Models\PhongChieu;
+use App\Models\SoDoGhe;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class GheNgoiController extends Controller
 {
@@ -23,6 +25,17 @@ class GheNgoiController extends Controller
         return view('admin.ghe-ngoi.create', compact('phongChieus', 'loaiGhes'));
     }
 
+    public function createBySoDoGhe($soDoGheId)
+    {
+        $soDo = SoDoGhe::findOrFail($soDoGheId);
+        $loaiGhes = LoaiGhe::all();
+
+        $soHang = $soDo->so_hang;
+        $soCot = $soDo->so_cot;
+
+        return view('admin.ghe-ngoi.create-by-so-do', compact('soDo', 'loaiGhes', 'soHang', 'soCot'));
+    }
+
     public function store(Request $request)
     {
         $request->validate([
@@ -30,7 +43,14 @@ class GheNgoiController extends Controller
             'loai_ghe_id' => 'nullable|exists:loai_ghes,id',
             'so_hang' => 'required|string|max:2',
             'so_cot' => 'required|integer|min:1',
-            'ma_ghe' => 'required|string|max:10|unique:ghe_ngois,ma_ghe,NULL,id,phong_chieu_id,' . $request->phong_chieu_id,
+            'ma_ghe' => [
+                'required',
+                'string',
+                'max:10',
+                Rule::unique('ghe_ngois')->where(function ($query) use ($request) {
+                    return $query->where('phong_chieu_id', $request->phong_chieu_id);
+                }),
+            ],
             'trang_thai' => 'required|in:sẵn sàng,đã giữ,đã đặt,không dùng',
         ]);
 
@@ -62,7 +82,14 @@ class GheNgoiController extends Controller
             'loai_ghe_id' => 'nullable|exists:loai_ghes,id',
             'so_hang' => 'required|string|max:2',
             'so_cot' => 'required|integer|min:1',
-            'ma_ghe' => 'required|string|max:10|unique:ghe_ngois,ma_ghe,' . $id . ',id,phong_chieu_id,' . $request->phong_chieu_id,
+            'ma_ghe' => [
+                'required',
+                'string',
+                'max:10',
+                Rule::unique('ghe_ngois')->ignore($id)->where(function ($query) use ($request) {
+                    return $query->where('phong_chieu_id', $request->phong_chieu_id);
+                }),
+            ],
             'trang_thai' => 'required|in:sẵn sàng,đã giữ,đã đặt,không dùng',
         ]);
 

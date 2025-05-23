@@ -11,9 +11,10 @@
     use App\Http\Controllers\Admin\LoaiPhongController;
     use App\Http\Controllers\Admin\RapphimController;
     use App\Http\Controllers\Admin\CauHinhController;
-    use App\Http\Controllers\Admin\PhongChieuController;
+use App\Http\Controllers\Admin\GheNgoiController;
+use App\Http\Controllers\Admin\PhongChieuController;
     use App\Http\Controllers\Admin\LoaiGheController;
-    
+use App\Http\Controllers\Admin\SoDoGheController;
 
     Route::get('/', function () {
         return view('welcome');
@@ -87,4 +88,11 @@
 
         //Quản lý loại ghế
         Route::resource('loai-ghe', LoaiGheController::class);
+
+        //Quản lý sơ đồ ghế
+        Route::resource('so-do-ghe', SoDoGheController::class);
+
+        //Quản lý ghế ngồi
+        Route::resource('ghe-ngoi', GheNgoiController::class);
+
     });
