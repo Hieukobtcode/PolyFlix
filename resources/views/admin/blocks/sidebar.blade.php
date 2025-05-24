@@ -131,6 +131,30 @@
                 </li>
             </ul>
         </li>
+        </li>
+            <a class="nav-link" href="{{ route('admin.phong-chieu.index') }}">
+                <span class="nav-icon">
+                    <i class="fas fa-newspaper"></i> <!-- Biểu tượng bài viết -->
+                </span>
+                <span class="nav-text">Quản lý phòng chiếu</span>
+            </a>
+        </li>
+        </li>
+            <a class="nav-link" href="{{ route('admin.loai-ghe.index') }}">
+                <span class="nav-icon">
+                    <i class="fas fa-newspaper"></i> <!-- Biểu tượng bài viết -->
+                </span>
+                <span class="nav-text">Quản lý loại ghế</span>
+            </a>
+        </li>
+        </li>
+            <a class="nav-link" href="{{ route('admin.so-do-ghe.index') }}">
+                <span class="nav-icon">
+                    <i class="fas fa-newspaper"></i> <!-- Biểu tượng bài viết -->
+                </span>
+                <span class="nav-text">Quản lý sơ đồ ghế</span>
+            </a>
+        </li>
         <li class="nav-title">Theme</li>
         <li class="nav-item"><a class="nav-link" href="colors.html">
                 <svg class="nav-icon">

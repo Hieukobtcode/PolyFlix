@@ -26,6 +26,10 @@ class RapPhim extends Model
     {
         return $this->belongsTo(ChiNhanh::class, 'chi_nhanh_id');
     }
+
+    public function phongChieus(){
+        return $this->hasMany(PhongChieu::class,'rap_phim_id');
+    }
     protected $dates = ['delete_at'];// đảm bảo laravel hiểu đây là kiểu ngày tháng
 
 }

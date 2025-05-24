@@ -1,9 +1,12 @@
 <?php
-namespace App\Http\Controllers\Admin;
-namespace App\Http\Controllers;
-use App\Models\PhongChieu;
-use Illuminate\Http\Request;
 
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use App\Models\LoaiPhong;
+use App\Models\PhongChieu;
+use App\Models\RapPhim;
+use Illuminate\Http\Request;
 
 class PhongChieuController extends Controller
 {
@@ -12,54 +15,67 @@ class PhongChieuController extends Controller
      */
     public function index()
     {
-        //
+        $phongChieus = PhongChieu::with('rapPhim', 'loaiPhong')->paginate(10);
+        return view('admin.phong-chieu.index', compact('phongChieus'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        $rapPhims = RapPhim::all();
+        $loaiPhongs = LoaiPhong::all();
+        return view('admin.phong-chieu.create', compact('rapPhims', 'loaiPhongs'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'ten_phong' => 'required|string|max:255',
+            'rap_phim_id' => 'required|exists:rap_phims,id',
+            'loai_phong_id' => 'required|exists:loai_phongs,id',
+            'status' => 'required|in:sẵn sàng,không khả dụng,bảo trì',
+        ]);
+
+        PhongChieu::create($request->all());
+
+        return redirect()->route('admin.phong-chieu.index')->with('success', 'Thêm phòng chiếu thành công');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(PhongChieu $phongChieu)
+    public function show(string $id)
     {
-        //
+
+        $phongChieu = PhongChieu::with('rapPhim', 'loaiPhong')->findOrFail($id);
+        return view('admin.phong-chieu.show', compact('phongChieu'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(PhongChieu $phongChieu)
+    public function edit(string $id)
     {
-        //
+        $phongChieu = PhongChieu::findOrFail($id);
+        $rapPhims = RapPhim::all();
+        $loaiPhongs = LoaiPhong::all();
+
+        return view('admin.phong-chieu.edit', compact('phongChieu', 'rapPhims', 'loaiPhongs'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, PhongChieu $phongChieu)
+    public function update(Request $request, string $id)
     {
-        //
+        $request->validate([
+            'ten_phong' => 'required|string|max:255',
+            'rap_phim_id' => 'required|exists:rap_phims,id',
+            'loai_phong_id' => 'required|exists:loai_phongs,id',
+            'status' => 'required|in:sẵn sàng,không khả dụng,bảo trì',
+        ]);
+
+        $phongChieu = PhongChieu::findOrFail($id);
+        $phongChieu->update($request->all());
+
+        return redirect()->route('phong-chieus.index')->with('success', 'Cập nhật phòng chiếu thành công!');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(PhongChieu $phongChieu)
+    public function destroy(string $id)
     {
-        //
+        $phongChieu = PhongChieu::findOrFail($id);
+        $phongChieu->delete();
+
+        return redirect()->route('phong-chieus.index')->with('success', 'Xóa phòng chiếu thành công!');
     }
 }
