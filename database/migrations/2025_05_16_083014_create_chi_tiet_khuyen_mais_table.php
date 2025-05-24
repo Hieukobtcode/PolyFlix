@@ -11,18 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('rap_phims', function (Blueprint $table) {
+        Schema::create('chi_tiet_khuyen_mais', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('khuyen_mai_id');
             $table->unsignedBigInteger('chi_nhanh_id');
-            $table->string('ten_rap', 255);
-            $table->text('dia_chi');
-            $table->text('so_dien_thoai');
-            $table->string('email', 255)->unique();
-            $table->enum('trang_thai', ['đang hoạt động', 'bảo trì', 'đã đóng']); // ENUM trạng thái
-            $table->softDeletes(); // hỗ trợ soft delete
-
-            $table->timestamps();
+            $table->foreign('khuyen_mai_id')->references('id')->on('khuyen_mais')->onDelete('cascade');
             $table->foreign('chi_nhanh_id')->references('id')->on('chi_nhanhs')->onDelete('cascade');
+            $table->timestamps();
         });
     }
 
@@ -31,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('rap_phims');
+        Schema::dropIfExists('chi_tiet_khuyen_mais');
     }
 };

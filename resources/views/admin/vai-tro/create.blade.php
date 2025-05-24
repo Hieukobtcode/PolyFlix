@@ -3,6 +3,7 @@
 @section('title', 'Quản lý Vai trò')
 @section('page-title', 'Thêm vai trò')
 @section('breadcrumb', 'Thêm vai trò')
+
 @section('styles')
     <style>
         .card {
@@ -25,6 +26,32 @@
         .invalid-feedback {
             font-size: 0.9em;
         }
+
+        .permissions-box {
+            max-height: 250px;
+            overflow-y: auto;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 1rem;
+            background-color: #f8f9fa;
+        }
+
+        .permissions-box label {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .permissions-box label input[type="checkbox"] {
+            margin-right: 0.5rem;
+        }
+
+        .select-all-wrapper {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
     </style>
 @endsection
 
@@ -46,7 +73,7 @@
                             <div class="mb-4">
                                 <label for="ten" class="form-label fw-semibold">Tên vai trò <span
                                         class="text-danger">*</span></label>
-                                <input type="text" class="form-control rounded @error('ten') is-invalid @enderror" id="ten"
+                                <input type="text" class="form-control @error('ten') is-invalid @enderror" id="ten"
                                     name="ten" value="{{ old('ten') }}" placeholder="Nhập tên vai trò">
                                 @error('ten')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -57,10 +84,34 @@
 
                     <div class="mb-4">
                         <label for="mo_ta" class="form-label fw-semibold">Mô tả</label>
-                        <textarea class="form-control rounded @error('mo_ta') is-invalid @enderror" id="mo_ta" name="mo_ta"
-                            rows="4" placeholder="Nhập mô tả vai trò">{{ old('mo_ta') }}</textarea>
+                        <textarea class="form-control @error('mo_ta') is-invalid @enderror" id="mo_ta" name="mo_ta" rows="4"
+                            placeholder="Nhập mô tả vai trò">{{ old('mo_ta') }}</textarea>
                         @error('mo_ta')
                             <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">Phân quyền cho vai trò</label>
+                        <div class="select-all-wrapper">
+                            <small class="text-muted">Chọn các quyền phù hợp bên dưới</small>
+                            <div>
+                                <input type="checkbox" id="checkAll" class="form-check-input me-1">
+                                <label for="checkAll" class="form-check-label">Chọn tất cả</label>
+                            </div>
+                        </div>
+                        <div class="permissions-box">
+                            @forelse($phanQuyens as $phanQuyen)
+                                <label>
+                                    <input type="checkbox" name="phan_quyen_ids[]" value="{{ $phanQuyen->id }}">
+                                    {{ $phanQuyen->ten }} <span class="text-muted ms-1">({{ $phanQuyen->slug }})</span>
+                                </label>
+                            @empty
+                                <p class="text-muted">Không có phân quyền nào để chọn.</p>
+                            @endforelse
+                        </div>
+                        @error('phan_quyen_ids')
+                            <div class="invalid-feedback d-block">{{ $message }}</div>
                         @enderror
                     </div>
 
@@ -78,14 +129,20 @@
 
 @section('scripts')
     <script>
-        // Tự động focus vào trường tên vai trò khi tải trang
+        // Focus vào tên
         document.getElementById('ten').focus();
 
-        // Xác nhận trước khi hủy
-        document.querySelector('.btn-outline-secondary').addEventListener('click', function (e) {
+        // Xác nhận hủy
+        document.querySelector('.btn-outline-secondary').addEventListener('click', function(e) {
             if (!confirm('Bạn có muốn hủy và quay lại danh sách?')) {
                 e.preventDefault();
             }
+        });
+
+        // Chọn tất cả checkbox
+        document.getElementById('checkAll').addEventListener('change', function() {
+            const checkboxes = document.querySelectorAll('input[name="phan_quyen_ids[]"]');
+            checkboxes.forEach(cb => cb.checked = this.checked);
         });
     </script>
 @endsection

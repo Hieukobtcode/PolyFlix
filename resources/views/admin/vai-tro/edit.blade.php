@@ -3,6 +3,7 @@
 @section('title', 'Quản lý Vai trò')
 @section('page-title', 'Chỉnh sửa vai trò')
 @section('breadcrumb', 'Chỉnh sửa vai trò')
+
 @section('styles')
     <style>
         .card {
@@ -24,6 +25,32 @@
 
         .invalid-feedback {
             font-size: 0.9em;
+        }
+
+        .permissions-box {
+            max-height: 250px;
+            overflow-y: auto;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 1rem;
+            background-color: #f8f9fa;
+        }
+
+        .permissions-box label {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .permissions-box label input[type="checkbox"] {
+            margin-right: 0.5rem;
+        }
+
+        .select-all-wrapper {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
         }
     </style>
 @endsection
@@ -54,7 +81,6 @@
                                 @enderror
                             </div>
                         </div>
-
                     </div>
 
                     <div class="mb-4">
@@ -66,8 +92,34 @@
                         @enderror
                     </div>
 
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">Phân quyền đã gán</label>
+                        <div class="select-all-wrapper">
+                            <small class="text-muted">Tích chọn các quyền muốn gán cho vai trò</small>
+                            <div>
+                                <input type="checkbox" id="checkAll" class="form-check-input me-1">
+                                <label for="checkAll" class="form-check-label">Chọn tất cả</label>
+                            </div>
+                        </div>
+                        <div class="permissions-box">
+                            @forelse($phanQuyens as $phanQuyen)
+                                <label>
+                                    <input type="checkbox" name="phan_quyen_ids[]" value="{{ $phanQuyen->id }}"
+                                        {{ in_array($phanQuyen->id, $phanQuyenDaGan) ? 'checked' : '' }}>
+                                    {{ $phanQuyen->ten }} <span class="text-muted ms-1">({{ $phanQuyen->slug }})</span>
+                                </label>
+                            @empty
+                                <p class="text-muted">Không có phân quyền nào để chọn.</p>
+                            @endforelse
+                        </div>
+                        @error('phan_quyen_ids')
+                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                        @enderror
+                    </div>
+
                     <div class="d-flex justify-content-end gap-2">
-                        <a href="{{ route('admin.vai-tro.index') }}" class="btn btn-outline-secondary" title="Hủy">Hủy</a>
+                        <a href="{{ route('admin.vai-tro.index') }}" class="btn btn-outline-secondary"
+                            title="Hủy">Hủy</a>
                         <button type="submit" class="btn btn-primary" title="Cập nhật">
                             <i class="fas fa-save me-1"></i> Cập nhật
                         </button>
@@ -84,10 +136,23 @@
         document.getElementById('ten').focus();
 
         // Xác nhận trước khi hủy
-        document.querySelector('.btn-outline-secondary').addEventListener('click', function (e) {
+        document.querySelector('.btn-outline-secondary').addEventListener('click', function(e) {
             if (!confirm('Bạn có muốn hủy và quay lại danh sách?')) {
                 e.preventDefault();
             }
+        });
+
+        // Xử lý chọn tất cả checkbox
+        document.getElementById('checkAll').addEventListener('change', function() {
+            const checkboxes = document.querySelectorAll('input[name="phan_quyen_ids[]"]');
+            checkboxes.forEach(cb => cb.checked = this.checked);
+        });
+
+        // Đồng bộ trạng thái "Chọn tất cả" khi load trang
+        window.addEventListener('DOMContentLoaded', function() {
+            const checkboxes = document.querySelectorAll('input[name="phan_quyen_ids[]"]');
+            const checkAll = document.getElementById('checkAll');
+            checkAll.checked = Array.from(checkboxes).every(cb => cb.checked);
         });
     </script>
 @endsection
