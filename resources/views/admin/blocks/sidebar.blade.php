@@ -49,6 +49,9 @@
                 <li class="nav-item"><a class="nav-link" href="{{ route('admin.vai-tro.index') }}">
                         <span class="nav-icon"><span class="nav-icon-bullet"></span></span> Quản lý vai trò</a>
                 </li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('admin.phan-quyen.index') }}">
+                        <span class="nav-icon"><span class="nav-icon-bullet"></span></span> Quản lý phân quyền</a>
+                </li>
             </ul>
         </li>
         <li class="nav-item">

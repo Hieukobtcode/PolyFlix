@@ -1,17 +1,18 @@
 <?php
 
-use App\Http\Controllers\Admin\CapBacTheController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\PhimController;
+use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\LienHeController;
 use App\Http\Controllers\Admin\VaiTroController;
 use App\Http\Controllers\Admin\BaiVietController;
-use App\Http\Controllers\Admin\ChiNhanhController;
-use App\Http\Controllers\Admin\TheLoaiPhimController;
-use App\Http\Controllers\Admin\LoaiPhongController;
-use App\Http\Controllers\Admin\RapphimController;
 use App\Http\Controllers\Admin\CauHinhController;
+use App\Http\Controllers\Admin\RapphimController;
+use App\Http\Controllers\Admin\ChiNhanhController;
+use App\Http\Controllers\Admin\CapBacTheController;
+use App\Http\Controllers\Admin\LoaiPhongController;
+use App\Http\Controllers\Admin\PhanQuyenController;
+use App\Http\Controllers\Admin\TheLoaiPhimController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -65,6 +66,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     // Quản lý vai trò
     Route::resource('vai-tro', VaiTroController::class);
+
+
+    // Quản lý phân quyền
+    Route::resource('phan-quyen', PhanQuyenController::class);
 
     // Quản lý banners
     Route::resource('banners', BannerController::class);
