@@ -3,6 +3,7 @@
 @section('title', 'Quản lý Vai trò')
 @section('page-title', 'Chi tiết vai trò')
 @section('breadcrumb', 'Chi tiết vai trò')
+
 @section('styles')
     <style>
         .card {
@@ -25,6 +26,17 @@
 
         .table-dark {
             background-color: #343a40;
+        }
+
+        .permission-badge {
+            background-color: #e9ecef;
+            border-radius: 5rem;
+            display: inline-block;
+            padding: 0.4em 1em;
+            margin: 0.3em 0.4em 0.3em 0;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #495057;
         }
     </style>
 @endsection
@@ -73,6 +85,23 @@
                     </div>
                 </div>
 
+                <!-- Danh sách phân quyền -->
+                <div class="mt-4">
+                    <h5 class="fw-bold mb-3">Các quyền được gán cho vai trò này</h5>
+                    @if ($vaiTro->phanQuyens->count() > 0)
+                        <div class="mb-3">
+                            @foreach ($vaiTro->phanQuyens as $phanQuyen)
+                                <span class="permission-badge">
+                                    <i class="fas fa-shield-alt me-1 text-primary"></i>
+                                    {{ $phanQuyen->ten }} <small class="text-muted">({{ $phanQuyen->slug }})</small>
+                                </span>
+                            @endforeach
+                        </div>
+                    @else
+                        <p class="text-muted"><i class="fas fa-ban me-1"></i> Chưa có phân quyền nào được gán.</p>
+                    @endif
+                </div>
+
                 <!-- Danh sách người dùng -->
                 <div class="mt-5">
                     <h5 class="fw-bold mb-3">Danh sách người dùng có vai trò này</h5>
@@ -89,23 +118,22 @@
                             </thead>
                             <tbody>
                                 {{-- @forelse($vaiTro->nguoiDungs as $index => $nguoiDung)
-                                <tr>
-                                    <td class="text-center">{{ $index + 1 }}</td>
-                                    <td>{{ $nguoiDung->ho_ten }}</td>
-                                    <td>{{ $nguoiDung->email }}</td>
-                                    <td class="text-center">
-                                        <span
-                                            class="badge rounded-pill {{ $nguoiDung->trang_thai === 'hoạt động' ? 'bg-success' : 'bg-secondary' }}">
-                                            {{ ucfirst($nguoiDung->trang_thai) }}
-                                        </span>
-                                    </td>
-                                    <td class="text-center">
-                                        <a href="" class="btn btn-sm btn-outline-info" title="Xem chi tiết">
-                                            <i class="fas fa-eye"></i>
-                                        </a>
-                                    </td>
-                                </tr>
-                                @empty --}}
+                            <tr>
+                                <td class="text-center">{{ $index + 1 }}</td>
+                                <td>{{ $nguoiDung->ho_ten }}</td>
+                                <td>{{ $nguoiDung->email }}</td>
+                                <td class="text-center">
+                                    <span class="badge rounded-pill {{ $nguoiDung->trang_thai === 'hoạt động' ? 'bg-success' : 'bg-secondary' }}">
+                                        {{ ucfirst($nguoiDung->trang_thai) }}
+                                    </span>
+                                </td>
+                                <td class="text-center">
+                                    <a href="" class="btn btn-sm btn-outline-info" title="Xem chi tiết">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            @empty --}}
                                 <tr>
                                     <td colspan="5" class="text-center text-muted py-3">
                                         <i class="fas fa-users-slash me-1"></i> Không có người dùng nào thuộc vai trò này
