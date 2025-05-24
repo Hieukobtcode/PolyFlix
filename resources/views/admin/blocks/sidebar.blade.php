@@ -1,31 +1,107 @@
 <div class="sidebar sidebar-dark sidebar-fixed border-end" id="sidebar">
-    <div class="sidebar-header border-bottom">
+    <div class="sidebar-header border-bottom d-flex justify-content-center align-items-center">
         <div class="sidebar-brand">
-            <svg class="sidebar-brand-full" width="88" height="32" alt="CoreUI Logo">
-                <use xlink:href="{{ asset('dist/assets/brand/coreui.svg#full') }}"></use>
-            </svg>
-            <svg class="sidebar-brand-narrow" width="32" height="32" alt="CoreUI Logo">
-                <use xlink:href="{{ asset('dist/assets/brand/coreui.svg#signet') }}"></use>
-            </svg>
+            <img src="{{ asset('logo/LogoPolyFlixAdmin.png') }}" class="sidebar-brand-full"
+                style="width: 150px; height: auto;" alt="PolyFlix Logo">
         </div>
-        <button class="btn-close d-lg-none" type="button" data-coreui-theme="dark" aria-label="Close" onclick="coreui.Sidebar.getInstance(document.querySelector(&quot;#sidebar&quot;)).toggle()"></button>
-      </div>
-      <ul class="sidebar-nav" data-coreui="navigation" data-simplebar="">
-        <li class="nav-item"><a class="nav-link" href="{{ route('admin.lien-he.index') }}">
-            <svg class="nav-icon">
-              <use xlink:href="{{ asset('dist/vendors/@coreui/icons/svg/free.svg#cil-speedometer') }}"></use>
-            </svg> Dashboard<span class="badge badge-sm bg-info ms-auto">NEW</span></a></li>
+        <button class="btn-close d-lg-none" type="button" data-coreui-theme="dark" aria-label="Close"
+            onclick="coreui.Sidebar.getInstance(document.querySelector('#sidebar')).toggle()"></button>
+    </div>
+
+    <ul class="sidebar-nav" data-coreui="navigation" data-simplebar="">
+        <li class="nav-item"><a class="nav-link" href="#">
+                <svg class="nav-icon">
+                    <use xlink:href="{{ asset('dist/vendors/@coreui/icons/svg/free.svg#cil-speedometer') }}"></use>
+                </svg> Dashboard<span class="badge badge-sm bg-info ms-auto">NEW</span></a></li>
 
         <li class="nav-title">Quản lý</li>
         <li class="nav-group"><a class="nav-link nav-group-toggle" href="#">
-            <svg class="nav-icon">
-              <use xlink:href="{{ asset('dist/vendors/@coreui/icons/svg/free.svg#cil-address-book') }}"></use>
-            </svg> Quản lý liên hệ</a>
-          <ul class="nav-group-items compact">
-            <li class="nav-item"><a class="nav-link" href="{{ route('admin.lien-he.index') }}">
-                <span class="nav-icon"><span class="nav-icon-bullet"></span></span> Danh sách liên hệ</a>
-            </li>
-          </ul>
+                <svg class="nav-icon">
+                    <use xlink:href="{{ asset('dist/vendors/@coreui/icons/svg/free.svg#cil-video') }}">
+                    </use>
+                </svg>Quản Lý phim</a>
+            <ul class="nav-group-items compact">
+                <li class="nav-item"><a class="nav-link" href="{{ route('admin.the-loai-phim.index') }}"><span
+                            class="nav-icon"><span class="nav-icon-bullet"></span></span> Thể Loại Phim</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('admin.phim.index') }}"><span
+                            class="nav-icon"><span class="nav-icon-bullet"></span></span> Quản Lý Phim</a>
+                </li>
+            </ul>
+        </li>
+        <li class="nav-group"><a class="nav-link nav-group-toggle" href="#">
+                <svg class="nav-icon">
+                    <use xlink:href="{{ asset('dist/vendors/@coreui/icons/svg/free.svg#cil-address-book') }}"></use>
+                </svg> Quản lý liên hệ</a>
+            <ul class="nav-group-items compact">
+                <li class="nav-item"><a class="nav-link" href="{{ route('admin.lien-he.index') }}">
+                        <span class="nav-icon"><span class="nav-icon-bullet"></span></span> Danh sách liên hệ</a>
+                </li>
+            </ul>
+        </li>
+        <li class="nav-group"><a class="nav-link nav-group-toggle" href="#">
+
+                <span class="nav-icon">
+                    <i class="fa-solid fa-user"></i> <!-- Biểu tượng người dùng -->
+                </span>
+                <span class="nav-text">Quản lý người dùng</span>
+            </a>
+            <ul class="nav-group-items compact">
+                <li class="nav-item"><a class="nav-link" href="{{ route('admin.vai-tro.index') }}">
+                        <span class="nav-icon"><span class="nav-icon-bullet"></span></span> Quản lý vai trò</a>
+                </li>
+            </ul>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('admin.bai-viet.index') }}">
+                <span class="nav-icon">
+                    <i class="fas fa-newspaper"></i> <!-- Biểu tượng bài viết -->
+                </span>
+                <span class="nav-text">Quản lý bài viết</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('admin.chi-nhanh.index') }}">
+                <span class="nav-icon">
+                    <i class="fas fa-building"></i> <!-- Biểu tượng bài viết -->
+                </span>
+                <span class="nav-text">Quản lý chi nhánh</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('admin.banners.index') }}">
+                <span class="nav-icon">
+                    <i class="fas fa-newspaper"></i> <!-- Biểu tượng bài viết -->
+                </span>
+                <span class="nav-text">Quản lý banners</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('admin.cau-hinh.index') }}">
+                <span class="nav-icon">
+                    <i class="fas fa-cogs"></i> <!-- Biểu tượng cấu hình -->
+                </span>
+                <span class="nav-text">Quản lý cấu hình</span>
+            </a>
+        </li>
+        <a class="nav-link" href="{{ route('admin.loai-phong.index') }}">
+            <span class="nav-icon">
+                <i class="fas fa-tags"></i>
+            </span>
+            <span class="nav-text">Quản lý loại phòng</span>
+        </a>
+        </li>
+        <a class="nav-link" href="{{ route('admin.rap-phim.index') }}">
+            <span class="nav-icon">
+                <i class="fas fa-newspaper"></i> <!-- Biểu tượng bài viết -->
+            </span>
+            <span class="nav-text">Quản lý rạp phim</span>
+        </a>
+        <a class="nav-link" href="{{ route('admin.cap-bac-the.index') }}">
+            <span class="nav-icon">
+                <i class="fa-solid fa-ranking-star"></i>
+            </span>
+            <span class="nav-text">Quản lý cấp bậc thẻ</span>
+        </a>
         </li>
         <li class="nav-group">
             <a class="nav-link nav-group-toggle" href="#">
@@ -64,69 +140,7 @@
                     </use>
                 </svg> Typography</a></li>
         <li class="nav-title">Components</li>
-        <li class="nav-group"><a class="nav-link nav-group-toggle" href="#">
-                <svg class="nav-icon">
-                    <use xlink:href="{{ asset('dist/vendors/@coreui/icons/svg/free.svg#cil-puzzle') }}">
-                    </use>
-                </svg>Quản Lý</a>
-            <ul class="nav-group-items compact">
-                <li class="nav-item"><a class="nav-link" href="{{ route('admin.the-loai-phim.index') }}"><span
-                            class="nav-icon"><span class="nav-icon-bullet"></span></span> Thể Loại Phim</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('admin.phim.index') }}"><span
-                            class="nav-icon"><span class="nav-icon-bullet"></span></span> Quản Lý Phim</a></li>
-                <li class="nav-item"><a class="nav-link" href="https://coreui.io/bootstrap/docs/components/calendar/"
-                        target="_blank"><span class="nav-icon"><span class="nav-icon-bullet"></span></span> Calendar
-                        <svg class="icon icon-sm ms-2">
-                            <use xlink:href="{{ asset('dist/vendors/@coreui/icons/svg/free.svg#cil-external-link') }}">
-                            </use>
-                        </svg><span class="badge badge-sm bg-danger ms-auto">PRO</span></a></li>
-                <li class="nav-item"><a class="nav-link" href="base/cards.html"><span class="nav-icon"><span
-                                class="nav-icon-bullet"></span></span> Cards</a></li>
-                <li class="nav-item"><a class="nav-link" href="base/carousel.html"><span class="nav-icon"><span
-                                class="nav-icon-bullet"></span></span> Carousel</a></li>
-                <li class="nav-item"><a class="nav-link" href="base/collapse.html"><span class="nav-icon"><span
-                                class="nav-icon-bullet"></span></span> Collapse</a></li>
-                <li class="nav-item"><a class="nav-link" href="base/list-group.html"><span class="nav-icon"><span
-                                class="nav-icon-bullet"></span></span> List group</a></li>
-                <li class="nav-item"><a class="nav-link" href="base/navs-tabs.html"><span class="nav-icon"><span
-                                class="nav-icon-bullet"></span></span> Navs &amp; Tabs</a></li>
-                <li class="nav-item"><a class="nav-link" href="base/pagination.html"><span class="nav-icon"><span
-                                class="nav-icon-bullet"></span></span> Pagination</a></li>
-                <li class="nav-item"><a class="nav-link" href="base/placeholders.html"><span class="nav-icon"><span
-                                class="nav-icon-bullet"></span></span> Placeholders</a></li>
-                <li class="nav-item"><a class="nav-link" href="base/popovers.html"><span class="nav-icon"><span
-                                class="nav-icon-bullet"></span></span> Popovers</a></li>
-                <li class="nav-item"><a class="nav-link" href="base/progress.html"><span class="nav-icon"><span
-                                class="nav-icon-bullet"></span></span> Progress</a></li>
-                <li class="nav-item"><a class="nav-link" href="base/spinners.html"><span class="nav-icon"><span
-                                class="nav-icon-bullet"></span></span> Spinners</a></li>
-                <li class="nav-item"><a class="nav-link" href="base/tables.html"><span class="nav-icon"><span
-                                class="nav-icon-bullet"></span></span> Tables</a></li>
-                <li class="nav-item"><a class="nav-link" href="base/tooltips.html"><span class="nav-icon"><span
-                                class="nav-icon-bullet"></span></span> Tooltips</a></li>
-            </ul>
-        </li>
-        <li class="nav-group"><a class="nav-link nav-group-toggle" href="#">
-                <svg class="nav-icon">
-                    <use xlink:href="{{ asset('dist/vendors/@coreui/icons/svg/free.svg#cil-cursor') }}">
-                    </use>
-                </svg> Buttons</a>
-            <ul class="nav-group-items compact">
-                <li class="nav-item"><a class="nav-link" href="buttons/buttons.html"><span class="nav-icon"><span
-                                class="nav-icon-bullet"></span></span> Buttons</a></li>
-                <li class="nav-item"><a class="nav-link" href="buttons/button-group.html"><span class="nav-icon"><span
-                                class="nav-icon-bullet"></span></span> Buttons Group</a></li>
-                <li class="nav-item"><a class="nav-link" href="buttons/dropdowns.html"><span class="nav-icon"><span
-                                class="nav-icon-bullet"></span></span> Dropdowns</a></li>
-                <li class="nav-item"><a class="nav-link"
-                        href="https://coreui.io/bootstrap/docs/components/loading-buttons/" target="_blank"><span
-                            class="nav-icon"><span class="nav-icon-bullet"></span></span> Loading Buttons
-                        <svg class="icon icon-sm ms-2">
-                            <use xlink:href="{{ asset('dist/vendors/@coreui/icons/svg/free.svg#cil-external-link') }}">
-                            </use>
-                        </svg><span class="badge badge-sm bg-danger ms-auto">PRO</span></a></li>
-            </ul>
-        </li>
+
         <li class="nav-item"><a class="nav-link" href="charts.html">
                 <svg class="nav-icon">
                     <use xlink:href="{{ asset('dist/vendors/@coreui/icons/svg/free.svg#cil-chart-pie') }}">
@@ -143,7 +157,8 @@
                 <li class="nav-item"><a class="nav-link" href="forms/select.html"><span class="nav-icon"><span
                                 class="nav-icon-bullet"></span></span> Select</a></li>
                 <li class="nav-item"><a class="nav-link" href="https://coreui.io/bootstrap/docs/forms/multi-select/"
-                        target="_blank"><span class="nav-icon"><span class="nav-icon-bullet"></span></span> Multi Select
+                        target="_blank"><span class="nav-icon"><span class="nav-icon-bullet"></span></span> Multi
+                        Select
                         <svg class="icon icon-sm ms-2">
                             <use xlink:href="{{ asset('dist/vendors/@coreui/icons/svg/free.svg#cil-external-link') }}">
                             </use>
@@ -153,7 +168,8 @@
                 <li class="nav-item"><a class="nav-link" href="forms/range.html"><span class="nav-icon"><span
                                 class="nav-icon-bullet"></span></span> Range</a></li>
                 <li class="nav-item"><a class="nav-link" href="https://coreui.io/bootstrap/docs/forms/range-slider/"
-                        target="_blank"><span class="nav-icon"><span class="nav-icon-bullet"></span></span> Range Slider
+                        target="_blank"><span class="nav-icon"><span class="nav-icon-bullet"></span></span> Range
+                        Slider
                         <svg class="icon icon-sm ms-2">
                             <use xlink:href="{{ asset('dist/vendors/@coreui/icons/svg/free.svg#cil-external-link') }}">
                             </use>
@@ -163,7 +179,8 @@
                 <li class="nav-item"><a class="nav-link" href="forms/floating-labels.html"><span class="nav-icon"><span
                                 class="nav-icon-bullet"></span></span> Floating labels</a></li>
                 <li class="nav-item"><a class="nav-link" href="https://coreui.io/bootstrap/docs/forms/date-picker/"
-                        target="_blank"><span class="nav-icon"><span class="nav-icon-bullet"></span></span> Date Picker
+                        target="_blank"><span class="nav-icon"><span class="nav-icon-bullet"></span></span> Date
+                        Picker
                         <svg class="icon icon-sm ms-2">
                             <use xlink:href="{{ asset('dist/vendors/@coreui/icons/svg/free.svg#cil-external-link') }}">
                             </use>
@@ -179,7 +196,8 @@
                             </use>
                         </svg><span class="badge badge-sm bg-danger ms-auto">PRO</span></a></li>
                 <li class="nav-item"><a class="nav-link" href="https://coreui.io/bootstrap/docs/forms/time-picker/"
-                        target="_blank"><span class="nav-icon"><span class="nav-icon-bullet"></span></span> Time Picker
+                        target="_blank"><span class="nav-icon"><span class="nav-icon-bullet"></span></span> Time
+                        Picker
                         <svg class="icon icon-sm ms-2">
                             <use xlink:href="{{ asset('dist/vendors/@coreui/icons/svg/free.svg#cil-external-link') }}">
                             </use>
@@ -200,7 +218,8 @@
                             class="nav-icon"><span class="nav-icon-bullet"></span></span> CoreUI Icons<span
                             class="badge badge-sm bg-success ms-auto">Free</span></a></li>
                 <li class="nav-item"><a class="nav-link" href="icons/coreui-icons-brand.html"><span
-                            class="nav-icon"><span class="nav-icon-bullet"></span></span> CoreUI Icons - Brand</a></li>
+                            class="nav-icon"><span class="nav-icon-bullet"></span></span> CoreUI Icons - Brand</a>
+                </li>
                 <li class="nav-item"><a class="nav-link" href="icons/coreui-icons-flag.html"><span
                             class="nav-icon"><span class="nav-icon-bullet"></span></span> CoreUI Icons - Flag</a></li>
             </ul>
@@ -269,6 +288,7 @@
                     </use>
                 </svg> Try CoreUI PRO</a></li>
     </ul>
+
     <div class="sidebar-footer border-top d-none d-md-flex">
         <button class="sidebar-toggler" type="button" data-coreui-toggle="unfoldable"></button>
     </div>

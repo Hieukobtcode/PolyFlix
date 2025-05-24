@@ -1,8 +1,8 @@
 <?php
 
+use App\Http\Controllers\Admin\CapBacTheController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
-
 use App\Http\Controllers\Admin\LienHeController;
 use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\PhimController;
@@ -11,7 +11,16 @@ use App\Http\Controllers\Admin\BaiVietController;
 use App\Http\Controllers\Admin\ChiNhanhController;
 use App\Http\Controllers\Admin\KhuyenMaiController;
 use App\Http\Controllers\Admin\TheLoaiPhimController;
-
+use App\Http\Controllers\Admin\BannerController;
+use App\Http\Controllers\Admin\PhimController;
+use App\Http\Controllers\Admin\LienHeController;
+use App\Http\Controllers\Admin\VaiTroController;
+use App\Http\Controllers\Admin\BaiVietController;
+use App\Http\Controllers\Admin\ChiNhanhController;
+use App\Http\Controllers\Admin\TheLoaiPhimController;
+use App\Http\Controllers\Admin\LoaiPhongController;
+use App\Http\Controllers\Admin\RapphimController;
+use App\Http\Controllers\Admin\CauHinhController;
 Route::get('/', function () {
     return view('welcome');
 });
@@ -30,6 +39,7 @@ Route::get('/check-data', function () {
 });
 
 Route::prefix('admin')->name('admin.')->group(function () {
+    // Trang dashboard của admin
     Route::get('/', function () {
         return redirect()->route('admin.lien-he.index');
     })->name('dashboard');
@@ -45,6 +55,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
         'destroy' => 'lien-he.destroy',
     ]);
 
+        return view('admin.dashboard');
+    })->name('dashboard');
+
+    // Các chức năng bổ sung cho quản lý liên hệ
     Route::prefix('lien-he')->name('lien-he.')->group(function () {
         Route::get('dashboard', [LienHeController::class, 'dashboard'])->name('dashboard');
         Route::get('export', [LienHeController::class, 'export'])->name('export');
@@ -54,8 +68,28 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('bulk-action', [LienHeController::class, 'bulkAction'])->name('bulk-action');
     });
 
-    // Quản lý thể loại phim & phim
+    // Quản lý liên hệ
+    Route::resource('lien-he', LienHeController::class)->names([
+        'index' => 'lien-he.index',
+        'create' => 'lien-he.create',
+        'store' => 'lien-he.store',
+        'show' => 'lien-he.show',
+        'edit' => 'lien-he.edit',
+        'update' => 'lien-he.update',
+        'destroy' => 'lien-he.destroy',
+    ]);
+
+    // Quản lý thể loại phim
     Route::resource('the-loai-phim', TheLoaiPhimController::class);
+
+    // Các chức năng xóa mềm cho quản lý phim
+    Route::prefix('phim')->name('phim.')->group(function () {
+        Route::get('trash', [PhimController::class, 'trash'])->name('trash');
+        Route::patch('{phim}/restore', [PhimController::class, 'restore'])->name('restore');
+        Route::delete('{phim}/force-delete', [PhimController::class, 'forceDelete'])->name('force-delete');
+    });
+
+    // Quản lý phim
     Route::resource('phim', PhimController::class);
 
     // Quản lý bài viết
@@ -78,4 +112,20 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     // Quản lý khuyến mãi
     Route::resource('khuyen-mai', KhuyenMaiController::class);
+    //Quản lý loại phòng
+    Route::resource('loai-phong', LoaiPhongController::class);
+
+    //Quản lý rạp phim
+    Route::resource('rap-phim', RapphimController::class);
+
+    //Quản lý cấu hình
+    Route::get('cau-hinh', [CauHinhController::class, 'index'])->name('cau-hinh.index');
+    Route::get('cau-hinh/edit', [CauHinhController::class, 'edit'])->name('cau-hinh.edit');
+    Route::post('cau-hinh/update', [CauHinhController::class, 'update'])->name('cau-hinh.update');
+
+    // Quản lý cấp bậc thẻ thành viên
+    Route::resource('cap-bac-the', CapBacTheController::class);
+    // Route đặt cấp bậc thẻ làm mặc định
+    Route::put('cap-bac-the/{capBacThe}/set-default', [CapBacTheController::class, 'setDefault'])
+        ->name('cap-bac-the.set-default');
 });
