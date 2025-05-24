@@ -75,6 +75,34 @@
                 <span class="nav-text">Quản lý banners</span>
             </a>
         </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('admin.cau-hinh.index') }}">
+                <span class="nav-icon">
+                    <i class="fas fa-cogs"></i> <!-- Biểu tượng cấu hình -->
+                </span>
+                <span class="nav-text">Quản lý cấu hình</span>
+            </a>
+        </li>
+        <a class="nav-link" href="{{ route('admin.loai-phong.index') }}">
+            <span class="nav-icon">
+                <i class="fas fa-tags"></i>
+            </span>
+            <span class="nav-text">Quản lý loại phòng</span>
+        </a>
+        </li>
+        <a class="nav-link" href="{{ route('admin.rap-phim.index') }}">
+            <span class="nav-icon">
+                <i class="fas fa-newspaper"></i> <!-- Biểu tượng bài viết -->
+            </span>
+            <span class="nav-text">Quản lý rạp phim</span>
+        </a>
+        <a class="nav-link" href="{{ route('admin.cap-bac-the.index') }}">
+            <span class="nav-icon">
+                <i class="fa-solid fa-ranking-star"></i>
+            </span>
+            <span class="nav-text">Quản lý cấp bậc thẻ</span>
+        </a>
+        </li>
         <li class="nav-title">Theme</li>
         <li class="nav-item"><a class="nav-link" href="colors.html">
                 <svg class="nav-icon">
