@@ -26,11 +26,6 @@ class PhongChieu extends Model
         return $this->belongsTo(loaiPhong::class,'loai_phong_id');
     }
 
-    public function gheNgois()
-    {
-        return $this->hasMany(GheNgoi::class);
-    }
-
       public function soDoGhe()
     {
         return $this->belongsTo(SoDoGhe::class);

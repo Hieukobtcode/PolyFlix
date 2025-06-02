@@ -19,8 +19,8 @@ class LoaiPhong extends Model
         return $this->hasMany(PhongChieu::class,'loai_phong_id');
     }
 
-    public $timestamps = true; // bật tính năng timestamps
+    public $timestamps = true; 
 
-    const CREATED_AT = 'create_at';  // đổi tên cột created_at thành create_at
-    const UPDATED_AT = 'update_at';  // đổi tên cột updated_at thành update_at
+    const CREATED_AT = 'create_at';  
+    const UPDATED_AT = 'update_at'; 
 }
