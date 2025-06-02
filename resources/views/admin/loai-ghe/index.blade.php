@@ -29,6 +29,7 @@
 @section('content')
     <div class="container-fluid">
         <div class="row g-4">
+
             <!-- Form thêm mới -->
             <div class="col-md-4">
                 <div class="card shadow-sm border-0">
@@ -91,7 +92,8 @@
                                             <td>{{ $ghe->mo_ta ?? '-' }}</td>
                                             <td>
                                                 @if ($ghe->phu_thu > 0)
-                                                    <span class="badge bg-info">{{ number_format($ghe->phu_thu, 0, '', '.') }}đ</span>
+                                                    <span
+                                                        class="badge bg-info">{{ number_format($ghe->phu_thu, 0, '', '.') }}đ</span>
                                                 @else
                                                     <span class="badge bg-secondary">Miễn phí</span>
                                                 @endif

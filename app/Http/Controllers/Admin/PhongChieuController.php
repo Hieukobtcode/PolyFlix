@@ -7,6 +7,7 @@ use App\Models\LoaiPhong;
 use App\Models\PhongChieu;
 use App\Models\RapPhim;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class PhongChieuController extends Controller
 {
@@ -21,24 +22,41 @@ class PhongChieuController extends Controller
 
     public function create()
     {
-        $rapPhims = RapPhim::all();
+        $id = request()->rap_phim_id;
+        $rapPhim = RapPhim::findOrFail($id);
         $loaiPhongs = LoaiPhong::all();
-        return view('admin.phong-chieu.create', compact('rapPhims', 'loaiPhongs'));
+        return view('admin.phong-chieu.create', compact('rapPhim', 'loaiPhongs'));
     }
 
     public function store(Request $request)
     {
+        $id = $request->rap_phim_id;
+        $rapPhim = RapPhim::findOrFail($id);
+
         $request->validate([
-            'ten_phong' => 'required|string|max:255',
-            'rap_phim_id' => 'required|exists:rap_phims,id',
+            'ten_phong' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('phong_chieus')->where(function ($query) use ($id) {
+                    return $query->where('rap_phim_id', $id);
+                }),
+            ],
             'loai_phong_id' => 'required|exists:loai_phongs,id',
-            'status' => 'required|in:sẵn sàng,không khả dụng,bảo trì',
+            'status' => 'required|in:hoat_dong,tam_dung,bao_tri',
         ]);
 
-        PhongChieu::create($request->all());
+        PhongChieu::create([
+            'ten_phong' => $request->ten_phong,
+            'rap_phim_id' => $id,
+            'loai_phong_id' => $request->loai_phong_id,
+            'status' => $request->status,
+        ]);
 
-        return redirect()->route('admin.phong-chieu.index')->with('success', 'Thêm phòng chiếu thành công');
+        return redirect()->route('admin.rap-phim.show', $id)
+            ->with('success', 'Thêm phòng chiếu thành công cho rạp');
     }
+
 
     public function show(string $id)
     {
