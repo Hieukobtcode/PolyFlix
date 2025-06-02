@@ -3,7 +3,6 @@
 @section('title', 'Quản lý Vai trò')
 @section('page-title', 'Chi tiết vai trò')
 @section('breadcrumb', 'Chi tiết vai trò')
-
 @section('styles')
     <style>
         .card {
@@ -117,8 +116,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                {{-- @forelse($vaiTro->nguoiDungs as $index => $nguoiDung)
-                            <tr>
+                                {{-- @forelse($vaiTro->nguoiDungs as $index => $nguoiDung)                   <tr>
                                 <td class="text-center">{{ $index + 1 }}</td>
                                 <td>{{ $nguoiDung->ho_ten }}</td>
                                 <td>{{ $nguoiDung->email }}</td>

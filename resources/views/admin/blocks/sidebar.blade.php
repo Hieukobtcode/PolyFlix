@@ -8,9 +8,11 @@
             onclick="coreui.Sidebar.getInstance(document.querySelector('#sidebar')).toggle()"></button>
     </div>
 
+
     <ul class="sidebar-nav" data-coreui="navigation" data-simplebar>
         <li class="nav-item">
             <a class="nav-link" href="#">
+
                 <svg class="nav-icon">
                     <use xlink:href="{{ asset('dist/vendors/@coreui/icons/svg/free.svg#cil-speedometer') }}"></use>
                 </svg>
@@ -50,6 +52,7 @@
             </ul>
         </li>
 
+
         {{-- Quản lý người dùng --}}
         <li class="nav-group">
             <a class="nav-link nav-group-toggle" href="#">
@@ -84,6 +87,7 @@
                 Cấu hình hệ thống
             </a>
             <ul class="nav-group-items compact">
+
                 <li class="nav-item"><a class="nav-link" href="{{ route('admin.cau-hinh.index') }}">Cài đặt chung</a>
                 </li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('admin.cap-bac-the.index') }}">Cấp bậc thẻ</a>
@@ -98,6 +102,7 @@
                 Nội dung hiển thị
             </a>
             <ul class="nav-group-items compact">
+
                 <li class="nav-item"><a class="nav-link" href="{{ route('admin.bai-viet.index') }}">Bài viết</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('admin.banners.index') }}">Banners</a></li>
             </ul>
@@ -111,4 +116,5 @@
             </a>
         </li>
     </ul>
+
 </div>

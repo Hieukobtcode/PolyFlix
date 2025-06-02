@@ -38,7 +38,6 @@
                             <small class="text-danger">{{ $message }}</small>
                         @enderror
                     </div>
-
                     <div class="mb-3">
                         <label for="dia_chi" class="form-label">Địa Chỉ <span class="text-danger">*</span></label>
                         <textarea name="dia_chi" class="form-control" rows="3" required>{{ old('dia_chi') }}</textarea>
@@ -75,3 +74,4 @@
         </div>
     </div>
 @endsection
+

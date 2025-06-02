@@ -105,6 +105,7 @@
                                     <td class="text-center">{{ $index + 1 }}</td>
                                     <td>{{ $chiNhanh->ten_chi_nhanh }}</td>
                                     <td>{{ $chiNhanh->dia_chi }}</td>
+
                                     <td class="text-center">
                                         @if ($chiNhanh->quan_ly_id)
                                             {{ $chiNhanh->quanLy->ten ?? 'ID: ' . $chiNhanh->quan_ly_id }}
@@ -112,6 +113,7 @@
                                             <span class="text-muted fst-italic">Chưa phân công</span>
                                         @endif
                                     </td>
+
 
                                     <td class="text-center">
                                         {{ \Carbon\Carbon::parse($chiNhanh->created_at)->format('d/m/Y H:i') }}
@@ -222,3 +224,4 @@
         });
     </script>
 @endsection
+

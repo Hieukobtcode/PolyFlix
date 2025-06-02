@@ -1,5 +1,6 @@
 @extends('layouts.admin')
 
+
 @section('title', 'Quản lý Rạp')
 @section('page-title', 'Thêm Rạp Chiếu')
 @section('breadcrumb', 'Thêm Rạp Chiếu')
@@ -9,7 +10,6 @@
         .card {
             border-radius: 10px;
         }
-
         .form-label {
             font-weight: 600;
         }

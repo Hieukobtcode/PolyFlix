@@ -78,7 +78,9 @@ class RapphimController extends Controller
         $rapPhim = RapPhim::findOrFail($id);
         $rapPhim->update($request->all());
 
+
         return redirect()->route('admin.chi-nhanh.show',$rapPhim->chi_nhanh_id)->with('success', 'Cập nhật rạp chiếu thành công');
+
     }
 
     public function destroy($id)

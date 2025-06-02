@@ -64,12 +64,14 @@ class ChiNhanhController extends Controller
 
         return redirect()->route('admin.chi-nhanh.index')->with('success', 'Cập nhật chi nhánh thành công');
     }
+
     
     public function show($id)
     {
         $chiNhanh = ChiNhanh::with('RapPhim')->findOrFail($id);
         return view('admin.chi-nhanh.show', compact('chiNhanh'));
     }
+
 
 
 

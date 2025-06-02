@@ -21,7 +21,6 @@ use App\Http\Controllers\Admin\SoDoGheController;
 use App\Http\Controllers\Admin\KhuyenMaiController;
 use App\Http\Controllers\Admin\CapBacTheController;
 use App\Http\Controllers\Admin\PhanQuyenController;
-
 // Trang welcome
 Route::get('/', function () {
     return view('welcome');
@@ -42,6 +41,16 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/', function () {
         return redirect()->route('admin.lien-he.index');
     })->name('dashboard');
+
+    // Các chức năng bổ sung cho quản lý liên hệ
+    Route::prefix('lien-he')->name('lien-he.')->group(function () {
+        Route::get('dashboard', [LienHeController::class, 'dashboard'])->name('dashboard');
+        Route::get('export', [LienHeController::class, 'export'])->name('export');
+        Route::post('{lienHe}/notes', [LienHeController::class, 'addNote'])->name('add-note');
+        Route::patch('{lienHe}/status', [LienHeController::class, 'updateStatus'])->name('update-status');
+        Route::post('{lienHe}/send-email', [LienHeController::class, 'sendEmail'])->name('send-email');
+        Route::post('bulk-action', [LienHeController::class, 'bulkAction'])->name('bulk-action');
+    });
 
     // Quản lý liên hệ
     Route::resource('lien-he', LienHeController::class)->names('lien-he');
@@ -74,6 +83,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     // Quản lý vai trò
     Route::resource('vai-tro', VaiTroController::class);
 
+
     // Quản lý phân quyền
     Route::resource('phan-quyen', PhanQuyenController::class);
 
@@ -87,10 +97,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('rap-phim', RapphimController::class);
 
     // Quản lý cấu hình
+
     Route::get('cau-hinh', [CauHinhController::class, 'index'])->name('cau-hinh.index');
     Route::get('cau-hinh/edit', [CauHinhController::class, 'edit'])->name('cau-hinh.edit');
     Route::post('cau-hinh/update', [CauHinhController::class, 'update'])->name('cau-hinh.update');
-
     // Quản lý phòng chiếu
     Route::resource('phong-chieu', PhongChieuController::class);
 

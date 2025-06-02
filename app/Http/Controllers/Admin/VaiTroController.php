@@ -15,6 +15,7 @@ class VaiTroController extends Controller
         return view('admin.vai-tro.index', compact('vaiTros'));
     }
 
+
     public function create()
     {
         $phanQuyens = PhanQuyen::all();
@@ -55,6 +56,7 @@ class VaiTroController extends Controller
         return view('admin.vai-tro.edit', compact('vaiTro', 'phanQuyens', 'phanQuyenDaGan'));
     }
 
+
     public function update(Request $request, $id)
     {
         $vaiTro = VaiTro::findOrFail($id);
@@ -74,10 +76,11 @@ class VaiTroController extends Controller
             ->with('success', 'Vai trò đã được cập nhật thành công!');
     }
 
+
+
     public function destroy($id)
     {
         $vaiTro = VaiTro::findOrFail($id);
-
         // Hủy liên kết các quyền trước khi xóa
         $vaiTro->phanQuyens()->detach();
 

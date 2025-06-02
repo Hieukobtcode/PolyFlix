@@ -3,7 +3,6 @@
 @section('title', 'Quản lý Vai trò')
 @section('page-title', 'Thêm vai trò')
 @section('breadcrumb', 'Thêm vai trò')
-
 @section('styles')
     <style>
         .card {
@@ -91,6 +90,7 @@
                         @enderror
                     </div>
 
+
                     <div class="mb-4">
                         <label class="form-label fw-semibold">Phân quyền cho vai trò</label>
                         <div class="select-all-wrapper">
@@ -114,7 +114,6 @@
                             <div class="invalid-feedback d-block">{{ $message }}</div>
                         @enderror
                     </div>
-
                     <div class="d-flex justify-content-end gap-2">
                         <a href="{{ route('admin.vai-tro.index') }}" class="btn btn-outline-secondary">Hủy</a>
                         <button type="submit" class="btn btn-primary">
