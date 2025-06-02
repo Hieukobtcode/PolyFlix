@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\TheLoaiPhimController;
 use App\Http\Controllers\Admin\LoaiPhongController;
 use App\Http\Controllers\Admin\RapphimController;
 use App\Http\Controllers\Admin\CauHinhController;
+use App\Http\Controllers\Admin\DinhDangPhimController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -46,6 +47,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     // Quản lý thể loại phim
     Route::resource('the-loai-phim', TheLoaiPhimController::class);
+    // Quản lý định dạng phim
+    Route::resource('dinh-dang-phim', DinhDangPhimController::class);
 
     // Các chức năng xóa mềm cho quản lý phim
     Route::prefix('phim')->name('phim.')->group(function () {

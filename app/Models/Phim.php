@@ -18,6 +18,7 @@ class Phim extends Model
         'dien_vien',
         'thoi_luong',
         'ngay_phat_hanh',
+        'ngay_ket_thuc',
         'trailer',
         'poster',
         'ngon_ngu',
@@ -28,6 +29,7 @@ class Phim extends Model
 
     protected $casts = [
         'ngay_phat_hanh' => 'date',
+        'ngay_ket_thuc' => 'date',
         'thoi_luong' => 'integer',
     ];
 
@@ -37,5 +39,10 @@ class Phim extends Model
     public function theLoais(): BelongsToMany
     {
         return $this->belongsToMany(TheLoaiPhim::class, 'phim_the_loais', 'phim_id', 'the_loai_phim_id');
+    }
+
+    public function dinhDangs(): BelongsToMany
+    {
+        return $this->belongsToMany(DinhDangPhim::class, 'phim_dinh_dangs', 'phim_id', 'dinh_dang_phim_id');
     }
 }
