@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\KhuyenMai;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -17,9 +18,15 @@ class ChiNhanh extends Model
         'quan_ly_id',
         'trang_thai',
     ];
-public function RapPhim()
-{
-    return $this->hasMany(RapPhim::class, 'chi_nhanh_id');
-}
 
+    // Quan hệ với khuyến mãi thông qua bảng trung gian
+    public function khuyenMais()
+    {
+        return $this->belongsToMany(KhuyenMai::class, 'khuyen_mai_chi_nhanhs', 'chi_nhanh_id', 'khuyen_mai_id')
+            ->withTimestamps('created_at', 'updated_at');
+    }
+    public function RapPhim()
+    {
+        return $this->hasMany(RapPhim::class, 'chi_nhanh_id');
+    }
 }

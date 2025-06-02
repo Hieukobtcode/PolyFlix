@@ -28,25 +28,35 @@ class RapphimController extends Controller
 
     public function create()
     {
-        $chiNhanhs = ChiNhanh::all();
-        return view('admin.rap-phim.create', compact('chiNhanhs'));
+        $id = request()->chiNhanhId;
+        $chiNhanh = ChiNhanh::findOrFail($id);
+        return view('admin.rap-phim.create', compact('chiNhanh'));
     }
+
 
     public function store(Request $request)
     {
-        $request->validate([
-            'chi_nhanh_id' => 'required|exists:chi_nhanhs,id',
+        $validated = $request->validate([
             'ten_rap' => 'required|string|max:255',
             'dia_chi' => 'required|string',
-            'so_dien_thoai' => 'required|string',
-            'email' => 'required|email|unique:rap_phims,email',
             'trang_thai' => 'required|in:đang hoạt động,bảo trì,đã đóng',
+            'chi_nhanh_id' => 'required|exists:chi_nhanhs,id',
         ]);
 
-        RapPhim::create($request->all());
+        RapPhim::create($validated);
 
-        return redirect()->route('admin.rap-phim.index')->with('success', 'Thêm rạp chiếu thành công');
+        return redirect()
+            ->route('admin.chi-nhanh.show', ['chi_nhanh' => $validated['chi_nhanh_id']])
+            ->with('success', 'Thêm rạp chiếu thành công');
     }
+
+    public function show($id)
+    {
+        $rapPhim = RapPhim::with(['phongChieus'])->findOrFail($id);
+
+        return view('admin.rap-phim.show', compact('rapPhim'));
+    }
+
 
     public function edit($id)
     {
@@ -62,15 +72,15 @@ class RapphimController extends Controller
             'chi_nhanh_id' => 'required|exists:chi_nhanhs,id',
             'ten_rap' => 'required|string|max:255',
             'dia_chi' => 'required|string',
-            'so_dien_thoai' => 'required|string',
-            'email' => 'required|email|unique:rap_phims,email,' . $id,
             'trang_thai' => 'required|in:đang hoạt động,bảo trì,đã đóng',
         ]);
 
         $rapPhim = RapPhim::findOrFail($id);
         $rapPhim->update($request->all());
 
-        return redirect()->route('admin.rap-phim.index')->with('success', 'Cập nhật rạp chiếu thành công');
+
+        return redirect()->route('admin.chi-nhanh.show',$rapPhim->chi_nhanh_id)->with('success', 'Cập nhật rạp chiếu thành công');
+
     }
 
     public function destroy($id)

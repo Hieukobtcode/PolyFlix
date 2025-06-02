@@ -8,24 +8,35 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class RapPhim extends Model
 {
-    //
     use HasFactory, SoftDeletes;
 
-    protected $table = 'rap_phims'; // Tên bảng
+    protected $table = 'rap_phims';
 
     protected $fillable = [
         'chi_nhanh_id',
         'ten_rap',
         'dia_chi',
-        'so_dien_thoai',
-        'email',
-        'trang_thai',      
+        'trang_thai',
+        'quan_ly_id',
     ];
-    
-       public function chiNhanh()
+
+    protected $dates = ['deleted_at'];
+
+
+    // Quan hệ với chi nhánh
+    public function chiNhanh()
     {
         return $this->belongsTo(ChiNhanh::class, 'chi_nhanh_id');
     }
-    protected $dates = ['delete_at'];// đảm bảo laravel hiểu đây là kiểu ngày tháng
 
+    // Quan hệ với người quản lý (giả sử là model User)
+    // public function quanLy()
+    // {
+    //     return $this->belongsTo(User::class, 'quan_ly_id');
+    // }
+
+    public function phongChieus()
+    {
+        return $this->hasMany(PhongChieu::class, 'rap_phim_id');
+    }
 }

@@ -19,8 +19,7 @@ return new class extends Migration
             $table->text('so_dien_thoai');
             $table->string('email', 255)->unique();
             $table->enum('trang_thai', ['đang hoạt động', 'bảo trì', 'đã đóng']); // ENUM trạng thái
-            $table->softDeletes(); // hỗ trợ soft delete
-
+            $table->softDeletes(); 
             $table->timestamps();
             $table->foreign('chi_nhanh_id')->references('id')->on('chi_nhanhs')->onDelete('cascade');
         });
