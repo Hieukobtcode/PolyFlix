@@ -21,6 +21,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'avatar', 
+        'role_id'
     ];
 
     /**
@@ -44,5 +46,23 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+    
+    // Quan hệ 1 user thuộc 1 vai trò
+    public function vaiTro()
+    {
+        return $this->belongsTo(VaiTro::class, 'role_id');
+    }
+
+    // Lấy các quyền thông qua vai trò
+    public function phanQuyens()
+    {
+        return $this->vaiTro ? $this->vaiTro->phanQuyens() : collect();
+    }
+
+    // Kiểm tra quyền theo slug
+    public function coQuyen($slug)
+    {
+        return $this->phanQuyens()->contains('slug', $slug);
     }
 }
