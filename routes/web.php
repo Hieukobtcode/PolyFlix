@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\TheLoaiPhimController;
 use App\Http\Controllers\Admin\LoaiPhongController;
 use App\Http\Controllers\Admin\RapphimController;
 use App\Http\Controllers\Admin\CauHinhController;
+use App\Http\Controllers\Admin\DinhDangPhimController;
 use App\Http\Controllers\Admin\GheNgoiController;
 use App\Http\Controllers\Admin\PhongChieuController;
 use App\Http\Controllers\Admin\LoaiGheController;
@@ -65,6 +66,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     // Quản lý thể loại phim
     Route::resource('the-loai-phim', TheLoaiPhimController::class);
+    // Quản lý định dạng phim
+    Route::resource('dinh-dang-phim', DinhDangPhimController::class);
 
     // Quản lý phim và chức năng xóa mềm
     Route::prefix('phim')->name('phim.')->group(function () {
@@ -115,6 +118,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     // Quản lý cấp bậc thẻ thành viên
     Route::resource('cap-bac-the', CapBacTheController::class);
+    // Route đặt cấp bậc thẻ làm mặc định
+    Route::put('cap-bac-the/{capBacThe}/set-default', [CapBacTheController::class, 'setDefault'])
+        ->name('cap-bac-the.set-default');
+});
     Route::put('cap-bac-the/{capBacThe}/set-default', [CapBacTheController::class, 'setDefault'])->name('cap-bac-the.set-default');
 
     // Quản lý khuyến mãi

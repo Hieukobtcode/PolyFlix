@@ -47,7 +47,7 @@
                 <div class="row g-4">
                     <div class="col-md-4">
                         <div class="text-center mb-4">
-                            @if($phim->poster)
+                            @if ($phim->poster)
                                 <img src="{{ asset('storage/' . $phim->poster) }}" alt="{{ $phim->ten_phim }}"
                                     class="img-fluid img-thumbnail rounded" style="max-height: 400px;">
                             @else
@@ -70,6 +70,17 @@
                         </div>
 
                         <div class="mb-4">
+                            <h5 class="fw-bold">Định dạng</h5>
+                            <div>
+                                @forelse($phim->dinhDangs as $dinhDang)
+                                    <span class="badge bg-info rounded-pill me-1">{{ $dinhDang->ten_dinh_dang }}</span>
+                                @empty
+                                    <span class="text-muted">Chưa có định dạng</span>
+                                @endforelse
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
                             <h5 class="fw-bold">Thông tin cơ bản</h5>
                             <ul class="list-group list-group-flush">
                                 <li class="list-group-item d-flex justify-content-between align-items-center">
@@ -81,12 +92,17 @@
                                     <span>{{ $phim->ngay_phat_hanh ? $phim->ngay_phat_hanh->format('d/m/Y') : 'N/A' }}</span>
                                 </li>
                                 <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span class="fw-semibold text-muted">Ngày kết thúc:</span>
+                                    <span>{{ $phim->ngay_ket_thuc ? $phim->ngay_ket_thuc->format('d/m/Y') : 'N/A' }}</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
                                     <span class="fw-semibold text-muted">Ngôn ngữ:</span>
                                     <span>{{ $phim->ngon_ngu ?? 'N/A' }}</span>
                                 </li>
                                 <li class="list-group-item d-flex justify-content-between align-items-center">
                                     <span class="fw-semibold text-muted">Quốc gia:</span>
                                     <span>{{ $phim->quoc_gia ?? 'N/A' }}</span>
+                                </li>
                                 </li>
                                 <li class="list-group-item d-flex justify-content-between align-items-center">
                                     <span class="fw-semibold text-muted">Độ tuổi:</span>
@@ -95,11 +111,13 @@
                                 <li class="list-group-item d-flex justify-content-between align-items-center">
                                     <span class="fw-semibold text-muted">Trạng thái:</span>
                                     <span
-                                        class="badge rounded-pill {{
-        $phim->trang_thai === 'đang chiếu' ? 'bg-success' :
-        ($phim->trang_thai === 'sắp chiếu' ? 'bg-warning' :
-            ($phim->trang_thai === 'đã kết thúc' ? 'bg-secondary' : 'bg-danger'))
-                                                                                                                                                                            }}">
+                                        class="badge rounded-pill {{ $phim->trang_thai === 'đang chiếu'
+                                            ? 'bg-success'
+                                            : ($phim->trang_thai === 'sắp chiếu'
+                                                ? 'bg-warning'
+                                                : ($phim->trang_thai === 'đã kết thúc'
+                                                    ? 'bg-secondary'
+                                                    : 'bg-danger')) }}">
                                         {{ ucfirst($phim->trang_thai) }}
                                     </span>
                                 </li>
@@ -126,7 +144,7 @@
                             </div>
                         </div>
 
-                        @if($phim->trailer)
+                        @if ($phim->trailer)
                             <div class="mb-4">
                                 <h5 class="fw-bold">Trailer</h5>
                                 <div class="ratio ratio-16x9">
@@ -146,8 +164,8 @@
                                             $embedUrl = $trailerUrl;
                                         }
                                     @endphp
-                                    <iframe src="{{ $embedUrl }}" title="Trailer {{ $phim->ten_phim }}" class="rounded"
-                                        allowfullscreen></iframe>
+                                    <iframe src="{{ $embedUrl }}" title="Trailer {{ $phim->ten_phim }}"
+                                        class="rounded" allowfullscreen></iframe>
                                 </div>
                             </div>
                         @endif

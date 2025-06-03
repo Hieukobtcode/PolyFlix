@@ -102,7 +102,6 @@
                 Nội dung hiển thị
             </a>
             <ul class="nav-group-items compact">
-
                 <li class="nav-item"><a class="nav-link" href="{{ route('admin.bai-viet.index') }}">Bài viết</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('admin.banners.index') }}">Banners</a></li>
             </ul>
@@ -116,5 +115,4 @@
             </a>
         </li>
     </ul>
-
 </div>
