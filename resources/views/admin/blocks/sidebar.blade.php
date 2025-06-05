@@ -107,6 +107,20 @@
                 <li class="nav-item"><a class="nav-link" href="{{ route('admin.banners.index') }}">Banners</a></li>
             </ul>
         </li>
+        {{-- Quản lý đồ ăn --}}
+        <li class="nav-group">
+            <a class="nav-link nav-group-toggle" href="#">
+                <svg class="nav-icon">
+                    <use xlink:href="{{ asset('dist/vendors/@coreui/icons/svg/free.svg#cil-restaurant') }}"></use>
+                </svg>
+                Quản lý đồ ăn
+            </a>
+            <ul class="nav-group-items compact">
+                <li class="nav-item"><a class="nav-link" href="{{ route('admin.do-an.index') }}">Đồ ăn</a>
+                </li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('admin.combos.index') }}">Combo</a></li>
+            </ul>
+        </li>
 
         {{-- Liên hệ --}}
         <li class="nav-item">

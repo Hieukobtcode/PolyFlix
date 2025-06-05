@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Admin\ComboController;
+use App\Http\Controllers\Admin\DoAnController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
 
@@ -123,4 +125,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('thong-ke-su-dung', [KhuyenMaiController::class, 'thongKeSuDung'])->name('thong-ke-su-dung');
     });
     Route::resource('khuyen-mai', KhuyenMaiController::class);
+
+    // Quản lý combo
+    Route::resource('combos', ComboController::class);
+
+    // Quản lý đồ ăn
+    Route::resource('do-an', DoAnController::class);
 });
