@@ -140,18 +140,6 @@
                                             <i class="fas fa-edit"></i>
                                         </a>
 
-                                        <!-- Delete -->
-                                        <form action="{{ route('admin.chi-nhanh.destroy', $chiNhanh->id) }}" method="POST"
-                                            class="d-inline">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-outline-danger"
-                                                data-bs-toggle="tooltip" data-bs-placement="top" title="Xóa chi nhánh"
-                                                onclick="return confirm('Bạn có chắc chắn muốn xóa chi nhánh này?')">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </form>
-
                                         <!-- Add Cinema -->
                                         <a href="{{ route('admin.rap-phim.create', ['chiNhanhId' => $chiNhanh->id]) }}"
                                             class="btn btn-sm btn-outline-success" title="Thêm rạp chiếu"

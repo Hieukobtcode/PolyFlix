@@ -7,12 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 class GheNgoi extends Model
 {
     protected $table = 'ghe_ngois';
-
+    public $timestamps = true;
     protected $fillable = [
         'phong_chieu_id',
-        'loai_ghe_id',
-        'so_hang',
-        'so_cot',
+        'loai_ghe',
+        'hang',
+        'cot',
         'ma_ghe',
         'trang_thai',
     ];

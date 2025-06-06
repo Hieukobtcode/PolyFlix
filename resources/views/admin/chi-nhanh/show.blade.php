@@ -177,20 +177,10 @@
                                                         class="btn btn-sm btn-outline-primary" title="Sửa">
                                                         <i class="fas fa-edit"></i>
                                                     </a>
-                                                    <form action="{{ route('admin.rap-phim.destroy', $rap->id) }}"
-                                                        method="POST" class="d-inline">
-                                                        @csrf @method('DELETE')
-                                                        <button type="submit" class="btn btn-sm btn-outline-danger"
-                                                            onclick="return confirm('Xóa rạp này?')">
-                                                            <i class="fas fa-trash"></i>
-                                                        </button>
-                                                    </form>
                                                     <a href="{{ route('admin.phong-chieu.create', ['rap_phim_id' => $rap->id]) }}"
                                                         class="btn btn-sm btn-outline-success" title="Thêm phòng">
                                                         <i class="fas fa-plus-circle"></i>
                                                     </a>
-
-                                                    {{-- Nút phân công hoặc thay đổi quản lý --}}
                                                     @if ($rap->quan_ly_id)
                                                         <a href="#" class="btn btn-sm btn-outline-warning"
                                                             title="Xem thông tin">

@@ -103,6 +103,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
     // Quản lý ghế ngồi
     Route::resource('ghe-ngoi', GheNgoiController::class);
 
+    Route::post('ghe-ngoi/updateSeat', [GheNgoiController::class, 'updateSeat'])
+        ->name('ghe-ngoi.updateSeat'); 
+
+
     // Quản lý cấp bậc thẻ thành viên
     Route::resource('cap-bac-the', CapBacTheController::class);
     Route::put('cap-bac-the/{capBacThe}/set-default', [CapBacTheController::class, 'setDefault'])->name('cap-bac-the.set-default');
