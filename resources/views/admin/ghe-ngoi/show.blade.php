@@ -264,6 +264,7 @@
                                             'thuong' => 'thuong',
                                             'vip' => 'vip',
                                             'doi' => 'doi',
+                                            default => 'empty',
                                         };
                                     @endphp
 
@@ -273,7 +274,7 @@
                                             data-seat="{{ $maGhe }}">
                                             <i class="fa-solid fa-couch"></i>
                                             <span class="seat-code">{{ $maGhe }}</span>
-                                        </div>
+                                        </div>  
                                     @else
                                         <div class="seat-wrapper empty"></div>
                                     @endif
