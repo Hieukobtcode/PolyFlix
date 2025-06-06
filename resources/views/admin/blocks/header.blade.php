@@ -1,4 +1,5 @@
 <header class="header header-sticky p-0 mb-4">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <div class="container-fluid border-bottom px-4">
         <button class="header-toggler" type="button"
             onclick="coreui.Sidebar.getInstance(document.querySelector('#sidebar')).toggle()"

@@ -9,22 +9,21 @@ class SoDoGhe extends Model
     protected $table = 'so_do_ghes';
 
     protected $fillable = [
-        'ten_so_do',
+        'phong_chieu_id',
         'cau_truc_ghe',
         'so_hang_thuong',
         'so_hang_vip',
         'so_hang_doi',
-        'mo_ta',
-        'trang_thai',
+        'so_ghe',
+        'trang_thai'
     ];
 
     protected $casts = [
         'cau_truc_ghe' => 'array',
-        'trang_thai'   => 'boolean',
     ];
 
-    public function phongChieus()
+    public function phongChieu()
     {
-        return $this->hasMany(PhongChieu::class);
+        return $this->belongsTo(PhongChieu::class, 'phong_chieu_id', 'id');
     }
 }
