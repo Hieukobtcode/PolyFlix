@@ -43,6 +43,18 @@
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
+                    <div class="mb-3">
+    <label class="form-label">Chọn chi nhánh</label>
+    <select id="select-chi-nhanh" class="form-select">
+        <option value="">-- Chọn chi nhánh --</option>
+        @foreach ($chiNhanhs as $cn)
+            <option value="{{ $cn->id }}" data-ten="{{ $cn->ten_chi_nhanh }}">{{ $cn->ten_chi_nhanh }}</option>
+        @endforeach
+    </select>
+</div>
+
+<div id="danh-sach-chi-nhanh"></div>
+<div id="hidden-chi-nhanh-inputs"></div>
 
                     <div class="mb-3">
                         <label class="form-label">Giá (VNĐ)</label>
@@ -97,7 +109,7 @@
     </div>
 @endsection
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
         const select = document.getElementById('select-mon-an');
         const foodList = document.getElementById('selected-food-list');
         const selectedInputs = document.getElementById('selected-inputs');
@@ -110,7 +122,7 @@
             giaInput.value = tongGia.toFixed(0);
         }
 
-        select.addEventListener('change', function () {
+        select.addEventListener('change', function() {
             const option = select.options[select.selectedIndex];
             const id = option.value;
             const ten = option.dataset.ten;
@@ -144,7 +156,7 @@
         });
 
         // Sự kiện xóa món
-        foodList.addEventListener('click', function (e) {
+        foodList.addEventListener('click', function(e) {
             if (e.target.classList.contains('btn-xoa-mon')) {
                 const id = e.target.dataset.id;
                 const gia = parseFloat(e.target.dataset.gia) || 0;
@@ -162,6 +174,51 @@
                 tongGia -= gia;
                 capNhatGia();
             }
+        });
+    });
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const selectChiNhanh = document.getElementById('select-chi-nhanh');
+        const danhSachChiNhanh = document.getElementById('danh-sach-chi-nhanh');
+        const hiddenInputs = document.getElementById('hidden-chi-nhanh-inputs');
+        const selectedIds = new Set();
+
+        selectChiNhanh.addEventListener('change', function () {
+            const selectedOption = this.options[this.selectedIndex];
+            const id = selectedOption.value;
+            const ten = selectedOption.dataset.ten;
+
+            if (!id || selectedIds.has(id)) return;
+
+            selectedIds.add(id);
+            selectedOption.disabled = true;
+            this.value = '';
+
+            const div = document.createElement('div');
+            div.classList.add('d-flex', 'align-items-center', 'mb-2');
+            div.dataset.id = id;
+            div.innerHTML = `
+                <span class="me-2">${ten}</span>
+                <button type="button" class="btn btn-sm btn-danger">Xóa</button>
+            `;
+
+            div.querySelector('button').addEventListener('click', () => {
+                selectedIds.delete(id);
+                div.remove();
+                document.getElementById('input-chi_nhanh-' + id)?.remove();
+                const option = selectChiNhanh.querySelector(`option[value="${id}"]`);
+                if (option) option.disabled = false;
+            });
+
+            danhSachChiNhanh.appendChild(div);
+
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'chi_nhanh_ids[]';
+            input.value = id;
+            input.id = 'input-chi_nhanh-' + id;
+            hiddenInputs.appendChild(input);
         });
     });
 </script>
