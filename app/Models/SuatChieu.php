@@ -1,0 +1,55 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+
+
+class SuatChieu extends Model
+{
+    use HasFactory;
+
+    protected $table = 'suat_chieus';
+
+    protected $fillable = [
+        'phim_id',
+        'chi_nhanh_id',
+        'rap_phim_id',
+        'phong_chieu_id',
+        'phien_ban_phim',
+        'ngay_chieu',
+        'bat_dau',
+        'ket_thuc',
+        'trang_thai',
+    ];
+
+    // protected $casts = [
+    //     'trang_thai' => 'boolean',
+
+    // ];
+
+    // Quan hệ với model Phim
+    public function phim()
+    {
+        return $this->belongsTo(Phim::class);
+    }
+
+    // Quan hệ với model ChiNhanh
+    public function chiNhanh()
+    {
+        return $this->belongsTo(ChiNhanh::class);
+    }
+
+    // Quan hệ với model RapPhim (nullable)
+    public function rapPhim()
+    {
+        return $this->belongsTo(RapPhim::class);
+    }
+
+    // Quan hệ với model PhongChieu
+    public function phongChieu()
+    {
+        return $this->belongsTo(PhongChieu::class);
+    }
+}

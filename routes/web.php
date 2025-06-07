@@ -24,6 +24,7 @@ use App\Http\Controllers\Admin\SoDoGheController;
 use App\Http\Controllers\Admin\KhuyenMaiController;
 use App\Http\Controllers\Admin\CapBacTheController;
 use App\Http\Controllers\Admin\PhanQuyenController;
+use App\Http\Controllers\Admin\SuatChieuController;
 
 // Trang welcome
 Route::get('/', function () {
@@ -58,6 +59,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     // Quản lý thể loại phim
     Route::resource('the-loai-phim', TheLoaiPhimController::class);
+
     // Quản lý định dạng phim
     Route::resource('dinh-dang-phim', DinhDangPhimController::class);
 
@@ -71,32 +73,42 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     // Quản lý bài viết
     Route::resource('bai-viet', BaiVietController::class);
+
     // Quản lý chi nhánh
     Route::resource('chi-nhanh', ChiNhanhController::class);
+
     // Quản lý vai trò
     Route::resource('vai-tro', VaiTroController::class);
+
     // Quản lý phân quyền
     Route::resource('phan-quyen', PhanQuyenController::class);
+
     // Quản lý banners
     Route::resource('banners', BannerController::class);
+
     // Quản lý loại phòng
     Route::resource('loai-phong', LoaiPhongController::class);
+
     // Quản lý rạp phim
     Route::resource('rap-phim', RapphimController::class);
-    // Quản lý phòng chiếu
-    Route::resource('phong-chieu', PhongChieuController::class);
-    // Quản lý loại ghế
-    Route::resource('loai-ghe', LoaiGheController::class);
-    // Quản lý sơ đồ ghế
-    Route::resource('so-do-ghe', SoDoGheController::class);
-    // Quản lý ghế ngồi
-    Route::resource('ghe-ngoi', GheNgoiController::class);
-    Route::post('ghe-ngoi/updateSeat', [GheNgoiController::class, 'updateSeat'])->name('ghe-ngoi.updateSeat');
 
     // Quản lý cấu hình
     Route::get('cau-hinh', [CauHinhController::class, 'index'])->name('cau-hinh.index');
     Route::get('cau-hinh/edit', [CauHinhController::class, 'edit'])->name('cau-hinh.edit');
     Route::post('cau-hinh/update', [CauHinhController::class, 'update'])->name('cau-hinh.update');
+
+    // Quản lý phòng chiếu
+    Route::resource('phong-chieu', PhongChieuController::class);
+
+    // Quản lý loại ghế
+    Route::resource('loai-ghe', LoaiGheController::class);
+
+    // Quản lý sơ đồ ghế
+    Route::resource('so-do-ghe', SoDoGheController::class);
+
+    // Quản lý ghế ngồi
+    Route::resource('ghe-ngoi', GheNgoiController::class);
+    Route::post('ghe-ngoi/updateSeat', [GheNgoiController::class, 'updateSeat'])->name('ghe-ngoi.updateSeat');
 
     // Quản lý cấp bậc thẻ thành viên
     Route::resource('cap-bac-the', CapBacTheController::class);
@@ -108,6 +120,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('thong-ke-su-dung', [KhuyenMaiController::class, 'thongKeSuDung'])->name('thong-ke-su-dung');
     });
     Route::resource('khuyen-mai', KhuyenMaiController::class);
+
+    // Quản lý suất chiếu
+    Route::resource('suat-chieu', SuatChieuController::class);
 
     // Quản lý combo
     Route::resource('combos', ComboController::class);
