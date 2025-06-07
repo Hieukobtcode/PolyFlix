@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Admin\ComboController;
+use App\Http\Controllers\Admin\DoAnController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
 
@@ -23,6 +25,7 @@ use App\Http\Controllers\Admin\KhuyenMaiController;
 use App\Http\Controllers\Admin\CapBacTheController;
 use App\Http\Controllers\Admin\PhanQuyenController;
 use App\Http\Controllers\Admin\SuatChieuController;
+
 // Trang welcome
 Route::get('/', function () {
     return view('welcome');
@@ -39,12 +42,11 @@ Route::get('/check-data', function () {
 
 // Group route cho admin
 Route::prefix('admin')->name('admin.')->group(function () {
-
     Route::get('/', function () {
         return redirect()->route('admin.lien-he.index');
     })->name('dashboard');
 
-    // Các chức năng bổ sung cho quản lý liên hệ
+    // Quản lý liên hệ
     Route::prefix('lien-he')->name('lien-he.')->group(function () {
         Route::get('dashboard', [LienHeController::class, 'dashboard'])->name('dashboard');
         Route::get('export', [LienHeController::class, 'export'])->name('export');
@@ -53,20 +55,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('{lienHe}/send-email', [LienHeController::class, 'sendEmail'])->name('send-email');
         Route::post('bulk-action', [LienHeController::class, 'bulkAction'])->name('bulk-action');
     });
-
-    // Quản lý liên hệ
     Route::resource('lien-he', LienHeController::class)->names('lien-he');
-    // Route::prefix('lien-he')->name('lien-he.')->group(function () {
-    //     Route::get('dashboard', [LienHeController::class, 'dashboard'])->name('dashboard');
-    //     Route::get('export', [LienHeController::class, 'export'])->name('export');
-    //     Route::post('{lienHe}/notes', [LienHeController::class, 'addNote'])->name('add-note');
-    //     Route::patch('{lienHe}/status', [LienHeController::class, 'updateStatus'])->name('update-status');
-    //     Route::post('{lienHe}/send-email', [LienHeController::class, 'sendEmail'])->name('send-email');
-    //     Route::post('bulk-action', [LienHeController::class, 'bulkAction'])->name('bulk-action');
-    // });
 
     // Quản lý thể loại phim
     Route::resource('the-loai-phim', TheLoaiPhimController::class);
+
     // Quản lý định dạng phim
     Route::resource('dinh-dang-phim', DinhDangPhimController::class);
 
@@ -87,7 +80,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
     // Quản lý vai trò
     Route::resource('vai-tro', VaiTroController::class);
 
-
     // Quản lý phân quyền
     Route::resource('phan-quyen', PhanQuyenController::class);
 
@@ -104,6 +96,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('cau-hinh', [CauHinhController::class, 'index'])->name('cau-hinh.index');
     Route::get('cau-hinh/edit', [CauHinhController::class, 'edit'])->name('cau-hinh.edit');
     Route::post('cau-hinh/update', [CauHinhController::class, 'update'])->name('cau-hinh.update');
+
     // Quản lý phòng chiếu
     Route::resource('phong-chieu', PhongChieuController::class);
 
@@ -115,12 +108,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     // Quản lý ghế ngồi
     Route::resource('ghe-ngoi', GheNgoiController::class);
+    Route::post('ghe-ngoi/updateSeat', [GheNgoiController::class, 'updateSeat'])->name('ghe-ngoi.updateSeat');
 
     // Quản lý cấp bậc thẻ thành viên
     Route::resource('cap-bac-the', CapBacTheController::class);
-    // Route đặt cấp bậc thẻ làm mặc định
-    Route::put('cap-bac-the/{capBacThe}/set-default', [CapBacTheController::class, 'setDefault'])
-        ->name('cap-bac-the.set-default');
+    Route::put('cap-bac-the/{capBacThe}/set-default', [CapBacTheController::class, 'setDefault'])->name('cap-bac-the.set-default');
 
     // Quản lý khuyến mãi
     Route::prefix('khuyen-mai')->name('khuyen-mai.')->group(function () {
@@ -131,4 +123,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     // Quản lý suất chiếu
     Route::resource('suat-chieu', SuatChieuController::class);
+
+    // Quản lý combo
+    Route::resource('combos', ComboController::class);
+
+    // Quản lý đồ ăn
+    Route::resource('do-an', DoAnController::class);
 });

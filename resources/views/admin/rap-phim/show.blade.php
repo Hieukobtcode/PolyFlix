@@ -1,5 +1,4 @@
 @extends('layouts.admin')
-
 @section('title', 'Chi tiết rạp chiếu')
 @section('page-title', 'Chi tiết rạp chiếu')
 @section('breadcrumb', 'Chi tiết rạp chiếu')
@@ -20,7 +19,8 @@
 @section('content')
     <div class="container-fluid">
         <div class="row g-3">
-            {{-- Cột trái: Thông tin rạp --}}
+
+            {{-- Cột trái --}}
             <div class="col-md-3">
                 <div class="card shadow-sm border-0 h-100">
                     <div class="card-header bg-primary text-white py-2">
@@ -75,21 +75,21 @@
                 </div>
             </div>
 
-            {{-- Cột phải: Danh sách phòng chiếu --}}
+            {{-- Cột phải --}}
             <div class="col-md-9">
                 <div class="card shadow-sm border-0">
                     <div class="card-header bg-primary text-white py-2 d-flex justify-content-between align-items-center">
                         <strong><i class="fas fa-door-open me-1"></i> Phòng Chiếu</strong>
-
                         <a href="{{ route('admin.phong-chieu.create', ['rap_phim_id' => $rapPhim->id]) }}"
                             class="btn btn-light btn-sm d-flex align-items-center" title="Thêm phòng chiếu">
                             <i class="fas fa-plus me-1"></i> Thêm phòng chiếu
                         </a>
                     </div>
-
                     <div class="card-body p-3">
                         @if ($rapPhim->phongChieus->isEmpty())
-                            <p class="text-muted mb-0"><i class="fas fa-info-circle me-1"></i> Không có phòng chiếu nào.</p>
+                            <p class="text-muted mb-0">
+                                <i class="fas fa-info-circle me-1"></i> Không có phòng chiếu nào.
+                            </p>
                         @else
                             <div class="table-responsive">
                                 <table class="table table-bordered table-sm align-middle">
@@ -115,30 +115,31 @@
                                                         <span class="text-muted fst-italic">Chưa có</span>
                                                     @endif
                                                 </td>
-
                                                 <td class="text-center">
-                                                    <a href="{{ route('admin.phong-chieu.edit', $phong->id ) }}"
-                                                        class="btn btn-sm btn-outline-primary" title="Sửa">
+                                                    <a href="{{ route('admin.phong-chieu.edit', $phong->id) }}"
+                                                        class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip"
+                                                        data-bs-placement="top" title="Sửa phòng chiếu">
                                                         <i class="fas fa-edit"></i>
                                                     </a>
-
                                                     @if (is_null($phong->so_do_ghe_id))
-                                                        {{-- Nút tạo sơ đồ ghế --}}
-                                                        <a href="{{ route('admin.so-do-ghe.create', ['phong_chieu_id' => $phong->id]) }}"
-                                                            class="btn btn-sm btn-outline-success" title="Tạo sơ đồ ghế">
-                                                            <i class="fas fa-plus-square"></i>
+                                                        <a href="#" class="btn btn-sm btn-outline-success"
+                                                            data-bs-toggle="modal" data-bs-target="#modalSoDoGhe"
+                                                            data-id="{{ $phong->id }}"
+                                                            data-tenphong="{{ $phong->ten_phong }}" title="Thêm sơ đồ ghế">
+                                                            <i class="fas fa-plus-circle"></i>
                                                         </a>
                                                     @else
-                                                        {{-- Nút xem sơ đồ ghế --}}
-                                                        <a href="{{ route('admin.so-do-ghe.show', ['id' => $phong->so_do_ghe_id]) }}"
-                                                            class="btn btn-sm btn-outline-secondary" title="Xem sơ đồ ghế">
-                                                            <i class="fas fa-chair"></i>
+                                                        <a href="{{ route('admin.ghe-ngoi.show', $phong->id) }}" class="btn btn-sm btn-outline-secondary"
+                                                            data-bs-toggle="tooltip" title="Xem sơ đồ ghế"
+                                                            data-bs-placement="top">
+                                                           <i class="fa-solid fa-couch fa-spin-pulse"></i>
                                                         </a>
+
                                                     @endif
                                                 </td>
-
                                             </tr>
                                         @endforeach
+
                                     </tbody>
                                 </table>
                             </div>
@@ -148,4 +149,79 @@
             </div>
         </div>
     </div>
+
+    @include('admin.rap-phim.modal')
+
+@endsection
+@section('scripts')
+    <script>
+        document.querySelectorAll('[data-bs-toggle="modal"]').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const phongId = this.getAttribute('data-id');
+                const tenPhong = this.getAttribute('data-tenphong');
+
+                document.getElementById('modalSoDoGheLabel').innerHTML =
+                    `Tạo sơ đồ ghế cho phòng chiếu: ${tenPhong}`;
+                document.getElementById('phong_id').value = phongId;
+                document.getElementById('formSoDoGhe').reset();
+            });
+        });
+
+        document.getElementById('formSoDoGhe').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const form = this;
+
+            $.ajax({
+                url: form.action,
+                method: 'POST',
+                data: $(form).serialize() + '&_token=' + '{{ csrf_token() }}',
+                success: function(response) {
+                    $('#modalSoDoGhe').modal('hide');
+                    window.location.href = response.redirectUrl;
+                },
+                error: function(xhr) {
+                    var errors = xhr.responseJSON.errors;
+
+                    $('.text-danger').remove();
+
+                    for (var field in errors) {
+                        $('#' + field).after('<div class="text-danger">' + errors[field][0] + '</div>');
+                    }
+                }
+            });
+        });
+
+        document.getElementById('mau_so_do').addEventListener('change', function() {
+            const selectedOption = this.value;
+
+            if (selectedOption) {
+                const [rows, cols] = selectedOption.split('x');
+
+                document.getElementById('so_hang').value = rows;
+                document.getElementById('so_cot').value = cols;
+
+                updateLoaiGhe(rows);
+            } else {
+                document.getElementById('so_hang').value = "";
+                document.getElementById('so_cot').value = "";
+                document.getElementById('ghe_thuong').value = "";
+                document.getElementById('ghe_vip').value = "";
+                document.getElementById('ghe_doi').value = "";
+            }
+        });
+
+        function updateLoaiGhe(rows) {
+            const hangGheThuong = document.getElementById('ghe_thuong');
+            const hangGheVip = document.getElementById('ghe_vip');
+            const hangGheDoi = document.getElementById('ghe_doi');
+
+            const gheThuong = Math.ceil(rows * 50 / 100);
+            const gheVip = Math.ceil(rows * 30 / 100);
+            const gheDoi = rows - (gheThuong + gheVip);
+
+            hangGheThuong.value = gheThuong;
+            hangGheVip.value = gheVip;
+            hangGheDoi.value = gheDoi;
+        }
+    </script>
 @endsection

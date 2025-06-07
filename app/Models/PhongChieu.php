@@ -18,16 +18,23 @@ class PhongChieu extends Model
         'status',
     ];
 
-    public function rapPhim(){
+    public function rapPhim()
+    {
         return $this->belongsTo(RapPhim::class, 'rap_phim_id');
     }
 
-    public function loaiPhong(){
-        return $this->belongsTo(loaiPhong::class,'loai_phong_id');
+    public function loaiPhong()
+    {
+        return $this->belongsTo(loaiPhong::class, 'loai_phong_id');
     }
 
-      public function soDoGhe()
+    public function soDoGhe()
     {
-        return $this->belongsTo(SoDoGhe::class);
+        return $this->hasOne(SoDoGhe::class, 'phong_chieu_id', 'id');
+    }
+
+    public function gheNgois()
+    {
+        return $this->hasMany(GheNgoi::class, 'phong_chieu_id');
     }
 }

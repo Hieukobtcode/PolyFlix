@@ -6,63 +6,66 @@ use App\Http\Controllers\Controller;
 use App\Models\GheNgoi;
 use App\Models\LoaiGhe;
 use App\Models\PhongChieu;
+use App\Models\RapPhim;
 use App\Models\SoDoGhe;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
 class GheNgoiController extends Controller
 {
-    public function index()
-    {
-        $gheNgois = GheNgoi::with('phongChieu', 'loaiGhe')->paginate(20);
-        return view('admin.ghe-ngoi.index', compact('gheNgois'));
-    }
-
-    public function create()
-    {
-        $phongChieus = PhongChieu::all();
-        $loaiGhes = LoaiGhe::all();
-        return view('admin.ghe-ngoi.create', compact('phongChieus', 'loaiGhes'));
-    }
-
-    public function createBySoDoGhe($soDoGheId)
-    {
-        $soDo = SoDoGhe::findOrFail($soDoGheId);
-        $loaiGhes = LoaiGhe::all();
-
-        $soHang = $soDo->so_hang;
-        $soCot = $soDo->so_cot;
-
-        return view('admin.ghe-ngoi.create-by-so-do', compact('soDo', 'loaiGhes', 'soHang', 'soCot'));
-    }
 
     public function store(Request $request)
     {
-        $request->validate([
-            'phong_chieu_id' => 'required|exists:phong_chieus,id',
-            'loai_ghe_id' => 'nullable|exists:loai_ghes,id',
-            'so_hang' => 'required|string|max:2',
-            'so_cot' => 'required|integer|min:1',
-            'ma_ghe' => [
-                'required',
-                'string',
-                'max:10',
-                Rule::unique('ghe_ngois')->where(function ($query) use ($request) {
-                    return $query->where('phong_chieu_id', $request->phong_chieu_id);
-                }),
-            ],
-            'trang_thai' => 'required|in:sẵn sàng,đã giữ,đã đặt,không dùng',
-        ]);
+        $soDoGheId = $request->soDoGheId;
+        $soDoGhe = SoDoGhe::findOrFail($soDoGheId);
+        $phongChieuId = $request->input('phong_chieu_id');
+        $phongChieu = PhongChieu::findOrFail($phongChieuId);
+        $rapPhimId = $phongChieu->rap_phim_id;
+        $seatDataJson = $request->input('seat_data');
+        $seatData = json_decode($seatDataJson, true);
+        foreach ($seatData as $seat) {
+            GheNgoi::create([
+                'phong_chieu_id' => $phongChieuId,
+                'loai_ghe' => $seat['loai'],
+                'hang' => $seat['row'],
+                'cot' => $seat['col'],
+                'ma_ghe' => $seat['row'] . $seat['col'],
+            ]);
+        }
 
-        GheNgoi::create($request->all());
+        $soDoGhe->trang_thai = 0;
+        $soDoGhe->save();
+        $soGhe = GheNgoi::where('phong_chieu_id',$phongChieuId)->count();
+        $phongChieu->so_ghe = $soGhe;
+        $phongChieu->save();
 
-        return redirect()->route('admin.ghe-ngoi.index')->with('success', 'Thêm ghế thành công');
+
+        return redirect()
+            ->route('admin.rap-phim.show', $rapPhimId)
+            ->with('success', 'Thêm sơ đồ ghế thành công cho phòng chiếu ' . $phongChieu->ten_phong);
     }
 
     public function show($id)
     {
-        $ghe = GheNgoi::with('phongChieu', 'loaiGhe')->findOrFail($id);
-        return view('admin.ghe-ngoi.show', compact('ghe'));
+        $phongChieu = PhongChieu::findOrfail($id);
+        $phongChieuId = $phongChieu->id;
+        $soDoGhe = SoDoGhe::where('phong_chieu_id',$phongChieuId)->first();
+
+        if( $soDoGhe->trang_thai == 1 ){
+            return redirect()->route('admin.so-do-ghe.edit',$soDoGhe->id);
+        }
+
+        $gheGrouped = GheNgoi::where('phong_chieu_id', $id)
+            ->orderBy('hang')
+            ->orderBy('cot')
+            ->get()
+            ->groupBy('hang');
+        $soGhe = GheNgoi::where('loai_ghe', '!=', 'empty')
+            ->where('phong_chieu_id', $id)
+            ->count();
+        $gheGroupedArray = $gheGrouped->toArray();
+
+        return view('admin.ghe-ngoi.show', compact('gheGroupedArray', 'phongChieu', 'soGhe', 'phongChieuId','soDoGhe'));
     }
 
     public function edit($id)
@@ -73,30 +76,48 @@ class GheNgoiController extends Controller
         return view('admin.ghe-ngoi.edit', compact('ghe', 'phongChieus', 'loaiGhes'));
     }
 
-    public function update(Request $request, $id)
+    public function updateSeat(Request $request)
     {
-        $ghe = GheNgoi::findOrFail($id);
+        $phongChieuId = $request->phongChieuId;
 
-        $request->validate([
-            'phong_chieu_id' => 'required|exists:phong_chieus,id',
-            'loai_ghe_id' => 'nullable|exists:loai_ghes,id',
-            'so_hang' => 'required|string|max:2',
-            'so_cot' => 'required|integer|min:1',
-            'ma_ghe' => [
-                'required',
-                'string',
-                'max:10',
-                Rule::unique('ghe_ngois')->ignore($id)->where(function ($query) use ($request) {
-                    return $query->where('phong_chieu_id', $request->phong_chieu_id);
-                }),
-            ],
-            'trang_thai' => 'required|in:sẵn sàng,đã giữ,đã đặt,không dùng',
-        ]);
+        $seatsJson = $request->input('seats_json', '[]');
 
-        $ghe->update($request->all());
+        $seatsId = json_decode($seatsJson, true);
 
-        return redirect()->route('admin.ghe-ngoi.index')->with('success', 'Cập nhật ghế thành công');
+        print_r($seatsId);
+
+        if (!is_array($seatsId)) {
+            $seatsId = [];
+        }
+
+        $allSeats = GheNgoi::where('phong_chieu_id', $phongChieuId)->get();
+
+        $countSeats  = 0;
+        $seatReturn  = 0;
+
+        foreach ($allSeats as $seat) {
+            $isSelected = in_array($seat->id, $seatsId);
+
+            if ($isSelected) {
+                if ($seat->trang_thai !== 'bao_tri') {
+                    $seat->trang_thai = 'bao_tri';
+                    $seat->save();
+                    $countSeats++;
+                }
+            } else {
+                if ($seat->trang_thai === 'bao_tri') {
+                    $seat->trang_thai = 'trong';
+                    $seat->save();
+                    $seatReturn++;
+                }
+            }
+        }
+
+        return redirect()
+            ->route('admin.ghe-ngoi.show', $phongChieuId)
+            ->with('success', "Đã cập nhật: $countSeats ghế chuyển sang bảo trì, $seatReturn ghế được phục hồi.");
     }
+
 
     public function destroy($id)
     {
