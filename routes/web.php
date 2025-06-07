@@ -1,31 +1,53 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Route;
 
 // Controllers
-use App\Http\Controllers\Admin\BannerController;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Admin\PhimController;
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\SocialAuthController;
+use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\LienHeController;
 use App\Http\Controllers\Admin\VaiTroController;
 use App\Http\Controllers\Admin\BaiVietController;
-use App\Http\Controllers\Admin\ChiNhanhController;
-use App\Http\Controllers\Admin\TheLoaiPhimController;
-use App\Http\Controllers\Admin\LoaiPhongController;
-use App\Http\Controllers\Admin\RapphimController;
 use App\Http\Controllers\Admin\CauHinhController;
 use App\Http\Controllers\Admin\GheNgoiController;
-use App\Http\Controllers\Admin\PhongChieuController;
 use App\Http\Controllers\Admin\LoaiGheController;
+use App\Http\Controllers\Admin\RapphimController;
 use App\Http\Controllers\Admin\SoDoGheController;
-use App\Http\Controllers\Admin\KhuyenMaiController;
+use App\Http\Controllers\Admin\ChiNhanhController;
 use App\Http\Controllers\Admin\CapBacTheController;
+use App\Http\Controllers\Admin\KhuyenMaiController;
+use App\Http\Controllers\Admin\LoaiPhongController;
 use App\Http\Controllers\Admin\PhanQuyenController;
+use App\Http\Controllers\Admin\PhongChieuController;
+use App\Http\Controllers\Admin\TheLoaiPhimController;
 
 // Trang welcome
 Route::get('/', function () {
     return view('welcome');
-});
+})->name('home');
+
+// Đăng ký (client)
+Route::get('dang-ky', [AuthController::class, 'showRegisterForm'])->name('register.form');
+Route::post('dang-ky', [AuthController::class, 'register'])->name('register');
+
+// Đăng nhập (chung)
+Route::get('dang-nhap', [AuthController::class, 'showLoginForm'])->name('login.form');
+Route::post('dang-nhap', [AuthController::class, 'login'])->name('login');
+
+// GOOGLE
+Route::get('/auth/google', [SocialAuthController::class, 'redirectToGoogle'])->name('google.redirect');
+Route::get('/auth/google/callback', [SocialAuthController::class, 'handleGoogleCallback'])->name('google.callback');
+
+// FACEBOOK
+Route::get('/auth/facebook', [SocialAuthController::class, 'redirectToFacebook'])->name('facebook.redirect');
+Route::get('/auth/facebook/callback', [SocialAuthController::class, 'handleFacebookCallback'])->name('facebook.callback');
+
+// Đăng xuất
+Route::post('dang-xuat', [AuthController::class, 'logout'])->name('logout');
 
 // Route tạm kiểm tra dữ liệu
 Route::get('/check-data', function () {
@@ -37,7 +59,7 @@ Route::get('/check-data', function () {
 });
 
 // Group route cho admin
-Route::prefix('admin')->name('admin.')->group(function () {
+Route::prefix('admin')->middleware(['custom.auth', 'admin.access'])->name('admin.')->group(function () {
 
     Route::get('/', function () {
         return redirect()->route('admin.lien-he.index');
@@ -113,4 +135,5 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('thong-ke-su-dung', [KhuyenMaiController::class, 'thongKeSuDung'])->name('thong-ke-su-dung');
     });
     Route::resource('khuyen-mai', KhuyenMaiController::class);
+    Route::resource('users', UserController::class);
 });

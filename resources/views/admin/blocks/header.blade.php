@@ -97,7 +97,8 @@
                         </svg> Tasks<span class="badge badge-sm bg-danger ms-2">42</span></a><a class="dropdown-item"
                         href="#">
                         <svg class="icon me-2">
-                            <use xlink:href="{{ asset('dist/vendors/@coreui/icons/svg/free.svg#cil-comment-square') }}">
+                            <use
+                                xlink:href="{{ asset('dist/vendors/@coreui/icons/svg/free.svg#cil-comment-square') }}">
                             </use>
                         </svg> Comments<span class="badge badge-sm bg-warning ms-2">42</span></a>
                     <div class="dropdown-header bg-body-tertiary text-body-secondary fw-semibold my-2">
@@ -124,11 +125,16 @@
                         <svg class="icon me-2">
                             <use xlink:href="{{ asset('dist/vendors/@coreui/icons/svg/free.svg#cil-lock-locked') }}">
                             </use>
-                        </svg> Lock Account</a><a class="dropdown-item" href="#">
+                        </svg> Lock Account</a>
+                    <form class="dropdown-item" action="{{ route('logout') }}" method="POST">
+                        @csrf
                         <svg class="icon me-2">
-                            <use xlink:href="{{ asset('dist/vendors/@coreui/icons/svg/free.svg#cil-account-logout') }}">
+                            <use
+                                xlink:href="{{ asset('dist/vendors/@coreui/icons/svg/free.svg#cil-account-logout') }}">
                             </use>
-                        </svg> Logout</a>
+                        </svg> <button class="btn p-0 border-0 bg-transparent" type="submit">Logout</button>
+                    </form>
+
                 </div>
             </li>
         </ul>
