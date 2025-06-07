@@ -20,4 +20,8 @@ class Combo extends Model
     {
         return $this->belongsToMany(DoAn::class, 'combo_do_ans', 'combo_id', 'do_an_id');
     }
+    public function chiNhanhs()
+{
+    return $this->belongsToMany(ChiNhanh::class, 'chi_nhanh_combo');
+}
 }

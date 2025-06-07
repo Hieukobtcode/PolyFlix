@@ -29,4 +29,12 @@ class ChiNhanh extends Model
     {
         return $this->hasMany(RapPhim::class, 'chi_nhanh_id');
     }
+    public function doAns()
+    {
+        return $this->belongsToMany(DoAn::class, 'chi_nhanh_do_an');
+    }
+    public function combos()
+    {
+        return $this->belongsToMany(Combo::class, 'chi_nhanh_combo');
+    }
 }

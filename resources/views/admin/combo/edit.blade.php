@@ -47,6 +47,33 @@
                             </div>
                         @endif
                     </div>
+                    <div class="mb-3">
+                        <label class="form-label">Chọn chi nhánh</label>
+                        <select id="select-chi-nhanh" class="form-select">
+                            <option value="">-- Chọn chi nhánh --</option>
+                            @foreach ($chiNhanhs as $cn)
+                                <option value="{{ $cn->id }}" data-ten="{{ $cn->ten_chi_nhanh }}"
+                                    {{ in_array($cn->id, $combo->chiNhanhs->pluck('id')->toArray()) ? 'disabled' : '' }}>
+                                    {{ $cn->ten_chi_nhanh }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div id="danh-sach-chi-nhanh">
+                        {{-- Hiển thị chi nhánh đã gán --}}
+                        @foreach ($combo->chiNhanhs as $cn)
+                            <div class="d-flex align-items-center mb-2" data-id="{{ $cn->id }}">
+                                <span class="me-2">{{ $cn->ten_chi_nhanh }}</span>
+                                <button type="button" class="btn btn-sm btn-danger"
+                                    onclick="removeChiNhanh({{ $cn->id }})">Xóa</button>
+                            </div>
+                            <input type="hidden" name="chi_nhanh_ids[]" value="{{ $cn->id }}"
+                                id="input-chi_nhanh-{{ $cn->id }}">
+                        @endforeach
+                    </div>
+
+                    <div id="hidden-chi-nhanh-inputs"></div>
 
                     <div class="mb-3">
                         <label class="form-label">Giá gốc (VNĐ)</label>
@@ -206,3 +233,59 @@
         });
     </script>
 @endsection
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const selectChiNhanh = document.getElementById('select-chi-nhanh');
+    const danhSachChiNhanh = document.getElementById('danh-sach-chi-nhanh');
+    const hiddenInputs = document.getElementById('hidden-chi-nhanh-inputs');
+    const selectedIds = new Set(
+        Array.from(document.querySelectorAll('input[name="chi_nhanh_ids[]"]')).map(input => input.value)
+    );
+
+    selectChiNhanh.addEventListener('change', function () {
+        const selectedOption = this.options[this.selectedIndex];
+        const id = selectedOption.value;
+        const ten = selectedOption.dataset.ten;
+
+        if (!id || selectedIds.has(id)) return;
+
+        selectedIds.add(id);
+        selectedOption.disabled = true;
+        this.value = '';
+
+        const div = document.createElement('div');
+        div.classList.add('d-flex', 'align-items-center', 'mb-2');
+        div.dataset.id = id;
+        div.innerHTML = `
+            <span class="me-2">${ten}</span>
+            <button type="button" class="btn btn-sm btn-danger">Xóa</button>
+        `;
+
+        div.querySelector('button').addEventListener('click', () => {
+            selectedIds.delete(id);
+            div.remove();
+            document.getElementById('input-chi_nhanh-' + id)?.remove();
+            const option = selectChiNhanh.querySelector(`option[value="${id}"]`);
+            if (option) option.disabled = false;
+        });
+
+        danhSachChiNhanh.appendChild(div);
+
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'chi_nhanh_ids[]';
+        input.value = id;
+        input.id = 'input-chi_nhanh-' + id;
+        hiddenInputs.appendChild(input);
+    });
+
+    // Xóa chi nhánh gán sẵn
+    window.removeChiNhanh = function (id) {
+        selectedIds.delete(id);
+        document.querySelector(`div[data-id="${id}"]`)?.remove();
+        document.getElementById('input-chi_nhanh-' + id)?.remove();
+        const option = selectChiNhanh.querySelector(`option[value="${id}"]`);
+        if (option) option.disabled = false;
+    };
+});
+</script>

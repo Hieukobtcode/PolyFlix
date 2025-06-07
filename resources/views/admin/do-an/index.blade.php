@@ -50,7 +50,7 @@
                         <div class="input-group">
                             <span class="input-group-text bg-light"><i class="fas fa-search"></i></span>
                             <input type="text" name="keyword" class="form-control" value="{{ request('keyword') }}"
-                                   placeholder="Tìm theo tên món ăn...">
+                                placeholder="Tìm theo tên món ăn...">
                         </div>
                     </div>
                     <div class="col-md-3 mb-2">
@@ -75,6 +75,7 @@
                                 <th>Tiêu đề</th>
                                 <th>Danh mục</th>
                                 <th>Giá</th>
+                                <th>Chi nhánh</th>
                                 <th class="text-center">Trạng thái</th>
                                 <th class="text-center">Ngày tạo</th>
                                 <th class="text-center" style="width: 15%">Thao tác</th>
@@ -87,6 +88,13 @@
                                     <td>{{ $doAn->tieu_de }}</td>
                                     <td>{{ $doAn->danhMuc->ten ?? '---' }}</td>
                                     <td>{{ number_format($doAn->gia) }} đ</td>
+                                    <td>
+                                        <ul class="mb-0 ps-3">
+                                            @foreach ($doAn->chiNhanhs as $cn)
+                                                <li>{{ $cn->ten_chi_nhanh }}</li>
+                                            @endforeach
+                                        </ul>
+                                    </td>
                                     <td class="text-center">
                                         <span class="badge bg-{{ $doAn->trang_thai == 'hien' ? 'success' : 'secondary' }}">
                                             {{ ucfirst($doAn->trang_thai) }}
@@ -97,17 +105,17 @@
                                     </td>
                                     <td class="text-center">
                                         <div class="btn-group" role="group">
-                                             <a href="{{ route('admin.do-an.show', $doAn->id) }}"
+                                            <a href="{{ route('admin.do-an.show', $doAn->id) }}"
                                                 class="btn btn-sm btn-outline-info">
                                                 <i class="fas fa-eye"></i>
                                             </a>
                                             <a href="{{ route('admin.do-an.edit', $doAn->id) }}"
-                                               class="btn btn-sm btn-outline-primary">
+                                                class="btn btn-sm btn-outline-primary">
                                                 <i class="fas fa-edit"></i>
                                             </a>
-                                            <form action="{{ route('admin.do-an.destroy', $doAn->id) }}"
-                                                  method="POST" class="d-inline"
-                                                  onsubmit="return confirm('Bạn có chắc muốn xóa món ăn này?')">
+                                            <form action="{{ route('admin.do-an.destroy', $doAn->id) }}" method="POST"
+                                                class="d-inline"
+                                                onsubmit="return confirm('Bạn có chắc muốn xóa món ăn này?')">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" class="btn btn-sm btn-outline-danger">
@@ -130,7 +138,8 @@
 
                 <div class="d-flex justify-content-between align-items-center mt-4">
                     <div>
-                        <small class="text-muted">Hiển thị {{ $doAns->count() }} trong tổng số {{ $doAns->total() }} món ăn</small>
+                        <small class="text-muted">Hiển thị {{ $doAns->count() }} trong tổng số {{ $doAns->total() }} món
+                            ăn</small>
                     </div>
                     <div>
                         {{ $doAns->links('pagination::bootstrap-5') }}
