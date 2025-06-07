@@ -327,15 +327,11 @@
                 seats.forEach(seat => {
                     seat.addEventListener('click', function() {
                         const isDouble = seat.classList.contains('doi');
-                        const row = seat.getAttribute('data-row');
-                        const col = parseInt(seat.getAttribute('data-col'));
-                        const seatId = seat.getAttribute('data-id');
+                        const row = seat.dataset.row;
+                        const col = parseInt(seat.dataset.col);
 
                         if (isDouble) {
-                            const rowIndex = row.charCodeAt(0) - 'A'.charCodeAt(0);
-                            const isOddRow = rowIndex % 2 === 0;
-
-                            const partnerCol = isOddRow ? col - 1 : col + 1;
+                            const partnerCol = col % 2 === 0 ? col - 1 : col + 1;
                             const partnerSelector =
                                 `.seat-wrapper.doi[data-row="${row}"][data-col="${partnerCol}"]`;
                             const partnerSeat = document.querySelector(partnerSelector);
@@ -344,7 +340,6 @@
                             if (partnerSeat) {
                                 partnerSeat.classList.toggle('selected');
                             }
-
                         } else {
                             seat.classList.toggle('selected');
                         }
@@ -358,6 +353,7 @@
                 });
             });
         </script>
+
 
     </div>
 @endsection
