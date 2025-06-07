@@ -271,10 +271,11 @@
                                     @if ($classLoai !== 'empty')
                                         <div data-id="{{ $oneSeat['id'] }}"
                                             class="seat-wrapper {{ $classLoai }} {{ $oneSeat['trang_thai'] === 'bao_tri' ? 'selected' : '' }}"
-                                            data-seat="{{ $maGhe }}">
+                                            data-seat="{{ $maGhe }}" data-row='{{ $oneSeat['hang'] }}'
+                                            data-col='{{ $oneSeat['cot'] }}'>
                                             <i class="fa-solid fa-couch"></i>
                                             <span class="seat-code">{{ $maGhe }}</span>
-                                        </div>  
+                                        </div>
                                     @else
                                         <div class="seat-wrapper empty"></div>
                                     @endif
@@ -322,26 +323,41 @@
         <script>
             document.addEventListener('DOMContentLoaded', function() {
                 const seats = document.querySelectorAll('.seat-wrapper:not(.empty)');
+
                 seats.forEach(seat => {
                     seat.addEventListener('click', function() {
-                        this.classList.toggle('selected');
+                        const isDouble = seat.classList.contains('doi');
+                        const row = seat.getAttribute('data-row');
+                        const col = parseInt(seat.getAttribute('data-col'));
+                        const seatId = seat.getAttribute('data-id');
+
+                        if (isDouble) {
+                            const rowIndex = row.charCodeAt(0) - 'A'.charCodeAt(0);
+                            const isOddRow = rowIndex % 2 === 0;
+
+                            const partnerCol = isOddRow ? col - 1 : col + 1;
+                            const partnerSelector =
+                                `.seat-wrapper.doi[data-row="${row}"][data-col="${partnerCol}"]`;
+                            const partnerSeat = document.querySelector(partnerSelector);
+
+                            seat.classList.toggle('selected');
+                            if (partnerSeat) {
+                                partnerSeat.classList.toggle('selected');
+                            }
+
+                        } else {
+                            seat.classList.toggle('selected');
+                        }
                     });
                 });
-            });
 
-            document.getElementById('updateSeatForm')
-                .addEventListener('submit', function(e) {
-                    console.log('Bắt được sự kiện submit, chuẩn bị thu thập ghế…');
-
+                document.getElementById('updateSeatForm').addEventListener('submit', function(e) {
                     const selectedSeats = document.querySelectorAll('.seat-wrapper.selected');
-                    console.log('selectedSeats NodeList:', selectedSeats);
-
                     const seats = Array.from(selectedSeats).map(el => el.getAttribute('data-id'));
-
                     document.getElementById('hiddenSeatsJson').value = JSON.stringify(seats);
-                    console.log('Giá trị hiddenSeatsJson được gán:', document.getElementById('hiddenSeatsJson').value);
-
                 });
+            });
         </script>
+
     </div>
 @endsection
