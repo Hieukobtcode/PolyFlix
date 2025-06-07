@@ -22,6 +22,7 @@ use App\Http\Controllers\Admin\SoDoGheController;
 use App\Http\Controllers\Admin\KhuyenMaiController;
 use App\Http\Controllers\Admin\CapBacTheController;
 use App\Http\Controllers\Admin\PhanQuyenController;
+use App\Http\Controllers\Admin\SuatChieuController;
 // Trang welcome
 Route::get('/', function () {
     return view('welcome');
@@ -55,14 +56,14 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     // Quản lý liên hệ
     Route::resource('lien-he', LienHeController::class)->names('lien-he');
-    Route::prefix('lien-he')->name('lien-he.')->group(function () {
-        Route::get('dashboard', [LienHeController::class, 'dashboard'])->name('dashboard');
-        Route::get('export', [LienHeController::class, 'export'])->name('export');
-        Route::post('{lienHe}/notes', [LienHeController::class, 'addNote'])->name('add-note');
-        Route::patch('{lienHe}/status', [LienHeController::class, 'updateStatus'])->name('update-status');
-        Route::post('{lienHe}/send-email', [LienHeController::class, 'sendEmail'])->name('send-email');
-        Route::post('bulk-action', [LienHeController::class, 'bulkAction'])->name('bulk-action');
-    });
+    // Route::prefix('lien-he')->name('lien-he.')->group(function () {
+    //     Route::get('dashboard', [LienHeController::class, 'dashboard'])->name('dashboard');
+    //     Route::get('export', [LienHeController::class, 'export'])->name('export');
+    //     Route::post('{lienHe}/notes', [LienHeController::class, 'addNote'])->name('add-note');
+    //     Route::patch('{lienHe}/status', [LienHeController::class, 'updateStatus'])->name('update-status');
+    //     Route::post('{lienHe}/send-email', [LienHeController::class, 'sendEmail'])->name('send-email');
+    //     Route::post('bulk-action', [LienHeController::class, 'bulkAction'])->name('bulk-action');
+    // });
 
     // Quản lý thể loại phim
     Route::resource('the-loai-phim', TheLoaiPhimController::class);
@@ -100,7 +101,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('rap-phim', RapphimController::class);
 
     // Quản lý cấu hình
-
     Route::get('cau-hinh', [CauHinhController::class, 'index'])->name('cau-hinh.index');
     Route::get('cau-hinh/edit', [CauHinhController::class, 'edit'])->name('cau-hinh.edit');
     Route::post('cau-hinh/update', [CauHinhController::class, 'update'])->name('cau-hinh.update');
@@ -121,8 +121,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
     // Route đặt cấp bậc thẻ làm mặc định
     Route::put('cap-bac-the/{capBacThe}/set-default', [CapBacTheController::class, 'setDefault'])
         ->name('cap-bac-the.set-default');
-});
-    Route::put('cap-bac-the/{capBacThe}/set-default', [CapBacTheController::class, 'setDefault'])->name('cap-bac-the.set-default');
 
     // Quản lý khuyến mãi
     Route::prefix('khuyen-mai')->name('khuyen-mai.')->group(function () {
@@ -130,4 +128,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('thong-ke-su-dung', [KhuyenMaiController::class, 'thongKeSuDung'])->name('thong-ke-su-dung');
     });
     Route::resource('khuyen-mai', KhuyenMaiController::class);
+
+    // Quản lý suất chiếu
+    Route::resource('suat-chieu', SuatChieuController::class);
 });
