@@ -119,6 +119,7 @@
                 <li class="nav-item"><a class="nav-link" href="{{ route('admin.do-an.index') }}">Đồ ăn</a>
                 </li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('admin.combos.index') }}">Combo</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('admin.danh-muc-do-an.index') }}">Danh mục đồ ăn</a></li>
             </ul>
         </li>
 
