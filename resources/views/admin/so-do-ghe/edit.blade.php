@@ -300,7 +300,7 @@
             <div class="right-panel">
                 <div class="panel-box">
                     <h4>Cập nhật</h4>
-                    <p><strong>Hoạt động:</strong>
+                    <p><strong>Trạng thái:</strong>
                         {{ $soDoGhe->trang_thai == 1 ? 'Chưa hoạt động' : 'Hoạt động' }}
                     </p>
                     <div class="btn-group">

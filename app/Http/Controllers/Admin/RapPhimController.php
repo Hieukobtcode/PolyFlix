@@ -54,7 +54,7 @@ class RapphimController extends Controller
     {
 
         $rapPhim = RapPhim::with(['phongChieus'])->findOrFail($id);
-
+        
         return view('admin.rap-phim.show', compact('rapPhim'));
     }
 

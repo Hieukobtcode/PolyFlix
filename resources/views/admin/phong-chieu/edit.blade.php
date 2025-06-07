@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Chỉnh sửa Phòng Chiếu')
+@section('title', 'Quản lý phòng chiếu')
 @section('page-title', 'Chỉnh sửa Phòng Chiếu')
 @section('breadcrumb', 'Chỉnh sửa Phòng Chiếu')
 

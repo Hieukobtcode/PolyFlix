@@ -49,6 +49,7 @@ class GheNgoiController extends Controller
     {
         $phongChieu = PhongChieu::findOrfail($id);
         $phongChieuId = $phongChieu->id;
+        $tenPhong = $phongChieu->ten_phong;
         $soDoGhe = SoDoGhe::where('phong_chieu_id',$phongChieuId)->first();
 
         if( $soDoGhe->trang_thai == 1 ){
@@ -65,7 +66,7 @@ class GheNgoiController extends Controller
             ->count();
         $gheGroupedArray = $gheGrouped->toArray();
 
-        return view('admin.ghe-ngoi.show', compact('gheGroupedArray', 'phongChieu', 'soGhe', 'phongChieuId','soDoGhe'));
+        return view('admin.ghe-ngoi.show', compact('gheGroupedArray', 'phongChieu', 'soGhe', 'phongChieuId','soDoGhe','tenPhong'));
     }
 
     public function edit($id)
@@ -92,9 +93,6 @@ class GheNgoiController extends Controller
 
         $allSeats = GheNgoi::where('phong_chieu_id', $phongChieuId)->get();
 
-        $countSeats  = 0;
-        $seatReturn  = 0;
-
         foreach ($allSeats as $seat) {
             $isSelected = in_array($seat->id, $seatsId);
 
@@ -102,28 +100,18 @@ class GheNgoiController extends Controller
                 if ($seat->trang_thai !== 'bao_tri') {
                     $seat->trang_thai = 'bao_tri';
                     $seat->save();
-                    $countSeats++;
                 }
             } else {
                 if ($seat->trang_thai === 'bao_tri') {
                     $seat->trang_thai = 'trong';
                     $seat->save();
-                    $seatReturn++;
                 }
             }
         }
 
         return redirect()
             ->route('admin.ghe-ngoi.show', $phongChieuId)
-            ->with('success', "Đã cập nhật: $countSeats ghế chuyển sang bảo trì, $seatReturn ghế được phục hồi.");
+            ->with('success', "Cập nhật trạng thái ghế thành công");
     }
 
-
-    public function destroy($id)
-    {
-        $ghe = GheNgoi::findOrFail($id);
-        $ghe->delete();
-
-        return redirect()->route('admin.ghe-ngoi.index')->with('success', 'Xóa ghế thành công');
-    }
 }
