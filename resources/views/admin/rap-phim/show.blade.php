@@ -1,7 +1,11 @@
 @extends('layouts.admin')
-@section('title', 'Chi tiết rạp chiếu')
+@section('title', 'Quản lý chi nhánh')
 @section('page-title', 'Chi tiết rạp chiếu')
-@section('breadcrumb', 'Chi tiết rạp chiếu')
+@section('breadcrumb')
+    <a href="{{ route('admin.chi-nhanh.index') }}">Danh sách chi nhánh</a> / 
+    <a href="{{ route('admin.chi-nhanh.show', $rapPhim->chi_nhanh_id) }}">Danh sách rạp chiếu</a>/
+    Danh sách phòng chiếu
+@endsection
 
 @section('styles')
     <style>
@@ -129,12 +133,12 @@
                                                             <i class="fas fa-plus-circle"></i>
                                                         </a>
                                                     @else
-                                                        <a href="{{ route('admin.ghe-ngoi.show', $phong->id) }}" class="btn btn-sm btn-outline-secondary"
+                                                        <a href="{{ route('admin.ghe-ngoi.show', $phong->id) }}"
+                                                            class="btn btn-sm btn-outline-secondary"
                                                             data-bs-toggle="tooltip" title="Xem sơ đồ ghế"
                                                             data-bs-placement="top">
-                                                           <i class="fa-solid fa-couch fa-spin-pulse"></i>
+                                                            <i class="fa-solid fa-couch fa-spin-pulse"></i>
                                                         </a>
-
                                                     @endif
                                                 </td>
                                             </tr>

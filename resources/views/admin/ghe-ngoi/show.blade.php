@@ -1,6 +1,19 @@
 @extends('layouts.admin')
-@section('title', 'Phòng chiếu')
+@section('title', 'Quản lý chi nhánh')
 @section('page-title', 'Chỉnh sửa sơ đồ ghế')
+@php
+    $breadcrumb = 'Chi tiết sơ đồ ghế - Phòng chiếu ' . $tenPhong;
+@endphp
+
+@section('breadcrumb')
+    <a href="{{ route('admin.chi-nhanh.index') }}">Danh sách chi nhánh</a> /
+    <a href="{{ route('admin.chi-nhanh.show', $phongChieu->rapPhim->chi_nhanh_id) }}">Danh sách rạp chiếu</a> /
+    <a href="{{ route('admin.rap-phim.show', $phongChieu->rap_phim_id) }}">Danh sách phòng chiếu</a> /
+    {{ $breadcrumb }}
+@endsection
+
+
+
 @php
     $tenPhong = $phongChieu->ten_phong;
     // Tính tổng số ghế
@@ -13,10 +26,6 @@
         }
     }
 @endphp
-@php
-    $breadcrumb = 'Chi tiết sơ đồ ghế - Phòng chiếu ' . $tenPhong;
-@endphp
-
 @section('breadcrumb', $breadcrumb)
 @section('content')
     <div class="container mx-auto p-6">
@@ -129,23 +138,18 @@
                 background-color: #ffffff;
                 border: 1px solid #d1d5db;
                 cursor: default;
-                /* không cho click nếu muốn */
             }
 
-            /* Khi ghế được đánh dấu (selected) */
             .seat-wrapper.selected {
                 background-color: #d1d5db;
-                /* đổi màu nền hoặc giữ nguyên tuỳ ý */
             }
 
-            /* Dấu gạch chéo (strike-through) hoặc dấu tích: */
             .seat-wrapper.selected::after {
                 content: '';
                 position: absolute;
                 width: 100%;
                 height: 2px;
                 background-color: #e53e3e;
-                /* màu gạch chéo, bạn có thể thay */
                 top: 50%;
                 left: 0;
                 transform: rotate(-45deg);
@@ -247,6 +251,7 @@
         </style>
         <form id="updateSeatForm" action="{{ route('admin.ghe-ngoi.updateSeat') }}" method="POST">
             @csrf
+
             <div class="two-column">
                 <div class="col-left">
                     <div class="seat-map">
@@ -271,10 +276,11 @@
                                     @if ($classLoai !== 'empty')
                                         <div data-id="{{ $oneSeat['id'] }}"
                                             class="seat-wrapper {{ $classLoai }} {{ $oneSeat['trang_thai'] === 'bao_tri' ? 'selected' : '' }}"
-                                            data-seat="{{ $maGhe }}">
+                                            data-seat="{{ $maGhe }}" data-row='{{ $oneSeat['hang'] }}'
+                                            data-col='{{ $oneSeat['cot'] }}'>
                                             <i class="fa-solid fa-couch"></i>
                                             <span class="seat-code">{{ $maGhe }}</span>
-                                        </div>  
+                                        </div>
                                     @else
                                         <div class="seat-wrapper empty"></div>
                                     @endif
@@ -288,7 +294,8 @@
                     <div class="right-panel">
                         <div class="panel-box">
                             <h4>Cập nhật</h4>
-                            <p><strong>Hoạt động:</strong> {{ $soDoGhe->trang_thai == 1 ? 'Chưa hoạt động' : 'Hoạt động' }}
+                            <p><strong>Trạng thái:</strong>
+                                {{ $soDoGhe->trang_thai == 1 ? 'Chưa hoạt động' : 'Hoạt động' }}
                             </p>
                             <div class="btn-group">
                                 <button type="submit" id="btn_update" class="btn-publish">Cập nhật</button>
@@ -322,26 +329,35 @@
         <script>
             document.addEventListener('DOMContentLoaded', function() {
                 const seats = document.querySelectorAll('.seat-wrapper:not(.empty)');
+
                 seats.forEach(seat => {
                     seat.addEventListener('click', function() {
-                        this.classList.toggle('selected');
+                        const isDouble = seat.classList.contains('doi');
+                        const row = seat.dataset.row;
+                        const col = parseInt(seat.dataset.col);
+
+                        if (isDouble) {
+                            const partnerCol = col % 2 === 0 ? col - 1 : col + 1;
+                            const partnerSelector =
+                                `.seat-wrapper.doi[data-row="${row}"][data-col="${partnerCol}"]`;
+                            const partnerSeat = document.querySelector(partnerSelector);
+
+                            seat.classList.toggle('selected');
+                            if (partnerSeat) {
+                                partnerSeat.classList.toggle('selected');
+                            }
+                        } else {
+                            seat.classList.toggle('selected');
+                        }
                     });
                 });
-            });
 
-            document.getElementById('updateSeatForm')
-                .addEventListener('submit', function(e) {
-                    console.log('Bắt được sự kiện submit, chuẩn bị thu thập ghế…');
-
+                document.getElementById('updateSeatForm').addEventListener('submit', function(e) {
                     const selectedSeats = document.querySelectorAll('.seat-wrapper.selected');
-                    console.log('selectedSeats NodeList:', selectedSeats);
-
                     const seats = Array.from(selectedSeats).map(el => el.getAttribute('data-id'));
-
                     document.getElementById('hiddenSeatsJson').value = JSON.stringify(seats);
-                    console.log('Giá trị hiddenSeatsJson được gán:', document.getElementById('hiddenSeatsJson').value);
-
                 });
+            });
         </script>
     </div>
 @endsection

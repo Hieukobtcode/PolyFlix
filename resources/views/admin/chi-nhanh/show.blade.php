@@ -2,7 +2,9 @@
 
 @section('title', 'Quản lý chi nhánh')
 @section('page-title', 'Chi tiết chi nhánh')
-@section('breadcrumb', 'Chi tiết chi nhánh')
+@section('breadcrumb')
+    <a href="{{ route('admin.chi-nhanh.index') }}">Danh sách chi nhánh</a> / Danh sách rạp chiếu
+@endsection
 
 @section('styles')
     <style>

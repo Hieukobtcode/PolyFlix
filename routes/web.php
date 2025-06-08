@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\ComboController;
+use App\Http\Controllers\Admin\DanhMucDoAnController;
 use App\Http\Controllers\Admin\DoAnController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
@@ -129,4 +130,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     // Quản lý đồ ăn
     Route::resource('do-an', DoAnController::class);
+
+     // Quản lý danh sách đồ ăn
+    Route::resource('danh-muc-do-an', DanhMucDoAnController::class);
 });
