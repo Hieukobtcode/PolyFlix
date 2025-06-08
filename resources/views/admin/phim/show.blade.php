@@ -81,6 +81,17 @@
                         </div>
 
                         <div class="mb-4">
+                            <h5 class="fw-bold">Chi nhánh</h5>
+                            <div>
+                                @forelse($phim->chiNhanhs as $chiNhanh)
+                                    <span class="badge bg-info rounded-pill me-1">{{ $chiNhanh->ten_chi_nhanh }}</span>
+                                @empty
+                                    <span class="text-muted">Chưa có định dạng</span>
+                                @endforelse
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
                             <h5 class="fw-bold">Thông tin cơ bản</h5>
                             <ul class="list-group list-group-flush">
                                 <li class="list-group-item d-flex justify-content-between align-items-center">

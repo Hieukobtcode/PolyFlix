@@ -46,7 +46,7 @@ class ChiNhanhController extends Controller
     public function edit($id)
     {
         $chiNhanh = ChiNhanh::findOrFail($id);
-        return view('admin.chi-nhanh.edit',compact('chiNhanh'));
+        return view('admin.chi-nhanh.edit', compact('chiNhanh'));
     }
 
 
@@ -65,15 +65,12 @@ class ChiNhanhController extends Controller
         return redirect()->route('admin.chi-nhanh.index')->with('success', 'Cập nhật chi nhánh thành công');
     }
 
-    
+
     public function show($id)
     {
         $chiNhanh = ChiNhanh::with('RapPhim')->findOrFail($id);
         return view('admin.chi-nhanh.show', compact('chiNhanh'));
     }
-
-
-
 
     public function destroy($id)
     {

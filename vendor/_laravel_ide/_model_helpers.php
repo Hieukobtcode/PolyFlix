@@ -1288,6 +1288,8 @@ namespace App\Models {
      * @property-read int|null $khuyenMais_count
      * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\RapPhim> $RapPhim
      * @property-read int|null $RapPhim_count
+     * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Phim> $phims
+     * @property-read int|null $phims_count
      * @method static \Illuminate\Database\Eloquent\Builder<ChiNhanh>|ChiNhanh whereId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<ChiNhanh>|ChiNhanh whereTenChiNhanh($value)
      * @method static \Illuminate\Database\Eloquent\Builder<ChiNhanh>|ChiNhanh whereDiaChi($value)
@@ -3160,8 +3162,26 @@ namespace App\Models {
     /**
      * App\Models\GheNgoi
      *
+     * @property \Illuminate\Support\Carbon|null $updated_at
+     * @property \Illuminate\Support\Carbon|null $created_at
+     * @property mixed $trang_thai
+     * @property string $ma_ghe
+     * @property int $cot
+     * @property string $hang
+     * @property string $loai_ghe
+     * @property int $phong_chieu_id
+     * @property int $id
      * @property-read \App\Models\PhongChieu $phongChieu
      * @property-read \App\Models\LoaiGhe $loaiGhe
+     * @method static \Illuminate\Database\Eloquent\Builder<GheNgoi>|GheNgoi whereId($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<GheNgoi>|GheNgoi wherePhongChieuId($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<GheNgoi>|GheNgoi whereLoaiGhe($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<GheNgoi>|GheNgoi whereHang($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<GheNgoi>|GheNgoi whereCot($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<GheNgoi>|GheNgoi whereMaGhe($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<GheNgoi>|GheNgoi whereTrangThai($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<GheNgoi>|GheNgoi whereCreatedAt($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<GheNgoi>|GheNgoi whereUpdatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<GheNgoi>|GheNgoi newModelQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<GheNgoi>|GheNgoi newQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<GheNgoi>|GheNgoi query()
@@ -6349,6 +6369,8 @@ namespace App\Models {
      * @property-read int|null $theLoais_count
      * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\DinhDangPhim> $dinhDangs
      * @property-read int|null $dinhDangs_count
+     * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ChiNhanh> $chiNhanhs
+     * @property-read int|null $chiNhanhs_count
      * @method static \Illuminate\Database\Eloquent\Builder<Phim>|Phim whereId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Phim>|Phim whereTenPhim($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Phim>|Phim whereMoTa($value)
@@ -6657,6 +6679,312 @@ namespace App\Models {
      * @mixin \Illuminate\Database\Query\Builder
      */
     class Phim extends \Illuminate\Database\Eloquent\Model
+    {
+        //
+    }
+
+    /**
+     * App\Models\PhimChiNhanh
+     *
+     * @property int $chi_nhanh_id
+     * @property int $phim_id
+     * @property int $id
+     * @property-read \App\Models\Phim $phim
+     * @property-read \App\Models\ChiNhanh $chiNhanh
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh whereId($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh wherePhimId($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh whereChiNhanhId($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh newModelQuery()
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh newQuery()
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh query()
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh select(array|mixed $columns)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh selectSub(\Closure|\Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder<mixed>|string $query, string $as)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh selectRaw(string $expression)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh fromSub(\Closure|\Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder<mixed>|string $query, string $as)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh fromRaw(string $expression, mixed $bindings)
+     * @method static array createSub(\Closure|\Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder<mixed>|string $query)
+     * @method static array parseSub(mixed $query)
+     * @method static mixed prependDatabaseNameIfCrossDatabaseQuery(mixed $query)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh addSelect(array|mixed $column)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh distinct()
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh from(\Closure|\Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder<mixed>|\Illuminate\Contracts\Database\Query\Expression|string $table, string|null $as)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh useIndex(string $index)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh forceIndex(string $index)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh ignoreIndex(string $index)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh join(\Illuminate\Contracts\Database\Query\Expression|string $table, \Closure|\Illuminate\Contracts\Database\Query\Expression|string $first, string|null $operator, \Illuminate\Contracts\Database\Query\Expression|string|null $second, string $type, bool $where)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh joinWhere(\Illuminate\Contracts\Database\Query\Expression|string $table, \Closure|\Illuminate\Contracts\Database\Query\Expression|string $first, string $operator, \Illuminate\Contracts\Database\Query\Expression|string $second, string $type)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh joinSub(\Closure|\Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder<mixed>|string $query, string $as, \Closure|\Illuminate\Contracts\Database\Query\Expression|string $first, string|null $operator, \Illuminate\Contracts\Database\Query\Expression|string|null $second, string $type, bool $where)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh joinLateral(\Closure|\Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder<mixed>|string $query)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh leftJoinLateral(\Closure|\Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder<mixed>|string $query)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh leftJoin(\Illuminate\Contracts\Database\Query\Expression|string $table, \Closure|\Illuminate\Contracts\Database\Query\Expression|string $first, string|null $operator, \Illuminate\Contracts\Database\Query\Expression|string|null $second)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh leftJoinWhere(\Illuminate\Contracts\Database\Query\Expression|string $table, \Closure|\Illuminate\Contracts\Database\Query\Expression|string $first, string $operator, \Illuminate\Contracts\Database\Query\Expression|string|null $second)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh leftJoinSub(\Closure|\Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder<mixed>|string $query, string $as, \Closure|\Illuminate\Contracts\Database\Query\Expression|string $first, string|null $operator, \Illuminate\Contracts\Database\Query\Expression|string|null $second)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh rightJoin(\Illuminate\Contracts\Database\Query\Expression|string $table, \Closure|string $first, string|null $operator, \Illuminate\Contracts\Database\Query\Expression|string|null $second)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh rightJoinWhere(\Illuminate\Contracts\Database\Query\Expression|string $table, \Closure|\Illuminate\Contracts\Database\Query\Expression|string $first, string $operator, \Illuminate\Contracts\Database\Query\Expression|string $second)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh rightJoinSub(\Closure|\Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder<mixed>|string $query, string $as, \Closure|\Illuminate\Contracts\Database\Query\Expression|string $first, string|null $operator, \Illuminate\Contracts\Database\Query\Expression|string|null $second)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh crossJoin(\Illuminate\Contracts\Database\Query\Expression|string $table, \Closure|\Illuminate\Contracts\Database\Query\Expression|string|null $first, string|null $operator, \Illuminate\Contracts\Database\Query\Expression|string|null $second)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh crossJoinSub(\Closure|\Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder<mixed>|string $query, string $as)
+     * @method static \Illuminate\Database\Query\JoinClause newJoinClause(string $type, \Illuminate\Contracts\Database\Query\Expression|string $table)
+     * @method static \Illuminate\Database\Query\JoinLateralClause newJoinLateralClause(string $type, \Illuminate\Contracts\Database\Query\Expression|string $table)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh mergeWheres(array $wheres, array $bindings)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh where(\Closure|string|array|\Illuminate\Contracts\Database\Query\Expression $column, mixed $operator, mixed $value, string $boolean)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh addArrayOfWheres(array $column, string $boolean, string $method)
+     * @method static array prepareValueAndOperator(string $value, string $operator, bool $useDefault)
+     * @method static bool invalidOperatorAndValue(string $operator, mixed $value)
+     * @method static bool invalidOperator(string $operator)
+     * @method static bool isBitwiseOperator(string $operator)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh orWhere(\Closure|string|array|\Illuminate\Contracts\Database\Query\Expression $column, mixed $operator, mixed $value)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh whereNot(\Closure|string|array|\Illuminate\Contracts\Database\Query\Expression $column, mixed $operator, mixed $value, string $boolean)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh orWhereNot(\Closure|string|array|\Illuminate\Contracts\Database\Query\Expression $column, mixed $operator, mixed $value)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh whereColumn(\Illuminate\Contracts\Database\Query\Expression|string|array $first, string|null $operator, string|null $second, string|null $boolean)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh orWhereColumn(\Illuminate\Contracts\Database\Query\Expression|string|array $first, string|null $operator, string|null $second)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh whereRaw(string $sql, mixed $bindings, string $boolean)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh orWhereRaw(string $sql, mixed $bindings)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh whereLike(\Illuminate\Contracts\Database\Query\Expression|string $column, string $value, bool $caseSensitive, string $boolean, bool $not)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh orWhereLike(\Illuminate\Contracts\Database\Query\Expression|string $column, string $value, bool $caseSensitive)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh whereNotLike(\Illuminate\Contracts\Database\Query\Expression|string $column, string $value, bool $caseSensitive, string $boolean)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh orWhereNotLike(\Illuminate\Contracts\Database\Query\Expression|string $column, string $value, bool $caseSensitive)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh whereIn(\Illuminate\Contracts\Database\Query\Expression|string $column, mixed $values, string $boolean, bool $not)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh orWhereIn(\Illuminate\Contracts\Database\Query\Expression|string $column, mixed $values)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh whereNotIn(\Illuminate\Contracts\Database\Query\Expression|string $column, mixed $values, string $boolean)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh orWhereNotIn(\Illuminate\Contracts\Database\Query\Expression|string $column, mixed $values)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh whereIntegerInRaw(string $column, \Illuminate\Contracts\Support\Arrayable|array $values, string $boolean, bool $not)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh orWhereIntegerInRaw(string $column, \Illuminate\Contracts\Support\Arrayable|array $values)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh whereIntegerNotInRaw(string $column, \Illuminate\Contracts\Support\Arrayable|array $values, string $boolean)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh orWhereIntegerNotInRaw(string $column, \Illuminate\Contracts\Support\Arrayable|array $values)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh whereNull(string|array|\Illuminate\Contracts\Database\Query\Expression $columns, string $boolean, bool $not)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh orWhereNull(string|array|\Illuminate\Contracts\Database\Query\Expression $column)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh whereNotNull(string|array|\Illuminate\Contracts\Database\Query\Expression $columns, string $boolean)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh whereBetween(\Illuminate\Contracts\Database\Query\Expression|string $column, string $boolean, bool $not)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh whereBetweenColumns(\Illuminate\Contracts\Database\Query\Expression|string $column, string $boolean, bool $not)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh orWhereBetween(\Illuminate\Contracts\Database\Query\Expression|string $column)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh orWhereBetweenColumns(\Illuminate\Contracts\Database\Query\Expression|string $column)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh whereNotBetween(\Illuminate\Contracts\Database\Query\Expression|string $column, string $boolean)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh whereNotBetweenColumns(\Illuminate\Contracts\Database\Query\Expression|string $column, string $boolean)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh orWhereNotBetween(\Illuminate\Contracts\Database\Query\Expression|string $column)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh orWhereNotBetweenColumns(\Illuminate\Contracts\Database\Query\Expression|string $column)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh orWhereNotNull(\Illuminate\Contracts\Database\Query\Expression|string $column)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh whereDate(\Illuminate\Contracts\Database\Query\Expression|string $column, \DateTimeInterface|string|null $operator, \DateTimeInterface|string|null $value, string $boolean)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh orWhereDate(\Illuminate\Contracts\Database\Query\Expression|string $column, \DateTimeInterface|string|null $operator, \DateTimeInterface|string|null $value)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh whereTime(\Illuminate\Contracts\Database\Query\Expression|string $column, \DateTimeInterface|string|null $operator, \DateTimeInterface|string|null $value, string $boolean)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh orWhereTime(\Illuminate\Contracts\Database\Query\Expression|string $column, \DateTimeInterface|string|null $operator, \DateTimeInterface|string|null $value)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh whereDay(\Illuminate\Contracts\Database\Query\Expression|string $column, \DateTimeInterface|string|int|null $operator, \DateTimeInterface|string|int|null $value, string $boolean)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh orWhereDay(\Illuminate\Contracts\Database\Query\Expression|string $column, \DateTimeInterface|string|int|null $operator, \DateTimeInterface|string|int|null $value)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh whereMonth(\Illuminate\Contracts\Database\Query\Expression|string $column, \DateTimeInterface|string|int|null $operator, \DateTimeInterface|string|int|null $value, string $boolean)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh orWhereMonth(\Illuminate\Contracts\Database\Query\Expression|string $column, \DateTimeInterface|string|int|null $operator, \DateTimeInterface|string|int|null $value)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh whereYear(\Illuminate\Contracts\Database\Query\Expression|string $column, \DateTimeInterface|string|int|null $operator, \DateTimeInterface|string|int|null $value, string $boolean)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh orWhereYear(\Illuminate\Contracts\Database\Query\Expression|string $column, \DateTimeInterface|string|int|null $operator, \DateTimeInterface|string|int|null $value)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh addDateBasedWhere(string $type, \Illuminate\Contracts\Database\Query\Expression|string $column, string $operator, mixed $value, string $boolean)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh whereNested(string $boolean)
+     * @method static \Illuminate\Database\Query\Builder forNestedWhere()
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh addNestedWhereQuery(\Illuminate\Database\Query\Builder $query, string $boolean)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh whereSub(\Illuminate\Contracts\Database\Query\Expression|string $column, string $operator, \Closure|\Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder<mixed> $callback, string $boolean)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh whereExists(\Closure|\Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder<mixed> $callback, string $boolean, bool $not)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh orWhereExists(\Closure|\Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder<mixed> $callback, bool $not)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh whereNotExists(\Closure|\Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder<mixed> $callback, string $boolean)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh orWhereNotExists(\Closure|\Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder<mixed> $callback)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh addWhereExistsQuery(string $boolean, bool $not)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh whereRowValues(array $columns, string $operator, array $values, string $boolean)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh orWhereRowValues(array $columns, string $operator, array $values)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh whereJsonContains(string $column, mixed $value, string $boolean, bool $not)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh orWhereJsonContains(string $column, mixed $value)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh whereJsonDoesntContain(string $column, mixed $value, string $boolean)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh orWhereJsonDoesntContain(string $column, mixed $value)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh whereJsonOverlaps(string $column, mixed $value, string $boolean, bool $not)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh orWhereJsonOverlaps(string $column, mixed $value)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh whereJsonDoesntOverlap(string $column, mixed $value, string $boolean)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh orWhereJsonDoesntOverlap(string $column, mixed $value)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh whereJsonContainsKey(string $column, string $boolean, bool $not)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh orWhereJsonContainsKey(string $column)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh whereJsonDoesntContainKey(string $column, string $boolean)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh orWhereJsonDoesntContainKey(string $column)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh whereJsonLength(string $column, mixed $operator, mixed $value, string $boolean)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh orWhereJsonLength(string $column, mixed $operator, mixed $value)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh dynamicWhere(string $method, array $parameters)
+     * @method static void addDynamic(string $segment, string $connector, array $parameters, int $index)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh whereFullText(string|string[] $columns, string $value, string $boolean)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh orWhereFullText(string|string[] $columns, string $value)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh whereAll(\Illuminate\Contracts\Database\Query\Expression[]|\Closure[]|string[] $columns, mixed $operator, mixed $value, string $boolean)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh orWhereAll(\Illuminate\Contracts\Database\Query\Expression[]|\Closure[]|string[] $columns, mixed $operator, mixed $value)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh whereAny(\Illuminate\Contracts\Database\Query\Expression[]|\Closure[]|string[] $columns, mixed $operator, mixed $value, string $boolean)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh orWhereAny(\Illuminate\Contracts\Database\Query\Expression[]|\Closure[]|string[] $columns, mixed $operator, mixed $value)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh whereNone(\Illuminate\Contracts\Database\Query\Expression[]|\Closure[]|string[] $columns, mixed $operator, mixed $value, string $boolean)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh orWhereNone(\Illuminate\Contracts\Database\Query\Expression[]|\Closure[]|string[] $columns, mixed $operator, mixed $value)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh groupBy(array|\Illuminate\Contracts\Database\Query\Expression|string ...$groups)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh groupByRaw(string $sql)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh having(\Illuminate\Contracts\Database\Query\Expression|\Closure|string $column, \DateTimeInterface|string|int|float|null $operator, \Illuminate\Contracts\Database\Query\Expression|\DateTimeInterface|string|int|float|null $value, string $boolean)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh orHaving(\Illuminate\Contracts\Database\Query\Expression|\Closure|string $column, \DateTimeInterface|string|int|float|null $operator, \Illuminate\Contracts\Database\Query\Expression|\DateTimeInterface|string|int|float|null $value)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh havingNested(string $boolean)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh addNestedHavingQuery(\Illuminate\Database\Query\Builder $query, string $boolean)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh havingNull(array|string $columns, string $boolean, bool $not)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh orHavingNull(string $column)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh havingNotNull(array|string $columns, string $boolean)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh orHavingNotNull(string $column)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh havingBetween(string $column, string $boolean, bool $not)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh havingRaw(string $sql, string $boolean)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh orHavingRaw(string $sql)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh orderBy(\Closure|\Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder<mixed>|\Illuminate\Contracts\Database\Query\Expression|string $column, string $direction)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh orderByDesc(\Closure|\Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder<mixed>|\Illuminate\Contracts\Database\Query\Expression|string $column)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh latest(\Closure|\Illuminate\Database\Query\Builder|\Illuminate\Contracts\Database\Query\Expression|string $column)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh oldest(\Closure|\Illuminate\Database\Query\Builder|\Illuminate\Contracts\Database\Query\Expression|string $column)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh inRandomOrder(string|int $seed)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh orderByRaw(string $sql, array $bindings)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh skip(int $value)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh offset(int $value)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh take(int $value)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh limit(int $value)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh groupLimit(int $value, string $column)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh forPage(int $page, int $perPage)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh forPageBeforeId(int $perPage, int|null $lastId, string $column)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh forPageAfterId(int $perPage, int|null $lastId, string $column)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh reorder(\Closure|\Illuminate\Database\Query\Builder|\Illuminate\Contracts\Database\Query\Expression|string|null $column, string $direction)
+     * @method static array removeExistingOrdersFor(string $column)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh union(\Closure|\Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder<mixed> $query, bool $all)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh unionAll(\Closure|\Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder<mixed> $query)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh lock(string|bool $value)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh lockForUpdate()
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh sharedLock()
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh beforeQuery()
+     * @method static void applyBeforeQueryCallbacks()
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh afterQuery()
+     * @method static mixed applyAfterQueryCallbacks(mixed $result)
+     * @method static string toSql()
+     * @method static string toRawSql()
+     * @method static PhimChiNhanh|null find(int|string $id, array|string $columns)
+     * @method static mixed findOr(mixed $id, callable|list<string>|string $columns, callable|null $callback)
+     * @method static mixed value(string $column)
+     * @method static mixed rawValue()
+     * @method static mixed soleValue(string $column)
+     * @method static \Illuminate\Support\Collection<int,\stdClass> get(array|string $columns)
+     * @method static array runSelect()
+     * @method static \Illuminate\Support\Collection withoutGroupLimitKeys(\Illuminate\Support\Collection $items)
+     * @method static \Illuminate\Pagination\LengthAwarePaginator paginate(int|\Closure $perPage, array|string $columns, string $pageName, int|null $page, \Closure|int|null $total)
+     * @method static \Illuminate\Contracts\Pagination\Paginator simplePaginate(int $perPage, array|string $columns, string $pageName, int|null $page)
+     * @method static \Illuminate\Contracts\Pagination\CursorPaginator cursorPaginate(int|null $perPage, array|string $columns, string $cursorName, \Illuminate\Pagination\Cursor|string|null $cursor)
+     * @method static \Illuminate\Support\Collection ensureOrderForCursorPagination(bool $shouldReverse)
+     * @method static int getCountForPagination(array $columns)
+     * @method static array runPaginationCountQuery(array $columns)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh cloneForPaginationCount()
+     * @method static array withoutSelectAliases()
+     * @method static \Illuminate\Support\LazyCollection<int,\stdClass> cursor()
+     * @method static void enforceOrderBy()
+     * @method static mixed pluck(\Illuminate\Contracts\Database\Query\Expression|string $column, string|null $key)
+     * @method static string|null stripTableForPluck(string $column)
+     * @method static \Illuminate\Support\Collection pluckFromObjectColumn(array $queryResult, string $column, string $key)
+     * @method static \Illuminate\Support\Collection pluckFromArrayColumn(array $queryResult, string $column, string $key)
+     * @method static string implode(string $column, string $glue)
+     * @method static bool exists()
+     * @method static bool doesntExist()
+     * @method static mixed existsOr()
+     * @method static mixed doesntExistOr()
+     * @method static int count(\Illuminate\Contracts\Database\Query\Expression|string $columns)
+     * @method static mixed min(\Illuminate\Contracts\Database\Query\Expression|string $column)
+     * @method static mixed max(\Illuminate\Contracts\Database\Query\Expression|string $column)
+     * @method static mixed sum(\Illuminate\Contracts\Database\Query\Expression|string $column)
+     * @method static mixed avg(\Illuminate\Contracts\Database\Query\Expression|string $column)
+     * @method static mixed average(\Illuminate\Contracts\Database\Query\Expression|string $column)
+     * @method static mixed aggregate(string $function, array $columns)
+     * @method static float|int numericAggregate(string $function, array $columns)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh setAggregate(string $function, array $columns)
+     * @method static mixed onceWithColumns(array $columns, callable $callback)
+     * @method static bool insert()
+     * @method static int insertOrIgnore()
+     * @method static int insertGetId(string|null $sequence)
+     * @method static int insertUsing(\Closure|\Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder<mixed>|string $query)
+     * @method static int insertOrIgnoreUsing(\Closure|\Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder<mixed>|string $query)
+     * @method static int update()
+     * @method static int updateFrom()
+     * @method static bool updateOrInsert()
+     * @method static int upsert(array|string $uniqueBy, array|null $update)
+     * @method static int increment(string $column, float|int $amount)
+     * @method static int incrementEach(array<string,float|int|numeric-string> $columns, array<string,mixed> $extra)
+     * @method static int decrement(string $column, float|int $amount)
+     * @method static int decrementEach(array<string,float|int|numeric-string> $columns, array<string,mixed> $extra)
+     * @method static int delete(mixed $id)
+     * @method static void truncate()
+     * @method static \Illuminate\Database\Query\Builder newQuery()
+     * @method static \Illuminate\Database\Query\Builder forSubQuery()
+     * @method static array getColumns()
+     * @method static \Illuminate\Contracts\Database\Query\Expression raw(mixed $value)
+     * @method static \Illuminate\Support\Collection getUnionBuilders()
+     * @method static mixed getLimit()
+     * @method static mixed getOffset()
+     * @method static array getBindings()
+     * @method static array getRawBindings()
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh setBindings(string $type)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh addBinding(mixed $value, string $type)
+     * @method static mixed castBinding(mixed $value)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh mergeBindings()
+     * @method static array cleanBindings()
+     * @method static mixed flattenValue(mixed $value)
+     * @method static string defaultKeyName()
+     * @method static \Illuminate\Database\ConnectionInterface getConnection()
+     * @method static \Illuminate\Database\Query\Processors\Processor getProcessor()
+     * @method static \Illuminate\Database\Query\Grammars\Grammar getGrammar()
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh useWritePdo()
+     * @method static bool isQueryable(mixed $value)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh clone()
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh cloneWithout()
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh cloneWithoutBindings()
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh dump(mixed ...$args)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh dumpRawSql()
+     * @method static void dd()
+     * @method static void ddRawSql()
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh wherePast(array|string $columns)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh whereNowOrPast(array|string $columns)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh orWherePast(array|string $columns)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh orWhereNowOrPast(array|string $columns)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh whereFuture(array|string $columns)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh whereNowOrFuture(array|string $columns)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh orWhereFuture(array|string $columns)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh orWhereNowOrFuture(array|string $columns)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh wherePastOrFuture(array|string $columns, string $operator, string $boolean)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh whereToday(array|string $columns, string $boolean)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh whereBeforeToday(array|string $columns)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh whereTodayOrBefore(array|string $columns)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh whereAfterToday(array|string $columns)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh whereTodayOrAfter(array|string $columns)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh orWhereToday(array|string $columns)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh orWhereBeforeToday(array|string $columns)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh orWhereTodayOrBefore(array|string $columns)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh orWhereAfterToday(array|string $columns)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh orWhereTodayOrAfter(array|string $columns)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh whereTodayBeforeOrAfter(array|string $columns, string $operator, string $boolean)
+     * @method static bool chunk(int $count, callable $callback)
+     * @method static mixed chunkMap(callable $callback, int $count)
+     * @method static bool each(callable $callback, int $count)
+     * @method static bool chunkById(int $count, callable $callback, string|null $column, string|null $alias)
+     * @method static bool chunkByIdDesc(int $count, callable $callback, string|null $column, string|null $alias)
+     * @method static bool orderedChunkById(int $count, callable $callback, string|null $column, string|null $alias, bool $descending)
+     * @method static bool eachById(callable $callback, int $count, string|null $column, string|null $alias)
+     * @method static mixed lazy(int $chunkSize)
+     * @method static mixed lazyById(int $chunkSize, string|null $column, string|null $alias)
+     * @method static mixed lazyByIdDesc(int $chunkSize, string|null $column, string|null $alias)
+     * @method static \Illuminate\Support\LazyCollection orderedLazyById(int $chunkSize, string|null $column, string|null $alias, bool $descending)
+     * @method static PhimChiNhanh|null first(array|string $columns)
+     * @method static PhimChiNhanh firstOrFail(array|string $columns, string|null $message)
+     * @method static PhimChiNhanh sole(array|string $columns)
+     * @method static \Illuminate\Contracts\Pagination\CursorPaginator paginateUsingCursor(int $perPage, array|string $columns, string $cursorName, \Illuminate\Pagination\Cursor|string|null $cursor)
+     * @method static string getOriginalColumnNameForCursorPagination(\Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder<mixed> $builder, string $parameter)
+     * @method static \Illuminate\Pagination\LengthAwarePaginator paginator(\Illuminate\Support\Collection $items, int $total, int $perPage, int $currentPage, array $options)
+     * @method static \Illuminate\Pagination\Paginator simplePaginator(\Illuminate\Support\Collection $items, int $perPage, int $currentPage, array $options)
+     * @method static \Illuminate\Pagination\CursorPaginator cursorPaginator(\Illuminate\Support\Collection $items, int $perPage, \Illuminate\Pagination\Cursor $cursor, array $options)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhimChiNhanh>|PhimChiNhanh tap(callable $callback)
+     * @method static mixed pipe(callable $callback)
+     * @method static mixed when(callable|\TWhenParameter|null $value, callable|null $callback, callable|null $default)
+     * @method static mixed unless(callable|\TUnlessParameter|null $value, callable|null $callback, callable|null $default)
+     * @method static \Illuminate\Support\Collection explain()
+     * @method static mixed forwardCallTo(mixed $object, string $method, array $parameters)
+     * @method static mixed forwardDecoratedCallTo(mixed $object, string $method, array $parameters)
+     * @method static void throwBadMethodCallException(string $method)
+     * @method static void macro(string $name, object|callable $macro)
+     * @method static void mixin(object $mixin, bool $replace)
+     * @method static bool hasMacro(string $name)
+     * @method static void flushMacros()
+     * @method static mixed macroCall(string $method, array $parameters)
+     * @mixin \Illuminate\Database\Query\Builder
+     */
+    class PhimChiNhanh extends \Illuminate\Database\Eloquent\Model
     {
         //
     }
@@ -7276,6 +7604,7 @@ namespace App\Models {
     /**
      * App\Models\PhongChieu
      *
+     * @property int|null $so_ghe
      * @property \Illuminate\Support\Carbon|null $updated_at
      * @property \Illuminate\Support\Carbon|null $created_at
      * @property mixed $status
@@ -7287,6 +7616,8 @@ namespace App\Models {
      * @property-read \App\Models\RapPhim $rapPhim
      * @property-read \App\Models\LoaiPhong $loaiPhong
      * @property-read \App\Models\SoDoGhe $soDoGhe
+     * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\GheNgoi> $gheNgois
+     * @property-read int|null $gheNgois_count
      * @method static \Illuminate\Database\Eloquent\Builder<PhongChieu>|PhongChieu whereId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<PhongChieu>|PhongChieu whereRapPhimId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<PhongChieu>|PhongChieu whereTenPhong($value)
@@ -7295,6 +7626,7 @@ namespace App\Models {
      * @method static \Illuminate\Database\Eloquent\Builder<PhongChieu>|PhongChieu whereStatus($value)
      * @method static \Illuminate\Database\Eloquent\Builder<PhongChieu>|PhongChieu whereCreatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<PhongChieu>|PhongChieu whereUpdatedAt($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<PhongChieu>|PhongChieu whereSoGhe($value)
      * @method static \Illuminate\Database\Eloquent\Builder<PhongChieu>|PhongChieu newModelQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<PhongChieu>|PhongChieu newQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<PhongChieu>|PhongChieu query()
@@ -8221,18 +8553,15 @@ namespace App\Models {
      *
      * @property \Illuminate\Support\Carbon|null $updated_at
      * @property \Illuminate\Support\Carbon|null $created_at
-     * @property boolean $trang_thai
+     * @property bool $trang_thai
      * @property string|null $mo_ta
      * @property bool $so_hang_doi
      * @property bool $so_hang_vip
      * @property bool $so_hang_thuong
      * @property array|null $cau_truc_ghe
-     * @property string $ten_so_do
      * @property int $id
-     * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\PhongChieu> $phongChieus
-     * @property-read int|null $phongChieus_count
+     * @property-read \App\Models\PhongChieu $phongChieu
      * @method static \Illuminate\Database\Eloquent\Builder<SoDoGhe>|SoDoGhe whereId($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<SoDoGhe>|SoDoGhe whereTenSoDo($value)
      * @method static \Illuminate\Database\Eloquent\Builder<SoDoGhe>|SoDoGhe whereCauTrucGhe($value)
      * @method static \Illuminate\Database\Eloquent\Builder<SoDoGhe>|SoDoGhe whereSoHangThuong($value)
      * @method static \Illuminate\Database\Eloquent\Builder<SoDoGhe>|SoDoGhe whereSoHangVip($value)

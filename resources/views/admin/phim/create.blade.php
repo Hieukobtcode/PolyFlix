@@ -213,10 +213,11 @@
                                         </option>
                                     @endforeach
                                 </select>
-                                @error('the_loai_ids')
+                                @error('dinh_dang_ids')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
+                            
                             {{-- <div class="mb-4">
                                 <label for="trang_thai" class="form-label fw-semibold">Trạng thái <span
                                         class="text-danger">*</span></label>
@@ -237,6 +238,23 @@
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div> --}}
+
+                            <div class="mb-4">
+                                <label for="chi_nhanh_ids" class="form-label fw-semibold">Chi nhánh <span
+                                        class="text-danger">*</span></label>
+                                <select class="form-control select2 rounded @error('chi_nhanh_ids') is-invalid @enderror"
+                                    id="chi_nhanh_ids" name="chi_nhanh_ids[]" multiple>
+                                    @foreach ($chiNhanhs as $chiNhanh)
+                                        <option value="{{ $chiNhanh->id }}"
+                                            {{ in_array($chiNhanh->id, old('chi_nhanh_ids', [])) ? 'selected' : '' }}>
+                                            {{ $chiNhanh->ten_chi_nhanh }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('chi_nhanh_ids')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
 
                         </div>
                     </div>
@@ -272,6 +290,8 @@
                 placeholder: "Chọn thể loại phim",
                 allowClear: true,
                 placeholder: "Chọn định dạng phim",
+                allowClear: true,
+                placeholder: "Chọn chi nhánh",
             });
 
             // Dữ liệu ngôn ngữ tĩnh

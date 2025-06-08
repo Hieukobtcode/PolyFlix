@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\ChiNhanh;
 use App\Models\DinhDangPhim;
 use App\Models\Phim;
 use App\Models\TheLoaiPhim;
@@ -22,7 +23,8 @@ class PhimController extends Controller
     {
         $theLoaiPhims = TheLoaiPhim::where('trang_thai', 'hoạt động')->get();
         $dinhDangPhims = DinhDangPhim::where('trang_thai', 'hoạt động')->get();
-        return view('admin.phim.create', compact('theLoaiPhims', 'dinhDangPhims'));
+        $chiNhanhs = ChiNhanh::where('trang_thai', 'hoat_dong')->get();
+        return view('admin.phim.create', compact('theLoaiPhims', 'dinhDangPhims', 'chiNhanhs'));
     }
 
     public function store(Request $request)
@@ -45,9 +47,11 @@ class PhimController extends Controller
             'the_loai_ids.*' => 'exists:the_loai_phims,id',
             'dinh_dang_ids' => 'required|array',
             'dinh_dang_ids.*' => 'exists:dinh_dang_phims,id',
+            'chi_nhanh_ids' => 'required|array',
+            'chi_nhanh_ids.*' => 'exists:chi_nhanhs,id',
         ]);
 
-        $data = $request->except(['poster', 'the_loai_ids', 'dinh_dang_ids']);
+        $data = $request->except(['poster', 'the_loai_ids', 'dinh_dang_ids', 'chi_nhanh_ids']);
 
         // Tính trạng thái dựa trên ngày phát hành và ngày kết thúc
         $today = Carbon::today();
@@ -71,6 +75,7 @@ class PhimController extends Controller
         $phim = Phim::create($data);
         $phim->theLoais()->attach($request->the_loai_ids);
         $phim->dinhDangs()->attach($request->dinh_dang_ids);
+        $phim->chiNhanhs()->attach($request->chi_nhanh_ids);
 
         return redirect()->route('admin.phim.index')
             ->with('success', 'Phim đã được tạo thành công!');
@@ -78,19 +83,21 @@ class PhimController extends Controller
 
     public function show($id)
     {
-        $phim = Phim::with('theLoais', 'dinhDangs')->findOrFail($id);
+        $phim = Phim::with('theLoais', 'dinhDangs', 'chiNhanhs')->findOrFail($id);
         return view('admin.phim.show', compact('phim'));
     }
 
     public function edit($id)
     {
-        $phim = Phim::with('theLoais', 'dinhDangs')->findOrFail($id);
+        $phim = Phim::with('theLoais', 'dinhDangs', 'chiNhanhs')->findOrFail($id);
         $theLoaiPhims = TheLoaiPhim::where('trang_thai', 'hoạt động')->get();
         $selectedTheLoais = $phim->theLoais->pluck('id')->toArray();
         $dinhDangPhims = DinhDangPhim::where('trang_thai', 'hoạt động')->get();
         $selectedDinhDangs = $phim->dinhDangs->pluck('id')->toArray();
+        $chiNhanhs = ChiNhanh::where('trang_thai', 'hoat_dong')->get();
+        $selectedChiNhanhs = $phim->chiNhanhs->pluck('id')->toArray();
 
-        return view('admin.phim.edit', compact('phim', 'theLoaiPhims', 'selectedTheLoais', 'dinhDangPhims', 'selectedDinhDangs'));
+        return view('admin.phim.edit', compact('phim', 'theLoaiPhims', 'selectedTheLoais', 'dinhDangPhims', 'selectedDinhDangs', 'chiNhanhs', 'selectedChiNhanhs'));
     }
 
     public function update(Request $request, $id)
@@ -115,9 +122,11 @@ class PhimController extends Controller
             'the_loai_ids.*' => 'exists:the_loai_phims,id',
             'dinh_dang_ids' => 'required|array',
             'dinh_dang_ids.*' => 'exists:dinh_dang_phims,id',
+            'chi_nhanh_ids' => 'required|array',
+            'chi_nhanh_ids.*' => 'exists:chi_nhanhs,id',
         ]);
 
-        $data = $request->except(['poster', 'the_loai_ids', 'dinh_dang_ids']);
+        $data = $request->except(['poster', 'the_loai_ids', 'dinh_dang_ids', 'chi_nhanh_ids']);
 
         // Tính trạng thái dựa trên ngày phát hành và ngày kết thúc
         $today = Carbon::today();
@@ -144,6 +153,7 @@ class PhimController extends Controller
         $phim->update($data);
         $phim->theLoais()->sync($request->the_loai_ids);
         $phim->dinhDangs()->sync($request->dinh_dang_ids);
+        $phim->chiNhanhs()->sync($request->chi_nhanh_ids);
 
         return redirect()->route('admin.phim.index')
             ->with('success', 'Phim đã được cập nhật thành công!');
