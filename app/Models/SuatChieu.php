@@ -14,8 +14,8 @@ class SuatChieu extends Model
 
     protected $fillable = [
         'phim_id',
-        'chi_nhanh_id',
-        'rap_phim_id',
+        // 'chi_nhanh_id',
+        // 'rap_phim_id',
         'phong_chieu_id',
         'phien_ban_phim',
         'ngay_chieu',
@@ -35,21 +35,31 @@ class SuatChieu extends Model
         return $this->belongsTo(Phim::class);
     }
 
-    // Quan hệ với model ChiNhanh
-    public function chiNhanh()
-    {
-        return $this->belongsTo(ChiNhanh::class);
-    }
+    // // Quan hệ với model ChiNhanh
+    // public function chiNhanh()
+    // {
+    //     return $this->belongsTo(ChiNhanh::class);
+    // }
 
-    // Quan hệ với model RapPhim (nullable)
-    public function rapPhim()
-    {
-        return $this->belongsTo(RapPhim::class);
-    }
+    // // Quan hệ với model RapPhim (nullable)
+    // public function rapPhim()
+    // {
+    //     return $this->belongsTo(RapPhim::class);
+    // }
 
     // Quan hệ với model PhongChieu
     public function phongChieu()
     {
         return $this->belongsTo(PhongChieu::class);
+    }
+
+    public function chiNhanh()
+    {
+        return $this->belongsTo(ChiNhanh::class, 'chi_nhanh_id');
+    }
+
+    public function rapPhims()
+    {
+        return $this->belongsTo(RapPhim::class, 'rap_id');
     }
 }

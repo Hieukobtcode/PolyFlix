@@ -217,7 +217,7 @@
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
-                            
+
                             {{-- <div class="mb-4">
                                 <label for="trang_thai" class="form-label fw-semibold">Trạng thái <span
                                         class="text-danger">*</span></label>
@@ -252,6 +252,23 @@
                                     @endforeach
                                 </select>
                                 @error('chi_nhanh_ids')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="rap_phim_ids" class="form-label fw-semibold">Rạp <span
+                                        class="text-danger">*</span></label>
+                                <select class="form-control select2 rounded @error('rap_phim_ids') is-invalid @enderror"
+                                    id="rap_phim_ids" name="rap_phim_ids[]" multiple>
+                                    @foreach ($rapPhims as $rapPhim)
+                                        <option value="{{ $rapPhim->id }}"
+                                            {{ in_array($rapPhim->id, old('rap_phim_ids', [])) ? 'selected' : '' }}>
+                                            {{ $rapPhim->ten_rap }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('rap_phim_ids')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
@@ -292,6 +309,8 @@
                 placeholder: "Chọn định dạng phim",
                 allowClear: true,
                 placeholder: "Chọn chi nhánh",
+                allowClear: true,
+                placeholder: "Chọn rạp",
             });
 
             // Dữ liệu ngôn ngữ tĩnh

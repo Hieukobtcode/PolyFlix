@@ -37,4 +37,9 @@ class PhongChieu extends Model
     {
         return $this->hasMany(GheNgoi::class, 'phong_chieu_id');
     }
+
+    public function suatChieus()
+    {
+        return $this->hasMany(SuatChieu::class);
+    }
 }

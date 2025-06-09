@@ -108,7 +108,7 @@
 
 
                     <div class="card-body p-3">
-                        @if ($chiNhanh->RapPhim->isEmpty())
+                        @if ($chiNhanh->rapPhims->isEmpty())
                             <p class="text-muted mb-0"><i class="fas fa-info-circle me-1"></i> Không có rạp nào thuộc chi
                                 nhánh này.</p>
                         @else
@@ -125,7 +125,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($chiNhanh->RapPhim as $index => $rap)
+                                        @foreach ($chiNhanh->rapPhims as $index => $rap)
                                             <tr>
                                                 <td class="text-center">{{ $index + 1 }}</td>
                                                 <td>{{ $rap->ten_rap }}</td>

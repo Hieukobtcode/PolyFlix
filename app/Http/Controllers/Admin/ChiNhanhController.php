@@ -10,7 +10,7 @@ class ChiNhanhController extends Controller
 {
     public function index(Request $request)
     {
-        $query = ChiNhanh::with('RapPhim');
+        $query = ChiNhanh::with('rapPhims');
 
         if ($request->has('keyword') && $request->keyword) {
             $query->where('ten_chi_nhanh', 'like', '%' . $request->keyword . '%');
@@ -68,7 +68,7 @@ class ChiNhanhController extends Controller
 
     public function show($id)
     {
-        $chiNhanh = ChiNhanh::with('RapPhim')->findOrFail($id);
+        $chiNhanh = ChiNhanh::with('rapPhims')->findOrFail($id);
         return view('admin.chi-nhanh.show', compact('chiNhanh'));
     }
 

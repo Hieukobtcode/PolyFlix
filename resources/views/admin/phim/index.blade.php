@@ -9,26 +9,33 @@
         .card {
             border-radius: 10px;
         }
+
         .table th,
         .table td {
             vertical-align: middle;
         }
+
         .badge {
             font-size: 0.9em;
             padding: 0.5em 1em;
         }
+
         .btn-group .btn {
             border-radius: 5px;
         }
+
         .pagination {
             justify-content: end;
         }
+
         .table-dark {
             background-color: #343a40;
         }
+
         .img-thumbnail {
             border-radius: 8px;
         }
+
         .form-control,
         .form-select {
             border-radius: 8px;
@@ -96,9 +103,9 @@
                                 <tr>
                                     <td class="text-center">{{ $index + 1 }}</td>
                                     <td class="text-center">
-                                        @if($phim->poster)
-                                            <img src="{{ asset('storage/' . $phim->poster) }}"
-                                                alt="{{ $phim->ten_phim }}" class="img-thumbnail rounded"
+                                        @if ($phim->poster)
+                                            <img src="{{ asset('storage/' . $phim->poster) }}" alt="{{ $phim->ten_phim }}"
+                                                class="img-thumbnail rounded"
                                                 style="width: 60px; height: 80px; object-fit: cover;">
                                         @else
                                             <span class="badge bg-secondary rounded-pill">Không có ảnh</span>
@@ -106,19 +113,26 @@
                                     </td>
                                     <td>{{ $phim->ten_phim }}</td>
                                     <td>
-                                        @foreach($phim->theLoais as $theLoai)
-                                            <span class="badge bg-info rounded-pill me-1">{{ $theLoai->ten_the_loai }}</span>
+                                        @foreach ($phim->theLoais as $theLoai)
+                                            <span
+                                                class="badge bg-info rounded-pill me-1">{{ $theLoai->ten_the_loai }}</span>
                                         @endforeach
                                     </td>
-                                    <td class="text-center">{{ $phim->thoi_luong ? $phim->thoi_luong . ' phút' : 'N/A' }}</td>
-                                    <td class="text-center">{{ $phim->ngay_phat_hanh ? $phim->ngay_phat_hanh->format('d/m/Y') : 'N/A' }}</td>
+                                    <td class="text-center">{{ $phim->thoi_luong ? $phim->thoi_luong . ' phút' : 'N/A' }}
+                                    </td>
+                                    <td class="text-center">
+                                        {{ $phim->ngay_phat_hanh ? $phim->ngay_phat_hanh->format('d/m/Y') : 'N/A' }}</td>
                                     <td class="text-center" data-status="{{ strtolower($phim->trang_thai) }}">
-                                        <span class="badge rounded-pill {{
-                                            $phim->trang_thai === 'đang chiếu' ? 'bg-success' :
-                                            ($phim->trang_thai === 'sắp chiếu' ? 'bg-warning' :
-                                                ($phim->trang_thai === 'đã kết thúc' ? 'bg-secondary' :
-                                                    ($phim->trang_thai === 'bị hủy' ? 'bg-danger' : 'bg-dark')))
-                                        }}">
+                                        <span
+                                            class="badge rounded-pill {{ $phim->trang_thai === 'đang chiếu'
+                                                ? 'bg-success'
+                                                : ($phim->trang_thai === 'sắp chiếu'
+                                                    ? 'bg-warning'
+                                                    : ($phim->trang_thai === 'đã kết thúc'
+                                                        ? 'bg-secondary'
+                                                        : ($phim->trang_thai === 'bị hủy'
+                                                            ? 'bg-danger'
+                                                            : 'bg-dark'))) }}">
                                             {{ ucfirst($phim->trang_thai) }}
                                         </span>
                                     </td>
@@ -132,12 +146,18 @@
                                                 class="btn btn-sm btn-outline-primary" title="Chỉnh sửa">
                                                 <i class="fas fa-edit"></i>
                                             </a>
+                                            <a href="{{ route('admin.suat-chieu.create', ['phimId' => $phim->id]) }}"
+                                                class="btn btn-sm btn-outline-success" title="Thêm suất chiếu"
+                                                data-bs-toggle="tooltip">
+                                                <i class="fas fa-plus-circle"></i>
+                                            </a>
                                             <form action="{{ route('admin.phim.destroy', $phim->id) }}" method="POST"
                                                 class="d-inline"
                                                 onsubmit="return confirm('Bạn có chắc chắn muốn xóa mềm phim này? Phim sẽ được chuyển vào thùng rác.')">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Xóa mềm">
+                                                <button type="submit" class="btn btn-sm btn-outline-danger"
+                                                    title="Xóa mềm">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
                                             </form>
@@ -158,7 +178,8 @@
                 <!-- Phân trang -->
                 <div class="d-flex justify-content-between align-items-center mt-4">
                     <div>
-                        <small class="text-muted">Hiển thị {{ $phims->count() }} trong tổng số {{ $phims->total() }} phim</small>
+                        <small class="text-muted">Hiển thị {{ $phims->count() }} trong tổng số {{ $phims->total() }}
+                            phim</small>
                     </div>
                     <div>
                         {{ $phims->links('pagination::bootstrap-5') }}
@@ -171,7 +192,7 @@
 
 @section('scripts')
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             // Lấy tất cả các hàng trong bảng
             const rows = document.querySelectorAll('#movieTable tr:not(#emptyRow)');
             const tableBody = document.getElementById('movieTable');

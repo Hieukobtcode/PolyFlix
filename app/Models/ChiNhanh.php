@@ -25,13 +25,11 @@ class ChiNhanh extends Model
     {
         return $this->belongsToMany(KhuyenMai::class, 'khuyen_mai_chi_nhanhs', 'chi_nhanh_id', 'khuyen_mai_id')
             ->withTimestamps('created_at', 'updated_at');
-      
     }
-    public function RapPhim()
+    public function rapPhims()
     {
         return $this->hasMany(RapPhim::class, 'chi_nhanh_id');
     }
-
 
     public function phims(): BelongsToMany
     {
@@ -42,10 +40,9 @@ class ChiNhanh extends Model
     {
         return $this->belongsToMany(DoAn::class, 'chi_nhanh_do_an');
     }
-  
+
     public function combos()
     {
         return $this->belongsToMany(Combo::class, 'chi_nhanh_combo');
     }
 }
-
