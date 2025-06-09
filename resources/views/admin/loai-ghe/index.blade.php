@@ -39,21 +39,39 @@
                     <div class="card-body">
                         <form action="{{ route('admin.loai-ghe.store') }}" method="POST">
                             @csrf
+
+                            {{-- Tên loại ghế --}}
                             <div class="mb-3">
                                 <label for="ten_loai_ghe" class="form-label">Tên loại ghế</label>
-                                <input type="text" name="ten_loai_ghe" class="form-control" required>
+                                <input type="text" name="ten_loai_ghe" class="form-control" required
+                                    value="{{ old('ten_loai_ghe') }}">
                             </div>
+
+                            {{-- Chú thích màu ghế --}}
+                            <div class="mb-3">
+                                <label for="chu_thich_mau_ghe" class="form-label">Chú thích màu ghế</label>
+                                <input type="color" name="chu_thich_mau_ghe" class="form-control form-control-color"
+                                    value="{{ old('chu_thich_mau_ghe', '#000000') }}" required>
+                            </div>
+
+                            {{-- Mô tả --}}
                             <div class="mb-3">
                                 <label for="mo_ta" class="form-label">Mô tả</label>
-                                <textarea name="mo_ta" rows="3" class="form-control"></textarea>
+                                <textarea name="mo_ta" rows="3" class="form-control">{{ old('mo_ta') }}</textarea>
                             </div>
+
+                            {{-- Phụ thu --}}
                             <div class="mb-3">
                                 <label for="phu_thu" class="form-label">Phụ thu</label>
-                                <input type="number" name="phu_thu" step="0.01" class="form-control">
+                                <input type="number" name="phu_thu" step="0.01" class="form-control"
+                                    value="{{ old('phu_thu') }}">
                             </div>
+
+                            {{-- Nút submit --}}
                             <div class="d-grid">
-                                <button type="submit" class="btn btn-success"><i class="fas fa-plus me-1"></i> Thêm
-                                    mới</button>
+                                <button type="submit" class="btn btn-success">
+                                    <i class="fas fa-plus me-1"></i> Thêm mới
+                                </button>
                             </div>
                         </form>
                     </div>
@@ -78,6 +96,7 @@
                                     <tr>
                                         <th class="text-center" style="width: 5%">#</th>
                                         <th>Tên loại ghế</th>
+                                        <th>Chú thích màu ghế</th>
                                         <th>Mô tả</th>
                                         <th>Phụ thu</th>
                                         <th class="text-center">Ngày tạo</th>
@@ -89,6 +108,12 @@
                                         <tr>
                                             <td class="text-center">{{ $index + 1 }}</td>
                                             <td>{{ $ghe->ten_loai_ghe }}</td>
+                                            <td>
+                                                <div
+                                                    style="width: 30px; height: 30px; background-color: {{ $ghe->chu_thich_mau_ghe }}; border: 1px solid #ccc; border-radius: 4px;">
+                                                </div>
+                                            </td>
+
                                             <td>{{ $ghe->mo_ta ?? '-' }}</td>
                                             <td>
                                                 @if ($ghe->phu_thu > 0)
@@ -105,13 +130,6 @@
                                                         data-id="{{ $ghe->id }}">
                                                         <i class="fas fa-edit"></i>
                                                     </button>
-                                                    <form action="{{ route('admin.loai-ghe.destroy', $ghe->id) }}"
-                                                        method="POST" onsubmit="return confirm('Xác nhận xóa?')">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button class="btn btn-sm btn-outline-danger"><i
-                                                                class="fas fa-trash"></i></button>
-                                                    </form>
                                                 </div>
                                             </td>
                                         </tr>
@@ -154,7 +172,12 @@
                     <div class="modal-body">
                         <div class="mb-3">
                             <label class="form-label">Tên loại ghế</label>
-                            <input type="text" name="ten_loai_ghe" class="form-control" id="edit_ten_loai_ghe" required>
+                            <input readonly type="text" name="ten_loai_ghe" class="form-control" id="edit_ten_loai_ghe" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Chú thích màu ghế</label>
+                            <input type="color" id="chu_thich_mau_ghe" name="chu_thich_mau_ghe"
+                                class="form-control form-control-color" id="edit_chu_thich_mau_ghe" required>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Mô tả</label>
@@ -173,6 +196,7 @@
             </form>
         </div>
     </div>
+
 @endsection
 
 @section('scripts')
@@ -215,7 +239,9 @@
                             form.action = `/admin/loai-ghe/${gheId}`;
                             document.getElementById('edit_ten_loai_ghe').value = data
                                 .ten_loai_ghe;
-                            document.getElementById('edit_mo_ta').value = data.mo_ta ?? '';
+                            document.getElementById('chu_thich_mau_ghe').value = data
+                                .chu_thich_mau_ghe,
+                                document.getElementById('edit_mo_ta').value = data.mo_ta ?? '';
                             document.getElementById('edit_phu_thu').value = data.phu_thu ?? 0;
                             editModal.show();
                         });

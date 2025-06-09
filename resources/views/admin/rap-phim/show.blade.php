@@ -2,12 +2,15 @@
 @section('title', 'Quản lý chi nhánh')
 @section('page-title', 'Chi tiết rạp chiếu')
 @section('breadcrumb')
-    <a href="{{ route('admin.chi-nhanh.index') }}">Danh sách chi nhánh</a> / 
+    <a href="{{ route('admin.chi-nhanh.index') }}">Danh sách chi nhánh</a> /
     <a href="{{ route('admin.chi-nhanh.show', $rapPhim->chi_nhanh_id) }}">Danh sách rạp chiếu</a>/
     Danh sách phòng chiếu
 @endsection
 
 @section('styles')
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.1.1/dist/select2-bootstrap-5-theme.min.css"
+        rel="stylesheet" />
     <style>
         .card {
             border-radius: 12px;
@@ -23,7 +26,6 @@
 @section('content')
     <div class="container-fluid">
         <div class="row g-3">
-
             {{-- Cột trái --}}
             <div class="col-md-3">
                 <div class="card shadow-sm border-0 h-100">
@@ -154,78 +156,159 @@
         </div>
     </div>
 
+    @if ($errors->any() && session('show_create_modal'))
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const modal = new bootstrap.Modal(document.getElementById('modalSoDoGhe'));
+                modal.show();
+            });
+        </script>
+    @endif
+
     @include('admin.rap-phim.modal')
 
 @endsection
 @section('scripts')
-    <script>
-        document.querySelectorAll('[data-bs-toggle="modal"]').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const phongId = this.getAttribute('data-id');
-                const tenPhong = this.getAttribute('data-tenphong');
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
-                document.getElementById('modalSoDoGheLabel').innerHTML =
-                    `Tạo sơ đồ ghế cho phòng chiếu: ${tenPhong}`;
-                document.getElementById('phong_id').value = phongId;
-                document.getElementById('formSoDoGhe').reset();
+    <script>
+        $(document).ready(function() {
+            $('#loai_ghe_ids').select2({
+                theme: 'bootstrap-5',
+                placeholder: 'Chọn loại ghế',
+                allowClear: true,
+                dropdownParent: $('#modalSoDoGhe'),
+                width: '100%'
             });
+
+            $('#loai_ghe_ids').on('change', function() {
+                const selected = $(this).val();
+                const container = $('#input_container');
+                container.empty();
+
+                if (selected && selected.length > 0) {
+                    selected.forEach(function(loaiGheId) {
+                        const tenLoaiGhe = $('#loai_ghe_ids option[value="' + loaiGheId.trim() +
+                            '"]').text();
+
+                        const inputHtml = `
+                <div class="mb-3">
+                    <label class="form-label">${tenLoaiGhe}</label>
+                    <input type="number" id="loai_ghe_${loaiGheId}" data-id-loai="${loaiGheId}" name="so_hang_${loaiGheId}" min="1"
+                        class="form-control form-control-lg shadow-sm"
+                        placeholder="Số hàng ghế">
+                    <div class="text-danger" id="error_loai_ghe_${loaiGheId}"></div>
+                </div>`;
+
+                        container.append(inputHtml);
+
+                        const errorMessage = document.getElementById(`error_loai_ghe_${loaiGheId}`);
+                        if (errorMessage && errorMessage.innerHTML) {
+                            document.getElementById(`loai_ghe_${loaiGheId}`).classList.add(
+                                'is-invalid');
+                        }
+                    });
+                }
+            });
+
+            $('[data-bs-toggle="modal"]').on('click', function() {
+                const phongId = $(this).data('id');
+                const tenPhong = $(this).data('tenphong');
+
+                $('#modalSoDoGheLabel').html(`Tạo sơ đồ ghế cho phòng chiếu: ${tenPhong}`);
+                $('#phong_id').val(phongId);
+
+                const form = $('#formSoDoGhe')[0];
+                form.reset();
+
+                $('#loai_ghe_ids').val(null).trigger('change');
+                $('#input_container').empty();
+            });
+
+            $('#mau_so_do').on('change', function() {
+                const selectedOption = $(this).val();
+
+                if (selectedOption) {
+                    const [rows, cols] = selectedOption.split('x');
+
+                    $('#so_hang').val(rows);
+                    $('#so_cot').val(cols);
+
+                    updateLoaiGhe(rows);
+                } else {
+                    $('#so_hang').val('');
+                    $('#so_cot').val('');
+                    $('#ghe_thuong').val('');
+                    $('#ghe_vip').val('');
+                    $('#ghe_doi').val('');
+                }
+            });
+
+            function updateLoaiGhe(rows) {
+                rows = parseInt(rows);
+                const gheThuong = Math.ceil(rows * 50 / 100);
+                const gheVip = Math.ceil(rows * 30 / 100);
+                const gheDoi = rows - (gheThuong + gheVip);
+
+                $('#ghe_thuong').val(gheThuong);
+                $('#ghe_vip').val(gheVip);
+                $('#ghe_doi').val(gheDoi);
+            }
+
         });
 
-        document.getElementById('formSoDoGhe').addEventListener('submit', function(e) {
+        $('#formSoDoGhe').on('submit', function(e) {
             e.preventDefault();
-            const form = this;
+            const form = $(this);
 
+            const soHang = Number($('#so_hang').val()) || 0;
+            const soCot = Number($('#so_cot').val()) || 0;
+
+            let selectedIds = $('#loai_ghe_ids').val();
+            if (!Array.isArray(selectedIds)) {
+                selectedIds = selectedIds ? [selectedIds] : [];
+            }
+
+            const inputHangGhe = selectedIds.map(id => ({
+                id,
+                soHang: Number($('#loai_ghe_' + id).val()) || 0
+            }));
+
+            const maTranGhe = {};
+            let currentRow = 1;
+            inputHangGhe.forEach(({
+                id,
+                soHang
+            }) => {
+                for (let j = 1; j <= soHang; j++) {
+                    const rowLabel = String.fromCharCode(64 + currentRow);
+                    for (let c = 1; c <= soCot; c++) {
+                        maTranGhe[rowLabel + c] = id;
+                    }
+                    currentRow++;
+                }
+            });
+
+            $('#ma_tran_ghe').val(JSON.stringify(maTranGhe));
             $.ajax({
-                url: form.action,
+                url: form.attr('action'),
                 method: 'POST',
-                data: $(form).serialize() + '&_token=' + '{{ csrf_token() }}',
-                success: function(response) {
+                data: form.serialize() + '&_token=' + $('meta[name="csrf-token"]').attr('content'),
+                success(response) {
                     $('#modalSoDoGhe').modal('hide');
                     window.location.href = response.redirectUrl;
                 },
-                error: function(xhr) {
-                    var errors = xhr.responseJSON.errors;
-
+                error(xhr) {
+                    const errors = xhr.responseJSON.errors;
                     $('.text-danger').remove();
-
-                    for (var field in errors) {
-                        $('#' + field).after('<div class="text-danger">' + errors[field][0] + '</div>');
-                    }
+                    $.each(errors, function(field, messages) {
+                        $('#' + field)
+                            .after('<div class="text-danger">' + messages[0] + '</div>');
+                    });
                 }
             });
         });
-
-        document.getElementById('mau_so_do').addEventListener('change', function() {
-            const selectedOption = this.value;
-
-            if (selectedOption) {
-                const [rows, cols] = selectedOption.split('x');
-
-                document.getElementById('so_hang').value = rows;
-                document.getElementById('so_cot').value = cols;
-
-                updateLoaiGhe(rows);
-            } else {
-                document.getElementById('so_hang').value = "";
-                document.getElementById('so_cot').value = "";
-                document.getElementById('ghe_thuong').value = "";
-                document.getElementById('ghe_vip').value = "";
-                document.getElementById('ghe_doi').value = "";
-            }
-        });
-
-        function updateLoaiGhe(rows) {
-            const hangGheThuong = document.getElementById('ghe_thuong');
-            const hangGheVip = document.getElementById('ghe_vip');
-            const hangGheDoi = document.getElementById('ghe_doi');
-
-            const gheThuong = Math.ceil(rows * 50 / 100);
-            const gheVip = Math.ceil(rows * 30 / 100);
-            const gheDoi = rows - (gheThuong + gheVip);
-
-            hangGheThuong.value = gheThuong;
-            hangGheVip.value = gheVip;
-            hangGheDoi.value = gheDoi;
-        }
     </script>
+
 @endsection

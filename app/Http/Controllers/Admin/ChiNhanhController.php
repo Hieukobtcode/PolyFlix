@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\ChiNhanh;
+use App\Models\LoaiGhe;
 
 class ChiNhanhController extends Controller
 {

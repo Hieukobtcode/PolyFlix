@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\RapPhim;
 use App\Models\ChiNhanh;
+use App\Models\LoaiGhe;
 
 class RapphimController extends Controller
 {
@@ -52,10 +53,10 @@ class RapphimController extends Controller
 
     public function show($id)
     {
-
+        $loaiGhes = LoaiGhe::all();
         $rapPhim = RapPhim::with(['phongChieus'])->findOrFail($id);
         
-        return view('admin.rap-phim.show', compact('rapPhim'));
+        return view('admin.rap-phim.show', compact('rapPhim','loaiGhes'));
     }
 
 

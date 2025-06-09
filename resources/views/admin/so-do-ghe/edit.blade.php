@@ -7,10 +7,12 @@
     @php
         $cauTrucGhes = $soDoGhe->cau_truc_ghe;
         $rows = [];
+        $gheId = [];
         foreach ($cauTrucGhes as $seat => $type) {
             $row = substr($seat, 0, 1);
             $col = substr($seat, 1);
             $rows[$row][$col] = $type;
+            $gheId[] = $type;
         }
         ksort($rows);
         foreach ($rows as &$cols) {
@@ -93,21 +95,6 @@
 
         .seat.filled i.fa-couch {
             color: #34495e;
-        }
-
-        .seat.vip {
-            background: #f3f4f6;
-            color: #fff;
-        }
-
-        .seat.thuong {
-            background: #fef3c7;
-            color: #fff;
-        }
-
-        .seat.doi {
-            background: #fce7f3;
-            color: #fff;
         }
 
         .seat-action-btns {
@@ -257,21 +244,19 @@
 
                     @foreach ($rows as $rowKey => $cols)
                         <div class="seat-row-label">{{ $rowKey }}</div>
-
-                        @foreach ($cols as $colKey => $type)
+                        @foreach ($cols as $colKey => $loaiGheId)
                             @php
-                                $statusClass = $type !== 'empty' ? 'empty' : 'filled';
-                                $typeClass = match ($type) {
-                                    'vip' => 'vip',
-                                    'thuong' => 'thuong',
-                                    'doi' => 'doi',
-                                    default => '',
-                                };
+
+                                $mau = $mauGhes[$loaiGheId] ?? '#ccc';
+                                $typeClass = $loaiGheId;
+                                $statusClass = 'empty';
+                                $isDouble = $loaiGheId == 12 ? 'doi' : '';
+
                             @endphp
 
-                            <button type="button" class="seat {{ $typeClass }} {{ $statusClass }}" empty
-                                data-row="{{ $rowKey }}" data-col="{{ $colKey }}"
-                                data-loai="{{ $typeClass }}"
+                            <button type="button" style="background-color: {{ $mau }}"
+                                class="seat {{ $typeClass }} {{ $statusClass }} {{ $isDouble }}" empty data-row="{{ $rowKey }}"
+                                data-col="{{ $colKey }}" data-loai="{{ $typeClass }}"
                                 onclick="toggleSeat('{{ $rowKey }}','{{ $colKey }}')">
                                 @if ($statusClass === 'empty')
                                     <i class="fa-solid fa-plus fa-spin-pulse"></i>
@@ -310,18 +295,14 @@
 
                 <div class="panel-box">
                     <h4>Chú thích</h4>
-                    <div class="legend-item">
-                        <span>Hàng ghế thường</span>
-                        <div class="legend-color legend-thuong"></div>
-                    </div>
-                    <div class="legend-item">
-                        <span>Hàng ghế vip</span>
-                        <div class="legend-color legend-vip"></div>
-                    </div>
-                    <div class="legend-item">
-                        <span>Hàng ghế đôi</span>
-                        <div class="legend-color legend-doi"></div>
-                    </div>
+                    @foreach ($loaiGhes as $item)
+                        @if (in_array($item->id, $gheId))
+                            <div class="legend-item">
+                                <span>{{ $item->ten_loai_ghe }}</span>
+                                <div style="background-color: {{ $item->chu_thich_mau_ghe }}" class="legend-color"></div>
+                            </div>
+                        @endif
+                    @endforeach
                 </div>
             </div>
         </div>
@@ -462,15 +443,17 @@
         }
 
         document.querySelector('form').addEventListener('submit', function(e) {
+
             const seats = [];
+
             document.querySelectorAll('.seat').forEach(seat => {
                 const row = seat.dataset.row;
                 const col = seat.dataset.col;
-                let loai = 'empty';
-                if (seat.classList.contains('filled')) {
-                    if (seat.classList.contains('thuong')) loai = 'thuong';
-                    else if (seat.classList.contains('vip')) loai = 'vip';
-                    else if (seat.classList.contains('doi')) loai = 'doi';
+                let loai;
+                if (seat.classList.contains('empty')) {
+                    loai = 'empty';
+                } else {
+                    loai = seat.dataset.loai || 'empty';
                 }
                 seats.push({
                     row,
@@ -478,6 +461,7 @@
                     loai
                 });
             });
+
             document.getElementById('seat_data').value = JSON.stringify(seats);
         });
     </script>
