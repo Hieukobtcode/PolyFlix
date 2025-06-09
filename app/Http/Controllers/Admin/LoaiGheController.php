@@ -23,19 +23,27 @@ class LoaiGheController extends Controller
     {
         $request->validate([
             'ten_loai_ghe' => 'required|string|max:255',
+            'chu_thich_mau_ghe' => 'required|string|size:7', 
             'mo_ta' => 'nullable|string',
             'phu_thu' => 'nullable|numeric|min:0',
         ]);
+
+        if (LoaiGhe::where('chu_thich_mau_ghe', $request->chu_thich_mau_ghe)->exists()) {
+            return redirect()->back()
+                ->withInput()
+                ->withErrors(['chu_thich_mau_ghe' => 'Màu này đã được sử dụng cho loại ghế khác. Vui lòng chọn màu khác.']);
+        }
 
         LoaiGhe::create($request->all());
 
         return redirect()->route('admin.loai-ghe.index')->with('success', 'Thêm loại ghế thành công');
     }
 
+
     public function show(string $id)
     {
         $loaiGhe = LoaiGhe::findOrFail($id);
-        return response()->json($loaiGhe); 
+        return response()->json($loaiGhe);
     }
 
     public function edit(string $id)

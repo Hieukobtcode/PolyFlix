@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -12,13 +13,13 @@ class LoaiGhe extends Model
 
     protected $fillable = [
         'ten_loai_ghe',
+        'chu_thich_mau_ghe',
         'mo_ta',
         'phu_thu',
     ];
 
-     public function gheNgois()
+    public function gheNgois()
     {
         return $this->hasMany(GheNgoi::class);
     }
-    
 }
