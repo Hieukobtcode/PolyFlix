@@ -123,6 +123,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('khuyen-mai', KhuyenMaiController::class);
 
     // Quản lý suất chiếu
+    Route::post('suat-chieu/bulk-delete', [SuatChieuController::class, 'bulkDelete'])->name('suat-chieu.bulk-delete');
+    Route::post('suat-chieu/bulk-toggle-status', [SuatChieuController::class, 'bulkToggleStatus'])->name('suat-chieu.bulk-toggle-status');
+    Route::post('suat-chieu/{suatChieu}/toggle-status', [SuatChieuController::class, 'toggleStatus']);
     Route::resource('suat-chieu', SuatChieuController::class);
 
     // Quản lý combo
@@ -131,6 +134,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
     // Quản lý đồ ăn
     Route::resource('do-an', DoAnController::class);
 
-     // Quản lý danh sách đồ ăn
+    // Quản lý danh sách đồ ăn
     Route::resource('danh-muc-do-an', DanhMucDoAnController::class);
 });

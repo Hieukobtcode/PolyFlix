@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\ChiNhanh;
 use App\Models\DinhDangPhim;
 use App\Models\Phim;
+use App\Models\RapPhim;
 use App\Models\TheLoaiPhim;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -24,7 +25,8 @@ class PhimController extends Controller
         $theLoaiPhims = TheLoaiPhim::where('trang_thai', 'hoạt động')->get();
         $dinhDangPhims = DinhDangPhim::where('trang_thai', 'hoạt động')->get();
         $chiNhanhs = ChiNhanh::where('trang_thai', 'hoat_dong')->get();
-        return view('admin.phim.create', compact('theLoaiPhims', 'dinhDangPhims', 'chiNhanhs'));
+        $rapPhims = RapPhim::where('trang_thai', 'đang hoạt động')->get();
+        return view('admin.phim.create', compact('theLoaiPhims', 'dinhDangPhims', 'chiNhanhs', 'rapPhims'));
     }
 
     public function store(Request $request)
@@ -49,9 +51,11 @@ class PhimController extends Controller
             'dinh_dang_ids.*' => 'exists:dinh_dang_phims,id',
             'chi_nhanh_ids' => 'required|array',
             'chi_nhanh_ids.*' => 'exists:chi_nhanhs,id',
+            'rap_phim_ids' => 'array',
+            'rap_phim_ids.*' => 'exists:rap_phims,id',
         ]);
 
-        $data = $request->except(['poster', 'the_loai_ids', 'dinh_dang_ids', 'chi_nhanh_ids']);
+        $data = $request->except(['poster', 'the_loai_ids', 'dinh_dang_ids', 'chi_nhanh_ids', 'rap_phim_ids']);
 
         // Tính trạng thái dựa trên ngày phát hành và ngày kết thúc
         $today = Carbon::today();
@@ -76,6 +80,7 @@ class PhimController extends Controller
         $phim->theLoais()->attach($request->the_loai_ids);
         $phim->dinhDangs()->attach($request->dinh_dang_ids);
         $phim->chiNhanhs()->attach($request->chi_nhanh_ids);
+        $phim->rapPhims()->attach($request->rap_phim_ids);
 
         return redirect()->route('admin.phim.index')
             ->with('success', 'Phim đã được tạo thành công!');
@@ -83,21 +88,23 @@ class PhimController extends Controller
 
     public function show($id)
     {
-        $phim = Phim::with('theLoais', 'dinhDangs', 'chiNhanhs')->findOrFail($id);
+        $phim = Phim::with('theLoais', 'dinhDangs', 'chiNhanhs', 'rapPhims')->findOrFail($id);
         return view('admin.phim.show', compact('phim'));
     }
 
     public function edit($id)
     {
-        $phim = Phim::with('theLoais', 'dinhDangs', 'chiNhanhs')->findOrFail($id);
+        $phim = Phim::with('theLoais', 'dinhDangs', 'chiNhanhs', 'rapPhims')->findOrFail($id);
         $theLoaiPhims = TheLoaiPhim::where('trang_thai', 'hoạt động')->get();
         $selectedTheLoais = $phim->theLoais->pluck('id')->toArray();
         $dinhDangPhims = DinhDangPhim::where('trang_thai', 'hoạt động')->get();
         $selectedDinhDangs = $phim->dinhDangs->pluck('id')->toArray();
         $chiNhanhs = ChiNhanh::where('trang_thai', 'hoat_dong')->get();
         $selectedChiNhanhs = $phim->chiNhanhs->pluck('id')->toArray();
+        $rapPhims = RapPhim::where('trang_thai', 'đang hoạt động')->get();
+        $selectedRapPhims = $phim->rapPhims->pluck('id')->toArray();
 
-        return view('admin.phim.edit', compact('phim', 'theLoaiPhims', 'selectedTheLoais', 'dinhDangPhims', 'selectedDinhDangs', 'chiNhanhs', 'selectedChiNhanhs'));
+        return view('admin.phim.edit', compact('phim', 'theLoaiPhims', 'selectedTheLoais', 'dinhDangPhims', 'selectedDinhDangs', 'chiNhanhs', 'selectedChiNhanhs', 'rapPhims', 'selectedRapPhims'));
     }
 
     public function update(Request $request, $id)
@@ -124,9 +131,11 @@ class PhimController extends Controller
             'dinh_dang_ids.*' => 'exists:dinh_dang_phims,id',
             'chi_nhanh_ids' => 'required|array',
             'chi_nhanh_ids.*' => 'exists:chi_nhanhs,id',
+            'rap_phim_ids' => 'array',
+            'rap_phim_ids.*' => 'exists:rap_phims,id',
         ]);
 
-        $data = $request->except(['poster', 'the_loai_ids', 'dinh_dang_ids', 'chi_nhanh_ids']);
+        $data = $request->except(['poster', 'the_loai_ids', 'dinh_dang_ids', 'chi_nhanh_ids', 'rap_phim_ids']);
 
         // Tính trạng thái dựa trên ngày phát hành và ngày kết thúc
         $today = Carbon::today();
@@ -154,6 +163,7 @@ class PhimController extends Controller
         $phim->theLoais()->sync($request->the_loai_ids);
         $phim->dinhDangs()->sync($request->dinh_dang_ids);
         $phim->chiNhanhs()->sync($request->chi_nhanh_ids);
+        $phim->rapPhims()->sync($request->chi_nhanh_ids);
 
         return redirect()->route('admin.phim.index')
             ->with('success', 'Phim đã được cập nhật thành công!');
@@ -199,6 +209,8 @@ class PhimController extends Controller
         // Xóa quan hệ với thể loại vaf định dạng
         $phim->theLoais()->detach();
         $phim->dinhDangs()->detach();
+        $phim->chiNhanhs()->detach();
+        $phim->rapPhims()->detach();
 
         // Xóa vĩnh viễn
         $phim->forceDelete();

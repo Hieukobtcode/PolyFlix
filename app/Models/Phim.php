@@ -45,8 +45,19 @@ class Phim extends Model
     {
         return $this->belongsToMany(DinhDangPhim::class, 'phim_dinh_dangs', 'phim_id', 'dinh_dang_phim_id');
     }
+
     public function chiNhanhs(): BelongsToMany
     {
         return $this->belongsToMany(ChiNhanh::class, 'phim_chi_nhanhs', 'phim_id', 'chi_nhanh_id');
+    }
+
+    public function rapPhims(): BelongsToMany
+    {
+        return $this->belongsToMany(RapPhim::class, 'phim_raps', 'phim_id', 'rap_phim_id');
+    }
+
+    public function suatChieus()
+    {
+        return $this->hasMany(SuatChieu::class);
     }
 }

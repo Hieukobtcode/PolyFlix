@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -38,5 +39,10 @@ class RapPhim extends Model
     public function phongChieus()
     {
         return $this->hasMany(PhongChieu::class, 'rap_phim_id');
+    }
+
+    public function phims(): BelongsToMany
+    {
+        return $this->belongsToMany(Phim::class, 'phim_raps', 'rap_phim_id', 'phim_id');
     }
 }

@@ -86,7 +86,18 @@
                                 @forelse($phim->chiNhanhs as $chiNhanh)
                                     <span class="badge bg-info rounded-pill me-1">{{ $chiNhanh->ten_chi_nhanh }}</span>
                                 @empty
-                                    <span class="text-muted">Chưa có định dạng</span>
+                                    <span class="text-muted">Chưa có chi nhánh</span>
+                                @endforelse
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <h5 class="fw-bold">Rạp</h5>
+                            <div>
+                                @forelse($phim->rapPhims as $rapPhim)
+                                    <span class="badge bg-info rounded-pill me-1">{{ $rapPhim->ten_rap }}</span>
+                                @empty
+                                    <span class="text-muted">Chưa có rạp</span>
                                 @endforelse
                             </div>
                         </div>
