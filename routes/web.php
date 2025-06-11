@@ -20,7 +20,6 @@ use App\Http\Controllers\Admin\GheNgoiController;
 use App\Http\Controllers\Admin\PhongChieuController;
 use App\Http\Controllers\Admin\LoaiGheController;
 use App\Http\Controllers\Admin\SoDoGheController;
-use App\Http\Controllers\Admin\KhuyenMaiController;
 use App\Http\Controllers\Admin\CapBacTheController;
 use App\Http\Controllers\Admin\PhanQuyenController;
 use App\Http\Controllers\Admin\SuatChieuController;
