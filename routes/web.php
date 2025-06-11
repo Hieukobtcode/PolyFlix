@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\ComboController;
 use App\Http\Controllers\Admin\DanhMucDoAnController;
 use App\Http\Controllers\Admin\DoAnController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\PhimController;
 use App\Http\Controllers\Admin\LienHeController;
@@ -63,6 +64,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
     // Quản lý định dạng phim
     Route::resource('dinh-dang-phim', DinhDangPhimController::class);
 
+    // Quản lý loại phòng
+    Route::resource('loai-phong', LoaiPhongController::class);
+
     // Quản lý phim và chức năng xóa mềm
     Route::prefix('phim')->name('phim.')->group(function () {
         Route::get('trash', [PhimController::class, 'trash'])->name('trash');
@@ -85,4 +89,44 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     // Quản lý banners
     Route::resource('banners', BannerController::class);
+
+    // Quản lý khuyến mãi
+    Route::prefix('khuyen-mai')->name('khuyen-mai.')->group(function () {
+        Route::get('thong-ke-su-dung', [KhuyenMaiController::class, 'thongKeSuDung'])->name('thong-ke-su-dung');
+        Route::post('{khuyenMai}/assign-chi-nhanh', [KhuyenMaiController::class, 'assignToChiNhanh'])->name('assign-chi-nhanh');
+    });
+    Route::resource('khuyen-mai', KhuyenMaiController::class);
+
+    // Quản lý rạp phim
+    Route::resource('rap-phim', RapphimController::class);
+
+    // Quản lý cấu hình
+    Route::resource('cau-hinh', CauHinhController::class);
+
+    // Quản lý ghế ngồi
+    Route::resource('ghe-ngoi', GheNgoiController::class);
+
+    // Quản lý phòng chiếu
+    Route::resource('phong-chieu', PhongChieuController::class);
+
+    // Quản lý loại ghế
+    Route::resource('loai-ghe', LoaiGheController::class);
+
+    // Quản lý sơ đồ ghế
+    Route::resource('so-do-ghe', SoDoGheController::class);
+
+    // Quản lý cấp bậc thẻ
+    Route::resource('cap-bac-the', CapBacTheController::class);
+
+    // Quản lý suất chiếu
+    Route::resource('suat-chieu', SuatChieuController::class);
+
+    // Quản lý combo
+    Route::resource('combos', ComboController::class);
+
+    // Quản lý danh mục đồ ăn
+    Route::resource('danh-muc-do-an', DanhMucDoAnController::class);
+
+    // Quản lý đồ ăn
+    Route::resource('do-an', DoAnController::class);
 });
