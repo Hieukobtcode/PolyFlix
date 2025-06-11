@@ -16,18 +16,27 @@ class PhongChieu extends Model
         'ten_phong',
         'loai_phong_id',
         'status',
+        'so_do_ghe_id',
+        'so_ghe',
     ];
 
-    public function rapPhim(){
+    public function rapPhim()
+    {
         return $this->belongsTo(RapPhim::class, 'rap_phim_id');
     }
 
-    public function loaiPhong(){
-        return $this->belongsTo(loaiPhong::class,'loai_phong_id');
+    public function loaiPhong()
+    {
+        return $this->belongsTo(loaiPhong::class, 'loai_phong_id');
     }
 
-      public function soDoGhe()
+    public function soDoGhe()
     {
-        return $this->belongsTo(SoDoGhe::class);
+        return $this->hasOne(SoDoGhe::class, 'phong_chieu_id', 'id');
+    }
+
+    public function gheNgois()
+    {
+        return $this->hasMany(GheNgoi::class, 'phong_chieu_id');
     }
 }

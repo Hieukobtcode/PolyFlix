@@ -92,6 +92,7 @@
                         @enderror
                     </div>
 
+
                     <div class="mb-4">
                         <label class="form-label fw-semibold">Phân quyền đã gán</label>
                         <div class="select-all-wrapper">

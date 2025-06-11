@@ -56,7 +56,6 @@ class SocialAuthController extends Controller
             // Đăng nhập user
             Auth::login($user);
 
-            // ✅ Chuyển về trang chủ
             return redirect()->route('home');
 
         } catch (\Exception $e) {

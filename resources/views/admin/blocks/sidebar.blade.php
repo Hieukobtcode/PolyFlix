@@ -8,9 +8,11 @@
             onclick="coreui.Sidebar.getInstance(document.querySelector('#sidebar')).toggle()"></button>
     </div>
 
+
     <ul class="sidebar-nav" data-coreui="navigation" data-simplebar>
         <li class="nav-item">
             <a class="nav-link" href="#">
+
                 <svg class="nav-icon">
                     <use xlink:href="{{ asset('dist/vendors/@coreui/icons/svg/free.svg#cil-speedometer') }}"></use>
                 </svg>
@@ -28,10 +30,11 @@
                 Hệ thống rạp
             </a>
             <ul class="nav-group-items compact">
-                <li class="nav-item"><a class="nav-link" href="{{ route('admin.chi-nhanh.index') }}">Chi nhánh</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('admin.chi-nhanh.index') }}">Mạng lưới rạp chiếu</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('admin.loai-phong.index') }}">Loại phòng</a>
                 </li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('admin.loai-ghe.index') }}">Loại ghế</a></li>
+                {{-- <li class="nav-item"><a class="nav-link" href="{{ route('admin.loai-ghe.index') }}">Loại ghế</a></li> --}}
+                <li class="nav-item"><a class="nav-link" href="{{ route('admin.suat-chieu.index') }}">Suất chiếu</a></li>
             </ul>
         </li>
 
@@ -46,9 +49,11 @@
             <ul class="nav-group-items compact">
                 <li class="nav-item"><a class="nav-link" href="{{ route('admin.the-loai-phim.index') }}">Thể Loại</a>
                 </li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('admin.dinh-dang-phim.index') }}">Định dạng phim</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('admin.phim.index') }}">Danh sách phim</a></li>
             </ul>
         </li>
+
 
         {{-- Quản lý người dùng --}}
         <li class="nav-group">
@@ -85,6 +90,7 @@
                 Cấu hình hệ thống
             </a>
             <ul class="nav-group-items compact">
+
                 <li class="nav-item"><a class="nav-link" href="{{ route('admin.cau-hinh.index') }}">Cài đặt chung</a>
                 </li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('admin.cap-bac-the.index') }}">Cấp bậc thẻ</a>
@@ -101,6 +107,21 @@
             <ul class="nav-group-items compact">
                 <li class="nav-item"><a class="nav-link" href="{{ route('admin.bai-viet.index') }}">Bài viết</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('admin.banners.index') }}">Banners</a></li>
+            </ul>
+        </li>
+        {{-- Quản lý đồ ăn --}}
+        <li class="nav-group">
+            <a class="nav-link nav-group-toggle" href="#">
+                <svg class="nav-icon">
+                    <use xlink:href="{{ asset('dist/vendors/@coreui/icons/svg/free.svg#cil-restaurant') }}"></use>
+                </svg>
+                Quản lý đồ ăn
+            </a>
+            <ul class="nav-group-items compact">
+                <li class="nav-item"><a class="nav-link" href="{{ route('admin.do-an.index') }}">Đồ ăn</a>
+                </li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('admin.combos.index') }}">Combo</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('admin.danh-muc-do-an.index') }}">Danh mục đồ ăn</a></li>
             </ul>
         </li>
 

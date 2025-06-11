@@ -2,13 +2,15 @@
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Admin\DoAnController;
+use App\Http\Controllers\Admin\PhimController;
 
 // Controllers
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\Admin\PhimController;
 use App\Http\Controllers\Admin\UserController;
-use App\Http\Controllers\SocialAuthController;
+use App\Http\Controllers\Admin\ComboController;
 use App\Http\Controllers\Admin\BannerController;
+use App\Http\Controllers\Admin\InviteController;
 use App\Http\Controllers\Admin\LienHeController;
 use App\Http\Controllers\Admin\VaiTroController;
 use App\Http\Controllers\Admin\BaiVietController;
@@ -16,14 +18,18 @@ use App\Http\Controllers\Admin\CauHinhController;
 use App\Http\Controllers\Admin\GheNgoiController;
 use App\Http\Controllers\Admin\LoaiGheController;
 use App\Http\Controllers\Admin\RapphimController;
+use App\Http\Controllers\Admin\RequestController;
 use App\Http\Controllers\Admin\SoDoGheController;
 use App\Http\Controllers\Admin\ChiNhanhController;
 use App\Http\Controllers\Admin\CapBacTheController;
 use App\Http\Controllers\Admin\KhuyenMaiController;
 use App\Http\Controllers\Admin\LoaiPhongController;
 use App\Http\Controllers\Admin\PhanQuyenController;
+use App\Http\Controllers\Admin\SuatChieuController;
 use App\Http\Controllers\Admin\PhongChieuController;
+use App\Http\Controllers\Admin\DanhMucDoAnController;
 use App\Http\Controllers\Admin\TheLoaiPhimController;
+use App\Http\Controllers\Admin\DinhDangPhimController;
 
 // Trang welcome
 Route::get('/', function () {
@@ -49,6 +55,7 @@ Route::get('/auth/facebook/callback', [SocialAuthController::class, 'handleFaceb
 // Đăng xuất
 Route::post('dang-xuat', [AuthController::class, 'logout'])->name('logout');
 
+
 // Route tạm kiểm tra dữ liệu
 Route::get('/check-data', function () {
     return [
@@ -58,15 +65,20 @@ Route::get('/check-data', function () {
     ];
 });
 
-// Group route cho admin
-Route::prefix('admin')->middleware(['custom.auth', 'admin.access'])->name('admin.')->group(function () {
 
+// Route mời quản lý chi nhánh/ rạp
+Route::post('/gui-loi-moi', [InviteController::class, 'sendInvite'])->name('invite.send');
+Route::get('/nhap-thong-tin', [InviteController::class, 'showForm'])->name('invite.form');
+Route::post('/gui-thong-tin', [InviteController::class, 'submitForm'])->name('invite.submit');
+
+
+// Group route cho admin
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access', 'permission.check'])->group(function () {
     Route::get('/', function () {
         return redirect()->route('admin.lien-he.index');
     })->name('dashboard');
 
     // Quản lý liên hệ
-    Route::resource('lien-he', LienHeController::class)->names('lien-he');
     Route::prefix('lien-he')->name('lien-he.')->group(function () {
         Route::get('dashboard', [LienHeController::class, 'dashboard'])->name('dashboard');
         Route::get('export', [LienHeController::class, 'export'])->name('export');
@@ -75,13 +87,17 @@ Route::prefix('admin')->middleware(['custom.auth', 'admin.access'])->name('admin
         Route::post('{lienHe}/send-email', [LienHeController::class, 'sendEmail'])->name('send-email');
         Route::post('bulk-action', [LienHeController::class, 'bulkAction'])->name('bulk-action');
     });
+    Route::resource('lien-he', LienHeController::class)->names('lien-he');
 
     // Quản lý thể loại phim
     Route::resource('the-loai-phim', TheLoaiPhimController::class);
 
+    // Quản lý định dạng phim
+    Route::resource('dinh-dang-phim', DinhDangPhimController::class);
+
     // Quản lý phim và chức năng xóa mềm
     Route::prefix('phim')->name('phim.')->group(function () {
-        Route::get('trash', [PhimController::class, 'trash'])->name('trash');
+Route::get('trash', [PhimController::class, 'trash'])->name('trash');
         Route::patch('{phim}/restore', [PhimController::class, 'restore'])->name('restore');
         Route::delete('{phim}/force-delete', [PhimController::class, 'forceDelete'])->name('force-delete');
     });
@@ -98,6 +114,9 @@ Route::prefix('admin')->middleware(['custom.auth', 'admin.access'])->name('admin
 
     // Quản lý phân quyền
     Route::resource('phan-quyen', PhanQuyenController::class);
+    
+    // Quản lý người dùng
+    Route::resource('users', UserController::class);
 
     // Quản lý banners
     Route::resource('banners', BannerController::class);
@@ -124,6 +143,7 @@ Route::prefix('admin')->middleware(['custom.auth', 'admin.access'])->name('admin
 
     // Quản lý ghế ngồi
     Route::resource('ghe-ngoi', GheNgoiController::class);
+    Route::post('ghe-ngoi/updateSeat', [GheNgoiController::class, 'updateSeat'])->name('ghe-ngoi.updateSeat');
 
     // Quản lý cấp bậc thẻ thành viên
     Route::resource('cap-bac-the', CapBacTheController::class);
@@ -135,5 +155,21 @@ Route::prefix('admin')->middleware(['custom.auth', 'admin.access'])->name('admin
         Route::get('thong-ke-su-dung', [KhuyenMaiController::class, 'thongKeSuDung'])->name('thong-ke-su-dung');
     });
     Route::resource('khuyen-mai', KhuyenMaiController::class);
-    Route::resource('users', UserController::class);
+
+    // Quản lý suất chiếu
+    Route::resource('suat-chieu', SuatChieuController::class);
+
+    // Quản lý combo
+    Route::resource('combos', ComboController::class);
+
+    // Quản lý đồ ăn
+    Route::resource('do-an', DoAnController::class);
+
+     // Quản lý danh sách đồ ăn
+    Route::resource('danh-muc-do-an', DanhMucDoAnController::class);
+
+    Route::get('requests', [RequestController::class, 'index'])->name('requests.index');
+    Route::post('requests/{id}/approve', [RequestController::class, 'approve'])->name('requests.approve');
+    Route::delete('requests/{id}', [RequestController::class, 'reject'])->name('requests.reject');
+
 });

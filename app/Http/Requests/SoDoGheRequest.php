@@ -3,7 +3,6 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Validator;
 
 class SoDoGheRequest extends FormRequest
 {
@@ -12,45 +11,46 @@ class SoDoGheRequest extends FormRequest
         return true;
     }
 
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     */
     public function rules(): array
     {
         return [
-            'ten_so_do'      => 'required|string|max:255',
-            'so_hang'        => 'required',
-            'so_hang_thuong' => 'required',
-            'so_hang_vip'    => 'required',
-            'so_hang_doi'    => 'required',
-            'mo_ta'          => 'nullable',
-            'trang_thai'     => 'boolean',
+            'mau_so_do' => 'required|in:8x12,10x12,12x14,14x16,18x20',
+            'ghe_thuong' => 'required|min:1',
+            'ghe_vip' => 'required|min:1',
+            'ghe_doi' => 'required|min:1',
         ];
     }
 
-    public function messages(): array
+    public function messages()
     {
         return [
-            'ten_so_do.required' => 'Vui lòng nhập tên sơ đồ.',
-            'ten_so_do.max'      => 'Tên sơ đồ không được vượt quá 255 ký tự.',
-
-            'so_hang.required' => 'Chọn ma trận ghế cho sơ đồ này',
-
-            'so_hang_thuong.required' => 'Hãy chọn số hàng ghế.',
-
+            'mau_so_do.required' => 'Hãy chọn mẫu sơ đồ ghế',
+            'ghe_thuong.required' => 'Hãy nhập số hàng ghế thường',
+            'ghe_vip.required' => 'Hãy nhập số hàng ghế vip',
+            'ghe_doi.required' => 'Hãy nhập số hàng ghế đôi',
+            'ghe_thuong.min' => 'Số hàng ghế thường phải lớn hơn hoặc bằng 1',
+            'ghe_vip.min' => 'Số hàng ghế VIP phải lớn hơn hoặc bằng 1',
+            'ghe_doi.min' => 'Số hàng ghế đôi phải lớn hơn hoặc bằng 1',
         ];
     }
 
-    public function withValidator(Validator $validator): void
+    protected function withValidator($validator)
     {
         $validator->after(function ($validator) {
-            $so_hang = (int) $this->input('so_hang');
-            $thuong = (int) $this->input('so_hang_thuong', 0);
-            $vip    = (int) $this->input('so_hang_vip', 0);
-            $doi    = (int) $this->input('so_hang_doi', 0);
+            $soHang = (int) $this->input('so_hang', 0);  
+            $gheThuong = (int) $this->input('ghe_thuong', 0);
+            $gheVip = (int) $this->input('ghe_vip', 0);
+            $gheDoi = (int) $this->input('ghe_doi', 0);
 
-            if ($thuong + $vip + $doi > $so_hang) {
-                $validator->errors()->add(
-                    'so_hang_loai',
-                    "Tổng số hàng loại ghế ({$thuong} thường + {$vip} VIP + {$doi} đôi) vượt quá tổng số hàng ({$so_hang})."
-                );
+            $total = $gheThuong + $gheVip + $gheDoi;
+
+            if ($total > $soHang) {
+                $validator->errors()->add('tong_ghe', "Tổng số hàng loại ghế ({$gheThuong} thường + {$gheVip} VIP + {$gheDoi} đôi) vượt quá tổng số hàng ({$soHang}).");
             }
         });
     }

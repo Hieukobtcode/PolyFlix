@@ -17,7 +17,7 @@ class CheckAdminAccess
 
     public function handle(Request $request, Closure $next): Response
     {
-        $allowedRoleIds = [1, 2, 3]; // Chỉ cho các vai trò có ID 1, 2, 3
+        $allowedRoleIds = [1, 2, 3];
 
         if (!auth()->check() || !in_array(auth()->user()->vai_tro_id, $allowedRoleIds)) {
             return response()->view('errors.forbidden', [], 403);

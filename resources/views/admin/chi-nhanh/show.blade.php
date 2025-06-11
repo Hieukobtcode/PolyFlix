@@ -2,7 +2,9 @@
 
 @section('title', 'Quản lý chi nhánh')
 @section('page-title', 'Chi tiết chi nhánh')
-@section('breadcrumb', 'Chi tiết chi nhánh')
+@section('breadcrumb')
+    <a href="{{ route('admin.chi-nhanh.index') }}">Danh sách chi nhánh</a> / Danh sách rạp chiếu
+@endsection
 
 @section('styles')
     <style>
@@ -177,30 +179,61 @@
                                                         class="btn btn-sm btn-outline-primary" title="Sửa">
                                                         <i class="fas fa-edit"></i>
                                                     </a>
-                                                    <form action="{{ route('admin.rap-phim.destroy', $rap->id) }}"
-                                                        method="POST" class="d-inline">
-                                                        @csrf @method('DELETE')
-                                                        <button type="submit" class="btn btn-sm btn-outline-danger"
-                                                            onclick="return confirm('Xóa rạp này?')">
-                                                            <i class="fas fa-trash"></i>
-                                                        </button>
-                                                    </form>
                                                     <a href="{{ route('admin.phong-chieu.create', ['rap_phim_id' => $rap->id]) }}"
                                                         class="btn btn-sm btn-outline-success" title="Thêm phòng">
                                                         <i class="fas fa-plus-circle"></i>
                                                     </a>
-
-                                                    {{-- Nút phân công hoặc thay đổi quản lý --}}
                                                     @if ($rap->quan_ly_id)
                                                         <a href="#" class="btn btn-sm btn-outline-warning"
                                                             title="Xem thông tin">
                                                             <i class="fa-solid fa-user"></i>
                                                         </a>
                                                     @else
-                                                        <a href="#" class="btn btn-sm btn-outline-warning"
+                                                        <button class="btn btn-sm btn-outline-warning"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#inviteModal{{ $rap->id }}"
                                                             title="Phân công quản lý">
-                                                            <i class="fas fa-user-plus"></i>
-                                                        </a>
+                                                            <i class="fa-solid fa-user-plus" style="color: #FFD43B;"></i>
+                                                        </button>
+
+                                                        <!-- Modal nhập email -->
+                                                        <div class="modal fade" id="inviteModal{{ $rap->id }}"
+                                                            tabindex="-1" aria-hidden="true">
+                                                            <div class="modal-dialog">
+                                                                <form method="POST" action="{{ route('invite.send') }}">
+                                                                    @csrf
+                                                                    <input type="hidden" name="loai_quan_ly"
+                                                                        value="2">
+                                                                    <input type="hidden" name="rap_phim_id"
+                                                                        value="{{ $rap->id }}">
+
+                                                                    <div class="modal-content">
+                                                                        <div class="modal-header">
+                                                                            <h5 class="modal-title">Phân công quản lý rạp
+                                                                                phim</h5>
+                                                                            <button type="button" class="btn-close"
+                                                                                data-bs-dismiss="modal"
+                                                                                aria-label="Đóng"></button>
+                                                                        </div>
+
+                                                                        <div class="modal-body">
+                                                                            <label>Email người quản lý</label>
+                                                                            <input type="email" name="email"
+                                                                                class="form-control" required>
+                                                                        </div>
+
+                                                                        <div class="modal-footer">
+                                                                            <button type="submit"
+                                                                                class="btn btn-primary">Gửi lời
+                                                                                mời</button>
+                                                                            <button type="button"
+                                                                                class="btn btn-secondary"
+                                                                                data-bs-dismiss="modal">Hủy</button>
+                                                                        </div>
+                                                                    </div>
+                                                                </form>
+                                                            </div>
+                                                        </div>
                                                     @endif
                                                 </td>
 

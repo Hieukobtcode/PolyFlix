@@ -55,7 +55,8 @@
                                 <label for="ten_phim" class="form-label fw-semibold">Tên phim <span
                                         class="text-danger">*</span></label>
                                 <input type="text" class="form-control rounded @error('ten_phim') is-invalid @enderror"
-                                    id="ten_phim" name="ten_phim" value="{{ old('ten_phim') }}" placeholder="Nhập tên phim">
+                                    id="ten_phim" name="ten_phim" value="{{ old('ten_phim') }}"
+                                    placeholder="Nhập tên phim">
                                 @error('ten_phim')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -63,8 +64,8 @@
 
                             <div class="mb-4">
                                 <label for="mo_ta" class="form-label fw-semibold">Mô tả</label>
-                                <textarea class="form-control rounded @error('mo_ta') is-invalid @enderror" id="mo_ta"
-                                    name="mo_ta" rows="4" placeholder="Nhập mô tả phim">{{ old('mo_ta') }}</textarea>
+                                <textarea class="form-control rounded @error('mo_ta') is-invalid @enderror" id="mo_ta" name="mo_ta" rows="4"
+                                    placeholder="Nhập mô tả phim">{{ old('mo_ta') }}</textarea>
                                 @error('mo_ta')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -73,9 +74,9 @@
                             <div class="row">
                                 <div class="col-md-6 mb-4">
                                     <label for="dao_dien" class="form-label fw-semibold">Đạo diễn</label>
-                                    <input type="text" class="form-control rounded @error('dao_dien') is-invalid @enderror"
-                                        id="dao_dien" name="dao_dien" value="{{ old('dao_dien') }}"
-                                        placeholder="Nhập tên đạo diễn">
+                                    <input type="text"
+                                        class="form-control rounded @error('dao_dien') is-invalid @enderror" id="dao_dien"
+                                        name="dao_dien" value="{{ old('dao_dien') }}" placeholder="Nhập tên đạo diễn">
                                     @error('dao_dien')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -95,9 +96,8 @@
 
                             <div class="mb-4">
                                 <label for="dien_vien" class="form-label fw-semibold">Diễn viên</label>
-                                <textarea class="form-control rounded @error('dien_vien') is-invalid @enderror"
-                                    id="dien_vien" name="dien_vien" rows="2"
-                                    placeholder="Nhập danh sách diễn viên">{{ old('dien_vien') }}</textarea>
+                                <textarea class="form-control rounded @error('dien_vien') is-invalid @enderror" id="dien_vien" name="dien_vien"
+                                    rows="2" placeholder="Nhập danh sách diễn viên">{{ old('dien_vien') }}</textarea>
                                 @error('dien_vien')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -116,11 +116,12 @@
                                 </div>
 
                                 <div class="col-md-6 mb-4">
-                                    <label for="do_tuoi" class="form-label fw-semibold">Độ tuổi</label>
-                                    <input type="text" class="form-control rounded @error('do_tuoi') is-invalid @enderror"
-                                        id="do_tuoi" name="do_tuoi" value="{{ old('do_tuoi') }}"
-                                        placeholder="VD: 16+, 18+, P">
-                                    @error('do_tuoi')
+                                    <label for="ngay_ket_thuc" class="form-label fw-semibold">Ngày kết thúc</label>
+                                    <input type="text"
+                                        class="form-control rounded datepicker @error('ngay_ket_thuc') is-invalid @enderror"
+                                        id="ngay_ket_thuc" name="ngay_ket_thuc" value="{{ old('ngay_ket_thuc') }}"
+                                        placeholder="YYYY-MM-DD">
+                                    @error('ngay_ket_thuc')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
@@ -174,12 +175,23 @@
                             </div>
 
                             <div class="mb-4">
+                                <label for="do_tuoi" class="form-label fw-semibold">Độ tuổi</label>
+                                <input type="text" class="form-control rounded @error('do_tuoi') is-invalid @enderror"
+                                    id="do_tuoi" name="do_tuoi" value="{{ old('do_tuoi') }}"
+                                    placeholder="VD: 16+, 18+, P">
+                                @error('do_tuoi')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="mb-4">
                                 <label for="the_loai_ids" class="form-label fw-semibold">Thể loại <span
                                         class="text-danger">*</span></label>
                                 <select class="form-control select2 rounded @error('the_loai_ids') is-invalid @enderror"
                                     id="the_loai_ids" name="the_loai_ids[]" multiple>
-                                    @foreach($theLoaiPhims as $theLoai)
-                                        <option value="{{ $theLoai->id }}" {{ in_array($theLoai->id, old('the_loai_ids', [])) ? 'selected' : '' }}>
+                                    @foreach ($theLoaiPhims as $theLoai)
+                                        <option value="{{ $theLoai->id }}"
+                                            {{ in_array($theLoai->id, old('the_loai_ids', [])) ? 'selected' : '' }}>
                                             {{ $theLoai->ten_the_loai }}
                                         </option>
                                     @endforeach
@@ -190,6 +202,23 @@
                             </div>
 
                             <div class="mb-4">
+                                <label for="dinh_dang_ids" class="form-label fw-semibold">Định dạng <span
+                                        class="text-danger">*</span></label>
+                                <select class="form-control select2 rounded @error('dinh_dang_ids') is-invalid @enderror"
+                                    id="dinh_dang_ids" name="dinh_dang_ids[]" multiple>
+                                    @foreach ($dinhDangPhims as $dinhDang)
+                                        <option value="{{ $dinhDang->id }}"
+                                            {{ in_array($dinhDang->id, old('dinh_dang_ids', [])) ? 'selected' : '' }}>
+                                            {{ $dinhDang->ten_dinh_dang }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('dinh_dang_ids')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            
+                            {{-- <div class="mb-4">
                                 <label for="trang_thai" class="form-label fw-semibold">Trạng thái <span
                                         class="text-danger">*</span></label>
                                 <select class="form-select rounded @error('trang_thai') is-invalid @enderror"
@@ -199,7 +228,8 @@
                                         Đang chiếu</option>
                                     <option value="sắp chiếu" {{ old('trang_thai') === 'sắp chiếu' ? 'selected' : '' }}>
                                         Sắp chiếu</option>
-                                    <option value="đã kết thúc" {{ old('trang_thai') === 'đã kết thúc' ? 'selected' : '' }}>
+                                    <option value="đã kết thúc"
+                                        {{ old('trang_thai') === 'đã kết thúc' ? 'selected' : '' }}>
                                         Đã kết thúc</option>
                                     <option value="bị huỷ" {{ old('trang_thai') === 'bị huỷ' ? 'selected' : '' }}>
                                         Bị huỷ</option>
@@ -207,12 +237,31 @@
                                 @error('trang_thai')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
+                            </div> --}}
+
+                            <div class="mb-4">
+                                <label for="chi_nhanh_ids" class="form-label fw-semibold">Chi nhánh <span
+                                        class="text-danger">*</span></label>
+                                <select class="form-control select2 rounded @error('chi_nhanh_ids') is-invalid @enderror"
+                                    id="chi_nhanh_ids" name="chi_nhanh_ids[]" multiple>
+                                    @foreach ($chiNhanhs as $chiNhanh)
+                                        <option value="{{ $chiNhanh->id }}"
+                                            {{ in_array($chiNhanh->id, old('chi_nhanh_ids', [])) ? 'selected' : '' }}>
+                                            {{ $chiNhanh->ten_chi_nhanh }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('chi_nhanh_ids')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
+
                         </div>
                     </div>
 
                     <div class="d-flex justify-content-end gap-2 mt-4">
-                        <a href="{{ route('admin.phim.index') }}" class="btn btn-outline-secondary" title="Hủy">Hủy</a>
+                        <a href="{{ route('admin.phim.index') }}" class="btn btn-outline-secondary"
+                            title="Hủy">Hủy</a>
                         <button type="submit" class="btn btn-primary" title="Lưu">
                             <i class="fas fa-save me-1"></i> Lưu
                         </button>
@@ -228,7 +277,7 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/vn.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             // Flatpickr cho ngày phát hành
             flatpickr(".datepicker", {
                 dateFormat: "Y-m-d",
@@ -240,6 +289,9 @@
             $('.select2').select2({
                 placeholder: "Chọn thể loại phim",
                 allowClear: true,
+                placeholder: "Chọn định dạng phim",
+                allowClear: true,
+                placeholder: "Chọn chi nhánh",
             });
 
             // Dữ liệu ngôn ngữ tĩnh
@@ -271,13 +323,14 @@
                 });
 
             // Preview ảnh poster
-            document.getElementById('poster').addEventListener('change', function () {
+            document.getElementById('poster').addEventListener('change', function() {
                 const file = this.files[0];
                 if (file) {
                     const reader = new FileReader();
-                    reader.onload = function (e) {
+                    reader.onload = function(e) {
                         document.getElementById('poster-preview').innerHTML =
-                            '<img src="' + e.target.result + '" class="img-fluid img-thumbnail rounded" style="max-height: 200px;">';
+                            '<img src="' + e.target.result +
+                            '" class="img-fluid img-thumbnail rounded" style="max-height: 200px;">';
                     };
                     reader.readAsDataURL(file);
                 } else {
@@ -289,7 +342,7 @@
             document.getElementById('ten_phim').focus();
 
             // Xác nhận trước khi hủy
-            document.querySelector('.btn-outline-secondary').addEventListener('click', function (e) {
+            document.querySelector('.btn-outline-secondary').addEventListener('click', function(e) {
                 if (!confirm('Bạn có muốn hủy và quay lại danh sách?')) {
                     e.preventDefault();
                 }

@@ -52,8 +52,9 @@ class RapphimController extends Controller
 
     public function show($id)
     {
-        $rapPhim = RapPhim::with(['phongChieus'])->findOrFail($id);
 
+        $rapPhim = RapPhim::with(['phongChieus'])->findOrFail($id);
+        
         return view('admin.rap-phim.show', compact('rapPhim'));
     }
 
@@ -78,7 +79,8 @@ class RapphimController extends Controller
         $rapPhim = RapPhim::findOrFail($id);
         $rapPhim->update($request->all());
 
-        return redirect()->route('admin.chi-nhanh.show',$rapPhim->chi_nhanh_id)->with('success', 'Cập nhật rạp chiếu thành công');
+
+        return redirect()->route('admin.chi-nhanh.show', $rapPhim->chi_nhanh_id)->with('success', 'Cập nhật rạp chiếu thành công');
     }
 
     public function destroy($id)
