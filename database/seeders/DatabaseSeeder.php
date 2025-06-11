@@ -23,10 +23,6 @@ class DatabaseSeeder extends Seeder
         // Gọi các seeder để tạo dữ liệu mẫu
         $this->call([
             BannerSeeder::class,
-            KhuyenMaiSeeder::class,
-            KhuyenMaiChiNhanhSeeder::class, // Thay thế ChiTietKhuyenMaiSeeder bằng KhuyenMaiChiNhanhSeeder
-            LichSuSuDungKhuyenMaiSeeder::class,
-            RapSeeder::class,
         ]);
     }
 }

@@ -8,12 +8,12 @@ class CreateChiNhanhsTable extends Migration
     public function up()
     {
         Schema::create('chi_nhanhs', function (Blueprint $table) {
-            $table->id(); // id - INT tự tăng
-            $table->string('ten_chi_nhanh'); // tên chi nhánh - VARCHAR
-            $table->text('dia_chi'); // địa chỉ - TEXT
-            $table->unsignedBigInteger('quan_ly_id'); // quản lý id - INT
-            $table->enum('trang_thai', ['hoat_dong', 'tam_dung', 'dong_cua'])->default('hoat_dong'); // trạng thái - ENUM
-            $table->timestamps(); // created_at và updated_at
+            $table->id(); 
+            $table->string('ten_chi_nhanh'); 
+            $table->text('dia_chi'); 
+            $table->unsignedBigInteger('quan_ly_id'); 
+            $table->enum('trang_thai', ['hoat_dong', 'tam_dung', 'dong_cua'])->default('hoat_dong'); 
+            $table->timestamps();
 
             // Nếu cần ràng buộc khóa ngoại:
             // $table->foreign('quan_ly_id')->references('id')->on('users')->onDelete('cascade');
