@@ -30,250 +30,88 @@
 @section('breadcrumb', $breadcrumb)
 @section('content')
     <div class="container mx-auto p-6">
-        <style>
-            .two-column {
-                display: flex;
-                justify-content: center;
-                gap: 40px;
-                margin-top: 10px;
-                flex-wrap: wrap;
-            }
+        @vite('resources/js/app.js')
 
-            .col-left {
-                width: 70%;
-                max-width: 100%;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                padding: 30px;
-                box-shadow:
-                    rgba(14, 63, 126, 0.06) 0px 0px 0px 1px,
-                    rgba(42, 51, 70, 0.03) 0px 1px 1px -0.5px,
-                    rgba(42, 51, 70, 0.04) 0px 2px 2px -1px,
-                    rgba(42, 51, 70, 0.04) 0px 3px 3px -1.5px,
-                    rgba(42, 51, 70, 0.03) 0px 5px 5px -2.5px,
-                    rgba(42, 51, 70, 0.03) 0px 10px 10px -5px,
-                    rgba(42, 51, 70, 0.03) 0px 24px 24px -8px;
-                margin-left: 40px;
-                border-radius: 8px;
-            }
-
-            .col-right {
-                width: 20%;
-                flex-shrink: 0;
-                display: flex;
-                flex-direction: column;
-                gap: 24px;
-            }
-
-            .seat-map {
-                display: flex;
-                flex-direction: column;
-                gap: 2px;
-                max-width: 100%;
-            }
-
-            .seat-row {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                gap: 2px;
-            }
-
-            .row-label {
-                width: 24px;
-                font-weight: 600;
-                font-size: 14px;
-                text-align: center;
-            }
-
-            .seat-wrapper {
-                position: relative;
-                width: 40px;
-                height: 40px;
-                background-color: #f3f4f6;
-                border-radius: 6px;
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
-                cursor: pointer;
-                transition: background-color 0.2s;
-            }
-
-            .seat-wrapper i.fa-couch {
-                position: absolute;
-                font-size: 20px;
-                color: #34495e;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-            }
-
-            .seat-wrapper .seat-code {
-                position: absolute;
-                bottom: 2px;
-                right: 2px;
-                font-size: 10px;
-                font-weight: 600;
-                color: #34495e;
-                background-color: rgba(255, 255, 255, 0.7);
-                padding: 2px 3px;
-                border-radius: 3px;
-                pointer-events: none;
-            }
-
-            .seat-wrapper.thuong {
-                background-color: #fef3c7;
-            }
-
-            .seat-wrapper.vip {
-                background-color: #f3f4f6;
-            }
-
-            .seat-wrapper.doi {
-                background-color: #fce7f3;
-            }
-
-            .seat-wrapper.empty {
-                background-color: #ffffff;
-                border: 1px solid #d1d5db;
-                cursor: default;
-            }
-
-            .seat-wrapper.selected {
-                background-color: #f87171 !important;
-            }
-
-            .seat-wrapper.selected::after {
-                content: '';
-                position: absolute;
-                width: 100%;
-                height: 2px;
-                background-color: #e53e3e;
-                top: 50%;
-                left: 0;
-                transform: rotate(-45deg);
-                pointer-events: none;
-            }
-
-            .right-panel {
-                display: flex;
-                flex-direction: column;
-                gap: 24px;
-            }
-
-            .panel-box {
-                background-color: #ffffff;
-                border-radius: 8px;
-                padding: 20px;
-                box-shadow:
-                    rgba(14, 63, 126, 0.06) 0px 0px 0px 1px,
-                    rgba(42, 51, 70, 0.03) 0px 1px 1px -0.5px,
-                    rgba(42, 51, 70, 0.04) 0px 2px 2px -1px,
-                    rgba(42, 51, 70, 0.04) 0px 3px 3px -1.5px,
-                    rgba(42, 51, 70, 0.03) 0px 5px 5px -2.5px,
-                    rgba(42, 51, 70, 0.03) 0px 10px 10px -5px,
-                    rgba(42, 51, 70, 0.03) 0px 24px 24px -8px;
-            }
-
-            .panel-box h4 {
-                font-size: 18px;
-                font-weight: 600;
-                margin-bottom: 12px;
-                color: #1f2937;
-            }
-
-            .panel-box p {
-                font-size: 14px;
-                margin: 4px 0;
-                color: #4b5563;
-            }
-
-            .legend-item {
-                display: flex;
-                justify-content: space-between;
-                margin-top: 10px;
-                font-size: 14px;
-                color: #374151;
-            }
-
-            .legend-color {
-                width: 24px;
-                height: 24px;
-                border-radius: 4px;
-                border: 1px solid #ccc;
-            }
-
-            .legend-thuong {
-                background-color: #fef3c7;
-            }
-
-            .legend-vip {
-                background-color: #f3f4f6;
-            }
-
-            .legend-doi {
-                background-color: #fce7f3;
-            }
-
-            .btn-group {
-                display: flex;
-                gap: 12px;
-                margin-top: 12px;
-            }
-
-            .btn-publish {
-                padding: 8px 16px;
-                border-radius: 8px;
-                font-size: 14px;
-                font-weight: 600;
-                background-color: #1e3a8a;
-                color: #fff;
-                border: none;
-                cursor: pointer;
-            }
-
-            .screen {
-                width: 400px;
-                max-width: 600px;
-                height: 32px;
-                background-color: #d1d5db;
-                border-radius: 8px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-weight: 600;
-                color: #4b5563;
-                margin-bottom: 50px;
-                margin-left: auto;
-                margin-right: auto;
-            }
-
-            .legend-color.selected::after {
-                content: '';
-                position: absolute;
-                width: 100%;
-                height: 2px;
-                background-color: #e53e3e;
-                top: 50%;
-                left: 0;
-                transform: rotate(-45deg);
-                pointer-events: none;
-            }
-        </style>
         <form id="updateSeatForm" action="{{ route('admin.ghe-ngoi.updateSeat') }}" method="POST">
             @csrf
 
             <div class="two-column">
                 <div class="col-left">
+
+                    <div class="seat-toolbar">
+                        <button class="btn btn-addSeat" id="btn-addSeat" type="button">
+                            <i class="fa-solid fa-gear fa-spin-pulse"></i>
+                        </button>
+
+                        {{-- ============================================================================== --}}
+
+                        <select name="" id="select-addSeat" style="display:none" class="select-hang">
+                            <option value="">--Thêm ghế--</option>
+                            <option value="1">Thêm hàng</option>
+                            <option value="2">Thêm cột</option>
+                        </select>
+
+                        {{-- Chọn loại ghế --}}
+                        <select style="display: none" name="add-hang-ghe" class="add-hang-ghe" id="add-hang-ghe">
+                            <option value="">Chọn loại ghế</option>
+                            @foreach ($loaiGhes as $item)
+                                <option value="{{ $item->id }}">{{ $item->ten_loai_ghe }}</option>
+                            @endforeach
+                        </select>
+
+                        {{-- Nhập số lượng hàng ghế theo loại --}}
+                        <input placeholder="Số hàng" style="display: none" max="10" id="so_luong_hang_ghe_theo_loai"
+                            class="add-hang-ghe-theo-loai" type="number" min="1">
+
+                        {{-- Nhập số ghế khi thêm hàng --}}
+                        <input type="number" placeholder="Số ghế" style="display: none" id="so-ghe-khi-them-hang"
+                            class="so-ghe-khi-them-hang" min="1">
+
+                        {{-- Nút thêm hàng --}}
+                        <button style="display: none" type="button" class="btn-them-hang" id="btn-them-hang">Thêm
+                            hàng</button>
+
+                        {{-- ===================================================================================== --}}
+
+                        {{-- Chọn cột ghế --}}
+                        <div id="chon-cot-ghe" style="display: none" class="btn-group list-cot w-100" role="group">
+                            <button type="button" class="btn btn-primary dropdown-toggle w-100" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                                Chọn cột ghế
+                            </button>
+                            <div class="dropdown-menu w-100 p-3">
+                                <div class="grid-checkboxes">
+                                    @foreach ($gheGroupedArray as $hangIndex => $item)
+                                        <label class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="checkbox[]"
+                                                value="{{ $hangIndex }}">
+                                            {{ $hangIndex }}
+                                        </label>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Nhập số lượng cột ghế  --}}
+                        <input placeholder="Số lượng" class="so-luong-cot-ghe" type="number" id="so-luong-cot-ghe"
+                            style="display: none">
+
+                        {{-- Chọn cột right or left --}}
+                        <select style="display: none" id="right-or-left" class="right-or-left" name="right-or-left">
+                            <option value="">Chọn bên ghế</option>
+                            <option value="1">Hàng phải</option>
+                            <option value="2">Hàng trái</option>
+                        </select>
+
+
+                    </div>
+
                     <div class="seat-map">
                         <div class="screen">Màn Hình Chiếu</div>
                         <input type="hidden" name="phongChieuId" id="phongChieuId" value="{{ $phongChieuId }}">
                         <input type="hidden" name="seats_json" id="hiddenSeatsJson">
                         @foreach ($gheGroupedArray as $hangIndex => $seatsInRow)
-                            <div class="seat-row">
-
+                            <div class="seat-row" data-row="{{ $hangIndex }}">
                                 @foreach ($seatsInRow as $oneSeat)
                                     @php
                                         $mau = $mauGhes[$oneSeat['loai_ghe']];
@@ -283,12 +121,14 @@
                                     @endphp
 
                                     @if ($oneSeat['loai_ghe'] !== 'empty')
-                                        <div style="background-color: {{ $mau }}" data-id="{{ $oneSeat['id'] }}"
+                                        <div style="background-color: {{ $mau }}"
+                                            data-loai="{{ $oneSeat['loai_ghe'] }}" data-id="{{ $oneSeat['id'] }}"
                                             class="{{ $isDouble }} seat-wrapper {{ $oneSeat['trang_thai'] === 'bao_tri' ? 'selected' : '' }}"
                                             data-seat="{{ $maGhe }}" data-row='{{ $oneSeat['hang'] }}'
                                             data-col='{{ $oneSeat['cot'] }}'>
                                             <i class="fa-solid fa-couch"></i>
-                                            <span class="seat-code">{{ $maGhe }}</span>
+                                            <span data-hang="{{ $oneSeat['hang'] }}"
+                                                class="seat-code">{{ $maGhe }}</span>
                                         </div>
                                     @else
                                         <div class="seat-wrapper empty"></div>
@@ -317,7 +157,8 @@
                                 @if (in_array($item->id, $loaiGheIdsDangSuDung))
                                     <div class="legend-item">
                                         <span>{{ $item->ten_loai_ghe }}</span>
-                                        <div style="background-color: {{ $item->chu_thich_mau_ghe }}" class="legend-color">
+                                        <div style="background-color: {{ $item->chu_thich_mau_ghe }}"
+                                            class="legend-color">
                                         </div>
                                     </div>
                                 @endif
@@ -339,40 +180,13 @@
                     </div>
                 </div>
             </div>
+
         </form>
-
         <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                const seats = document.querySelectorAll('.seat-wrapper:not(.empty)');
-
-                seats.forEach(seat => {
-                    seat.addEventListener('click', function() {
-                        const isDouble = seat.classList.contains('doi');
-                        const row = seat.dataset.row;
-                        const col = parseInt(seat.dataset.col);
-
-                        if (isDouble) {
-                            const partnerCol = col % 2 === 0 ? col - 1 : col + 1;
-                            const partnerSelector =
-                                `.seat-wrapper.doi[data-row="${row}"][data-col="${partnerCol}"]`;
-                            const partnerSeat = document.querySelector(partnerSelector);
-
-                            seat.classList.toggle('selected');
-                            if (partnerSeat) {
-                                partnerSeat.classList.toggle('selected');
-                            }
-                        } else {
-                            seat.classList.toggle('selected');
-                        }
-                    });
-                });
-
-                document.getElementById('updateSeatForm').addEventListener('submit', function(e) {
-                    const selectedSeats = document.querySelectorAll('.seat-wrapper.selected');
-                    const seats = Array.from(selectedSeats).map(el => el.getAttribute('data-id'));
-                    document.getElementById('hiddenSeatsJson').value = JSON.stringify(seats);
-                });
-            });
+            window.tenLoaiGheMap = {!! json_encode($loaiGhes->pluck('ten', 'id')) !!};
         </script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
     </div>
 @endsection

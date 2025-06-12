@@ -1,4 +1,5 @@
 <header class="header header-sticky p-0 mb-4">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <div class="container-fluid border-bottom px-4">
         <button class="header-toggler" type="button"
@@ -98,7 +99,8 @@
                         </svg> Tasks<span class="badge badge-sm bg-danger ms-2">42</span></a><a class="dropdown-item"
                         href="#">
                         <svg class="icon me-2">
-                            <use xlink:href="{{ asset('dist/vendors/@coreui/icons/svg/free.svg#cil-comment-square') }}">
+                            <use
+                                xlink:href="{{ asset('dist/vendors/@coreui/icons/svg/free.svg#cil-comment-square') }}">
                             </use>
                         </svg> Comments<span class="badge badge-sm bg-warning ms-2">42</span></a>
                     <div class="dropdown-header bg-body-tertiary text-body-secondary fw-semibold my-2">
@@ -127,7 +129,8 @@
                             </use>
                         </svg> Lock Account</a><a class="dropdown-item" href="#">
                         <svg class="icon me-2">
-                            <use xlink:href="{{ asset('dist/vendors/@coreui/icons/svg/free.svg#cil-account-logout') }}">
+                            <use
+                                xlink:href="{{ asset('dist/vendors/@coreui/icons/svg/free.svg#cil-account-logout') }}">
                             </use>
                         </svg> Logout</a>
                 </div>

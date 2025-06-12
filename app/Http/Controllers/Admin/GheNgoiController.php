@@ -49,7 +49,7 @@ class GheNgoiController extends Controller
     {
         $loaiGhes = LoaiGhe::all();
         $mauGhes = LoaiGhe::pluck('chu_thich_mau_ghe', 'id');
-
+        $mauGhes['empty'] = '#e5e7eb'; 
         $phongChieu = PhongChieu::findOrFail($id);
         $phongChieuId = $phongChieu->id;
         $tenPhong = $phongChieu->ten_phong;

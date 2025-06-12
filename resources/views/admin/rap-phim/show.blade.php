@@ -193,13 +193,18 @@
                             '"]').text();
 
                         const inputHtml = `
-                <div class="mb-3">
-                    <label class="form-label">${tenLoaiGhe}</label>
-                    <input type="number" id="loai_ghe_${loaiGheId}" data-id-loai="${loaiGheId}" name="so_hang_${loaiGheId}" min="1"
-                        class="form-control form-control-lg shadow-sm"
-                        placeholder="Số hàng ghế">
-                    <div class="text-danger" id="error_loai_ghe_${loaiGheId}"></div>
-                </div>`;
+                        <div class="mb-3">
+                            <label class="form-label">${tenLoaiGhe}</label>
+                            <input type="number"
+                                   id="loai_ghe_${loaiGheId}"
+                                   data-id-loai="${loaiGheId}"
+                                   name="so_hang_${loaiGheId}"
+                                   min="1"
+                                   class="form-control form-control-lg shadow-sm"
+                                   placeholder="Số hàng ghế">
+                            <div class="text-danger" id="error_loai_ghe_${loaiGheId}"></div>
+                        </div>
+                    `;
 
                         container.append(inputHtml);
 
@@ -256,59 +261,63 @@
                 $('#ghe_doi').val(gheDoi);
             }
 
-        });
+            $('#formSoDoGhe').on('submit', function(e) {
+                e.preventDefault();
+                const form = $(this);
 
-        $('#formSoDoGhe').on('submit', function(e) {
-            e.preventDefault();
-            const form = $(this);
+                const soHang = Number($('#so_hang').val()) || 0;
+                const soCot = Number($('#so_cot').val()) || 0;
 
-            const soHang = Number($('#so_hang').val()) || 0;
-            const soCot = Number($('#so_cot').val()) || 0;
+                let selectedIds = $('#loai_ghe_ids').val();
+                if (!Array.isArray(selectedIds)) {
+                    selectedIds = selectedIds ? [selectedIds] : [];
+                }
 
-            let selectedIds = $('#loai_ghe_ids').val();
-            if (!Array.isArray(selectedIds)) {
-                selectedIds = selectedIds ? [selectedIds] : [];
-            }
+                const inputHangGhe = selectedIds.map(id => ({
+                    id,
+                    soHang: Number($('#loai_ghe_' + id).val()) || 0
+                }));
 
-            const inputHangGhe = selectedIds.map(id => ({
-                id,
-                soHang: Number($('#loai_ghe_' + id).val()) || 0
-            }));
-
-            const maTranGhe = {};
-            let currentRow = 1;
-            inputHangGhe.forEach(({
-                id,
-                soHang
-            }) => {
-                for (let j = 1; j <= soHang; j++) {
-                    const rowLabel = String.fromCharCode(64 + currentRow);
-                    for (let c = 1; c <= soCot; c++) {
-                        maTranGhe[rowLabel + c] = id;
+                const maTranGhe = {};
+                let currentRow = 1;
+                inputHangGhe.forEach(({
+                    id,
+                    soHang
+                }) => {
+                    for (let j = 1; j <= soHang; j++) {
+                        const rowLabel = String.fromCharCode(64 + currentRow);
+                        for (let c = 1; c <= soCot; c++) {
+                            maTranGhe[rowLabel + c] = id;
+                        }
+                        currentRow++;
                     }
-                    currentRow++;
-                }
-            });
+                });
 
-            $('#ma_tran_ghe').val(JSON.stringify(maTranGhe));
-            $.ajax({
-                url: form.attr('action'),
-                method: 'POST',
-                data: form.serialize() + '&_token=' + $('meta[name="csrf-token"]').attr('content'),
-                success(response) {
-                    $('#modalSoDoGhe').modal('hide');
-                    window.location.href = response.redirectUrl;
-                },
-                error(xhr) {
-                    const errors = xhr.responseJSON.errors;
-                    $('.text-danger').remove();
-                    $.each(errors, function(field, messages) {
-                        $('#' + field)
-                            .after('<div class="text-danger">' + messages[0] + '</div>');
-                    });
-                }
+                $('#ma_tran_ghe').val(JSON.stringify(maTranGhe));
+
+                $('input').removeClass('is-invalid');
+                $('.text-danger').empty();
+
+                $.ajax({
+                    url: form.attr('action'),
+                    method: 'POST',
+                    data: form.serialize(),
+                    success(response) {
+                        $('#modalSoDoGhe').modal('hide');
+                        window.location.href = response.redirectUrl;
+                    },
+                    error(xhr) {
+                        const errors = xhr.responseJSON.errors;
+                        $.each(errors, function(field, messages) {
+                            $('#' + field).addClass('is-invalid');
+                            $('#' + field).after('<div class="text-danger">' + messages[0] +
+                                '</div>');
+                        });
+                    }
+                });
             });
         });
     </script>
+
 
 @endsection
