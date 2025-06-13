@@ -306,6 +306,16 @@
     width: 100px;
 }
 
+.btn-cot-ghe {
+    background-color: rgb(137, 228, 137);
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    color: #374151;
+    font-size: 14px;
+    padding: 6px 8px;
+    white-space: nowrap; 
+    margin-bottom: 10px;
+}
 .so-luong-cot-ghe {
     padding: 6px 8px;
     font-size: 14px;

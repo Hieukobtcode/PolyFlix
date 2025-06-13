@@ -34,4 +34,5 @@ return new class extends Migration
             $table->foreign('rap_phim_id')->references('id')->on('rap_phims');
         });
     }
+    
 };

@@ -49,7 +49,7 @@ class GheNgoiController extends Controller
     {
         $loaiGhes = LoaiGhe::all();
         $mauGhes = LoaiGhe::pluck('chu_thich_mau_ghe', 'id');
-        $mauGhes['empty'] = '#e5e7eb'; 
+        $mauGhes['empty'] = '#e5e7eb';
         $phongChieu = PhongChieu::findOrFail($id);
         $phongChieuId = $phongChieu->id;
         $tenPhong = $phongChieu->ten_phong;
@@ -106,8 +106,6 @@ class GheNgoiController extends Controller
 
         $seatsId = json_decode($seatsJson, true);
 
-        print_r($seatsId);
-
         if (!is_array($seatsId)) {
             $seatsId = [];
         }
@@ -126,6 +124,33 @@ class GheNgoiController extends Controller
                 if ($seat->trang_thai === 'bao_tri') {
                     $seat->trang_thai = 'trong';
                     $seat->save();
+                }
+            }
+        }
+
+        $newSeatsJson = $request->input('allSeat', '[]');
+        $newSeats = json_decode($newSeatsJson, true);
+
+        $hasNewSeat = collect($newSeats)->contains(function ($seat) {
+            return empty($seat['id']);
+        });
+
+        if ($hasNewSeat) {
+            foreach ($newSeats as $seat) {
+                if (!empty($seat['id'])) {
+                    GheNgoi::where('id', $seat['id'])->update([
+                        'hang' => $seat['row'],
+                        'cot' => $seat['col'],
+                        'ma_ghe' => $seat['seat_code']
+                    ]);
+                } else {
+                    GheNgoi::create([
+                        'phong_chieu_id' => $phongChieuId,
+                        'loai_ghe' => $seat['loai'],
+                        'hang' => $seat['row'],
+                        'cot' => $seat['col'],
+                        'ma_ghe' => $seat['seat_code']
+                    ]);
                 }
             }
         }
