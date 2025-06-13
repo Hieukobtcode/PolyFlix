@@ -13,7 +13,7 @@ use App\Http\Controllers\Admin\LienHeController;
 use App\Http\Controllers\Admin\VaiTroController;
 use App\Http\Controllers\Admin\BaiVietController;
 use App\Http\Controllers\Admin\ChiNhanhController;
-use App\Http\Controllers\Admin\TheLoaiPhimController;
+use App\Http\Controllers\Admin\TheLoaiPhimConttroller;
 use App\Http\Controllers\Admin\LoaiPhongController;
 use App\Http\Controllers\Admin\RapphimController;
 use App\Http\Controllers\Admin\CauHinhController;
@@ -26,6 +26,7 @@ use App\Http\Controllers\Admin\KhuyenMaiController;
 use App\Http\Controllers\Admin\CapBacTheController;
 use App\Http\Controllers\Admin\PhanQuyenController;
 use App\Http\Controllers\Admin\SuatChieuController;
+use App\Http\Controllers\Admin\DatVeController;
 
 // Trang welcome
 Route::get('/', function () {
@@ -131,9 +132,14 @@ Route::prefix('admin')->name('admin.')->group(function () {
     // Quản lý combo
     Route::resource('combos', ComboController::class);
 
+    // Quản lý combo
+    Route::resource('combos', ComboController::class);
+
     // Quản lý đồ ăn
     Route::resource('do-an', DoAnController::class);
 
     // Quản lý danh sách đồ ăn
     Route::resource('danh-muc-do-an', DanhMucDoAnController::class);
+    // Đặt vé
+    Route::resource('dat-ves', DatVeController::class);
 });
