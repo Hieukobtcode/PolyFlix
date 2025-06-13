@@ -2,9 +2,10 @@
 
 namespace App\Models;
 
+use App\Models\User;
 use App\Models\KhuyenMai;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class ChiNhanh extends Model
@@ -45,4 +46,9 @@ class ChiNhanh extends Model
     {
         return $this->belongsToMany(Combo::class, 'chi_nhanh_combo');
     }
+    public function quanLy()
+    {
+        return $this->belongsTo(User::class, 'quan_ly_id');
+    }
 }
+

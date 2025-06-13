@@ -62,6 +62,7 @@
                 Quản lý người dùng
             </a>
             <ul class="nav-group-items compact">
+                <li class="nav-item"><a class="nav-link" href="{{ route('admin.users.index') }}">Người dùng</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('admin.vai-tro.index') }}">Vai trò</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('admin.phan-quyen.index') }}">Phân quyền</a>
                 </li>

@@ -13,7 +13,7 @@ class SoDoGheController extends Controller
 {
 
     public function store(SoDoGheRequest $request)
-    {
+    { 
         try {
             $phongchieuId = $request->phong_id;
             $cauTruc = $request->ma_tran_ghe;

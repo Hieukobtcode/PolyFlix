@@ -36,7 +36,23 @@
 
 @section('content')
 
+
+
     <div class="container-fluid">
+        {{-- Thông báo lỗi validate --}}
+        @if ($errors->any())
+            <div class="alert alert-danger d-flex align-items-start gap-3 alert-dismissible fade show" role="alert">
+                <i class="fas fa-exclamation-circle fa-lg mt-1"></i>
+                <div>
+                    <ul class="mb-0 mt-1">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+                <button type="button" class="btn-close mt-1" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
 
         <div class="card shadow-sm border-0">
 
@@ -108,7 +124,7 @@
 
                                     <td class="text-center">
                                         @if ($chiNhanh->quan_ly_id)
-                                            {{ $chiNhanh->quanLy->ten ?? 'ID: ' . $chiNhanh->quan_ly_id }}
+                                            {{ $chiNhanh->quanLy->name ?? 'ID: ' . $chiNhanh->quan_ly_id }}
                                         @else
                                             <span class="text-muted fst-italic">Chưa phân công</span>
                                         @endif
@@ -151,17 +167,50 @@
 
                                         {{-- Quản lý --}}
                                         @if (!$chiNhanh->quan_ly_id)
-                                            <a href="" class="btn btn-sm btn-outline-warning"
-                                                data-bs-toggle="tooltip" title="Phân công quản lý">
+                                            <button class="btn btn-sm btn-outline-warning" data-bs-toggle="modal"
+                                                data-bs-target="#inviteModal{{ $chiNhanh->id }}" title="Phân công quản lý">
                                                 <i class="fa-solid fa-user-plus" style="color: #FFD43B;"></i>
-                                            </a>
+                                            </button>
+
+                                            <!-- Modal nhập email -->
+                                            <div class="modal fade" id="inviteModal{{ $chiNhanh->id }}" tabindex="-1"
+                                                aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                    <form method="POST" action="{{ route('invite.send') }}">
+                                                        @csrf
+                                                        <input type="hidden" name="loai_quan_ly" value="1">
+                                                        <input type="hidden" name="chi_nhanh_id"
+                                                            value="{{ $chiNhanh->id }}">
+
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title">Phân công quản lý chi nhánh</h5>
+                                                                <button type="button" class="btn-close"
+                                                                    data-bs-dismiss="modal" aria-label="Đóng"></button>
+                                                            </div>
+
+                                                            <div class="modal-body">
+                                                                <label>Email người quản lý</label>
+                                                                <input type="email" name="email" class="form-control"
+                                                                    required>
+                                                            </div>
+
+                                                            <div class="modal-footer">
+                                                                <button type="submit" class="btn btn-primary">Gửi lời
+                                                                    mời</button>
+                                                                <button type="button" class="btn btn-secondary"
+                                                                    data-bs-dismiss="modal">Hủy</button>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
                                         @else
-                                            <a href="" class="btn btn-sm btn-outline-warning"
-                                                data-bs-toggle="tooltip" title="Xem thông tin quản lý">
+                                            <a href="{{ route('admin.users.show', $chiNhanh->quan_ly_id) }}"
+                                                class="btn btn-sm btn-outline-warning" title="Xem thông tin quản lý">
                                                 <i class="fa-solid fa-user" style="color: #FFD43B;"></i>
                                             </a>
                                         @endif
-
 
                                     </td>
                                 </tr>
@@ -212,4 +261,3 @@
         });
     </script>
 @endsection
-
