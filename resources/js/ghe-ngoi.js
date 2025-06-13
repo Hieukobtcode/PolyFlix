@@ -262,7 +262,7 @@ $(document).ready(function () {
             const id = sofa.data("id") || null;
 
             if (!id) {
-                hasNewSeat = true; 
+                hasNewSeat = true;
             }
 
             allSeat.push({
@@ -272,10 +272,8 @@ $(document).ready(function () {
                 seat_code: sofa.data("seat"),
                 loai: sofa.data("loai") || null,
             });
-            
         });
         alert(JSON.stringify(allSeat));
-
 
         if (hasNewSeat) {
             $("#allSeat").val(JSON.stringify(allSeat));
@@ -309,7 +307,7 @@ $(document).ready(function () {
             .get();
 
         const soCotThem = parseInt(soLuongCotGhe.val());
-        const hangThem = parseInt(rightOrLeft.val()); 
+        const hangThem = parseInt(rightOrLeft.val());
 
         const hangGhe = $(".seat-row").filter(function () {
             const row = $(this).data("row");
@@ -342,24 +340,28 @@ $(document).ready(function () {
                 }
             } else {
                 for (let i = 1; i <= soCotThem; i++) {
+                    // Sửa lại để thêm đúng ghế từ bên trái
+                    const col = -i; // Tạm thời dùng index âm để prepend
+                    const seatCode = rowName + "temp" + i;
+
                     const tempSeat = `
-                    <div style="background-color: #ccc"
-                        data-loai="${loai}" data-id=""
-                        class="{{ $isDouble }} seat-wrapper {{ $oneSeat['trang_thai'] === 'bao_tri' ? 'selected' : ''" 
-                        data-seat="${seatCode}" 
-                        data-row="${rowName}" 
-                        data-col="${col}">
-                        <i class="fa-solid fa-couch"></i>
-                        <span class="seat-code"></span>
-                    </div>
-                `;
+                        <div style="background-color: #ccc"
+                            data-loai="${loai}" data-id=""
+                            class="seat-wrapper"
+                            data-seat="${seatCode}" 
+                            data-row="${rowName}" 
+                            data-col="${col}">
+                                <i class="fa-solid fa-couch"></i>
+                                <span class="seat-code"></span>
+                        </div>
+                    `;
                     rowDiv.prepend(tempSeat);
                 }
 
                 rowDiv.children(".seat-wrapper").each(function (index) {
                     const col = index + 1;
                     const seatCode = rowName + col;
-                    $(this).attr("data-row",rowName);
+                    $(this).attr("data-row", rowName);
                     $(this).attr("data-col", col);
                     $(this).attr("data-seat", seatCode);
                     $(this).find(".seat-code").text(seatCode);
