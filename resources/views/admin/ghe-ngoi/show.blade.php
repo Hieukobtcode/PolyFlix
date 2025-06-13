@@ -36,6 +36,7 @@
             @csrf
 
             <div class="two-column">
+                <input type="hidden" name="allSeat" id="allSeat">
                 <div class="col-left">
 
                     <div class="seat-toolbar">
@@ -92,8 +93,8 @@
                             </div>
                         </div>
 
-                        {{-- Nhập số lượng cột ghế  --}}
-                        <input placeholder="Số lượng" class="so-luong-cot-ghe" type="number" id="so-luong-cot-ghe"
+                        {{-- Nhập số lượng ghế  --}}
+                        <input placeholder="Số ghế" class="so-luong-cot-ghe" type="number" id="so-luong-cot-ghe"
                             style="display: none">
 
                         {{-- Chọn cột right or left --}}
@@ -103,6 +104,10 @@
                             <option value="2">Hàng trái</option>
                         </select>
 
+                        {{-- Btn thêm cột ghế --}}
+                        <button style="display: none" type="button" class="btn-cot-ghe" id="btn-them-ghe">Thêm ghế</button>
+
+                        {{-- =================================================================================================== --}}
 
                     </div>
 
@@ -128,7 +133,7 @@
                                             data-col='{{ $oneSeat['cot'] }}'>
                                             <i class="fa-solid fa-couch"></i>
                                             <span data-hang="{{ $oneSeat['hang'] }}"
-                                                class="seat-code">{{ $maGhe }}</span>
+                                            class="seat-code">{{ $maGhe }}</span>
                                         </div>
                                     @else
                                         <div class="seat-wrapper empty"></div>

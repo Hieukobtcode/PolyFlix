@@ -4,16 +4,13 @@ use App\Http\Controllers\Admin\ComboController;
 use App\Http\Controllers\Admin\DanhMucDoAnController;
 use App\Http\Controllers\Admin\DoAnController;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\DB;
-
-// Controllers
 use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\PhimController;
 use App\Http\Controllers\Admin\LienHeController;
 use App\Http\Controllers\Admin\VaiTroController;
 use App\Http\Controllers\Admin\BaiVietController;
 use App\Http\Controllers\Admin\ChiNhanhController;
-use App\Http\Controllers\Admin\TheLoaiPhimConttroller;
+use App\Http\Controllers\Admin\TheLoaiPhimController;
 use App\Http\Controllers\Admin\LoaiPhongController;
 use App\Http\Controllers\Admin\RapphimController;
 use App\Http\Controllers\Admin\CauHinhController;
@@ -26,12 +23,14 @@ use App\Http\Controllers\Admin\KhuyenMaiController;
 use App\Http\Controllers\Admin\CapBacTheController;
 use App\Http\Controllers\Admin\PhanQuyenController;
 use App\Http\Controllers\Admin\SuatChieuController;
-use App\Http\Controllers\Admin\DatVeController;
+use Illuminate\Support\Facades\DB;
 
 // Trang welcome
 Route::get('/', function () {
     return view('welcome');
 });
+
+
 
 // Route tạm kiểm tra dữ liệu
 Route::get('/check-data', function () {
@@ -140,6 +139,5 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     // Quản lý danh sách đồ ăn
     Route::resource('danh-muc-do-an', DanhMucDoAnController::class);
-    // Đặt vé
-    Route::resource('dat-ves', DatVeController::class);
+ 
 });
