@@ -284,8 +284,6 @@ $(document).ready(function () {
                 loai: sofa.data("loai") || null,
             });
         });
-        alert(JSON.stringify(allSeat));
-
         if (hasNewSeat) {
             $("#allSeat").val(JSON.stringify(allSeat));
         }
