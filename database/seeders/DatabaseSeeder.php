@@ -26,7 +26,6 @@ class DatabaseSeeder extends Seeder
             CauHinhSeeder::class,
             PhanQuyenSeeder::class,
             UserSeeder::class,
-            VaiTroSeeder::class
         ]);
     }
 }
