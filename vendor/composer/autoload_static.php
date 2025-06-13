@@ -625,13 +625,6 @@ class ComposerStaticInitb63c0539f69f2908b999c5a5e14fc4fb
         'App\\Http\\Controllers\\Admin\\CapBacTheController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/CapBacTheController.php',
         'App\\Http\\Controllers\\Admin\\CauHinhController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/CauHinhController.php',
         'App\\Http\\Controllers\\Admin\\ChiNhanhController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/ChiNhanhController.php',
-<<<<<<< HEAD
-        'App\\Http\\Controllers\\Admin\\ComboController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/ComboController.php',
-        'App\\Http\\Controllers\\Admin\\DanhMucDoAnController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/DanhMucDoAnController.php',
-        'App\\Http\\Controllers\\Admin\\DinhDangPhimController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/DinhDangPhimController.php',
-        'App\\Http\\Controllers\\Admin\\DoAnController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/DoAnController.php',
-=======
->>>>>>> 5650e2fbd664015c7322135380259e4ed7cfbd17
         'App\\Http\\Controllers\\Admin\\GheNgoiController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/GheNgoiController.php',
         'App\\Http\\Controllers\\Admin\\KhuyenMaiController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/KhuyenMaiController.php',
         'App\\Http\\Controllers\\Admin\\LienHeController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/LienHeController.php',
@@ -641,16 +634,10 @@ class ComposerStaticInitb63c0539f69f2908b999c5a5e14fc4fb
         'App\\Http\\Controllers\\Admin\\PhimController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/PhimController.php',
         'App\\Http\\Controllers\\Admin\\PhongChieuController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/PhongChieuController.php',
         'App\\Http\\Controllers\\Admin\\SoDoGheController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/SoDoGheController.php',
-<<<<<<< HEAD
-        'App\\Http\\Controllers\\Admin\\SuatChieuController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/SuatChieuController.php',
-        'App\\Http\\Controllers\\Admin\\TheLoaiPhimController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/TheLoaiPhimController.php',
-        'App\\Http\\Controllers\\Admin\\VaiTroController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/VaiTroController.php',
-=======
         'App\\Http\\Controllers\\Admin\\TheLoaiPhimController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/TheLoaiPhimController.php',
         'App\\Http\\Controllers\\Admin\\UserController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/UserController.php',
         'App\\Http\\Controllers\\Admin\\VaiTroController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/VaiTroController.php',
         'App\\Http\\Controllers\\AuthController' => __DIR__ . '/../..' . '/app/Http/Controllers/AuthController.php',
->>>>>>> 5650e2fbd664015c7322135380259e4ed7cfbd17
         'App\\Http\\Controllers\\Controller' => __DIR__ . '/../..' . '/app/Http/Controllers/Controller.php',
         'App\\Http\\Middleware\\AuthRedirect' => __DIR__ . '/../..' . '/app/Http/Middleware/AuthRedirect.php',
         'App\\Http\\Middleware\\CheckAdminAccess' => __DIR__ . '/../..' . '/app/Http/Middleware/CheckAdminAccess.php',
@@ -661,14 +648,6 @@ class ComposerStaticInitb63c0539f69f2908b999c5a5e14fc4fb
         'App\\Models\\CapBacThe' => __DIR__ . '/../..' . '/app/Models/CapBacThe.php',
         'App\\Models\\CauHinh' => __DIR__ . '/../..' . '/app/Models/CauHinh.php',
         'App\\Models\\ChiNhanh' => __DIR__ . '/../..' . '/app/Models/ChiNhanh.php',
-<<<<<<< HEAD
-        'App\\Models\\Combo' => __DIR__ . '/../..' . '/app/Models/Combo.php',
-        'App\\Models\\ComboDoAn' => __DIR__ . '/../..' . '/app/Models/ComboDoAn.php',
-        'App\\Models\\DanhMucDoAn' => __DIR__ . '/../..' . '/app/Models/DanhMucDoAn.php',
-        'App\\Models\\DinhDangPhim' => __DIR__ . '/../..' . '/app/Models/DinhDangPhim.php',
-        'App\\Models\\DoAn' => __DIR__ . '/../..' . '/app/Models/DoAn.php',
-=======
->>>>>>> 5650e2fbd664015c7322135380259e4ed7cfbd17
         'App\\Models\\GheNgoi' => __DIR__ . '/../..' . '/app/Models/GheNgoi.php',
         'App\\Models\\KhuyenMai' => __DIR__ . '/../..' . '/app/Models/KhuyenMai.php',
         'App\\Models\\KhuyenMaiChiNhanh' => __DIR__ . '/../..' . '/app/Models/KhuyenMaiChiNhanh.php',
@@ -687,10 +666,6 @@ class ComposerStaticInitb63c0539f69f2908b999c5a5e14fc4fb
         'App\\Models\\Rap' => __DIR__ . '/../..' . '/app/Models/Rap.php',
         'App\\Models\\RapPhim' => __DIR__ . '/../..' . '/app/Models/RapPhim.php',
         'App\\Models\\SoDoGhe' => __DIR__ . '/../..' . '/app/Models/SoDoGhe.php',
-<<<<<<< HEAD
-        'App\\Models\\SuatChieu' => __DIR__ . '/../..' . '/app/Models/SuatChieu.php',
-=======
->>>>>>> 5650e2fbd664015c7322135380259e4ed7cfbd17
         'App\\Models\\TheLoaiPhim' => __DIR__ . '/../..' . '/app/Models/TheLoaiPhim.php',
         'App\\Models\\User' => __DIR__ . '/../..' . '/app/Models/User.php',
         'App\\Models\\VaiTro' => __DIR__ . '/../..' . '/app/Models/VaiTro.php',
