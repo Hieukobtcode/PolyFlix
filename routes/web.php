@@ -7,11 +7,8 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\ComboController;
 use App\Http\Controllers\Admin\DanhMucDoAnController;
 use App\Http\Controllers\Admin\DoAnController;
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\PhimController;
-use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\InviteController;
 use App\Http\Controllers\Admin\LienHeController;
 use App\Http\Controllers\Admin\VaiTroController;
@@ -159,7 +156,6 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access', 'per
         Route::get('lien-he', [ThongKeController::class, 'lienHe'])->name('lien-he');
         Route::get('xuat-bao-cao', [ThongKeController::class, 'xuatBaoCao'])->name('xuat-bao-cao');
     });
-});
 
     Route::resource('loai-phong', LoaiPhongController::class);
     Route::resource('rap-phim', RapphimController::class);
@@ -196,4 +192,3 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access', 'per
     Route::post('requests/{id}/approve', [RequestController::class, 'approve'])->name('requests.approve');
     Route::delete('requests/{id}', [RequestController::class, 'reject'])->name('requests.reject');
 });
-
