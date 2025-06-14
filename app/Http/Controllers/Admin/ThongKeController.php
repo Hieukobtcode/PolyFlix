@@ -51,7 +51,7 @@ class ThongKeController extends Controller
             $ngay = Carbon::now()->subDays($i);
             $thongKeTheoNgay[] = [
                 'ngay' => $ngay->format('d/m'),
-                'lien_he_moi' => LienHe::whereDate('created_at', $ngay)->count(),
+                'lien_he_moi' => LienHe::whereDate('create_at', $ngay)->count(),
                 'khuyen_mai_su_dung' => LichSuSuDungKhuyenMai::whereDate('thoi_gian_su_dung', $ngay)->count(),
             ];
         }
