@@ -60,4 +60,9 @@ class Phim extends Model
     {
         return $this->hasMany(SuatChieu::class);
     }
+
+       public function datVes()
+    {
+        return $this->hasMany(DatVe::class, 'phim_id'); 
+    }
 }

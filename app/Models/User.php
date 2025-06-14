@@ -65,4 +65,10 @@ class User extends Authenticatable
     {
         return $this->phanQuyens()->contains('slug', $slug);
     }
+
+    public function datVes()
+    {
+    return $this->hasMany(DatVe::class, 'nguoi_dung_id');
+    }
+
 }

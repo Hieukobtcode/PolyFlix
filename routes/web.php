@@ -4,14 +4,16 @@ use App\Http\Controllers\Admin\ComboController;
 use App\Http\Controllers\Admin\DanhMucDoAnController;
 use App\Http\Controllers\Admin\DoAnController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\DB;
+
+// Controllers
 use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\PhimController;
 use App\Http\Controllers\Admin\LienHeController;
 use App\Http\Controllers\Admin\VaiTroController;
 use App\Http\Controllers\Admin\BaiVietController;
 use App\Http\Controllers\Admin\ChiNhanhController;
-use App\Http\Controllers\Admin\KhuyenMaiController;
-use App\Http\Controllers\Admin\TheLoaiPhimController;
+use App\Http\Controllers\Admin\TheLoaiPhimConttroller;
 use App\Http\Controllers\Admin\LoaiPhongController;
 use App\Http\Controllers\Admin\RapphimController;
 use App\Http\Controllers\Admin\CauHinhController;
@@ -24,13 +26,12 @@ use App\Http\Controllers\Admin\KhuyenMaiController;
 use App\Http\Controllers\Admin\CapBacTheController;
 use App\Http\Controllers\Admin\PhanQuyenController;
 use App\Http\Controllers\Admin\SuatChieuController;
+use App\Http\Controllers\Admin\DatVeController;
 
 // Trang welcome
 Route::get('/', function () {
     return view('welcome');
 });
-
-
 
 // Route tạm kiểm tra dữ liệu
 Route::get('/check-data', function () {
@@ -66,7 +67,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     // Quản lý phim và chức năng xóa mềm
     Route::prefix('phim')->name('phim.')->group(function () {
-        Route::get('trash', [PhimController::class, 'trash'])->name('trash');
+Route::get('trash', [PhimController::class, 'trash'])->name('trash');
         Route::patch('{phim}/restore', [PhimController::class, 'restore'])->name('restore');
         Route::delete('{phim}/force-delete', [PhimController::class, 'forceDelete'])->name('force-delete');
     });
@@ -86,4 +87,58 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     // Quản lý banners
     Route::resource('banners', BannerController::class);
+
+    // Quản lý loại phòng
+    Route::resource('loai-phong', LoaiPhongController::class);
+
+    // Quản lý rạp phim
+    Route::resource('rap-phim', RapphimController::class);
+
+    // Quản lý cấu hình
+    Route::get('cau-hinh', [CauHinhController::class, 'index'])->name('cau-hinh.index');
+    Route::get('cau-hinh/edit', [CauHinhController::class, 'edit'])->name('cau-hinh.edit');
+    Route::post('cau-hinh/update', [CauHinhController::class, 'update'])->name('cau-hinh.update');
+
+    // Quản lý phòng chiếu
+    Route::resource('phong-chieu', PhongChieuController::class);
+
+    // Quản lý loại ghế
+    Route::resource('loai-ghe', LoaiGheController::class);
+
+    // Quản lý sơ đồ ghế
+    Route::resource('so-do-ghe', SoDoGheController::class);
+
+    // Quản lý ghế ngồi
+    Route::resource('ghe-ngoi', GheNgoiController::class);
+    Route::post('ghe-ngoi/updateSeat', [GheNgoiController::class, 'updateSeat'])->name('ghe-ngoi.updateSeat');
+
+    // Quản lý cấp bậc thẻ thành viên
+    Route::resource('cap-bac-the', CapBacTheController::class);
+    Route::put('cap-bac-the/{capBacThe}/set-default', [CapBacTheController::class, 'setDefault'])->name('cap-bac-the.set-default');
+
+    // Quản lý khuyến mãi
+    Route::prefix('khuyen-mai')->name('khuyen-mai.')->group(function () {
+        Route::post('{khuyenMai}/assign-chi-nhanh', [KhuyenMaiController::class, 'assignToChiNhanh'])->name('assign-chi-nhanh');
+        Route::get('thong-ke-su-dung', [KhuyenMaiController::class, 'thongKeSuDung'])->name('thong-ke-su-dung');
+    });
+    Route::resource('khuyen-mai', KhuyenMaiController::class);
+
+    // Quản lý suất chiếu
+    Route::post('suat-chieu/bulk-delete', [SuatChieuController::class, 'bulkDelete'])->name('suat-chieu.bulk-delete');
+    Route::post('suat-chieu/bulk-toggle-status', [SuatChieuController::class, 'bulkToggleStatus'])->name('suat-chieu.bulk-toggle-status');
+    Route::post('suat-chieu/{suatChieu}/toggle-status', [SuatChieuController::class, 'toggleStatus']);
+    Route::resource('suat-chieu', SuatChieuController::class);
+
+   // Quản lý combo
+    Route::resource('combos', ComboController::class);
+
+    // Quản lý đồ ăn
+    Route::resource('do-an', DoAnController::class);
+
+    // Quản lý danh sách đồ ăn
+    Route::resource('danh-muc-do-an', DanhMucDoAnController::class);
+    // Đặt vé
+    Route::resource('dat-ves', DatVeController::class);
+    
+
 });
