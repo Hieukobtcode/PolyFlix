@@ -46,9 +46,11 @@ class ChiNhanh extends Model
     {
         return $this->belongsToMany(Combo::class, 'chi_nhanh_combo');
     }
+
     public function quanLy()
     {
         return $this->belongsTo(User::class, 'quan_ly_id');
     }
 }
+
 
