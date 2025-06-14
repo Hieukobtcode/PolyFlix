@@ -1,4 +1,4 @@
-@extends('admin.layouts.app')
+@extends('layouts.admin')
 
 @section('title', 'Dashboard Thống kê')
 
@@ -25,7 +25,7 @@
                         </div>
                         <div class="flex-grow-1 ms-3">
                             <div class="small">Tổng số phim</div>
-                            <div class="h3 mb-0 fw-bold">{{ \App\Models\Phim::count() }}</div>
+                            <div class="h3 mb-0 fw-bold">{{ $tongQuan['tong_phim'] ?? 0 }}</div>
                         </div>
                     </div>
                 </div>
@@ -41,7 +41,7 @@
                         </div>
                         <div class="flex-grow-1 ms-3">
                             <div class="small">Combo & Đồ ăn</div>
-                            <div class="h3 mb-0 fw-bold">{{ \App\Models\Combo::count() + \App\Models\DoAn::count() }}</div>
+                            <div class="h3 mb-0 fw-bold">{{ ($tongQuan['tong_combo'] ?? 0) + ($tongQuan['tong_do_an'] ?? 0) }}</div>
                         </div>
                     </div>
                 </div>
@@ -57,7 +57,7 @@
                         </div>
                         <div class="flex-grow-1 ms-3">
                             <div class="small">Liên hệ</div>
-                            <div class="h3 mb-0 fw-bold">{{ \App\Models\LienHe::count() }}</div>
+                            <div class="h3 mb-0 fw-bold">{{ $tongQuan['tong_lien_he'] ?? 0 }}</div>
                         </div>
                     </div>
                 </div>
@@ -73,7 +73,7 @@
                         </div>
                         <div class="flex-grow-1 ms-3">
                             <div class="small">Khuyến mãi</div>
-                            <div class="h3 mb-0 fw-bold">{{ \App\Models\KhuyenMai::count() }}</div>
+                            <div class="h3 mb-0 fw-bold">{{ $tongQuan['tong_khuyen_mai'] ?? 0 }}</div>
                         </div>
                     </div>
                 </div>
@@ -93,15 +93,15 @@
                 <div class="card-body">
                     <div class="row text-center">
                         <div class="col-4">
-                            <div class="h4 mb-0 text-success">{{ \App\Models\Phim::where('trang_thai', 'dang_chieu')->count() }}</div>
+                            <div class="h4 mb-0 text-success">{{ $tongQuan['phim_dang_chieu'] ?? 0 }}</div>
                             <div class="small text-muted">Đang chiếu</div>
                         </div>
                         <div class="col-4">
-                            <div class="h4 mb-0 text-warning">{{ \App\Models\Phim::where('trang_thai', 'sap_chieu')->count() }}</div>
+                            <div class="h4 mb-0 text-warning">{{ $tongQuan['phim_sap_chieu'] ?? 0 }}</div>
                             <div class="small text-muted">Sắp chiếu</div>
                         </div>
                         <div class="col-4">
-                            <div class="h4 mb-0 text-secondary">{{ \App\Models\Phim::where('trang_thai', 'ngung_chieu')->count() }}</div>
+                            <div class="h4 mb-0 text-secondary">{{ ($tongQuan['tong_phim'] ?? 0) - ($tongQuan['phim_dang_chieu'] ?? 0) - ($tongQuan['phim_sap_chieu'] ?? 0) }}</div>
                             <div class="small text-muted">Ngừng chiếu</div>
                         </div>
                     </div>
@@ -119,11 +119,11 @@
                 <div class="card-body">
                     <div class="row text-center">
                         <div class="col-6">
-                            <div class="h4 mb-0 text-warning">{{ \App\Models\LienHe::where('trang_thai', 'chua_xu_ly')->count() }}</div>
+                            <div class="h4 mb-0 text-warning">{{ $thongKeLienHe['chua_xu_ly'] ?? 0 }}</div>
                             <div class="small text-muted">Chưa xử lý</div>
                         </div>
                         <div class="col-6">
-                            <div class="h4 mb-0 text-success">{{ \App\Models\LienHe::where('trang_thai', 'da_xu_ly')->count() }}</div>
+                            <div class="h4 mb-0 text-success">{{ $thongKeLienHe['da_xu_ly'] ?? 0 }}</div>
                             <div class="small text-muted">Đã xử lý</div>
                         </div>
                     </div>
@@ -140,14 +140,12 @@
                     <h5 class="mb-0 fw-bold">Phim mới nhất</h5>
                 </div>
                 <div class="card-body">
-                    @php
-                        $phimMoiNhat = \App\Models\Phim::orderBy('created_at', 'desc')->take(5)->get();
-                    @endphp
-                    @forelse($phimMoiNhat as $phim)
+                    @forelse($topPhim as $phim)
                     <div class="d-flex align-items-center mb-3">
                         <div class="flex-grow-1">
                             <div class="fw-semibold">{{ $phim->tieu_de ?? $phim->ten_phim }}</div>
-                            <div class="small text-muted">{{ $phim->created_at ? $phim->created_at->format('d/m/Y') : '---' }}</div>
+                            <div class="small text-muted">{{ $phim->suat_chieus_count ?? 0 }} suất chiếu</div>
+                            <div class="small text-muted">{{ $phim->create_at ? $phim->create_at->format('d/m/Y') : '---' }}</div>
                         </div>
                         <div class="flex-shrink-0">
                             <span class="badge bg-{{ $phim->trang_thai == 'dang_chieu' ? 'success' : 'secondary' }}">
@@ -170,14 +168,14 @@
                 </div>
                 <div class="card-body">
                     @php
-                        $lienHeMoiNhat = \App\Models\LienHe::orderBy('created_at', 'desc')->take(5)->get();
+                        $lienHeMoiNhat = \App\Models\LienHe::orderBy('create_at', 'desc')->take(5)->get();
                     @endphp
                     @forelse($lienHeMoiNhat as $lienHe)
                     <div class="d-flex align-items-center mb-3">
                         <div class="flex-grow-1">
                             <div class="fw-semibold">{{ $lienHe->ho_ten }}</div>
                             <div class="small text-muted">{{ $lienHe->chu_de }}</div>
-                            <div class="small text-muted">{{ $lienHe->created_at ? $lienHe->created_at->format('d/m/Y H:i') : '---' }}</div>
+                            <div class="small text-muted">{{ $lienHe->create_at ? $lienHe->create_at->format('d/m/Y H:i') : '---' }}</div>
                         </div>
                         <div class="flex-shrink-0">
                             <span class="badge bg-{{ $lienHe->trang_thai == 'chua_xu_ly' ? 'warning' : 'success' }}">

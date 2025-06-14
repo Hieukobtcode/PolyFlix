@@ -45,7 +45,7 @@ Route::get('/check-data', function () {
 // Group route cho admin
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/', function () {
-        return redirect()->route('admin.lien-he.index');
+        return redirect()->route('admin.thong-ke.index');
     })->name('dashboard');
 
     // Quản lý liên hệ
@@ -134,9 +134,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     // Thống kê
     Route::prefix('thong-ke')->name('thong-ke.')->group(function () {
         Route::get('/', [ThongKeController::class, 'index'])->name('index');
-        Route::get('dashboard', function () {
-            return view('admin.thong-ke.dashboard');
-        })->name('dashboard');
+        Route::get('dashboard', [ThongKeController::class, 'dashboard'])->name('dashboard');
         Route::get('phim', [ThongKeController::class, 'phim'])->name('phim');
         Route::get('lien-he', [ThongKeController::class, 'lienHe'])->name('lien-he');
         Route::get('xuat-bao-cao', [ThongKeController::class, 'xuatBaoCao'])->name('xuat-bao-cao');
