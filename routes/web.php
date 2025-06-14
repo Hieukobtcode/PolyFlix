@@ -24,6 +24,7 @@ use App\Http\Controllers\Admin\SoDoGheController;
 use App\Http\Controllers\Admin\CapBacTheController;
 use App\Http\Controllers\Admin\PhanQuyenController;
 use App\Http\Controllers\Admin\SuatChieuController;
+use App\Http\Controllers\Admin\ThongKeController;
 
 // Trang welcome
 Route::get('/', function () {
@@ -129,4 +130,12 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     // Quản lý đồ ăn
     Route::resource('do-an', DoAnController::class);
+
+    // Thống kê
+    Route::prefix('thong-ke')->name('thong-ke.')->group(function () {
+        Route::get('/', [ThongKeController::class, 'index'])->name('index');
+        Route::get('phim', [ThongKeController::class, 'phim'])->name('phim');
+        Route::get('lien-he', [ThongKeController::class, 'lienHe'])->name('lien-he');
+        Route::get('xuat-bao-cao', [ThongKeController::class, 'xuatBaoCao'])->name('xuat-bao-cao');
+    });
 });
