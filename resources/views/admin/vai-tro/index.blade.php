@@ -77,7 +77,9 @@
                                     <td class="text-center">{{ $index + 1 }}</td>
                                     <td>{{ $vaiTro->ten }}</td>
                                     <td>{{ Str::limit($vaiTro->mo_ta, 50) }}</td>
-                                    <td class="text-center">{{ $vaiTro->created_at->format('d/m/Y H:i') }}</td>
+                                    <td class="text-center">
+                                        {{ $vaiTro->created_at ? $vaiTro->created_at->format('d/m/Y H:i') : '---' }}
+                                    </td>
                                     <td class="text-center">
                                         <div class="btn-group" role="group">
                                             <a href="{{ route('admin.vai-tro.show', $vaiTro->id) }}"

@@ -16,6 +16,8 @@ class PhongChieu extends Model
         'ten_phong',
         'loai_phong_id',
         'status',
+        'so_do_ghe_id',
+        'so_ghe',
     ];
 
     public function rapPhim()
