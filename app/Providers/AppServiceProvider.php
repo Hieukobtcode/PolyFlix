@@ -2,7 +2,13 @@
 
 namespace App\Providers;
 
+use App\Models\AdminRequest;
+use Illuminate\Support\Facades\View;
+use App\Http\Middleware\AuthRedirect;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use App\Http\Middleware\CheckPermission;
+use App\Http\Middleware\CheckAdminAccess;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -20,5 +26,9 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         //
+        Route::aliasMiddleware('admin.access', CheckAdminAccess::class);
+        Route::aliasMiddleware('custom.auth', AuthRedirect::class);
+        Route::aliasMiddleware('permission.check', CheckPermission::class);
+        
     }
 }

@@ -11,6 +11,7 @@ $(document).ready(function () {
     const rightOrLeft = $("#right-or-left");
     const soGheKhiThemHang = $("#so-ghe-khi-them-hang");
     const btnThemHang = $("#btn-them-hang");
+    const btnThemCotGhe = $("#btn-them-ghe");
     selectAddSeat.change(function () {
         let valSelect = $(this).val();
         if (valSelect == 1) {
@@ -137,9 +138,8 @@ $(document).ready(function () {
     btnThemHang.on("click", function () {
         $(this).hide();
 
+
         const loaiChon = parseInt(addHang.val());
-        const tenLoaiGhe =
-            window.tenLoaiGheMap?.[String(loaiChon)] || "Không rõ";
         const soHangThem = parseInt(soHangGheTheoLoai.val());
         if (soHangThem === 0) return;
 
@@ -151,19 +151,23 @@ $(document).ready(function () {
         // Dịch các hàng bên dưới xuống
         for (let i = danhSach.length - 1; i >= viTriChen; i--) {
             const hangCu = danhSach[i].hang;
-            const hangMoi = String.fromCharCode(
-                hangCu.charCodeAt(0) + soHangThem
-            );
+            const hangMoi = String.fromCharCode(hangCu.charCodeAt(0) + soHangThem);
 
             $(`.seat-wrapper[data-row='${hangCu}']`).each(function () {
                 const col = $(this).data("col");
                 const maGheMoi = hangMoi + col;
 
+                // Cập nhật trực tiếp attribute, không dùng .data() để set
                 $(this).attr("data-row", hangMoi);
                 $(this).attr("data-seat", maGheMoi);
+
+                // Xóa cache để đảm bảo .data() không giữ giá trị cũ
+                $(this).removeData("row").removeData("seat");
+
                 $(this).find(".seat-code").text(maGheMoi);
             });
         }
+
 
         const soCot = parseInt(soGheKhiThemHang.val());
         let baseCharCode = danhSach[viTriChen - 1]
@@ -178,8 +182,11 @@ $(document).ready(function () {
             for (let j = 1; j <= soCot; j++) {
                 const maGhe = hangMoi + j;
                 hangHTML += `
-                <div style="background-color: #ccc;" data-loai="${loaiChon}"
-                    class="seat-wrapper" data-seat="${maGhe}" data-row="${hangMoi}" data-col="${j}">
+                <div style="background-color: #ccc;"
+                    data-loai="${loaiChon}" data-id=""
+                    class=" {{ $isDouble }} seat-wrapper {{ $oneSeat['trang_thai'] === 'bao_tri' ? 'selected' : '' }}"
+                    data-seat="${maGhe}" data-row="${hangMoi}"
+                    data-col="${j}">
                     <i class="fa-solid fa-couch"></i>
                     <span class="seat-code">${maGhe}</span>
                 </div>`;
@@ -205,13 +212,29 @@ $(document).ready(function () {
             $(".seat-map").append(allHangHTML);
         }
 
+        const hangDaThem = $(".seat-wrapper").filter(function () {
+            const dataId = $(this).data("id");
+            return dataId !== ""; // hoặc return !!dataId;
+        }).map(function () {
+            return $(this).data("row");
+        }).get();
+
         Swal.fire({
             icon: "success",
             title: "Thêm hàng ghế thành công!",
-            html: `Đã thêm <strong>${soHangThem}</strong> hàng ghế loại: <strong>${tenLoaiGhe}</strong>.<br> 
-            Hãy nhấn <strong>Cập nhật</strong> để lưu thay đổi.`,
-            confirmButtonText: "Đã hiểu",
-        });
+            html: `Đã thêm <strong>${soHangThem}</strong> hàng ghế<br> 
+           Hãy nhấn <strong>Cập nhật</strong> để lưu thay đổi.`,
+            confirmButtonText: "Đã hiểu"
+        })
+
+    });
+
+    rightOrLeft.change(function () {
+        if ($(this).val() === "") {
+            btnThemCotGhe.hide();
+        } else {
+            btnThemCotGhe.show();
+        }
     });
 
     $(".seat-wrapper:not(.empty)").on("click", function () {
@@ -234,13 +257,36 @@ $(document).ready(function () {
         }
     });
 
-    $("#updateSeatForm").on("submit", function () {
+    $("#updateSeatForm").on("submit", function (e) {
         const seats = $(".seat-wrapper.selected")
             .map(function () {
                 return $(this).data("id");
             })
             .get();
         $("#hiddenSeatsJson").val(JSON.stringify(seats));
+
+        const allSeat = [];
+        let hasNewSeat = false;
+
+        $(".seat-wrapper").each(function () {
+            const sofa = $(this);
+            const id = sofa.data("id") || null;
+
+            if (!id) {
+                hasNewSeat = true;
+            }
+
+            allSeat.push({
+                id: id,
+                row: sofa.data("row"),
+                col: sofa.data("col"),
+                seat_code: sofa.data("seat"),
+                loai: sofa.data("loai") || null,
+            });
+        });
+        if (hasNewSeat) {
+            $("#allSeat").val(JSON.stringify(allSeat));
+        }
     });
 
     function layDanhSachHang() {
@@ -260,4 +306,90 @@ $(document).ready(function () {
 
         return danhSach;
     }
+    btnThemCotGhe.on("click", function () {
+        $(this).hide();
+
+        const selectedCheckbox = $("input[name='checkbox[]']:checked")
+            .map(function () {
+                return this.value;
+            })
+            .get();
+
+        const soCotThem = parseInt(soLuongCotGhe.val());
+        const hangThem = parseInt(rightOrLeft.val());
+
+        const hangGhe = $(".seat-row").filter(function () {
+            const row = $(this).data("row");
+            return selectedCheckbox.includes(row);
+        });
+
+        hangGhe.each(function () {
+            const rowDiv = $(this);
+            const rowName = rowDiv.data("row");
+            const lastSeat = rowDiv.children(".seat-wrapper").last();
+            const lastCol = parseInt(lastSeat.data("col")) || 0;
+            const loai = rowDiv.children(".seat-wrapper").first().data("loai");
+            if (hangThem === 1) {
+                for (let i = 1; i <= soCotThem; i++) {
+                    const col = lastCol + i;
+                    const seatCode = rowName + col;
+
+                    const gheHTML = `
+                    <div style="background-color: #ccc"
+                        data-loai="${loai}"  data-id=""
+                        class="{{ $isDouble }}  seat-wrapper {{ $oneSeat['trang_thai'] === 'bao_tri' ? 'selected' : ''" 
+                        data-seat="${seatCode}" 
+                        data-row="${rowName}" 
+                        data-col="${col}">
+                        <i class="fa-solid fa-couch"></i>
+                        <span class="seat-code">${seatCode}</span>
+                    </div>
+                `;
+                    rowDiv.append(gheHTML);
+                }
+            } else {
+                for (let i = 1; i <= soCotThem; i++) {
+                    // Sửa lại để thêm đúng ghế từ bên trái
+                    const col = -i; // Tạm thời dùng index âm để prepend
+                    const seatCode = rowName + "temp" + i;
+
+                    const tempSeat = `
+                        <div style="background-color: #ccc"
+                            data-loai="${loai}" data-id=""
+                            class="seat-wrapper"
+                            data-seat="${seatCode}" 
+                            data-row="${rowName}" 
+                            data-col="${col}">
+                                <i class="fa-solid fa-couch"></i>
+                                <span class="seat-code"></span>
+                        </div>
+                    `;
+                    rowDiv.prepend(tempSeat);
+                }
+
+                rowDiv.children(".seat-wrapper").each(function (index) {
+                    const col = index + 1;
+                    const seatCode = rowName + col;
+                    $(this).attr("data-row", rowName);
+                    $(this).attr("data-col", col);
+                    $(this).attr("data-seat", seatCode);
+                    $(this).find(".seat-code").text(seatCode);
+                });
+            }
+        });
+        const hangNames = hangGhe
+            .map(function () {
+                return $(this).data("row");
+            })
+            .get()
+            .join(", ");
+
+        Swal.fire({
+            icon: "success",
+            title: "Thêm ghế thành công!",
+            html: `Đã thêm <strong>${soCotThem}</strong> ghế vào hàng: <strong>${hangNames}</strong>.<br> 
+            Hãy nhấn <strong>Cập nhật</strong> để lưu thay đổi.`,
+            confirmButtonText: "Đã hiểu",
+        });
+    });
 });

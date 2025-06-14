@@ -60,9 +60,6 @@ class SuatChieuController extends Controller
         return view('admin.suat-chieu.create', compact('phims', 'phongChieus'));
     }
 
-    /**
-     * Lưu suất chiếu mới vào database.
-     */
     public function store(Request $request)
     {
         $cheDo = $request->input('che_do');
@@ -91,6 +88,23 @@ class SuatChieuController extends Controller
             foreach ($request->thucong_bat_dau as $index => $gioBatDau) {
                 $gioKetThuc = $request->thucong_ket_thuc[$index];
 
+                $daTonTai = SuatChieu::where('phong_chieu_id', $validated['phong_chieu_id'])
+                    ->where('ngay_chieu', $validated['ngay_chieu'])
+                    ->where(function ($query) use ($gioBatDau, $gioKetThuc) {
+                        $query->whereBetween('bat_dau', [$gioBatDau, $gioKetThuc])
+                            ->orWhereBetween('ket_thuc', [$gioBatDau, $gioKetThuc])
+                            ->orWhere(function ($q) use ($gioBatDau, $gioKetThuc) {
+                                $q->where('bat_dau', '<=', $gioBatDau)
+                                    ->where('ket_thuc', '>=', $gioKetThuc);
+                            });
+                    })->exists();
+
+                if ($daTonTai) {
+                    return redirect()->back()->withErrors([
+                        "Suất chiếu từ $gioBatDau đến $gioKetThuc bị trùng với suất khác."
+                    ]);
+                }
+
                 SuatChieu::create([
                     'phim_id' => $validated['phim_id'],
                     'phong_chieu_id' => $validated['phong_chieu_id'],
@@ -101,7 +115,12 @@ class SuatChieuController extends Controller
                     'trang_thai' => $validated['trang_thai'] ?? 'tam_dung',
                 ]);
             }
-        } elseif ($cheDo === 'tu_dong') {
+        }
+
+        // ----------------------------------------------------------
+        // TỰ ĐỘNG
+        // ----------------------------------------------------------
+        elseif ($cheDo === 'tu_dong') {
             $request->validate([
                 'tudong_bat_dau' => 'required|date_format:H:i',
                 'tudong_ket_thuc' => 'required|date_format:H:i|after:tudong_bat_dau',
@@ -115,23 +134,42 @@ class SuatChieuController extends Controller
 
             while (true) {
                 $gioKetThucSuat = $gioBatDau->copy()->addMinutes($thoiLuong);
+
                 if ($gioKetThucSuat->gt($gioKetThucChung)) break;
 
-                SuatChieu::create([
-                    'phim_id' => $validated['phim_id'],
-                    'phong_chieu_id' => $validated['phong_chieu_id'],
-                    'phien_ban_phim' => $validated['phien_ban_phim'],
-                    'ngay_chieu' => $validated['ngay_chieu'],
-                    'bat_dau' => $gioBatDau->format('H:i'),
-                    'ket_thuc' => $gioKetThucSuat->format('H:i'),
-                    'trang_thai' => $validated['trang_thai'] ?? 'tam_dung',
-                ]);
+                $batDauStr = $gioBatDau->format('H:i');
+                $ketThucStr = $gioKetThucSuat->format('H:i');
 
-                $gioBatDau = $gioKetThucSuat->addMinutes(20);
+                $daTonTai = SuatChieu::where('phong_chieu_id', $validated['phong_chieu_id'])
+                    ->where('ngay_chieu', $validated['ngay_chieu'])
+                    ->where(function ($query) use ($batDauStr, $ketThucStr) {
+                        $query->whereBetween('bat_dau', [$batDauStr, $ketThucStr])
+                            ->orWhereBetween('ket_thuc', [$batDauStr, $ketThucStr])
+                            ->orWhere(function ($q) use ($batDauStr, $ketThucStr) {
+                                $q->where('bat_dau', '<=', $batDauStr)
+                                    ->where('ket_thuc', '>=', $ketThucStr);
+                            });
+                    })->exists();
+
+                if (!$daTonTai) {
+                    SuatChieu::create([
+                        'phim_id' => $validated['phim_id'],
+                        'phong_chieu_id' => $validated['phong_chieu_id'],
+                        'phien_ban_phim' => $validated['phien_ban_phim'],
+                        'ngay_chieu' => $validated['ngay_chieu'],
+                        'bat_dau' => $batDauStr,
+                        'ket_thuc' => $ketThucStr,
+                        'trang_thai' => $validated['trang_thai'] ?? 'tam_dung',
+                    ]);
+                }
+
+                $gioBatDau = $gioKetThucSuat->addMinutes(20); // nghỉ giữa các suất
             }
         }
+
         return redirect()->route('admin.suat-chieu.index')->with('success', 'Tạo suất chiếu thành công.');
     }
+
 
     /**
      * Hiển thị chi tiết một suất chiếu.
@@ -187,22 +225,51 @@ class SuatChieuController extends Controller
             'che_do' => 'required|in:thu_cong,tu_dong',
         ]);
 
+        // ------------------------------
+        // THỦ CÔNG
+        // ------------------------------
         if ($cheDo === 'thu_cong') {
             $request->validate([
                 'thucong_bat_dau' => 'required|date_format:H:i',
                 'thucong_ket_thuc' => 'required|date_format:H:i|after:thucong_bat_dau',
             ]);
 
+            $gioBatDau = $request->thucong_bat_dau;
+            $gioKetThuc = $request->thucong_ket_thuc;
+
+            $daTonTai = SuatChieu::where('id', '!=', $suatChieu->id)
+                ->where('phong_chieu_id', $validated['phong_chieu_id'])
+                ->where('ngay_chieu', $validated['ngay_chieu'])
+                ->where(function ($query) use ($gioBatDau, $gioKetThuc) {
+                    $query->whereBetween('bat_dau', [$gioBatDau, $gioKetThuc])
+                        ->orWhereBetween('ket_thuc', [$gioBatDau, $gioKetThuc])
+                        ->orWhere(function ($q) use ($gioBatDau, $gioKetThuc) {
+                            $q->where('bat_dau', '<=', $gioBatDau)
+                                ->where('ket_thuc', '>=', $gioKetThuc);
+                        });
+                })->exists();
+
+            if ($daTonTai) {
+                return redirect()->back()->withErrors([
+                    "Suất chiếu từ $gioBatDau đến $gioKetThuc bị trùng với suất khác."
+                ]);
+            }
+
             $suatChieu->update([
                 'phim_id' => $validated['phim_id'],
                 'phong_chieu_id' => $validated['phong_chieu_id'],
                 'phien_ban_phim' => $validated['phien_ban_phim'],
                 'ngay_chieu' => $validated['ngay_chieu'],
-                'bat_dau' => $request->thucong_bat_dau,
-                'ket_thuc' => $request->thucong_ket_thuc,
+                'bat_dau' => $gioBatDau,
+                'ket_thuc' => $gioKetThuc,
                 'trang_thai' => $validated['trang_thai'] ?? 'tam_dung',
             ]);
-        } elseif ($cheDo === 'tu_dong') {
+        }
+
+        // ------------------------------
+        // TỰ ĐỘNG
+        // ------------------------------
+        elseif ($cheDo === 'tu_dong') {
             $request->validate([
                 'tudong_bat_dau' => 'required|date_format:H:i',
                 'tudong_ket_thuc' => 'required|date_format:H:i|after:tudong_bat_dau',
@@ -219,19 +286,41 @@ class SuatChieuController extends Controller
                 return redirect()->back()->withErrors(['tudong_ket_thuc' => 'Khung giờ không đủ để chiếu phim.']);
             }
 
+            $batDauStr = $gioBatDau->format('H:i');
+            $ketThucStr = $gioKetThucSuat->format('H:i');
+
+            $daTonTai = SuatChieu::where('id', '!=', $suatChieu->id)
+                ->where('phong_chieu_id', $validated['phong_chieu_id'])
+                ->where('ngay_chieu', $validated['ngay_chieu'])
+                ->where(function ($query) use ($batDauStr, $ketThucStr) {
+                    $query->whereBetween('bat_dau', [$batDauStr, $ketThucStr])
+                        ->orWhereBetween('ket_thuc', [$batDauStr, $ketThucStr])
+                        ->orWhere(function ($q) use ($batDauStr, $ketThucStr) {
+                            $q->where('bat_dau', '<=', $batDauStr)
+                                ->where('ket_thuc', '>=', $ketThucStr);
+                        });
+                })->exists();
+
+            if ($daTonTai) {
+                return redirect()->back()->withErrors([
+                    "Suất chiếu từ $batDauStr đến $ketThucStr bị trùng với suất khác."
+                ]);
+            }
+
             $suatChieu->update([
                 'phim_id' => $validated['phim_id'],
                 'phong_chieu_id' => $validated['phong_chieu_id'],
                 'phien_ban_phim' => $validated['phien_ban_phim'],
                 'ngay_chieu' => $validated['ngay_chieu'],
-                'bat_dau' => $gioBatDau->format('H:i'),
-                'ket_thuc' => $gioKetThucSuat->format('H:i'),
+                'bat_dau' => $batDauStr,
+                'ket_thuc' => $ketThucStr,
                 'trang_thai' => $validated['trang_thai'] ?? 'tam_dung',
             ]);
         }
 
         return redirect()->route('admin.suat-chieu.index')->with('success', 'Cập nhật suất chiếu thành công.');
     }
+
 
     /**
      * Xóa một suất chiếu.

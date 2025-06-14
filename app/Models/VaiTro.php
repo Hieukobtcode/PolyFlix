@@ -16,7 +16,7 @@ class VaiTro extends Model
     // Quan hệ nhiều user thuộc 1 vai trò
     public function users()
     {
-        return $this->hasMany(User::class, 'role_id');
+        return $this->hasMany(User::class, 'vai_tro_id');
     }
 
     // Quan hệ nhiều-nhiều với phân quyền

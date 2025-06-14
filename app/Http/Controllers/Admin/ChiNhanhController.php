@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\ChiNhanh;
 use App\Models\LoaiGhe;
+use Illuminate\Support\Str;
+use App\Models\QuanLyInvite;
+use Illuminate\Http\Request;
+use App\Mail\MoiQuanLyChiNhanh;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Mail;
 
 class ChiNhanhController extends Controller
 {
@@ -77,5 +81,21 @@ class ChiNhanhController extends Controller
     {
         ChiNhanh::findOrFail($id)->delete();
         return redirect()->route('admin.chi-nhanh.index')->with('success', 'Xóa chi nhánh thành công');
+    }
+    public function invite(Request $request)
+    {
+        $request->validate(['email' => 'required|email']);
+
+        $token = Str::random(40);
+        QuanLyInvite::create([
+            'email' => $request->email,
+            'token' => $token,
+            'expires_at' => now()->addHour(),
+        ]);
+
+        $link = route('invite.form', ['token' => $token]);
+        Mail::to($request->email)->send(new MoiQuanLyChiNhanh($link));
+
+        return back()->with('success', 'Đã gửi lời mời thành công');
     }
 }
