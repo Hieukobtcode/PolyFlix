@@ -10,16 +10,7 @@
 
 
     <ul class="sidebar-nav" data-coreui="navigation" data-simplebar>
-        <li class="nav-item">
-            <a class="nav-link" href="#">
 
-                <svg class="nav-icon">
-                    <use xlink:href="{{ asset('dist/vendors/@coreui/icons/svg/free.svg#cil-speedometer') }}"></use>
-                </svg>
-                Dashboard
-                <span class="badge badge-sm bg-info ms-auto">NEW</span>
-            </a>
-        </li>
 
         <li class="nav-title">Quản lý</li>
 
@@ -131,6 +122,21 @@
                 <i class="fas fa-envelope nav-icon"></i>
                 Liên hệ khách hàng
             </a>
+        </li>
+
+        {{-- Thống kê --}}
+        <li class="nav-group">
+            <a class="nav-link nav-group-toggle" href="#">
+                <i class="fas fa-chart-bar nav-icon"></i>
+                Thống kê & Báo cáo
+            </a>
+            <ul class="nav-group-items compact">
+                <li class="nav-item"><a class="nav-link" href="{{ route('admin.thong-ke.index') }}">Tổng quan</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('admin.thong-ke.dashboard') }}">Biểu đồ</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('admin.thong-ke.phim') }}">Thống kê phim</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('admin.thong-ke.lien-he') }}">Thống kê liên hệ</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('admin.khuyen-mai.thong-ke-su-dung') }}">Thống kê khuyến mãi</a></li>
+            </ul>
         </li>
     </ul>
 </div>

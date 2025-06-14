@@ -7,6 +7,9 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\ComboController;
 use App\Http\Controllers\Admin\DanhMucDoAnController;
 use App\Http\Controllers\Admin\DoAnController;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\PhimController;
 use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\InviteController;
@@ -25,10 +28,12 @@ use App\Http\Controllers\Admin\KhuyenMaiController;
 use App\Http\Controllers\Admin\LoaiPhongController;
 use App\Http\Controllers\Admin\PhanQuyenController;
 use App\Http\Controllers\Admin\SuatChieuController;
+use App\Http\Controllers\Admin\ThongKeController;
 use App\Http\Controllers\Admin\PhongChieuController;
 use App\Http\Controllers\Admin\TheLoaiPhimController;
 use App\Http\Controllers\Admin\DinhDangPhimController;
 use App\Http\Controllers\SocialAuthController;
+
 
 // Trang welcome
 Route::get('/', function () {
@@ -71,7 +76,7 @@ Route::post('/gui-thong-tin', [InviteController::class, 'submitForm'])->name('in
 // Group route cho admin
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access', 'permission.check'])->group(function () {
     Route::get('/', function () {
-        return redirect()->route('admin.lien-he.index');
+        return redirect()->route('admin.thong-ke.index');
     })->name('dashboard');
 
     Route::prefix('lien-he')->name('lien-he.')->group(function () {
@@ -87,6 +92,11 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access', 'per
     Route::resource('the-loai-phim', TheLoaiPhimController::class);
     Route::resource('dinh-dang-phim', DinhDangPhimController::class);
 
+    // Quản lý loại phòng
+    Route::resource('loai-phong', LoaiPhongController::class);
+
+    // Quản lý phim và chức năng xóa mềm
+
     Route::prefix('phim')->name('phim.')->group(function () {
         Route::get('trash', [PhimController::class, 'trash'])->name('trash');
         Route::patch('{phim}/restore', [PhimController::class, 'restore'])->name('restore');
@@ -100,6 +110,57 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access', 'per
     Route::resource('phan-quyen', PhanQuyenController::class);
     Route::resource('users', UserController::class);
     Route::resource('banners', BannerController::class);
+
+    // Quản lý khuyến mãi
+    Route::prefix('khuyen-mai')->name('khuyen-mai.')->group(function () {
+        Route::get('thong-ke-su-dung', [KhuyenMaiController::class, 'thongKeSuDung'])->name('thong-ke-su-dung');
+        Route::post('{khuyenMai}/assign-chi-nhanh', [KhuyenMaiController::class, 'assignToChiNhanh'])->name('assign-chi-nhanh');
+    });
+    Route::resource('khuyen-mai', KhuyenMaiController::class);
+
+    // Quản lý rạp phim
+    Route::resource('rap-phim', RapphimController::class);
+
+    // Quản lý cấu hình
+    Route::resource('cau-hinh', CauHinhController::class);
+
+    // Quản lý ghế ngồi
+    Route::resource('ghe-ngoi', GheNgoiController::class);
+
+    // Quản lý phòng chiếu
+    Route::resource('phong-chieu', PhongChieuController::class);
+
+    // Quản lý loại ghế
+    Route::resource('loai-ghe', LoaiGheController::class);
+
+    // Quản lý sơ đồ ghế
+    Route::resource('so-do-ghe', SoDoGheController::class);
+
+    // Quản lý cấp bậc thẻ
+    Route::resource('cap-bac-the', CapBacTheController::class);
+
+    // Quản lý suất chiếu
+    Route::resource('suat-chieu', SuatChieuController::class);
+
+    // Quản lý combo
+    Route::resource('combos', ComboController::class);
+
+    // Quản lý danh mục đồ ăn
+    Route::resource('danh-muc-do-an', DanhMucDoAnController::class);
+
+    // Quản lý đồ ăn
+    Route::resource('do-an', DoAnController::class);
+
+    // Thống kê
+    Route::prefix('thong-ke')->name('thong-ke.')->group(function () {
+        Route::get('/', [ThongKeController::class, 'index'])->name('index');
+        Route::get('dashboard', [ThongKeController::class, 'dashboard'])->name('dashboard');
+        Route::get('phim', [ThongKeController::class, 'phim'])->name('phim');
+        Route::get('lien-he', [ThongKeController::class, 'lienHe'])->name('lien-he');
+        Route::get('xuat-bao-cao', [ThongKeController::class, 'xuatBaoCao'])->name('xuat-bao-cao');
+    });
+});
+
     Route::resource('loai-phong', LoaiPhongController::class);
     Route::resource('rap-phim', RapphimController::class);
 
@@ -135,3 +196,4 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access', 'per
     Route::post('requests/{id}/approve', [RequestController::class, 'approve'])->name('requests.approve');
     Route::delete('requests/{id}', [RequestController::class, 'reject'])->name('requests.reject');
 });
+
