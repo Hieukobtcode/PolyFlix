@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Thống Kê Sử Dụng Khuyến Mãi')
+@section('title', 'Thống kê')
 @section('page-title', 'Quản lý Khuyến Mãi')
 @section('breadcrumb', 'Thống kê sử dụng khuyến mãi')
 

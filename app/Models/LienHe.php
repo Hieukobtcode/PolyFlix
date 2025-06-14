@@ -25,6 +25,20 @@ class LienHe extends Model
     protected $primaryKey = 'id';
 
     /**
+     * The name of the "created at" column.
+     *
+     * @var string
+     */
+    const CREATED_AT = 'create_at';
+
+    /**
+     * The name of the "updated at" column.
+     *
+     * @var string
+     */
+    const UPDATED_AT = 'update_at';
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
@@ -61,21 +75,7 @@ class LienHe extends Model
      *
      * @var bool
      */
-    public $timestamps = false;
-
-    /**
-     * Get the name of the "created at" column.
-     *
-     * @var string
-     */
-    const CREATED_AT = 'create_at';
-
-    /**
-     * Get the name of the "updated at" column.
-     *
-     * @var string
-     */
-    const UPDATED_AT = 'update_at';
+    public $timestamps = true;
 
     /**
      * Scope a query to filter contacts by search term.
