@@ -109,14 +109,14 @@ class ThongKeController extends Controller
 
         // Lọc theo thời gian nếu có
         if ($request->filled('start_date')) {
-            $query->whereDate('created_at', '>=', $request->start_date);
+            $query->whereDate('create_at', '>=', $request->start_date);
         }
         if ($request->filled('end_date')) {
-            $query->whereDate('created_at', '<=', $request->end_date);
+            $query->whereDate('create_at', '<=', $request->end_date);
         }
 
         $phims = $query->withCount('suatChieus')
-            ->orderBy('created_at', 'desc')
+            ->orderBy('create_at', 'desc')
             ->paginate(10);
 
         // Thống kê tổng hợp
