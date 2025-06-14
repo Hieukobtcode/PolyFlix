@@ -147,6 +147,13 @@
                 Liên hệ khách hàng
             </a>
         </li>
+         {{-- Đơn vé --}}
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('admin.dat-ves.index')}}">
+                <i class="fas fa-envelope nav-icon"></i>
+                Đơn vé 
+            </a>
+        </li>
 
 
     </ul>

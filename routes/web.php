@@ -125,7 +125,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access', 'per
     Route::resource('ghe-ngoi', GheNgoiController::class);
 
     // Quản lý phòng chiếu
-    Route::resource('phong-chieu', PhongChieuController::class);
+Route::resource('phong-chieu', PhongChieuController::class);
 
     // Quản lý loại ghế
     Route::resource('loai-ghe', LoaiGheController::class);
@@ -182,7 +182,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access', 'per
     Route::post('suat-chieu/bulk-delete', [SuatChieuController::class, 'bulkDelete'])->name('suat-chieu.bulk-delete');
     Route::post('suat-chieu/bulk-toggle-status', [SuatChieuController::class, 'bulkToggleStatus'])->name('suat-chieu.bulk-toggle-status');
     Route::post('suat-chieu/{suatChieu}/toggle-status', [SuatChieuController::class, 'toggleStatus']);
-    Route::resource('suat-chieu', SuatChieuController::class);
+Route::resource('suat-chieu', SuatChieuController::class);
 
     Route::resource('combos', ComboController::class);
     Route::resource('do-an', DoAnController::class);
