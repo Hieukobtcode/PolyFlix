@@ -1,4 +1,4 @@
-@extends('admin.layouts.app')
+@extends('layouts.admin')
 
 @section('title', 'Thống kê liên hệ')
 
@@ -117,7 +117,7 @@
                                     <td>{{ $lienHes->firstItem() + $index }}</td>
                                     <td>
                                         <div>
-                                            <div class="fw-semibold">{{ $lienHe->ho_ten }}</div>
+                                            <div class="fw-semibold">{{ $lienHe->ten }}</div>
                                             <div class="small text-muted">
                                                 <i class="fas fa-envelope me-1"></i>{{ $lienHe->email }}
                                             </div>
@@ -129,7 +129,6 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <div class="fw-semibold">{{ $lienHe->chu_de }}</div>
                                         <div class="small text-muted">{{ Str::limit($lienHe->noi_dung, 80) }}</div>
                                     </td>
                                     <td>
@@ -139,7 +138,7 @@
                                             <span class="badge bg-success">Đã xử lý</span>
                                         @endif
                                     </td>
-                                    <td>{{ $lienHe->created_at ? $lienHe->created_at->format('d/m/Y H:i') : '---' }}</td>
+                                    <td>{{ $lienHe->create_at ? date('d/m/Y H:i', strtotime($lienHe->create_at)) : '---' }}</td>
                                     <td>
                                         <div class="btn-group" role="group">
                                             <a href="{{ route('admin.lien-he.show', $lienHe->id) }}" class="btn btn-sm btn-outline-info">
