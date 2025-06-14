@@ -26,6 +26,8 @@ use App\Http\Controllers\Admin\KhuyenMaiController;
 use App\Http\Controllers\Admin\CapBacTheController;
 use App\Http\Controllers\Admin\PhanQuyenController;
 use App\Http\Controllers\Admin\SuatChieuController;
+use App\Http\Controllers\Admin\CommentController;
+
 
 // Trang welcome
 Route::get('/', function () {
@@ -136,4 +138,26 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     // Quản lý danh sách đồ ăn
     Route::resource('danh-muc-do-an', DanhMucDoAnController::class);
+
+    // Quản lý bình luận & đánh giá
+Route::prefix('comments')->name('comments.')->group(function () {
+    // Giao diện quản lý bình luận
+    Route::get('/', [CommentController::class, 'index'])->name('index');
+
+    // Giao diện chi tiết bình luận theo phim
+    Route::get('{phim}', [CommentController::class, 'show'])->name('show');
+    // Giao diện trả lời bình luận
+    Route::post('{id}/reply', [CommentController::class, 'reply'])->name('reply');
+    
+    // Ẩn bình luận
+    Route::post('{id}/hide', [CommentController::class, 'hide'])->name('hide');
+
+    // Hiện lại bình luận
+    Route::post('{id}/unhide', [CommentController::class, 'unhide'])->name('unhide');
+
+    // Xóa bình luận
+    Route::delete('{id}', [CommentController::class, 'destroy'])->name('destroy');
+});
+
+  
 });
