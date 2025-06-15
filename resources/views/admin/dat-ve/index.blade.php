@@ -8,6 +8,17 @@
 
     @vite('resources/js/dat-ve.js')
 
+        {{-- @php
+            $ma_dat_ve = strtoupper(Str::random(10));
+        @endphp
+
+        <div class="text-center">
+            <div class="div">
+                {!! DNS1D::getBarcodeHTML($ma_dat_ve, 'C128', 1.2, 60) !!}
+            </div>
+            <div>{{ $ma_dat_ve }}</div>
+        </div> --}}
+
     <!-- Modal quét mã -->
     <div class="modal fade" id="scannerModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
@@ -112,7 +123,6 @@
                                     <tr>
                                         <th scope="col">STT</th>
                                         <th>Mã vé</th>
-                                        <th scope="col"><i class="fas fa-user"></i> Người dùng</th>
                                         <th scope="col"><i class="fas fa-film"></i> Phim</th>
                                         <th scope="col"><i class="far fa-clock"></i> Thời gian đặt</th>
                                         <th scope="col"><i class="fas fa-cogs"></i> Hành động</th>
@@ -122,19 +132,14 @@
                                     @foreach ($datVes as $index => $datVe)
                                         <tr>
                                             <td>{{ $index + 1 }}</td>
-                                            <td></td>
-                                            <td>{{ $datVe->nguoiDung?->name ?? 'Không rõ' }}</td>
-                                            <td>{{ $datVe->phim->ten_phim }}</td>
-                                            <td>{{ \Carbon\Carbon::parse($datVe->thoi_gian_dat)->format('d/m/Y H:i') }}
-                                            </td>
-                                            <td>
-                                                <a href="{{ route('admin.dat-ves.show', $datVe->id) }}"
-                                                    class="btn btn-sm btn-outline-info">
-                                                    <i class="fas fa-eye"></i> Xem
-                                                </a>
-                                                {{-- <a href="#" class="btn btn-sm btn-outline-warning">Sửa</a>
-                                    <a href="#" class="btn btn-sm btn-outline-danger">Xóa</a> --}}
-                                            </td>
+                                            <td>{{ $datVe->ma_dat_ve }}</td>
+                                            <td>{{ $datVe->suatChieu->phim->ten_phim }}</td>
+                                            <td>{{ $datVe->created_at->format('H:i d/m/Y') }}</td>
+                                           <td>
+                                            <a class="btn btn-warning" href="{{ route('admin.dat-ves.show',$datVe->id) }}">
+                                                <i class="fa-solid fa-eye fa-spin-pulse"></i>
+                                            </a>
+                                           </td>
                                         </tr>
                                     @endforeach
                                 </tbody>

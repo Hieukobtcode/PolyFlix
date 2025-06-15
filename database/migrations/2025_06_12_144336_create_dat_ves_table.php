@@ -4,37 +4,32 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
-    /**
-     * Run the migrations.
-     */
-   public function up(): void
+return new class extends Migration {
+    public function up(): void
     {
         Schema::create('dat_ves', function (Blueprint $table) {
-            $table->id(); // id (Primary Key)
-            $table->unsignedBigInteger('nguoi_dung_id'); // Foreign key đến bảng users
+            $table->id();
 
-            $table->decimal('tong_tien', 15, 2);
-            $table->decimal('khuyen_mai', 15, 2)->nullable();
-            $table->decimal('tong_tien_thanh_toan', 15, 2);
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('suat_chieu_id')->constrained('suat_chieus')->onDelete('cascade');
+            $table->foreignId('khuyen_mai_id')->nullable()->constrained('khuyen_mais')->onDelete('set null');
 
-            $table->dateTime('thoi_gian_dat');
-            $table->enum('phuong_thuc_thanh_toan', [ 'zalo_pay']);
-            
-            $table->text('ghi_chu')->nullable();
-            $table->dateTime('ngay_cap_nhat')->nullable();
+            $table->decimal('tong_tien', 10, 2);
+            $table->string('phuong_thuc_tt', 50); 
+
+            $table->enum('trang_thai', [
+                'Chờ thanh toán',
+                'Đã thanh toán',
+                'Đã hủy',
+                'Hết hạn',
+                'Chưa xuất vé',
+                'Đã xuất vé',
+            ])->default('Chờ thanh toán');
 
             $table->timestamps();
-
-            // Khóa ngoại
-            $table->foreign('nguoi_dung_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('dat_ves');

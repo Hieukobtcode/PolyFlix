@@ -45,6 +45,8 @@
                 </li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('admin.loai-ghe.index') }}">Loại ghế</a></li>
                 </li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('admin.gia-ve.index') }}">Giá vé</a></li>
+                </li>
             </ul>
         </li>
 

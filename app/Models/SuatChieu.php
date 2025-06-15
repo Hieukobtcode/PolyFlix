@@ -63,4 +63,8 @@ class SuatChieu extends Model
         return $this->belongsTo(RapPhim::class, 'rap_id');
     }
 
+    public function datVes()
+    {
+        return $this->hasMany(DatVe::class, 'suat_chieu_id');
+    }
 }
