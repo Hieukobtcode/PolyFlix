@@ -1,8 +1,8 @@
 @extends('layouts.admin')
 
-@section('title', 'Quản lý Định dạng phim')
-@section('page-title', 'Chi tiết định dạng phim')
-@section('breadcrumb', 'Chi tiết định dạng phim')
+@section('title', 'Quản lý phụ đề phim')
+@section('page-title', 'Chi tiết phụ đề phim')
+@section('breadcrumb', 'Chi tiết phụ đề phim')
 @section('styles')
     <style>
         .card {
@@ -33,14 +33,13 @@
     <div class="container-fluid">
         <div class="card shadow-sm border-0">
             <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                <h5 class="mb-0 fw-bold">Thông tin định dạng phim</h5>
+                <h5 class="mb-0 fw-bold">Thông tin phụ đề phim</h5>
                 <div class="btn-group gap-2">
-                    <a href="{{ route('admin.dinh-dang-phim.edit', $dinhDangPhim->id) }}" class="btn btn-light btn-sm"
+                    <a href="{{ route('admin.phu-de-phim.edit', $phuDePhim->id) }}" class="btn btn-light btn-sm"
                         title="Chỉnh sửa">
                         <i class="fas fa-edit me-1"></i> Chỉnh sửa
                     </a>
-                    <a href="{{ route('admin.dinh-dang-phim.index') }}" class="btn btn-outline-light btn-sm"
-                        title="Quay lại">
+                    <a href="{{ route('admin.phu-de-phim.index') }}" class="btn btn-outline-light btn-sm" title="Quay lại">
                         <i class="fas fa-arrow-left me-1"></i> Quay lại
                     </a>
                 </div>
@@ -51,13 +50,13 @@
                     <div class="col-md-6">
                         <div class="d-flex">
                             <div class="fw-semibold text-muted" style="width: 150px;">ID:</div>
-                            <div>{{ $dinhDangPhim->id }}</div>
+                            <div>{{ $phuDePhim->id }}</div>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="d-flex">
                             <div class="fw-semibold text-muted" style="width: 150px;">Tên thể loại:</div>
-                            <div>{{ $dinhDangPhim->ten_dinh_dang }}</div>
+                            <div>{{ $phuDePhim->ten_phu_de }}</div>
                         </div>
                     </div>
                     <div class="col-md-6">
@@ -65,8 +64,8 @@
                             <div class="fw-semibold text-muted" style="width: 150px;">Trạng thái:</div>
                             <div>
                                 <span
-                                    class="badge rounded-pill {{ $dinhDangPhim->trang_thai === 'hoạt động' ? 'bg-success' : 'bg-danger' }}">
-                                    {{ ucfirst($dinhDangPhim->trang_thai) }}
+                                    class="badge rounded-pill {{ $phuDePhim->trang_thai === 'hoạt động' ? 'bg-success' : 'bg-danger' }}">
+                                    {{ ucfirst($phuDePhim->trang_thai) }}
                                 </span>
                             </div>
                         </div>
@@ -74,21 +73,21 @@
                     <div class="col-md-6">
                         <div class="d-flex">
                             <div class="fw-semibold text-muted" style="width: 150px;">Ngày tạo:</div>
-                            <div>{{ $dinhDangPhim->create_at->format('d/m/Y H:i:s') }}</div>
+                            <div>{{ $phuDePhim->create_at->format('d/m/Y H:i:s') }}</div>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="d-flex">
                             <div class="fw-semibold text-muted" style="width: 150px;">Cập nhật lần cuối:</div>
                             <div>
-                                {{ $dinhDangPhim->updated_at ? $dinhDangPhim->updated_at->format('d/m/Y H:i') : 'Chưa cập nhật' }}
+                                {{ $phuDePhim->updated_at ? $phuDePhim->updated_at->format('d/m/Y H:i') : 'Chưa cập nhật' }}
                             </div>
                         </div>
                     </div>
                     <div class="col-md-12">
                         <div class="d-flex">
                             <div class="fw-semibold text-muted" style="width: 150px;">Mô tả:</div>
-                            <div>{{ $dinhDangPhim->mo_ta ?? 'Không có mô tả' }}</div>
+                            <div>{{ $phuDePhim->mo_ta ?? 'Không có mô tả' }}</div>
                         </div>
                     </div>
                 </div>
@@ -107,7 +106,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse($dinhDangPhim->phims as $index => $phim)
+                                @forelse($phuDePhim->phims as $index => $phim)
                                     <tr>
                                         <td class="text-center">{{ $index + 1 }}</td>
                                         <td>{{ $phim->ten_phim }}</td>
@@ -127,7 +126,7 @@
                                 @empty
                                     <tr>
                                         <td colspan="4" class="text-center text-muted py-3">
-                                            <i class="fas fa-folder-open me-1"></i> Không có phim nào thuộc định dạng này
+                                            <i class="fas fa-folder-open me-1"></i> Không có phim nào thuộc phụ đề này
                                         </td>
                                     </tr>
                                 @endforelse

@@ -30,11 +30,13 @@
                 Hệ thống rạp
             </a>
             <ul class="nav-group-items compact">
-                <li class="nav-item"><a class="nav-link" href="{{ route('admin.chi-nhanh.index') }}">Mạng lưới rạp chiếu</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('admin.chi-nhanh.index') }}">Mạng lưới rạp
+                        chiếu</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('admin.loai-phong.index') }}">Loại phòng</a>
                 </li>
                 {{-- <li class="nav-item"><a class="nav-link" href="{{ route('admin.loai-ghe.index') }}">Loại ghế</a></li> --}}
-                <li class="nav-item"><a class="nav-link" href="{{ route('admin.suat-chieu.index') }}">Suất chiếu</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('admin.suat-chieu.index') }}">Suất chiếu</a>
+                </li>
             </ul>
         </li>
 
@@ -49,7 +51,10 @@
             <ul class="nav-group-items compact">
                 <li class="nav-item"><a class="nav-link" href="{{ route('admin.the-loai-phim.index') }}">Thể Loại</a>
                 </li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('admin.dinh-dang-phim.index') }}">Định dạng phim</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('admin.dinh-dang-phim.index') }}">Định dạng
+                        phim</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('admin.phu-de-phim.index') }}">Phụ đề phim</a>
+                </li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('admin.phim.index') }}">Danh sách phim</a></li>
             </ul>
         </li>
@@ -120,7 +125,8 @@
                 <li class="nav-item"><a class="nav-link" href="{{ route('admin.do-an.index') }}">Đồ ăn</a>
                 </li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('admin.combos.index') }}">Combo</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('admin.danh-muc-do-an.index') }}">Danh mục đồ ăn</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('admin.danh-muc-do-an.index') }}">Danh mục
+                        đồ ăn</a></li>
             </ul>
         </li>
 

@@ -18,6 +18,7 @@ use App\Http\Controllers\Admin\LoaiPhongController;
 use App\Http\Controllers\Admin\RapphimController;
 use App\Http\Controllers\Admin\CauHinhController;
 use App\Http\Controllers\Admin\DinhDangPhimController;
+use App\Http\Controllers\Admin\PhuDePhimController;
 use App\Http\Controllers\Admin\GheNgoiController;
 use App\Http\Controllers\Admin\PhongChieuController;
 use App\Http\Controllers\Admin\LoaiGheController;
@@ -63,6 +64,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     // Quản lý định dạng phim
     Route::resource('dinh-dang-phim', DinhDangPhimController::class);
+
+    // Quản lý phụ đề phim
+    Route::resource('phu-de-phim', PhuDePhimController::class);
 
     // Quản lý phim và chức năng xóa mềm
     Route::prefix('phim')->name('phim.')->group(function () {
@@ -126,6 +130,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::post('suat-chieu/bulk-delete', [SuatChieuController::class, 'bulkDelete'])->name('suat-chieu.bulk-delete');
     Route::post('suat-chieu/bulk-toggle-status', [SuatChieuController::class, 'bulkToggleStatus'])->name('suat-chieu.bulk-toggle-status');
     Route::post('suat-chieu/{suatChieu}/toggle-status', [SuatChieuController::class, 'toggleStatus']);
+    Route::get('/suat-chieu/theo-phong-ngay', [SuatChieuController::class, 'theoPhongVaNgay'])->name('suat-chieu.api_phong_ngay');
     Route::resource('suat-chieu', SuatChieuController::class);
 
     // Quản lý combo
