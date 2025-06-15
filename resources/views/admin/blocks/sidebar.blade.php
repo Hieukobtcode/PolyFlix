@@ -44,7 +44,6 @@
                 <li class="nav-item"><a class="nav-link" href="{{ route('admin.loai-phong.index') }}">Loại phòng</a>
                 </li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('admin.loai-ghe.index') }}">Loại ghế</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('admin.suat-chieu.index') }}">Suất chiếu</a>
                 </li>
             </ul>
         </li>
@@ -63,9 +62,9 @@
                 <li class="nav-item"><a class="nav-link" href="{{ route('admin.dinh-dang-phim.index') }}">Định dạng
                         phim</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('admin.phim.index') }}">Danh sách phim</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('admin.suat-chieu.index') }}">Suất chiếu</a>
             </ul>
         </li>
-
 
         {{-- Quản lý người dùng --}}
         <li class="nav-group">
