@@ -50,7 +50,7 @@ class SuatChieu extends Model
     // Quan hệ với model PhongChieu
     public function phongChieu()
     {
-        return $this->belongsTo(PhongChieu::class);
+        return $this->belongsTo(PhongChieu::class, 'phong_chieu_id');
     }
 
     public function chiNhanh()
@@ -61,5 +61,10 @@ class SuatChieu extends Model
     public function rapPhims()
     {
         return $this->belongsTo(RapPhim::class, 'rap_id');
+    }
+
+    public function datVes()
+    {
+        return $this->hasMany(DatVe::class, 'suat_chieu_id');
     }
 }

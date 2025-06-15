@@ -16,7 +16,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'avatar', 
+        'avatar',
         'vai_tro_id',
         'dia_chi',
         'so_dien_thoai',
@@ -37,7 +37,7 @@ class User extends Authenticatable
             'hoat_dong' => 'boolean',
         ];
     }
-    
+
     public function vaiTro()
     {
         return $this->belongsTo(VaiTro::class, 'vai_tro_id');
@@ -55,7 +55,11 @@ class User extends Authenticatable
 
     public function datVes()
     {
-    return $this->hasMany(DatVe::class, 'nguoi_dung_id');
+        return $this->hasMany(DatVe::class, 'nguoi_dung_id');
+    }
+    public function ratings()
+    {
+        return $this->hasMany(Rating::class);
     }
 
 }
