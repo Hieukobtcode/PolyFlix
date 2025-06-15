@@ -120,6 +120,8 @@
                 <li class="nav-item"><a class="nav-link" href="{{ route('admin.bai-viet.index') }}">Bài viết</a>
                 </li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('admin.banners.index') }}">Banners</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('admin.comments.index') }}">Bình luận và
+                        đánh giá</a></li>
             </ul>
         </li>
         {{-- Quản lý đồ ăn --}}
@@ -144,6 +146,13 @@
             <a class="nav-link" href="{{ route('admin.lien-he.index') }}">
                 <i class="fas fa-envelope nav-icon"></i>
                 Liên hệ khách hàng
+            </a>
+        </li>
+        {{-- Đơn vé --}}
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('admin.dat-ves.index') }}">
+                <i class="fas fa-envelope nav-icon"></i>
+                Đơn vé
             </a>
         </li>
 

@@ -25,4 +25,5 @@ class PhimRap extends Model
     {
         return $this->belongsTo(RapPhim::class, 'rap_phim_id');
     }
+    
 }

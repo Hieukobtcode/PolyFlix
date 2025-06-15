@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Phim extends Model
 {
-    use SoftDeletes;
+    // use SoftDeletes;
     protected $table = 'phims';
 
     protected $fillable = [
@@ -62,4 +62,20 @@ class Phim extends Model
     {
         return $this->hasMany(SuatChieu::class);
     }
+
+    public function datVes()
+    {
+        return $this->hasMany(DatVe::class, 'phim_id');
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class, 'phim_id');
+    }
+    public function ratings()
+    {
+        return $this->hasMany(Rating::class);
+    }
+
+
 }
