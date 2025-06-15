@@ -30,6 +30,7 @@ use App\Http\Controllers\Admin\PhongChieuController;
 use App\Http\Controllers\Admin\TheLoaiPhimController;
 use App\Http\Controllers\Admin\DinhDangPhimController;
 use App\Http\Controllers\SocialAuthController;
+use App\Http\Controllers\Admin\DatVeController;
 
 
 // Trang welcome
@@ -178,6 +179,7 @@ Route::resource('phong-chieu', PhongChieuController::class);
         Route::get('thong-ke-su-dung', [KhuyenMaiController::class, 'thongKeSuDung'])->name('thong-ke-su-dung');
     });
     Route::resource('khuyen-mai', KhuyenMaiController::class);
+    
 
     Route::post('suat-chieu/bulk-delete', [SuatChieuController::class, 'bulkDelete'])->name('suat-chieu.bulk-delete');
     Route::post('suat-chieu/bulk-toggle-status', [SuatChieuController::class, 'bulkToggleStatus'])->name('suat-chieu.bulk-toggle-status');
@@ -191,4 +193,6 @@ Route::resource('suat-chieu', SuatChieuController::class);
     Route::get('requests', [RequestController::class, 'index'])->name('requests.index');
     Route::post('requests/{id}/approve', [RequestController::class, 'approve'])->name('requests.approve');
     Route::delete('requests/{id}', [RequestController::class, 'reject'])->name('requests.reject');
+
+    Route::resource('dat-ves', DatVeController::class);
 });
