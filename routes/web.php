@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\DatVeController;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
@@ -192,7 +193,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access', 'per
     Route::get('requests', [RequestController::class, 'index'])->name('requests.index');
     Route::post('requests/{id}/approve', [RequestController::class, 'approve'])->name('requests.approve');
     Route::delete('requests/{id}', [RequestController::class, 'reject'])->name('requests.reject');
-    
+
+     Route::resource('dat-ves', DatVeController::class);
+
     // Quản lý bình luận & đánh giá
     Route::prefix('comments')->name('comments.')->group(function () {
         // Giao diện quản lý bình luận

@@ -121,6 +121,8 @@
                 <li class="nav-item"><a class="nav-link" href="{{ route('admin.bai-viet.index') }}">Bài viết</a>
                 </li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('admin.banners.index') }}">Banners</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('admin.comments.index') }}">Bình luận và
+                        đánh giá</a></li>
             </ul>
         </li>
         {{-- Quản lý đồ ăn --}}
@@ -139,13 +141,6 @@
                         đồ ăn</a></li>
             </ul>
         </li>
-        {{-- Quan lý bình luận --}}
-        <li class="nav-item">
-            <a class="nav-link" href="{{ route('admin.comments.index') }}">
-                <i class="fas fa-envelope nav-icon"></i>
-                Quản lý bình luận và đánh giá 
-            </a>
-        </li>
 
         {{-- Liên hệ --}}
         <li class="nav-item">
@@ -154,11 +149,11 @@
                 Liên hệ khách hàng
             </a>
         </li>
-         {{-- Đơn vé --}}
+        {{-- Đơn vé --}}
         <li class="nav-item">
-            <a class="nav-link" href="{{ route('admin.dat-ves.index')}}">
+            <a class="nav-link" href="{{ route('admin.dat-ves.index') }}">
                 <i class="fas fa-envelope nav-icon"></i>
-                Đơn vé 
+                Đơn vé
             </a>
         </li>
 
