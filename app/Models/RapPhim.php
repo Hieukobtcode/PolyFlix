@@ -18,6 +18,7 @@ class RapPhim extends Model
         'ten_rap',
         'dia_chi',
         'trang_thai',
+        'phu_thu',
         'quan_ly_id',
     ];
 

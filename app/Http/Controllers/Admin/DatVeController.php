@@ -17,7 +17,7 @@ class DatVeController extends Controller
     $rapId = $request->input('rap');
     $chiNhanhId = $request->input('chi_nhanh');
 
-    $query = DatVe::with(['nguoiDung', 'phim.rapPhims.chiNhanh']);
+    $query = DatVe::with(['nguoiDung', 'phim.rapPhims.chiNhanh','suatChieu']);
 
     if (!empty($chiNhanhId)) {
         $query->whereHas('phim.rapPhims.chiNhanh', function ($q) use ($chiNhanhId) {
@@ -44,6 +44,7 @@ class DatVeController extends Controller
         'datVes', 'chiNhanhs', 'dsPhim',
         'phimId', 'rapId', 'chiNhanhId'
     ));
+
 }
 
     public function show($id)

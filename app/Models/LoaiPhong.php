@@ -11,6 +11,7 @@ class LoaiPhong extends Model
     protected $fillable = [
         'ten_loai_phong',
         'mo_ta',
+        'phu_thu',
         'create_at',
         'update_at',
     ];

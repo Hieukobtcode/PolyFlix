@@ -32,7 +32,7 @@ use App\Http\Controllers\Admin\TheLoaiPhimController;
 use App\Http\Controllers\Admin\DinhDangPhimController;
 use App\Http\Controllers\SocialAuthController;
 use App\Http\Controllers\Admin\CommentController;
-
+use App\Http\Controllers\Admin\GiaVeController;
 
 // Trang welcome
 Route::get('/', function () {
@@ -194,7 +194,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access', 'per
     Route::post('requests/{id}/approve', [RequestController::class, 'approve'])->name('requests.approve');
     Route::delete('requests/{id}', [RequestController::class, 'reject'])->name('requests.reject');
 
-     Route::resource('dat-ves', DatVeController::class);
+    Route::resource('dat-ves', DatVeController::class);
+
+    Route::get('gia-ve', [GiaVeController::class, 'index'])->name('gia-ve.index');
+    Route::post('gia-ve/cap-nhat', [GiaVeController::class, 'updateGiaVe'])->name('gia-ve.cap-nhat');
 
     // Quản lý bình luận & đánh giá
     Route::prefix('comments')->name('comments.')->group(function () {
@@ -215,6 +218,4 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access', 'per
         // Xóa bình luận
         Route::delete('{id}', [CommentController::class, 'destroy'])->name('destroy');
     });
-
-
 });
