@@ -30,6 +30,7 @@ use App\Http\Controllers\Admin\PhongChieuController;
 use App\Http\Controllers\Admin\TheLoaiPhimController;
 use App\Http\Controllers\Admin\DinhDangPhimController;
 use App\Http\Controllers\SocialAuthController;
+use App\Http\Controllers\Admin\CommentController;
 
 
 // Trang welcome
@@ -125,7 +126,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access', 'per
     Route::resource('ghe-ngoi', GheNgoiController::class);
 
     // Quản lý phòng chiếu
-Route::resource('phong-chieu', PhongChieuController::class);
+    Route::resource('phong-chieu', PhongChieuController::class);
 
     // Quản lý loại ghế
     Route::resource('loai-ghe', LoaiGheController::class);
@@ -182,7 +183,7 @@ Route::resource('phong-chieu', PhongChieuController::class);
     Route::post('suat-chieu/bulk-delete', [SuatChieuController::class, 'bulkDelete'])->name('suat-chieu.bulk-delete');
     Route::post('suat-chieu/bulk-toggle-status', [SuatChieuController::class, 'bulkToggleStatus'])->name('suat-chieu.bulk-toggle-status');
     Route::post('suat-chieu/{suatChieu}/toggle-status', [SuatChieuController::class, 'toggleStatus']);
-Route::resource('suat-chieu', SuatChieuController::class);
+    Route::resource('suat-chieu', SuatChieuController::class);
 
     Route::resource('combos', ComboController::class);
     Route::resource('do-an', DoAnController::class);
@@ -191,4 +192,26 @@ Route::resource('suat-chieu', SuatChieuController::class);
     Route::get('requests', [RequestController::class, 'index'])->name('requests.index');
     Route::post('requests/{id}/approve', [RequestController::class, 'approve'])->name('requests.approve');
     Route::delete('requests/{id}', [RequestController::class, 'reject'])->name('requests.reject');
+    
+    // Quản lý bình luận & đánh giá
+    Route::prefix('comments')->name('comments.')->group(function () {
+        // Giao diện quản lý bình luận
+        Route::get('/', [CommentController::class, 'index'])->name('index');
+
+        // Giao diện chi tiết bình luận theo phim
+        Route::get('{phim}', [CommentController::class, 'show'])->name('show');
+        // Giao diện trả lời bình luận
+        Route::post('{id}/reply', [CommentController::class, 'reply'])->name('reply');
+
+        // Ẩn bình luận
+        Route::post('{id}/hide', [CommentController::class, 'hide'])->name('hide');
+
+        // Hiện lại bình luận
+        Route::post('{id}/unhide', [CommentController::class, 'unhide'])->name('unhide');
+
+        // Xóa bình luận
+        Route::delete('{id}', [CommentController::class, 'destroy'])->name('destroy');
+    });
+
+
 });

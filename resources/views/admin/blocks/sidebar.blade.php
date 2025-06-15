@@ -139,6 +139,13 @@
                         đồ ăn</a></li>
             </ul>
         </li>
+        {{-- Quan lý bình luận --}}
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('admin.comments.index') }}">
+                <i class="fas fa-envelope nav-icon"></i>
+                Quản lý bình luận và đánh giá 
+            </a>
+        </li>
 
         {{-- Liên hệ --}}
         <li class="nav-item">
