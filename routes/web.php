@@ -4,23 +4,16 @@ use App\Http\Controllers\Admin\DatVeController;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\SocialAuthController;
-use App\Http\Controllers\Admin\BaiVietController;
 use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\CapBacTheController;
-use App\Http\Controllers\Admin\CauHinhController;
 use App\Http\Controllers\Admin\ChiNhanhController;
 use App\Http\Controllers\Admin\ComboController;
 use App\Http\Controllers\Admin\DanhMucDoAnController;
-use App\Http\Controllers\Admin\DinhDangPhimController;
 use App\Http\Controllers\Admin\DoAnController;
-use App\Http\Controllers\Admin\GheNgoiController;
-use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\PhimController;
 use App\Http\Controllers\Admin\InviteController;
 use App\Http\Controllers\Admin\KhuyenMaiController;
 use App\Http\Controllers\Admin\LienHeController;
-use App\Http\Controllers\Admin\VaiTroController;
 use App\Http\Controllers\Admin\BaiVietController;
 use App\Http\Controllers\Admin\CauHinhController;
 use App\Http\Controllers\Admin\DinhDangPhimController;
@@ -29,7 +22,6 @@ use App\Http\Controllers\Admin\GheNgoiController;
 use App\Http\Controllers\Admin\LoaiGheController;
 use App\Http\Controllers\Admin\LoaiPhongController;
 use App\Http\Controllers\Admin\PhanQuyenController;
-use App\Http\Controllers\Admin\PhimController;
 use App\Http\Controllers\Admin\PhongChieuController;
 use App\Http\Controllers\Admin\RapphimController;
 use App\Http\Controllers\Admin\SoDoGheController;
@@ -202,7 +194,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access', 'per
     Route::resource('danh-muc-do-an', DanhMucDoAnController::class);
  
 
-    Route::get('requests', [RequestController::class, 'index'])->name('requests.index');
+    Route::get('requests', [RequestControllery::class, 'index'])->name('requests.index');
     Route::post('requests/{id}/approve', [RequestController::class, 'approve'])->name('requests.approve');
     Route::delete('requests/{id}', [RequestController::class, 'reject'])->name('requests.reject');
 
