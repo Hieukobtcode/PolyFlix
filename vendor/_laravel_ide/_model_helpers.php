@@ -335,6 +335,9 @@ namespace App\Models {
      *
      * @property string $status
      * @property string $ngay_cap_nhat
+     * App\Models\BaiViet
+     *
+     * @property string $status
      * @property string $ngay_tao
      * @property string|null $hinh_anh
      * @property string $noi_dung

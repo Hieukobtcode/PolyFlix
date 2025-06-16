@@ -48,6 +48,7 @@ class SuatChieu extends Model
     // }
 
     // Quan hệ với model PhongChieu
+    
     public function phongChieu()
     {
         return $this->belongsTo(PhongChieu::class, 'phong_chieu_id');
@@ -63,17 +64,16 @@ class SuatChieu extends Model
         return $this->belongsTo(RapPhim::class, 'rap_id');
     }
 
-<<<<<<< HEAD
+
     public function datVes()
     {
         return $this->hasMany(DatVe::class, 'suat_chieu_id');
     }
-}
-=======
+
     public function getFormattedVersionAttribute()
     {
         [$f, $s] = explode('-', $this->phien_ban_phim, 2) + ['', ''];
         return Str::upper($f) . ' – ' . Str::title(str_replace('-', ' ', $s));
     }
 }
->>>>>>> ee23965c2bea700029958ec95965651b93fb36de
+
