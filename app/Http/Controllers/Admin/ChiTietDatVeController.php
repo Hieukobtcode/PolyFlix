@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\DatVe;
 use Illuminate\Http\Request;
 
 class ChiTietDatVeController extends Controller
@@ -12,7 +13,7 @@ class ChiTietDatVeController extends Controller
      */
     public function index()
     {
-        
+
     }
 
     /**
@@ -36,7 +37,7 @@ class ChiTietDatVeController extends Controller
      */
     public function show(string $id)
     {
-        //
+
     }
 
     /**
