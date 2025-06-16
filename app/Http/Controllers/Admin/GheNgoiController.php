@@ -23,7 +23,6 @@ class GheNgoiController extends Controller
         $rapPhimId = $phongChieu->rap_phim_id;
         $seatDataJson = $request->input('seat_data');
         $seatData = json_decode($seatDataJson, true);
-        dd($seatData);
         foreach ($seatData as $seat) {
             GheNgoi::create([
                 'phong_chieu_id' => $phongChieuId,

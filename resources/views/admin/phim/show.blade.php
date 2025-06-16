@@ -81,6 +81,17 @@
                         </div>
 
                         <div class="mb-4">
+                            <h5 class="fw-bold">Phụ đề</h5>
+                            <div>
+                                @forelse($phim->phuDes as $phuDe)
+                                    <span class="badge bg-info rounded-pill me-1">{{ $phuDe->ten_phu_de }}</span>
+                                @empty
+                                    <span class="text-muted">Chưa có phụ đề</span>
+                                @endforelse
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
                             <h5 class="fw-bold">Chi nhánh</h5>
                             <div>
                                 @forelse($phim->chiNhanhs as $chiNhanh)
