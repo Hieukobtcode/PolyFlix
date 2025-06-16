@@ -92,18 +92,28 @@
                                 <label class="form-label fw-semibold">Phiên bản phim <span
                                         class="text-danger">*</span></label>
                                 <div class="d-flex gap-3">
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="phien_ban_phim" id="long_tieng"
-                                            value="long_tieng"
-                                            {{ old('phien_ban_phim', $suatChieu->phien_ban_phim) == 'long_tieng' ? 'checked' : '' }}>
-                                        <label class="form-check-label" for="long_tieng">Lồng tiếng</label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="phien_ban_phim" id="phu_de"
-                                            value="phu_de"
-                                            {{ old('phien_ban_phim', $suatChieu->phien_ban_phim) == 'phu_de' ? 'checked' : '' }}>
-                                        <label class="form-check-label" for="phu_de">Phụ đề</label>
-                                    </div>
+                                    @foreach ($dinhDangs as $fmt)
+                                        @foreach ($phuDes as $sub)
+                                            @php
+                                                $fSlug = \Str::slug($fmt->ten_dinh_dang, '-');
+                                                $sSlug = \Str::slug($sub->ten_phu_de, '-');
+                                                $code = strtolower($fSlug . '-' . $sSlug);
+                                                $checked =
+                                                    old('phien_ban_phim', $suatChieu->phien_ban_phim) === $code
+                                                        ? 'checked'
+                                                        : '';
+                                            @endphp
+
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="phien_ban_phim"
+                                                    id="version_{{ $code }}" value="{{ $code }}"
+                                                    {{ $checked }} required>
+                                                <label class="form-check-label" for="version_{{ $code }}">
+                                                    {{ $fmt->ten_dinh_dang }} – {{ $sub->ten_phu_de }}
+                                                </label>
+                                            </div>
+                                        @endforeach
+                                    @endforeach
                                 </div>
                                 @error('phien_ban_phim')
                                     <div class="invalid-feedback d-block">{{ $message }}</div>

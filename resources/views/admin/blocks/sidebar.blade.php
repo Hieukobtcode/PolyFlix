@@ -63,6 +63,8 @@
                 </li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('admin.dinh-dang-phim.index') }}">Định dạng
                         phim</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('admin.phu-de-phim.index') }}">Phụ đề phim</a>
+                </li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('admin.phim.index') }}">Danh sách phim</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('admin.suat-chieu.index') }}">Suất chiếu</a>
             </ul>
