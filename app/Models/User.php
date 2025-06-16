@@ -12,62 +12,54 @@ class User extends Authenticatable
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
     protected $fillable = [
         'name',
         'email',
         'password',
-        'avatar', 
-        'role_id'
+        'avatar',
+        'vai_tro_id',
+        'dia_chi',
+        'so_dien_thoai',
+        'trang_thai',
+        'hoat_dong',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
     protected function casts(): array
     {
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'hoat_dong' => 'boolean',
         ];
     }
-    
-    // Quan hệ 1 user thuộc 1 vai trò
+
     public function vaiTro()
     {
-        return $this->belongsTo(VaiTro::class, 'role_id');
+        return $this->belongsTo(VaiTro::class, 'vai_tro_id');
     }
 
-    // Lấy các quyền thông qua vai trò
     public function phanQuyens()
     {
         return $this->vaiTro ? $this->vaiTro->phanQuyens() : collect();
     }
 
-    // Kiểm tra quyền theo slug
     public function coQuyen($slug)
     {
         return $this->phanQuyens()->contains('slug', $slug);
     }
+
+    public function datVes()
+    {
+        return $this->hasMany(DatVe::class, 'nguoi_dung_id');
+    }
     public function ratings()
-{
-    return $this->hasMany(Rating::class);
-}
+    {
+        return $this->hasMany(Rating::class);
+    }
 
 }

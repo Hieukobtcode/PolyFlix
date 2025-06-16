@@ -149,22 +149,22 @@
                                     <div class="col-md-5">
                                         <label class="form-label">Giờ bắt đầu <span class="text-danger">*</span></label>
                                         <input type="time"
-                                            class="form-control rounded @error('bat_dau') is-invalid @enderror"
-                                            name="bat_dau"
-                                            value="{{ old('bat_dau', \Carbon\Carbon::parse($suatChieu->bat_dau)->format('H:i')) }}"
+                                            class="form-control rounded @error('thucong_bat_dau') is-invalid @enderror"
+                                            name="thucong_bat_dau"
+                                            value="{{ old('thucong_bat_dau', \Carbon\Carbon::parse($suatChieu->bat_dau)->format('H:i')) }}"
                                             required>
-                                        @error('bat_dau')
+                                        @error('thucong_bat_dau')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
                                     <div class="col-md-5">
                                         <label class="form-label">Giờ kết thúc <span class="text-danger">*</span></label>
                                         <input type="time"
-                                            class="form-control rounded @error('ket_thuc') is-invalid @enderror"
-                                            name="ket_thuc"
-                                            value="{{ old('ket_thuc', \Carbon\Carbon::parse($suatChieu->ket_thuc)->format('H:i')) }}"
+                                            class="form-control rounded @error('thucong_ket_thuc') is-invalid @enderror"
+                                            name="thucong_ket_thuc"
+                                            value="{{ old('thucong_ket_thuc', \Carbon\Carbon::parse($suatChieu->ket_thuc)->format('H:i')) }}"
                                             required>
-                                        @error('ket_thuc')
+                                        @error('thucong_ket_thuc')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>

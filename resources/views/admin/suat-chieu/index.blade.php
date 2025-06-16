@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Danh sách Suất chiếu')
+@section('title', 'Suất chiếu')
 @section('page-title', 'Danh sách Suất chiếu')
 @section('breadcrumb', 'Danh sách Suất chiếu')
 
