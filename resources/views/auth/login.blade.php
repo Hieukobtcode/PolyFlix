@@ -24,7 +24,7 @@
             @enderror
             <button type="submit" class="btn btn-primary">Đăng nhập</button>
         </form>
-        <a href="{{ route('google.redirect') }}" class="btn btn-danger">Đăng nhập bằng Google</a>
-        <a href="{{ route('facebook.redirect') }}" class="btn btn-primary">Đăng nhập bằng Facebook</a>
+        {{-- <a href="{{ route('google.redirect') }}" class="btn btn-danger">Đăng nhập bằng Google</a>
+        <a href="{{ route('facebook.redirect') }}" class="btn btn-primary">Đăng nhập bằng Facebook</a> --}}
     </div>
 @endsection

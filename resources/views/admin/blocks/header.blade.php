@@ -1,4 +1,5 @@
 <header class="header header-sticky p-0 mb-4">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <div class="container-fluid border-bottom px-4">
         <button class="header-toggler" type="button"
@@ -13,11 +14,58 @@
             <li class="nav-item"><a class="nav-link" href="{{ route('admin.dashboard') }}">Dashboard</a></li>
         </ul>
         <ul class="header-nav ms-auto">
-            <li class="nav-item"><a class="nav-link" href="#">
+            @php
+                use App\Models\AdminRequest;
+                $pendingRequests = AdminRequest::with('chiNhanh')->where('approved', false)->latest()->take(5)->get();
+                $pendingCount = $pendingRequests->count();
+            @endphp
+
+            <li class="nav-item dropdown" style='margin-right: 10px'>
+                <a class="nav-link" data-coreui-toggle="dropdown" href="#" role="button" aria-haspopup="true"
+                    aria-expanded="false">
                     <svg class="icon icon-lg">
-                        <use xlink:href="{{ asset('dist/vendors/@coreui/icons/svg/free.svg#cil-bell') }}">
-                        </use>
-                    </svg></a></li>
+                        <use xlink:href="{{ asset('dist/vendors/@coreui/icons/svg/free.svg#cil-bell') }}"></use>
+                    </svg>
+                    @if ($pendingCount > 0)
+                        <span class="position-absolute top-0 start-100 translate-middle badge bg-danger text-white"
+                            style="font-size: 13px; padding: 2px 5px; border-radius: 8px;">
+                            {{ $pendingCount }}
+                        </span>
+                    @endif
+                </a>
+
+                <div class="dropdown-menu dropdown-menu-end shadow"
+                    style="min-width: 320px; max-height: 400px; overflow-y: auto;">
+                    <h6 class="dropdown-header">Thông báo</h6>
+
+                    @forelse ($pendingRequests as $request)
+                        <div class="dropdown-item d-flex align-items-start gap-2 border-bottom py-2">
+                            <div class="avatar bg-info text-white rounded-circle d-flex align-items-center justify-content-center"
+                                style="width: 32px; height: 32px;">
+                                <i class="fa-solid fa-user"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <div class="fw-semibold mb-1">
+                                    Phê duyệt Admin chi nhánh: <span
+                                        class="text-dark">{{ $request->chiNhanh->ten_chi_nhanh ?? 'Không rõ' }}</span>
+                                </div>
+                                <small class="text-muted">{{ $request->original_email }}</small>
+                            </div>
+                        </div>
+                    @empty
+                        <div class="dropdown-item text-muted text-center">Không có thông báo nào mới</div>
+                    @endforelse
+
+                    @if (count($pendingRequests) > 0)
+                        <div class="dropdown-item text-center" style='padding-top:10px'>
+                            <a href="{{ route('admin.requests.index') }}"
+                                class="btn btn-sm btn-primary rounded-pill px-4 fw-semibold shadow-sm">
+                                <i class="fa-solid fa-eye me-1"></i> Xem tất cả yêu cầu
+                            </a>
+                        </div>
+                    @endif
+                </div>
+            </li>
             <li class="nav-item"><a class="nav-link" href="#">
                     <svg class="icon icon-lg">
                         <use xlink:href="{{ asset('dist/vendors/@coreui/icons/svg/free.svg#cil-list-rich') }}">
@@ -88,7 +136,8 @@
                         </svg> Updates<span class="badge badge-sm bg-info ms-2">42</span></a><a class="dropdown-item"
                         href="#">
                         <svg class="icon me-2">
-                            <use xlink:href="{{ asset('dist/vendors/@coreui/icons/svg/free.svg#cil-envelope-open') }}">
+                            <use
+                                xlink:href="{{ asset('dist/vendors/@coreui/icons/svg/free.svg#cil-envelope-open') }}">
                             </use>
                         </svg> Messages<span class="badge badge-sm bg-success ms-2">42</span></a><a
                         class="dropdown-item" href="#">
@@ -98,7 +147,8 @@
                         </svg> Tasks<span class="badge badge-sm bg-danger ms-2">42</span></a><a class="dropdown-item"
                         href="#">
                         <svg class="icon me-2">
-                            <use xlink:href="{{ asset('dist/vendors/@coreui/icons/svg/free.svg#cil-comment-square') }}">
+                            <use
+                                xlink:href="{{ asset('dist/vendors/@coreui/icons/svg/free.svg#cil-comment-square') }}">
                             </use>
                         </svg> Comments<span class="badge badge-sm bg-warning ms-2">42</span></a>
                     <div class="dropdown-header bg-body-tertiary text-body-secondary fw-semibold my-2">
@@ -125,11 +175,16 @@
                         <svg class="icon me-2">
                             <use xlink:href="{{ asset('dist/vendors/@coreui/icons/svg/free.svg#cil-lock-locked') }}">
                             </use>
-                        </svg> Lock Account</a><a class="dropdown-item" href="#">
+                        </svg> Lock Account</a>
+                    <form class="dropdown-item" action="{{ route('logout') }}" method="POST">
+                        @csrf
                         <svg class="icon me-2">
-                            <use xlink:href="{{ asset('dist/vendors/@coreui/icons/svg/free.svg#cil-account-logout') }}">
+                            <use
+                                xlink:href="{{ asset('dist/vendors/@coreui/icons/svg/free.svg#cil-account-logout') }}">
                             </use>
-                        </svg> Logout</a>
+                        </svg> <button class="btn p-0 border-0 bg-transparent" type="submit">Logout</button>
+                    </form>
+
                 </div>
             </li>
         </ul>

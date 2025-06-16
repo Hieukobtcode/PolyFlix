@@ -43,7 +43,7 @@ class VaiTroController extends Controller
 
     public function show($id)
     {
-        $vaiTro = VaiTro::with('phanQuyens')->findOrFail($id);
+        $vaiTro = VaiTro::with('phanQuyens', 'users')->findOrFail($id);
         return view('admin.vai-tro.show', compact('vaiTro'));
     }
 
@@ -90,3 +90,4 @@ class VaiTroController extends Controller
             ->with('success', 'Vai trò đã được xóa thành công!');
     }
 }
+
