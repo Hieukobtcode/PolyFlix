@@ -15,6 +15,8 @@ use App\Http\Controllers\Admin\LienHeController;
 use App\Http\Controllers\Admin\VaiTroController;
 use App\Http\Controllers\Admin\BaiVietController;
 use App\Http\Controllers\Admin\CauHinhController;
+use App\Http\Controllers\Admin\DinhDangPhimController;
+use App\Http\Controllers\Admin\PhuDePhimController;
 use App\Http\Controllers\Admin\GheNgoiController;
 use App\Http\Controllers\Admin\LoaiGheController;
 use App\Http\Controllers\Admin\RapphimController;
@@ -29,7 +31,6 @@ use App\Http\Controllers\Admin\SuatChieuController;
 use App\Http\Controllers\Admin\ThongKeController;
 use App\Http\Controllers\Admin\PhongChieuController;
 use App\Http\Controllers\Admin\TheLoaiPhimController;
-use App\Http\Controllers\Admin\DinhDangPhimController;
 use App\Http\Controllers\SocialAuthController;
 use App\Http\Controllers\Admin\CommentController;
 use App\Http\Controllers\Admin\GiaVeController;
@@ -93,6 +94,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access', 'per
 
     // Quản lý loại phòng
     Route::resource('loai-phong', LoaiPhongController::class);
+    // Quản lý phụ đề phim
+    Route::resource('phu-de-phim', PhuDePhimController::class);
 
     // Quản lý phim và chức năng xóa mềm
 
@@ -184,6 +187,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access', 'per
     Route::post('suat-chieu/bulk-delete', [SuatChieuController::class, 'bulkDelete'])->name('suat-chieu.bulk-delete');
     Route::post('suat-chieu/bulk-toggle-status', [SuatChieuController::class, 'bulkToggleStatus'])->name('suat-chieu.bulk-toggle-status');
     Route::post('suat-chieu/{suatChieu}/toggle-status', [SuatChieuController::class, 'toggleStatus']);
+    Route::get('/suat-chieu/theo-phong-ngay', [SuatChieuController::class, 'theoPhongVaNgay'])->name('suat-chieu.api_phong_ngay');
     Route::resource('suat-chieu', SuatChieuController::class);
 
     Route::resource('combos', ComboController::class);

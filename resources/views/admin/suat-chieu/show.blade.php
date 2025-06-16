@@ -97,11 +97,12 @@
                                 </div>
                             </div>
                         </div>
+
                         <div class="col-md-6">
                             <div class="d-flex align-items-start">
                                 <span class="info-label col-4">Phiên bản:</span>
                                 <span class="info-value col-8">
-                                    {{ $suatChieu->phien_ban_phim == 'long_tieng' ? 'Lồng tiếng' : 'Phụ đề' }}
+                                    {{ $suatChieu->formatted_version }}
                                 </span>
                             </div>
                         </div>

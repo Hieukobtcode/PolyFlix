@@ -1,8 +1,8 @@
 @extends('layouts.admin')
 
-@section('title', 'Quản lý Định dạng phim')
-@section('page-title', 'Danh sách định dạng phim')
-@section('breadcrumb', 'Danh sách định dạng phim')
+@section('title', 'Quản lý phụ đề phim')
+@section('page-title', 'Danh sách phụ đề phim')
+@section('breadcrumb', 'Danh sách phụ đề phim')
 @section('styles')
     <style>
         .card {
@@ -37,9 +37,9 @@
     <div class="container-fluid">
         <div class="card shadow-sm border-0">
             <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                <h5 class="mb-0 fw-bold">Danh sách định dạng phim</h5>
-                <a href="{{ route('admin.dinh-dang-phim.create') }}" class="btn btn-light btn-sm">
-                    <i class="fas fa-plus me-1"></i> Thêm định dạng
+                <h5 class="mb-0 fw-bold">Danh sách phụ đề phim</h5>
+                <a href="{{ route('admin.phu-de-phim.create') }}" class="btn btn-light btn-sm">
+                    <i class="fas fa-plus me-1"></i> Thêm phụ đề
                 </a>
             </div>
             <div class="card-body p-4">
@@ -49,7 +49,7 @@
                         <thead class="table-dark">
                             <tr>
                                 <th scope="col" class="text-center" style="width: 5%">#</th>
-                                <th scope="col">Tên định dạng</th>
+                                <th scope="col">Tên phụ đề</th>
                                 <th scope="col">Mô tả</th>
                                 <th scope="col" class="text-center" style="width: 15%">Trạng thái</th>
                                 <th scope="col" class="text-center" style="width: 15%">Ngày tạo</th>
@@ -57,34 +57,34 @@
                             </tr>
                         </thead>
                         <tbody id="categoryTable">
-                            @forelse($dinhDangPhims as $index => $dinhDang)
+                            @forelse($phuDePhims as $index => $phuDe)
                                 <tr>
                                     <td class="text-center">{{ $index + 1 }}</td>
-                                    <td>{{ $dinhDang->ten_dinh_dang }}</td>
-                                    <td>{{ Str::limit($dinhDang->mo_ta, 50) }}</td>
+                                    <td>{{ $phuDe->ten_phu_de }}</td>
+                                    <td>{{ Str::limit($phuDe->mo_ta, 50) }}</td>
                                     <td class="text-center">
-                                        @if ($dinhDang->trang_thai === 'hoạt động')
+                                        @if ($phuDe->trang_thai === 'hoạt động')
                                             <span class="badge bg-success rounded-pill">
-                                                {{ ucfirst($dinhDang->trang_thai) }}
+                                                {{ ucfirst($phuDe->trang_thai) }}
                                             </span>
                                         @else
                                             <span class="badge bg-danger rounded-pill">
-                                                {{ ucfirst($dinhDang->trang_thai) }}
+                                                {{ ucfirst($phuDe->trang_thai) }}
                                             </span>
                                         @endif
                                     </td>
-                                    <td class="text-center">{{ $dinhDang->create_at->format('d/m/Y H:i') }}</td>
+                                    <td class="text-center">{{ $phuDe->create_at->format('d/m/Y H:i') }}</td>
                                     <td class="text-center">
                                         <div class="btn-group" role="group">
-                                            <a href="{{ route('admin.dinh-dang-phim.show', $dinhDang->id) }}"
+                                            <a href="{{ route('admin.phu-de-phim.show', $phuDe->id) }}"
                                                 class="btn btn-sm btn-outline-info" title="Xem chi tiết">
                                                 <i class="fas fa-eye"></i>
                                             </a>
-                                            <a href="{{ route('admin.dinh-dang-phim.edit', $dinhDang->id) }}"
+                                            <a href="{{ route('admin.phu-de-phim.edit', $phuDe->id) }}"
                                                 class="btn btn-sm btn-outline-primary" title="Chỉnh sửa">
                                                 <i class="fas fa-edit"></i>
                                             </a>
-                                            <form action="{{ route('admin.dinh-dang-phim.destroy', $dinhDang->id) }}"
+                                            <form action="{{ route('admin.phu-de-phim.destroy', $phuDe->id) }}"
                                                 method="POST" class="d-inline"
                                                 onsubmit="return confirm('Bạn có chắc chắn muốn xóa thể loại này?')">
                                                 @csrf
@@ -110,11 +110,11 @@
                 <!-- Phân trang -->
                 <div class="d-flex justify-content-between align-items-center mt-4">
                     <div>
-                        <small class="text-muted">Hiển thị {{ $dinhDangPhims->count() }} trong tổng số
-                            {{ $dinhDangPhims->total() }} định dạng</small>
+                        <small class="text-muted">Hiển thị {{ $phuDePhims->count() }} trong tổng số
+                            {{ $phuDePhims->total() }} phụ đề</small>
                     </div>
                     <div>
-                        {{ $dinhDangPhims->links('pagination::bootstrap-5') }}
+                        {{ $phuDePhims->links('pagination::bootstrap-5') }}
                     </div>
                 </div>
             </div>
@@ -221,7 +221,7 @@
                 const infoText = document.querySelector('.text-muted');
                 if (infoText) {
                     const totalCount = rows.length - (document.getElementById('emptyRow') ? 1 : 0);
-                    infoText.textContent = `Hiển thị ${visibleCount} trong tổng số ${totalCount} định dạng`;
+                    infoText.textContent = `Hiển thị ${visibleCount} trong tổng số ${totalCount} phụ đề`;
                 }
             }
 
