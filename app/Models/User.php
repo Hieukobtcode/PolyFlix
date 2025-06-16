@@ -65,4 +65,9 @@ class User extends Authenticatable
     {
         return $this->phanQuyens()->contains('slug', $slug);
     }
+    public function ratings()
+{
+    return $this->hasMany(Rating::class);
+}
+
 }
