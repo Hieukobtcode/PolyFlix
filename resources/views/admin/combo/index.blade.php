@@ -77,6 +77,7 @@
                                 <th>Giá sau giảm</th>
                                 <th>Chi nhánh</th>
                                 <th>Món ăn</th>
+                                <th>Số lượng</th>
                                 <th class="text-center">Trạng thái</th>
                                 <th class="text-center">Ngày tạo</th>
                                 <th class="text-center" style="width: 15%">Thao tác</th>
@@ -96,10 +97,14 @@
                                             @endforeach
                                         </ul>
                                     </td>
-                                    <td>
-                                        <ul class="mb-0">
+                                    <td colspan="2">
+                                        <ul class="mb-0 list-unstyled">
                                             @foreach ($combo->doAns as $doAn)
-                                                <li>{{ $doAn->tieu_de }}</li>
+                                                <li
+                                                    class="d-flex justify-content-between align-items-center border-bottom py-1">
+                                                    <span>{{ $doAn->tieu_de }}</span>
+                                                    <span class="badge bg-secondary">{{ $doAn->pivot->so_luong }} x</span>
+                                                </li>
                                             @endforeach
                                         </ul>
                                     </td>
