@@ -58,11 +58,47 @@ class DatVeController extends Controller
 
     }
 
-    public function show($id)
+    public function show(Request $request, $id = null, $ma_ve = null)
     {
-        $datVe = DatVe::with(['nguoiDung', 'suatChieu.phim', 'combos'])->findOrFail($id);
+        // Ưu tiên lấy từ query string nếu có
+        $id = $id ?? $request->input('id');
+        $ma_ve = $ma_ve ?? $request->input('ma_ve');
+
+        // Nếu có ID thì tìm theo ID
+        if ($id) {
+            $datVe = DatVe::with([
+                'nguoiDung',
+                'suatChieu.phim',
+                'suatChieu.phongChieu.rapPhim.chiNhanh',
+                'gheNgois.loaiGhe',
+                'combos.doAns'
+            ])->findOrFail($id);
+
+            // Nếu có mã vé thì kiểm tra trùng khớp
+            if ($ma_ve && $datVe->ma_dat_ve !== $ma_ve) {
+                abort(404, 'Mã vé không khớp');
+            }
+        }
+        // Nếu không có ID thì thử tìm theo mã vé
+        elseif ($ma_ve) {
+            $datVe = DatVe::with([
+                'nguoiDung',
+                'suatChieu.phim',
+                'suatChieu.phongChieu.rapPhim.chiNhanh',
+                'gheNgois.loaiGhe',
+                'combos.doAns'
+            ])->where('ma_dat_ve', $ma_ve)->firstOrFail();
+        } else {
+            // Không đủ thông tin
+            abort(404, 'Không có thông tin để hiển thị vé');
+        }
+
         return view('admin.dat-ve.show', compact('datVe'));
     }
+
+
+
+
     public function guiVe($datVeId)
     {
         $datVe = DatVe::with(['nguoiDung', 'suatChieu.phim', 'combos.doAns'])->findOrFail($datVeId);
@@ -71,8 +107,24 @@ class DatVeController extends Controller
         $barcodeUrl = 'data:image/png;base64,' . DNS1D::getBarcodePNG($datVe->ma_dat_ve, 'C128', 2, 60);
 
         Mail::to($datVe->nguoiDung->email)
-            ->send(new GuiVeXemPhim($datVe, $barcodeUrl)); 
+            ->send(new GuiVeXemPhim($datVe, $barcodeUrl));
 
         return back()->with('success', 'Đã gửi vé về email người dùng!');
     }
+    public function print($id)
+{
+    $datVe = DatVe::with([
+        'nguoiDung',
+        'suatChieu.phim',
+        'suatChieu.phongChieu.rapPhim',
+        'gheNgois.loaiGhe',
+        'combos.doAns'
+    ])->findOrFail($id);
+
+    $pdf = Pdf::loadView('admin.dat-ve.print', compact('datVe'))->setPaper('a4');
+    return $pdf->stream('ve_xem_phim_' . $datVe->ma_dat_ve . '.pdf');
+}
+
+
+
 }
