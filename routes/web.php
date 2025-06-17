@@ -34,6 +34,7 @@ use App\Http\Controllers\Admin\VaiTroController;
 use App\Http\Controllers\SocialAuthController;
 use App\Http\Controllers\Admin\CommentController;
 use App\Http\Controllers\Admin\GiaVeController;
+use App\Http\Controllers\Admin\RequestController;
 
 // Trang welcome
 Route::get('/', function () {
@@ -187,15 +188,16 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access', 'per
     Route::post('suat-chieu/bulk-delete', [SuatChieuController::class, 'bulkDelete'])->name('suat-chieu.bulk-delete');
     Route::post('suat-chieu/bulk-toggle-status', [SuatChieuController::class, 'bulkToggleStatus'])->name('suat-chieu.bulk-toggle-status');
     Route::post('suat-chieu/{suatChieu}/toggle-status', [SuatChieuController::class, 'toggleStatus']);
-    Route::get('/suat-chieu/theo-phong-ngay', [SuatChieuController::class, 'theoPhongVaNgay'])->name('suat-chieu.api_phong_ngay');
+    Route::get('/suat-chieu/theo-phong-ngay', [SuatChieuController::class, 'theoPhongVaNgay'])
+        ->name('suat-chieu.theo-phong-ngay');
     Route::resource('suat-chieu', SuatChieuController::class);
 
     Route::resource('combos', ComboController::class);
     Route::resource('do-an', DoAnController::class);
     Route::resource('danh-muc-do-an', DanhMucDoAnController::class);
- 
 
-    Route::get('requests', [RequestControllery::class, 'index'])->name('requests.index');
+
+    Route::get('requests', [RequestController::class, 'index'])->name('requests.index');
     Route::post('requests/{id}/approve', [RequestController::class, 'approve'])->name('requests.approve');
     Route::delete('requests/{id}', [RequestController::class, 'reject'])->name('requests.reject');
     // Đặt vé
