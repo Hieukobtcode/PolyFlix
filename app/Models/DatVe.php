@@ -68,5 +68,9 @@ class DatVe extends Model
             ->withPivot('so_luong')
             ->withTimestamps();
     }
+    public function gheNgois()
+    {
+        return $this->belongsToMany(GheNgoi::class, 'chi_tiet_dat_ves', 'dat_ve_id', 'ghe_id');
+    }
 
 }

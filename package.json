@@ -14,6 +14,7 @@
         "vite": "^6.2.4"
     },
     "dependencies": {
+        "@ericblade/quagga2": "^1.8.4",
         "jquery": "^3.7.1",
         "select2": "^4.1.0-rc.0"
     }

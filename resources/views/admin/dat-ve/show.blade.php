@@ -223,6 +223,41 @@
             letter-spacing: 1.5px;
             color: #666;
         }
+
+        @media print {
+
+            /* Ẩn toàn bộ nội dung */
+            body * {
+                visibility: hidden !important;
+            }
+
+            /* Hiển thị lại phần cần in */
+            .print-area,
+            .print-area * {
+                visibility: visible !important;
+            }
+
+            .print-area {
+                display: block !important;
+                position: absolute !important;
+                top: 0 !important;
+                left: 0 !important;
+                width: 100% !important;
+                padding: 30px !important;
+                z-index: 9999 !important;
+                background: white !important;
+            }
+
+            /* Ẩn các thành phần giao diện khác */
+            header,
+            nav,
+            .btn,
+            .breadcrumb,
+            footer,
+            .cinema-ticket {
+                display: none !important;
+            }
+        }
     </style>
     <a href="{{ route('admin.dat_ve.gui_email', $datVe->id) }}" style="width:150px;" class="btn btn-sm btn-outline-primary">
         <i class="fas fa-envelope me-1"></i> Gửi vé về email
@@ -252,14 +287,27 @@
                         </td>
 
                         <td>
-                            <p>C11 (Ghế thường)</p>
-                            <p>C12 (Ghế thường)</p>
-                            <p>C13 (Ghế thường)</p>
+                            @foreach ($datVe->gheNgois as $ghe)
+                                <p>{{ $ghe->ma_ghe }} ({{ $ghe->loaiGhe->ten_loai_ghe ?? 'Không rõ loại' }})</p>
+                            @endforeach
                         </td>
+
                         <td>
-                            <p>20.000 đ</p>
-                            <p>20.000 đ</p>
-                            <p>20.000 đ</p>
+                            @php
+                                $phuThuRap = $datVe->suatChieu->phongChieu->rapPhim->phu_thu;
+                                $tongTienGhe = 0;
+                            @endphp
+                            @foreach ($datVe->gheNgois as $ghe)
+                                @php
+                                    $phuThu = $ghe->loaiGhe->phu_thu ?? 0;
+                                    $tongTienGhe += $phuThu;
+                                @endphp
+                                <p>{{ number_format($phuThu, 0, ',', '.') }} đ</p>
+                            @endforeach
+                            @php
+                                $tongTienGhe += $phuThuRap;
+
+                            @endphp
                         </td>
                     </tr>
 
@@ -293,16 +341,26 @@
                             <table style="width: 100%;">
                                 <tr>
                                     <td style="text-align: right; margin-left:90px;">Tiền vé:</td>
-                                    <td style="text-align: right;">60.000 đ</td>
+                                    <td style="text-align: right;">{{ number_format($tongTienGhe, 0, ',', '.') }} đ</td>
                                 </tr>
+                                @php
+                                    $tongTienCombo = 0;
+                                    foreach ($datVe->combos as $combo) {
+                                        foreach ($combo->doAns as $doAn) {
+                                            $tongTienCombo += ($doAn->gia ?? 0) * ($doAn->pivot->so_luong ?? 0);
+                                        }
+                                    }
+                                    $tongThanhTien = $tongTienGhe + $tongTienCombo;
+                                @endphp
+
                                 <tr>
                                     <td style="text-align: right;">Tiền combo:</td>
-                                    <td style="text-align: right;">0 đ</td>
+                                    <td style="text-align: right;">{{ number_format($tongTienCombo, 0, ',', '.') }} đ</td>
                                 </tr>
-                                <tr>
+                                {{-- <tr>
                                     <td style="text-align: right;">Giảm giá:</td>
                                     <td style="text-align: right;">0 đ</td>
-                                </tr>
+                                </tr> --}}
                                 <tr>
                                     <td colspan="2">
                                         <hr style="border-top: 3px dashed #000000; width: 70%; margin-left: auto;">
@@ -310,7 +368,7 @@
                                 </tr>
                                 <tr style="font-weight: bold; color: #d60000;">
                                     <td style="text-align: right;">Thành tiền:</td>
-                                    <td style="text-align: right;">150.000 đ</td>
+                                    <td style="text-align: right;">{{ number_format($tongThanhTien, 0, ',', '.') }} đ</td>
                                 </tr>
                             </table>
                         </td>
@@ -323,10 +381,14 @@
 
         <div class="ticket-right">
             <div class="barcode">
+                <button onclick="window.print()" class="btn btn-sm btn-danger">
+                    <i class="fas fa-print me-1"></i> In vé
+                </button>
                 <div class="trang-thai" style="display: flex">
-                    <p style="font-size:18px">Trạng thái vé</p>
-                    <button type="button" class="btn btn-primary">Chưa xuất</button>
+                    <p style="font-size:18px">Trạng thái vé: </p>
+                    <p style="font-size:18px">Chưa xuất</p>
                 </div>
+
                 <div class="code" style="margin-left:45px; text-align: center;">
                     {!! DNS1D::getBarcodeHTML($datVe->ma_dat_ve, 'C128', 2, 60) !!}
                 </div>
@@ -341,9 +403,89 @@
 
             <div class="info-payment">
                 <p>Phương thức: {{ ucfirst(str_replace('_', ' ', $datVe->phuong_thuc_tt)) }}</p>
-                <p><i class="fa-solid fa-money-bill-wave"></i> {{ number_format($datVe->tong_tien, 0, ',', '.') }} đ</p>
+                <p><i class="fa-solid fa-money-bill-wave"></i> {{ number_format($tongThanhTien, 0, ',', '.') }} đ</p>
             </div>
         </div>
 
     </div>
+
 @endsection
+<div class="print-area"
+    style="
+    display: none;
+    position: relative;
+    padding: 24px;
+    font-family: Arial, sans-serif;
+    color: #000;
+    background-color: #f5f5f5;
+    border: 1px dashed #aaa;
+    width: 90%;
+    margin: auto;
+    overflow: hidden;
+">
+
+    <!-- Layer chứa nhiều logo -->
+    <div class="logo-overlay">
+        @for ($i = 0; $i < 10; $i++)
+            @for ($j = 0; $j < 5; $j++)
+                <img src="{{ asset('logo/polyflix_title.png') }}"
+                    style="position: absolute; 
+                            top: {{ $i * 120 }}px; 
+                            left: {{ $j * 200 }}px; 
+                            width: 100px; 
+                            opacity: 0.12; 
+                            z-index: 0;
+                                        ">
+            @endfor
+        @endfor
+    </div>
+    {{-- Nội dung chính --}}
+    <div style="position: relative; z-index: 1;">
+        <h2 style="text-align: center; margin-bottom: 8px;">HÓA ĐƠN CHI TIẾT</h2>
+        <h3 style="text-align: center; margin-bottom: 4px;">PoLyFlix - Rạp phim số 1 thế giới</h3>
+        <p style="text-align: center; font-size: 14px; color: #555;">
+            {{ $datVe->suatChieu->phongChieu->rapPhim->ten_rap }} -
+            {{ $datVe->suatChieu->phongChieu->rapPhim->chiNhanh->ten_chi_nhanh }}<br>
+            Địa chỉ: {{ $datVe->suatChieu->phongChieu->rapPhim->chiNhanh->dia_chi ?? 'Chưa cập nhật' }}
+        </p>
+
+        <hr style="margin: 12px 0; border-top: 2px dashed #999;">
+        <p><strong>Mã vé:</strong> {{ $datVe->ma_dat_ve }}</p>
+        <p><strong>Tên phim:</strong> {{ $datVe->suatChieu->phim->ten_phim }}</p>
+        <p><strong>Phòng chiếu:</strong> {{ $datVe->suatChieu->phongChieu->ten_phong }}</p>
+        <p><strong>Ngày chiếu:</strong> {{ $datVe->suatChieu->ngay_chieu }}</p>
+        <p><strong>Giờ chiếu:</strong> {{ $datVe->suatChieu->bat_dau }} - {{ $datVe->suatChieu->ket_thuc }}</p>
+
+        <p><strong>Ghế ngồi:</strong>
+            @foreach ($datVe->gheNgois as $ghe)
+                {{ $ghe->ma_ghe }} ({{ $ghe->loaiGhe->ten_loai_ghe ?? 'Không rõ' }})@if (!$loop->last)
+                    ,
+                @endif
+            @endforeach
+        </p>
+
+        <hr style="margin: 12px 0; border-top: 2px dashed #999;">
+        <p><strong>Combo:</strong>
+            @if ($datVe->combos && $datVe->combos->count())
+                @foreach ($datVe->combos as $combo)
+                    {{ $combo->tieu_de }}:
+                    @foreach ($combo->doAns as $doAn)
+                        {{ $doAn->tieu_de }} × {{ $doAn->pivot->so_luong }};
+                    @endforeach
+                @endforeach
+            @else
+                Không có combo
+            @endif
+        </p>
+
+        <hr style="margin: 12px 0; border-top: 2px dashed #999;">
+        <p><strong>Phương thức thanh toán:</strong> {{ ucfirst(str_replace('_', ' ', $datVe->phuong_thuc_tt)) }}</p>
+        <p><strong>Giá vé:</strong> {{ number_format($tongTienGhe, 0, ',', '.') }} đ</p>
+        <p><strong>Giá combo:</strong> {{ number_format($tongTienCombo, 0, ',', '.') }} đ</p>
+        <p style="font-size: 16px;"><strong>Tổng tiền:</strong> {{ number_format($tongThanhTien, 0, ',', '.') }} đ</p>
+
+        <p style="text-align: center; font-style: italic; margin-top: 20px; color: #666;">
+            Cảm ơn bạn đã sử dụng dịch vụ tại PoLyFlix!
+        </p>
+    </div>
+</div>
