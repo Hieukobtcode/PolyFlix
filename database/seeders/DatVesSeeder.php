@@ -13,9 +13,9 @@ class DatVesSeeder extends Seeder
     public function run(): void
 {
     $datVe = DatVe::create([
-        'user_id' => 2,
+        'user_id' => 3,
         'ma_dat_ve' => str_pad(mt_rand(0, 9999999999), 10, '0', STR_PAD_LEFT),
-        'suat_chieu_id' => 1,
+        'suat_chieu_id' => 17,
         'tong_tien' => 150000,
         'phuong_thuc_tt' => 'zalo_pay',
         'trang_thai' => 'Chờ thanh toán',

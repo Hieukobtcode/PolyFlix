@@ -12,9 +12,9 @@ class UserSeeder extends Seeder
     {
         User::insert(
             [
-            'name' => 'Polyflix Team',
-            'email' => 'polyflixteam@gmail.com',
-            'password' => Hash::make('password'),
+            'name' => 'hieu',
+            'email' => 'hieultph49402@gmail.com',
+            'password' => Hash::make('pass'),
             'vai_tro_id' => 1,
             'hoat_dong' => 1
             ],
