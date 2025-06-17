@@ -150,9 +150,11 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access', 'per
     // Thống kê
     Route::prefix('thong-ke')->name('thong-ke.')->group(function () {
         Route::get('/', [ThongKeController::class, 'index'])->name('index');
-        Route::get('dashboard', [ThongKeController::class, 'dashboard'])->name('dashboard');
+        Route::get('doanh-thu', [ThongKeController::class, 'doanhThu'])->name('doanh-thu');
+        Route::get('ve', [ThongKeController::class, 've'])->name('ve');
+        Route::get('suat-chieu', [ThongKeController::class, 'suatChieu'])->name('suat-chieu');
+        Route::get('do-an-combo', [ThongKeController::class, 'doAnCombo'])->name('do-an-combo');
         Route::get('phim', [ThongKeController::class, 'phim'])->name('phim');
-        Route::get('lien-he', [ThongKeController::class, 'lienHe'])->name('lien-he');
         Route::get('xuat-bao-cao', [ThongKeController::class, 'xuatBaoCao'])->name('xuat-bao-cao');
     });
 });
