@@ -65,6 +65,12 @@
                 <!-- Bộ lọc -->
                 <form method="GET" action="{{ route('admin.suat-chieu.index') }}" class="row g-3 mb-4">
                     <div class="col-md-3">
+                        <label for="chi_nhanh" class="form-label fw-semibold">Tìm kiếm</label>
+                        <input type="text" name="ten_phim" class="form-control rounded" placeholder="Tìm theo tên phim"
+                            value="{{ request('ten_phim') }}">
+                    </div>
+
+                    <div class="col-md-3">
                         <label for="chi_nhanh" class="form-label fw-semibold">Chi nhánh</label>
                         <select name="chi_nhanh" id="chi_nhanh" class="form-select rounded">
                             <option value="">-- Tất cả chi nhánh --</option>
@@ -75,6 +81,7 @@
                             @endforeach
                         </select>
                     </div>
+
                     <div class="col-md-3">
                         <label for="rap" class="form-label fw-semibold">Rạp</label>
                         <select name="rap" id="rap" class="form-select rounded">
@@ -82,6 +89,7 @@
                             <!-- Option rạp sẽ được cập nhật bằng JS -->
                         </select>
                     </div>
+
                     <div class="col-md-3">
                         <label for="phim" class="form-label fw-semibold">Phim</label>
                         <select name="phim" id="phim" class="form-select rounded">
@@ -89,11 +97,16 @@
                             <!-- Option rạp sẽ được cập nhật bằng JS -->
                         </select>
                     </div>
+                    
                     {{-- <div class="col-md-3">
                         <label for="ngay_chieu" class="form-label fw-semibold">Ngày chiếu</label>
                         <input type="date" name="ngay_chieu" id="ngay_chieu" class="form-control rounded"
                             value="{{ request('ngay_chieu') }}">
+
+                    </div>
+
                     </div> --}}
+                    
                     <div class="col-md-3 d-flex align-items-end gap-2">
                         <button type="submit" class="btn btn-primary" title="Lọc">
                             <i class="fas fa-filter me-1"></i> Lọc
@@ -202,6 +215,7 @@
                                                             </button>
                                                         </div>
                                                     </td>
+
                                                 </tr>
                                             </thead>
 
