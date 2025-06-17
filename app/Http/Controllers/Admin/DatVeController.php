@@ -71,7 +71,7 @@ class DatVeController extends Controller
         $barcodeUrl = 'data:image/png;base64,' . DNS1D::getBarcodePNG($datVe->ma_dat_ve, 'C128', 2, 60);
 
         Mail::to($datVe->nguoiDung->email)
-            ->send(new GuiVeXemPhim($datVe, $barcodeUrl)); // truyền đúng biến
+            ->send(new GuiVeXemPhim($datVe, $barcodeUrl)); 
 
         return back()->with('success', 'Đã gửi vé về email người dùng!');
     }
