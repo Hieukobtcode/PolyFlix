@@ -6,12 +6,12 @@
     <title>Vé xem phim - {{ $datVe->ma_dat_ve }}</title>
 </head>
 
-<body style="margin:0; padding:0; background:#f4f4f4; font-family:Arial,sans-serif;">
-    <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+<body style=" margin:0; padding:0; background:#f4f4f4; font-family:Arial,sans-serif;">
+    <table role="presentation"  border="0" cellpadding="0" cellspacing="0" width="100%">
         <tr>
             <td align="center" style="padding:40px 0;">
                 <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="550"
-                    style="background:#fff; border-radius:24px; overflow:hidden; box-shadow:0 6px 24px rgba(0,0,0,0.13); border:2px dashed #e0e0e0; position:relative;">
+                    style="background: linear-gradient(to bottom right, #fff0f0, #ffffff); border-radius:24px; overflow:hidden; box-shadow:0 6px 24px rgba(0,0,0,0.13); border:2px dashed #e0e0e0; position:relative;">
                     <!-- Decorative circles -->
                     <tr>
                         <td style="height:0; position:relative; padding:0;">

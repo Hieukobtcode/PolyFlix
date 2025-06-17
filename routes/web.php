@@ -201,6 +201,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access', 'per
     Route::get('requests', [RequestController::class, 'index'])->name('requests.index');
     Route::post('requests/{id}/approve', [RequestController::class, 'approve'])->name('requests.approve');
     Route::delete('requests/{id}', [RequestController::class, 'reject'])->name('requests.reject');
+
     // Đặt vé
     Route::resource('dat-ves', DatVeController::class);
     // Chi tiết đặt vé
@@ -208,6 +209,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access', 'per
     //gửi email
     Route::get('dat-ve/{id}/gui-email', [DatVeController::class, 'guiVe'])->name('dat_ve.gui_email');
 
+    
     Route::get('gia-ve', [GiaVeController::class, 'index'])->name('gia-ve.index');
     Route::post('gia-ve/cap-nhat', [GiaVeController::class, 'updateGiaVe'])->name('gia-ve.cap-nhat');
 
