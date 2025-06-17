@@ -155,4 +155,7 @@
             </div>
         </div>
     </div>
+     <a href="{{ route('admin.dat_ve.gui_email', $datVe->id) }}" class="btn btn-sm btn-outline-primary">
+            <i class="fas fa-envelope me-1"></i> Gửi vé về email
+        </a>
 @endsection

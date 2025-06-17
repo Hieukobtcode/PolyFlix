@@ -36,6 +36,7 @@ use App\Http\Controllers\Admin\CommentController;
 use App\Http\Controllers\Admin\GiaVeController;
 use App\Http\Controllers\Admin\RequestController;
 
+
 // Trang welcome
 Route::get('/', function () {
     return view('welcome');
@@ -204,6 +205,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access', 'per
     Route::resource('dat-ves', DatVeController::class);
     // Chi tiết đặt vé
     Route::get('admin/chi-tiet-dat-ve/{id}', [ChiTietDatVeController::class, 'show'])->name('admin.datve.show');
+    //gửi email
+    Route::get('dat-ve/{id}/gui-email', [DatVeController::class, 'guiVe'])->name('dat_ve.gui_email');
 
     Route::get('gia-ve', [GiaVeController::class, 'index'])->name('gia-ve.index');
     Route::post('gia-ve/cap-nhat', [GiaVeController::class, 'updateGiaVe'])->name('gia-ve.cap-nhat');
