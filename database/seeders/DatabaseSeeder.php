@@ -5,6 +5,11 @@ namespace Database\Seeders;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Database\Seeders\UserSeeder;
+use Database\Seeders\VaiTroSeeder;
+use Database\Seeders\CauHinhSeeder;
+use Database\Seeders\PhanQuyenSeeder;
+use Database\Seeders\VaiTroPhanQuyenSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -22,13 +27,12 @@ class DatabaseSeeder extends Seeder
 
         // Gọi các seeder để tạo dữ liệu mẫu
         
-       $this->call([
-        BannerSeeder::class,
-    ]);
+
         $this->call([
-            BannerSeeder::class,
             CauHinhSeeder::class,
+            VaiTroSeeder::class,
             PhanQuyenSeeder::class,
+            VaiTroPhanQuyenSeeder::class,
             UserSeeder::class,
         ]);
     }

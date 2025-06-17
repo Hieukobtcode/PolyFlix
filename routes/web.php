@@ -152,7 +152,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access', 'per
 
     // Thống kê
     Route::prefix('thong-ke')->name('thong-ke.')->group(function () {
-        Route::get('/', [ThongKeController::class, 'index'])->name('index');
+        Route::get('/', [ThongKeController::class, 'index'])->name('index');    
         Route::get('dashboard', [ThongKeController::class, 'dashboard'])->name('dashboard');
         Route::get('phim', [ThongKeController::class, 'phim'])->name('phim');
         Route::get('lien-he', [ThongKeController::class, 'lienHe'])->name('lien-he');
@@ -184,11 +184,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access', 'per
     Route::post('suat-chieu/bulk-delete', [SuatChieuController::class, 'bulkDelete'])->name('suat-chieu.bulk-delete');
     Route::post('suat-chieu/bulk-toggle-status', [SuatChieuController::class, 'bulkToggleStatus'])->name('suat-chieu.bulk-toggle-status');
     Route::post('suat-chieu/{suatChieu}/toggle-status', [SuatChieuController::class, 'toggleStatus']);
-    Route::resource('suat-chieu', SuatChieuController::class);
 
-    Route::resource('combos', ComboController::class);
-    Route::resource('do-an', DoAnController::class);
-    Route::resource('danh-muc-do-an', DanhMucDoAnController::class);
+
 
     Route::get('requests', [RequestController::class, 'index'])->name('requests.index');
     Route::post('requests/{id}/approve', [RequestController::class, 'approve'])->name('requests.approve');
@@ -218,4 +215,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access', 'per
         // Xóa bình luận
         Route::delete('{id}', [CommentController::class, 'destroy'])->name('destroy');
     });
+    // Hủy lời mời quản lý
+    Route::post('invite/cancel', [InviteController::class, 'cancel'])->name('invite.cancel');
+
 });
