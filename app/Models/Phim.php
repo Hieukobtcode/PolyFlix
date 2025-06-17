@@ -8,10 +8,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Phim extends Model
 {
-    use SoftDeletes;
+    // use SoftDeletes;
     protected $table = 'phims';
 
     protected $fillable = [
+        'tieu_de',
         'ten_phim',
         'mo_ta',
         'dao_dien',
@@ -21,6 +22,7 @@ class Phim extends Model
         'ngay_ket_thuc',
         'trailer',
         'poster',
+        'hinh_anh',
         'ngon_ngu',
         'quoc_gia',
         'do_tuoi',
@@ -65,4 +67,20 @@ class Phim extends Model
     {
         return $this->hasMany(SuatChieu::class);
     }
+
+    public function datVes()
+    {
+        return $this->hasMany(DatVe::class, 'phim_id');
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class, 'phim_id');
+    }
+    public function ratings()
+    {
+        return $this->hasMany(Rating::class);
+    }
+
+
 }

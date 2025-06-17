@@ -63,12 +63,13 @@
                     </div>
                 @endif
 
-                <form action="{{ route('admin.suat-chieu.store') }}" method="POST" id="suat-chieu-form">
-                    @csrf
-                    <input type="hidden" name="phim_id" value="{{ $phim->id }}">
+                <div class="row">
+                    <!-- Cột trái: Form thêm suất chiếu -->
+                    <div class="col-md-6 border-end">
+                        <form action="{{ route('admin.suat-chieu.store') }}" method="POST" id="suat-chieu-form">
+                            @csrf
+                            <input type="hidden" name="phim_id" value="{{ $phim->id }}">
 
-                    <div class="row g-4">
-                        <div class="col-md-12">
                             <div class="mb-4">
                                 <label for="phong_chieu_id" class="form-label fw-semibold">Phòng chiếu <span
                                         class="text-danger">*</span></label>
@@ -90,25 +91,23 @@
                             <div class="mb-4">
                                 <label class="form-label fw-semibold">Phiên bản phim <span
                                         class="text-danger">*</span></label>
-                                <div class="d-flex gap-3">
-                                    <div class="form-check form-check-inline">
-                                        @foreach ($dinhDangs as $fmt)
-                                            @foreach ($phuDes as $sub)
-                                                @php
-                                                    $fSlug = \Str::slug($fmt->ten_dinh_dang, '-');
-                                                    $sSlug = \Str::slug($sub->ten_phu_de, '-');
-                                                    $code = strtolower($fSlug . '-' . $sSlug);
-                                                @endphp
-                                                <div class="form-check form-check-inline">
-                                                    <input class="form-check-input" type="radio" name="phien_ban_phim"
-                                                        id="{{ $code }}" value="{{ $code }}" required>
-                                                    <label class="form-check-label" for="{{ $code }}">
-                                                        {{ $fmt->ten_dinh_dang }} – {{ $sub->ten_phu_de }}
-                                                    </label>
-                                                </div>
-                                            @endforeach
+                                <div class="d-flex flex-wrap gap-3">
+                                    @foreach ($dinhDangs as $fmt)
+                                        @foreach ($phuDes as $sub)
+                                            @php
+                                                $fSlug = \Str::slug($fmt->ten_dinh_dang, '-');
+                                                $sSlug = \Str::slug($sub->ten_phu_de, '-');
+                                                $code = strtolower($fSlug . '-' . $sSlug);
+                                            @endphp
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="phien_ban_phim"
+                                                    id="{{ $code }}" value="{{ $code }}" required>
+                                                <label class="form-check-label" for="{{ $code }}">
+                                                    {{ $fmt->ten_dinh_dang }} – {{ $sub->ten_phu_de }}
+                                                </label>
+                                            </div>
                                         @endforeach
-                                    </div>
+                                    @endforeach
                                 </div>
                                 @error('phien_ban_phim')
                                     <div class="invalid-feedback d-block">{{ $message }}</div>
@@ -215,33 +214,37 @@
                                     <i class="fas fa-save me-1"></i> Lưu suất chiếu
                                 </button>
                             </div>
-                        </div>
+                        </form>
                     </div>
-                </form>
 
-                {{-- Nằm trong phần <form> hoặc sát dưới form --}}
-                <div class="mt-4">
-                    <h5>Suất chiếu hiện có</h5>
-                    <table class="table table-bordered" id="tbl-suat-chieu">
-                        <thead>
-                            <tr>
-                                <th>Ngày chiếu</th>
-                                <th>Giờ bắt đầu – Kết thúc</th>
-                                <th>Phòng</th>
-                                <th>Phiên bản</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td colspan="4" class="text-center">Vui lòng chọn phòng & ngày để xem suất chiếu.</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <!-- Cột phải: Danh sách suất chiếu -->
+                    <div class="col-md-6 ps-md-4 mt-4 mt-md-0">
+                        <table class="table table-bordered" id="tbl-suat-chieu">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">Ngày chiếu</th>
+                                    <th class="text-center">Giờ bắt đầu – Kết thúc</th>
+                                    <th class="text-center">Phòng</th>
+                                    <th class="text-center">Phiên bản</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="4" class="text-center">Vui lòng chọn phòng & ngày để xem suất chiếu.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-
             </div>
         </div>
     </div>
+    <script>
+        const apiUrl = "{{ route('admin.suat-chieu.theo-phong-ngay') }}";
+    </script>
+
+
 @endsection
 
 @section('scripts')
@@ -340,12 +343,13 @@
                 return;
             }
 
-            fetch(`{{ route('admin.suat-chieu.api_phong_ngay') }}?phong_chieu_id=${phongId}&ngay_chieu=${ngay}`)
+            fetch(`${apiUrl}?phong_chieu_id=${phongId}&ngay_chieu=${ngay}`)
                 .then(res => {
                     if (!res.ok) throw new Error('Lỗi kết nối');
                     return res.json();
                 })
                 .then(data => {
+                    alert("Dữ liệu nhận được:", data);
                     if (data.length === 0) {
                         tbody.innerHTML =
                             `<tr><td colspan="4" class="text-center">Chưa có suất chiếu cho lựa chọn này.</td></tr>`;

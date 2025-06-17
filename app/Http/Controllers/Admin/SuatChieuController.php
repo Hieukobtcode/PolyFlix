@@ -22,9 +22,7 @@ class SuatChieuController extends Controller
         return $gioBatDau->gte($gioChoPhepBatDau) && $gioKetThuc->lte($gioChoPhepKetThuc);
     }
 
-    /**
-     * Hiển thị danh sách các suất chiếu.
-     */
+
     public function index(Request $request)
     {
         $suatChieus = SuatChieu::with(['phim', 'phongChieu.rapPhim.chiNhanh'])
@@ -40,20 +38,22 @@ class SuatChieuController extends Controller
             })
             ->when($request->filled('ngay_chieu'), function ($q) use ($request) {
                 $q->whereDate('ngay_chieu', $request->ngay_chieu);
+            }, function ($q) {
+                $q->whereDate('ngay_chieu', '>=', Carbon::today());
             })
+
             ->when($request->filled('ten_phim'), function ($q) use ($request) {
                 $q->whereHas('phim', function ($q2) use ($request) {
                     $q2->where('ten_phim', 'like', '%' . $request->ten_phim . '%');
                 });
             })
+            ->orderBy('ngay_chieu', 'asc')
             ->get();
 
-        // Lấy danh sách chi nhánh kèm các rạp phim thuộc chi nhánh đó
         $chiNhanhs = ChiNhanh::with('rapPhims')->get();
 
         return view('admin.suat-chieu.index', compact('suatChieus', 'chiNhanhs'));
     }
-
 
     /**
      * Hiển thị form tạo mới suất chiếu.
@@ -437,7 +437,7 @@ class SuatChieuController extends Controller
         $suatChieus = SuatChieu::with('PhongChieu')
             ->where('phong_chieu_id', $req->phong_chieu_id)
             ->where('ngay_chieu', $req->ngay_chieu)
-            ->orderBy('bat_dau') // sử dụng đúng tên cột
+            ->orderBy('bat_dau') 
             ->get();
 
         // (3) Chuyển dữ liệu sang chuẩn JSON response

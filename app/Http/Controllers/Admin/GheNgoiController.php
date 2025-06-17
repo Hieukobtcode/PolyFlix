@@ -35,7 +35,7 @@ class GheNgoiController extends Controller
 
         $soDoGhe->trang_thai = 0;
         $soDoGhe->save();
-        $soGhe = GheNgoi::where('phong_chieu_id',$phongChieuId)->count();
+        $soGhe = GheNgoi::where('phong_chieu_id', $phongChieuId)->count();
         $phongChieu->so_ghe = $soGhe;
         $phongChieu->save();
 
@@ -47,27 +47,48 @@ class GheNgoiController extends Controller
 
     public function show($id)
     {
-        $phongChieu = PhongChieu::findOrfail($id);
+        $loaiGhes = LoaiGhe::all();
+        $mauGhes = LoaiGhe::pluck('chu_thich_mau_ghe', 'id');
+        $mauGhes['empty'] = '#e5e7eb';
+        $phongChieu = PhongChieu::findOrFail($id);
         $phongChieuId = $phongChieu->id;
         $tenPhong = $phongChieu->ten_phong;
-        $soDoGhe = SoDoGhe::where('phong_chieu_id',$phongChieuId)->first();
 
-        if( $soDoGhe->trang_thai == 1 ){
-            return redirect()->route('admin.so-do-ghe.edit',$soDoGhe->id);
+        $soDoGhe = SoDoGhe::where('phong_chieu_id', $phongChieuId)->first();
+
+        if ($soDoGhe && $soDoGhe->trang_thai == 1) {
+            return redirect()->route('admin.so-do-ghe.edit', $soDoGhe->id);
         }
 
-        $gheGrouped = GheNgoi::where('phong_chieu_id', $id)
+        $gheGrouped = GheNgoi::where('phong_chieu_id', $phongChieuId)
             ->orderBy('hang')
             ->orderBy('cot')
             ->get()
             ->groupBy('hang');
-        $soGhe = GheNgoi::where('loai_ghe', '!=', 'empty')
-            ->where('phong_chieu_id', $id)
+
+        $totalSeats = GheNgoi::where('loai_ghe', '!=', 'empty')
+            ->where('phong_chieu_id', $phongChieuId)
             ->count();
+
+        $gheBaoTri = GheNgoi::where('trang_thai', 'bao_tri')
+            ->where('phong_chieu_id', $phongChieuId)
+            ->count();
+
         $gheGroupedArray = $gheGrouped->toArray();
 
-        return view('admin.ghe-ngoi.show', compact('gheGroupedArray', 'phongChieu', 'soGhe', 'phongChieuId','soDoGhe','tenPhong'));
+        return view('admin.ghe-ngoi.show', compact(
+            'gheBaoTri',
+            'mauGhes',
+            'gheGroupedArray',
+            'loaiGhes',
+            'phongChieu',
+            'totalSeats',
+            'phongChieuId',
+            'soDoGhe',
+            'tenPhong'
+        ));
     }
+
 
     public function edit($id)
     {
@@ -84,8 +105,6 @@ class GheNgoiController extends Controller
         $seatsJson = $request->input('seats_json', '[]');
 
         $seatsId = json_decode($seatsJson, true);
-
-        print_r($seatsId);
 
         if (!is_array($seatsId)) {
             $seatsId = [];
@@ -109,9 +128,35 @@ class GheNgoiController extends Controller
             }
         }
 
+        $newSeatsJson = $request->input('allSeat', '[]');
+        $newSeats = json_decode($newSeatsJson, true);
+
+        $hasNewSeat = collect($newSeats)->contains(function ($seat) {
+            return empty($seat['id']);
+        });
+
+        if ($hasNewSeat) {
+            foreach ($newSeats as $seat) {
+                if (!empty($seat['id'])) {
+                    GheNgoi::where('id', $seat['id'])->update([
+                        'hang' => $seat['row'],
+                        'cot' => $seat['col'],
+                        'ma_ghe' => $seat['seat_code']
+                    ]);
+                } else {
+                    GheNgoi::create([
+                        'phong_chieu_id' => $phongChieuId,
+                        'loai_ghe' => $seat['loai'],
+                        'hang' => $seat['row'],
+                        'cot' => $seat['col'],
+                        'ma_ghe' => $seat['seat_code']
+                    ]);
+                }
+            }
+        }
+
         return redirect()
             ->route('admin.ghe-ngoi.show', $phongChieuId)
             ->with('success', "Cập nhật trạng thái ghế thành công");
     }
-
 }

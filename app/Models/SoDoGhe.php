@@ -14,7 +14,7 @@ class SoDoGhe extends Model
         'so_hang_thuong',
         'so_hang_vip',
         'so_hang_doi',
-        'so_ghe',
+        'mo_ta',
         'trang_thai'
     ];
 

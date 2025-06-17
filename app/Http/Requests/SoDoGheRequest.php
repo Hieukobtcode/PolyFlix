@@ -8,7 +8,7 @@ class SoDoGheRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true;
+        return true;  // Chấp nhận yêu cầu từ tất cả người dùng
     }
 
     /**
@@ -20,9 +20,8 @@ class SoDoGheRequest extends FormRequest
     {
         return [
             'mau_so_do' => 'required|in:8x12,10x12,12x14,14x16,18x20',
-            'ghe_thuong' => 'required|min:1',
-            'ghe_vip' => 'required|min:1',
-            'ghe_doi' => 'required|min:1',
+            'loai_ghe_ids' => 'required|array',
+            'loai_ghe_ids.*' => 'integer|exists:loai_ghes,id',
         ];
     }
 
@@ -30,28 +29,40 @@ class SoDoGheRequest extends FormRequest
     {
         return [
             'mau_so_do.required' => 'Hãy chọn mẫu sơ đồ ghế',
-            'ghe_thuong.required' => 'Hãy nhập số hàng ghế thường',
-            'ghe_vip.required' => 'Hãy nhập số hàng ghế vip',
-            'ghe_doi.required' => 'Hãy nhập số hàng ghế đôi',
-            'ghe_thuong.min' => 'Số hàng ghế thường phải lớn hơn hoặc bằng 1',
-            'ghe_vip.min' => 'Số hàng ghế VIP phải lớn hơn hoặc bằng 1',
-            'ghe_doi.min' => 'Số hàng ghế đôi phải lớn hơn hoặc bằng 1',
+            'loai_ghe_ids.required' => 'Hãy chọn loại ghế',
         ];
     }
 
-    protected function withValidator($validator)
-    {
-        $validator->after(function ($validator) {
-            $soHang = (int) $this->input('so_hang', 0);  
-            $gheThuong = (int) $this->input('ghe_thuong', 0);
-            $gheVip = (int) $this->input('ghe_vip', 0);
-            $gheDoi = (int) $this->input('ghe_doi', 0);
+    /**
+     * Xử lý sau khi xác thực dữ liệu.
+     *
+     * @param  \Illuminate\Validation\Validator  $validator
+     * @return void
+     */
+        // protected function withValidator($validator)
+        // {
+        //     $validator->after(function ($validator) {
+        //         $hangGheTheoLoais = $this->loai_ghe_ids;  
+        //         $soHangGhe = (int) $this->input('so_hang'); 
+        //         $tongSoHangGhe = 0;  
 
-            $total = $gheThuong + $gheVip + $gheDoi;
+        //         foreach ($hangGheTheoLoais as $hangGheTheoLoai) {
+        //             $loaiGhe = 'so_hang_' . (int) $hangGheTheoLoai;  
+        //             $ghe = $this->input($loaiGhe); 
 
-            if ($total > $soHang) {
-                $validator->errors()->add('tong_ghe', "Tổng số hàng loại ghế ({$gheThuong} thường + {$gheVip} VIP + {$gheDoi} đôi) vượt quá tổng số hàng ({$soHang}).");
-            }
-        });
-    }
+        //             if (empty($ghe)) {
+        //                 $validator->errors()->add('loi_loai_ghe_' . $hangGheTheoLoai, 'Không được để trống');
+        //             }
+        //             elseif ((int)$ghe === 0) {
+        //                 $validator->errors()->add('loi_loai_ghe_' . $hangGheTheoLoai, 'Số hàng ghế phải lớn hơn 0');
+        //             }
+
+        //             $tongSoHangGhe += (int) $ghe;
+        //         }
+
+        //         if ($tongSoHangGhe > $soHangGhe) {
+        //             $validator->errors()->add('tong_hang_ghe', 'Tổng số hàng không được vượt quá ' . $soHangGhe);
+        //         }
+        //     });
+        // }
 }

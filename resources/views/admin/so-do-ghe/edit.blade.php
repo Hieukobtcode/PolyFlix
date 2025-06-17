@@ -7,10 +7,12 @@
     @php
         $cauTrucGhes = $soDoGhe->cau_truc_ghe;
         $rows = [];
+        $gheId = [];
         foreach ($cauTrucGhes as $seat => $type) {
             $row = substr($seat, 0, 1);
             $col = substr($seat, 1);
             $rows[$row][$col] = $type;
+            $gheId[] = $type;
         }
         ksort($rows);
         foreach ($rows as &$cols) {
@@ -93,21 +95,6 @@
 
         .seat.filled i.fa-couch {
             color: #34495e;
-        }
-
-        .seat.vip {
-            background: #f3f4f6;
-            color: #fff;
-        }
-
-        .seat.thuong {
-            background: #fef3c7;
-            color: #fff;
-        }
-
-        .seat.doi {
-            background: #fce7f3;
-            color: #fff;
         }
 
         .seat-action-btns {
@@ -257,19 +244,18 @@
 
                     @foreach ($rows as $rowKey => $cols)
                         <div class="seat-row-label">{{ $rowKey }}</div>
-
-                        @foreach ($cols as $colKey => $type)
+                        @foreach ($cols as $colKey => $loaiGheId)
                             @php
-                                $statusClass = $type !== 'empty' ? 'empty' : 'filled';
-                                $typeClass = match ($type) {
-                                    'vip' => 'vip',
-                                    'thuong' => 'thuong',
-                                    'doi' => 'doi',
-                                    default => '',
-                                };
+
+                                $mau = $mauGhes[$loaiGheId] ?? '#ccc';
+                                $typeClass = $loaiGheId;
+                                $statusClass = 'empty';
+                                $isDouble = $loaiGheId == 12 ? 'doi' : '';
+
                             @endphp
 
-                            <button type="button" class="seat {{ $typeClass }} {{ $statusClass }}" empty
+                            <button type="button" style="background-color: {{ $mau }}"
+                                class="seat {{ $typeClass }} {{ $statusClass }} {{ $isDouble }}" empty
                                 data-row="{{ $rowKey }}" data-col="{{ $colKey }}"
                                 data-loai="{{ $typeClass }}"
                                 onclick="toggleSeat('{{ $rowKey }}','{{ $colKey }}')">
@@ -310,18 +296,14 @@
 
                 <div class="panel-box">
                     <h4>Chú thích</h4>
-                    <div class="legend-item">
-                        <span>Hàng ghế thường</span>
-                        <div class="legend-color legend-thuong"></div>
-                    </div>
-                    <div class="legend-item">
-                        <span>Hàng ghế vip</span>
-                        <div class="legend-color legend-vip"></div>
-                    </div>
-                    <div class="legend-item">
-                        <span>Hàng ghế đôi</span>
-                        <div class="legend-color legend-doi"></div>
-                    </div>
+                    @foreach ($loaiGhes as $item)
+                        @if (in_array($item->id, $gheId))
+                            <div class="legend-item">
+                                <span>{{ $item->ten_loai_ghe }}</span>
+                                <div style="background-color: {{ $item->chu_thich_mau_ghe }}" class="legend-color"></div>
+                            </div>
+                        @endif
+                    @endforeach
                 </div>
             </div>
         </div>
@@ -329,38 +311,31 @@
     <script>
         function toggleSeat(row, col) {
             const seatSelector = `[data-row="${row}"][data-col="${col}"]`;
-            const seat = document.querySelector(seatSelector);
-            if (!seat) return;
+            const seat = $(seatSelector);
+            if (seat.length === 0) return;
 
-            if (seat.classList.contains('doi')) {
+            if (seat.hasClass('doi')) {
                 const colNum = Number(col);
-                const partnerCol = (colNum % 2 === 1) ?
-                    String(colNum + 1) :
-                    String(colNum - 1);
+                const partnerCol = (colNum % 2 === 1) ? colNum + 1 : colNum - 1;
                 const partnerSelector = `[data-row="${row}"][data-col="${partnerCol}"]`;
-                const partnerSeat = document.querySelector(partnerSelector);
+                const partnerSeat = $(partnerSelector);
 
                 const toggleOne = s => {
-                    if (s.classList.contains('empty')) {
-                        s.classList.replace('empty', 'filled');
-                        s.innerHTML = '<i class="fa-solid fa-couch"></i>';
+                    if (s.hasClass('empty')) {
+                        s.removeClass('empty').addClass('filled').html('<i class="fa-solid fa-couch"></i>');
                     } else {
-                        s.classList.replace('filled', 'empty');
-                        s.innerHTML = '<i class="fa-solid fa-plus fa-spin-pulse"></i>';
+                        s.removeClass('filled').addClass('empty').html(
+                        '<i class="fa-solid fa-plus fa-spin-pulse"></i>');
                     }
                 };
 
                 toggleOne(seat);
-                if (partnerSeat) {
-                    toggleOne(partnerSeat);
-                }
+                if (partnerSeat.length) toggleOne(partnerSeat);
             } else {
-                if (seat.classList.contains('empty')) {
-                    seat.classList.replace('empty', 'filled');
-                    seat.innerHTML = '<i class="fa-solid fa-couch"></i>';
+                if (seat.hasClass('empty')) {
+                    seat.removeClass('empty').addClass('filled').html('<i class="fa-solid fa-couch"></i>');
                 } else {
-                    seat.classList.replace('filled', 'empty');
-                    seat.innerHTML = '<i class="fa-solid fa-plus fa-spin-pulse"></i>';
+                    seat.removeClass('filled').addClass('empty').html('<i class="fa-solid fa-plus fa-spin-pulse"></i>');
                 }
             }
 
@@ -368,117 +343,62 @@
         }
 
         function toggleRow(row) {
-            const rowSeats = document.querySelectorAll(`.seat[data-row="${row}"]`);
-            rowSeats.forEach(seat => {
-                if (seat.classList.contains('empty')) {
-                    if (seat.classList.contains('doi')) {
-                        const colNum = Number(seat.dataset.col);
-                        const partnerCol = (colNum % 2 === 1) ?
-                            String(colNum + 1) :
-                            String(colNum - 1);
-                        const partnerSelector = `[data-row="${row}"][data-col="${partnerCol}"]`;
-                        const partnerSeat = document.querySelector(partnerSelector);
-
-                        seat.classList.replace('empty', 'filled');
-                        seat.innerHTML = '<i class="fa-solid fa-couch"></i>';
-                        if (partnerSeat && partnerSeat.classList.contains('empty')) {
-                            partnerSeat.classList.replace('empty', 'filled');
-                            partnerSeat.innerHTML = '<i class="fa-solid fa-couch"></i>';
-                        }
-                    } else {
-                        seat.classList.replace('empty', 'filled');
-                        seat.innerHTML = '<i class="fa-solid fa-couch"></i>';
-                    }
+            const rowSeats = $(`.seat[data-row="${row}"]`);
+            rowSeats.each(function() {
+                const seat = $(this);
+                if (seat.hasClass('empty')) {
+                    seat.removeClass('empty').addClass('filled').html('<i class="fa-solid fa-couch"></i>');
                 }
             });
-
-            const btnGroup = document.querySelector(`.seat-action-btns[data-row="${row}"]`);
-            if (!btnGroup) return;
-            const addBtn = btnGroup.querySelector('.seat-action-btn.add');
-            const deleteBtn = btnGroup.querySelector('.seat-action-btn.delete');
-            if (addBtn && deleteBtn) {
-                addBtn.style.display = 'none';
-                deleteBtn.style.display = 'flex';
-            }
-
+            updateRowButtons(row);
         }
 
         function deleteRow(row) {
-            const rowSeats = document.querySelectorAll(`.seat[data-row="${row}"]`);
-            rowSeats.forEach(seat => {
-                if (seat.classList.contains('filled')) {
-                    if (seat.classList.contains('doi')) {
-                        const colNum = Number(seat.dataset.col);
-                        const partnerCol = (colNum % 2 === 1) ?
-                            String(colNum + 1) :
-                            String(colNum - 1);
-                        const partnerSelector = `[data-row="${row}"][data-col="${partnerCol}"]`;
-                        const partnerSeat = document.querySelector(partnerSelector);
-
-                        seat.classList.replace('filled', 'empty');
-                        seat.innerHTML = '<i class="fa-solid fa-plus fa-spin-pulse"></i>';
-                        if (partnerSeat && partnerSeat.classList.contains('filled')) {
-                            partnerSeat.classList.replace('filled', 'empty');
-                            partnerSeat.innerHTML = '<i class="fa-solid fa-plus fa-spin-pulse"></i>';
-                        }
-                    } else {
-                        seat.classList.replace('filled', 'empty');
-                        seat.innerHTML = '<i class="fa-solid fa-plus fa-spin-pulse"></i>';
-                    }
+            const rowSeats = $(`.seat[data-row="${row}"]`);
+            rowSeats.each(function() {
+                const seat = $(this);
+                if (seat.hasClass('filled')) {
+                    seat.removeClass('filled').addClass('empty').html(
+                        '<i class="fa-solid fa-plus fa-spin-pulse"></i>');
                 }
             });
-
-            const btnGroup = document.querySelector(`.seat-action-btns[data-row="${row}"]`);
-            if (!btnGroup) return;
-            const addBtn = btnGroup.querySelector('.seat-action-btn.add');
-            const deleteBtn = btnGroup.querySelector('.seat-action-btn.delete');
-            if (addBtn && deleteBtn) {
-                addBtn.style.display = 'flex';
-                deleteBtn.style.display = 'none';
-            }
-
+            updateRowButtons(row);
         }
 
         function updateRowButtons(row) {
-            const rowSeats = document.querySelectorAll(`.seat[data-row="${row}"]`);
+            const rowSeats = $(`.seat[data-row="${row}"]`);
             let hasFilled = false;
-            rowSeats.forEach(seat => {
-                if (seat.classList.contains('filled')) {
-                    hasFilled = true;
-                }
+            rowSeats.each(function() {
+                if ($(this).hasClass('filled')) hasFilled = true;
             });
 
-            const btnGroup = document.querySelector(`.seat-action-btns[data-row="${row}"]`);
-            if (!btnGroup) return;
-            const addBtn = btnGroup.querySelector('.seat-action-btn.add');
-            const deleteBtn = btnGroup.querySelector('.seat-action-btn.delete');
+            const btnGroup = $(`.seat-action-btns[data-row="${row}"]`);
+            const addBtn = btnGroup.find('.seat-action-btn.add');
+            const deleteBtn = btnGroup.find('.seat-action-btn.delete');
+
             if (hasFilled) {
-                if (addBtn) addBtn.style.display = 'none';
-                if (deleteBtn) deleteBtn.style.display = 'flex';
+                addBtn.hide();
+                deleteBtn.show();
             } else {
-                if (addBtn) addBtn.style.display = 'flex';
-                if (deleteBtn) deleteBtn.style.display = 'none';
+                addBtn.show();
+                deleteBtn.hide();
             }
         }
 
-        document.querySelector('form').addEventListener('submit', function(e) {
+        $('form').on('submit', function() {
             const seats = [];
-            document.querySelectorAll('.seat').forEach(seat => {
-                const row = seat.dataset.row;
-                const col = seat.dataset.col;
-                let loai = 'empty';
-                if (seat.classList.contains('filled')) {
-                    if (seat.classList.contains('thuong')) loai = 'thuong';
-                    else if (seat.classList.contains('vip')) loai = 'vip';
-                    else if (seat.classList.contains('doi')) loai = 'doi';
-                }
+
+            $('.seat').each(function() {
+                const seat = $(this);
                 seats.push({
-                    row,
-                    col,
-                    loai
+                    row: seat.data('row'),
+                    col: seat.data('col'),
+                    loai: seat.hasClass('empty') ? 'empty' : seat.data('loai')
                 });
             });
-            document.getElementById('seat_data').value = JSON.stringify(seats);
+
+            $('#seat_data').val(JSON.stringify(seats));
         });
     </script>
+
 @endsection
