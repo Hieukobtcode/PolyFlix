@@ -137,31 +137,28 @@
                                         </span>
                                     </td>
                                     <td class="text-center">
-                                        <div class="btn-group" role="group">
-                                            <a href="{{ route('admin.phim.show', $phim->id) }}"
-                                                class="btn btn-sm btn-outline-info" title="Xem chi tiết">
-                                                <i class="fas fa-eye"></i>
-                                            </a>
-                                            <a href="{{ route('admin.phim.edit', $phim->id) }}"
-                                                class="btn btn-sm btn-outline-primary" title="Chỉnh sửa">
-                                                <i class="fas fa-edit"></i>
-                                            </a>
-                                            <a href="{{ route('admin.suat-chieu.create', ['phimId' => $phim->id]) }}"
-                                                class="btn btn-sm btn-outline-success" title="Thêm suất chiếu"
-                                                data-bs-toggle="tooltip">
-                                                <i class="fas fa-plus-circle"></i>
-                                            </a>
-                                            <form action="{{ route('admin.phim.destroy', $phim->id) }}" method="POST"
-                                                class="d-inline"
-                                                onsubmit="return confirm('Bạn có chắc chắn muốn xóa mềm phim này? Phim sẽ được chuyển vào thùng rác.')">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-sm btn-outline-danger"
-                                                    title="Xóa mềm">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
-                                            </form>
-                                        </div>
+                                        <a href="{{ route('admin.phim.show', $phim->id) }}"
+                                            class="btn btn-sm btn-outline-info" title="Xem chi tiết">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a href="{{ route('admin.phim.edit', $phim->id) }}"
+                                            class="btn btn-sm btn-outline-primary" title="Chỉnh sửa">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a href="{{ route('admin.suat-chieu.create', ['phimId' => $phim->id]) }}"
+                                            class="btn btn-sm btn-outline-success" title="Thêm suất chiếu"
+                                            data-bs-toggle="tooltip">
+                                            <i class="fas fa-plus-circle"></i>
+                                        </a>
+                                        <form action="{{ route('admin.phim.destroy', $phim->id) }}" method="POST"
+                                            class="d-inline"
+                                            onsubmit="return confirm('Bạn có chắc chắn muốn xóa mềm phim này? Phim sẽ được chuyển vào thùng rác.')">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Xóa mềm">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
                                     </td>
                                 </tr>
                             @empty
