@@ -89,21 +89,61 @@
             </div>
 
             <!-- Danh sách phân quyền -->
-            <div class="mt-4">
-                <h5 class="fw-bold mb-3">Các quyền được gán cho vai trò này</h5>
-                @if ($vaiTro->phanQuyens->count() > 0)
-                    <div class="mb-3">
-                        @foreach ($vaiTro->phanQuyens as $phanQuyen)
-                            <span class="permission-badge">
-                                <i class="fas fa-shield-alt me-1 text-primary"></i>
-                                {{ $phanQuyen->ten }} <small class="text-muted">({{ $phanQuyen->slug }})</small>
-                            </span>
-                        @endforeach
-                    </div>
-                @else
-                    <p class="text-muted"><i class="fas fa-ban me-1"></i> Chưa có phân quyền nào được gán.</p>
-                @endif
-            </div>
+            @if ($vaiTro->phanQuyens->count() > 0)
+                @php
+                    $prefixMap = [
+                        'admin.phim' => 'Quản lý phim',
+                        'admin.users' => 'Quản lý người dùng',
+                        'admin.dat-ve' => 'Quản lý vé',
+                        'admin.vai-tro' => 'Quản lý vai trò',
+                        'admin.rap' => 'Quản lý rạp',
+                        'admin.chi-nhanh' => 'Quản lý chi nhánh',
+                    ];
+
+                    $prefixOrder = [
+                        'admin.phim',
+                        'admin.users',
+                        'admin.dat-ve',
+                        'admin.rap',
+                        'admin.chi-nhanh',
+                        'admin.vai-tro',
+                    ];
+
+                    $groupedPermissions = $vaiTro->phanQuyens
+                        ->sortBy('slug')
+                        ->groupBy(function ($item) {
+                            return explode('.', $item->slug)[0] . '.' . explode('.', $item->slug)[1];
+                        })
+                        ->sortBy(function ($_, $key) use ($prefixOrder) {
+                            $index = array_search($key, $prefixOrder);
+                            return $index !== false ? $index : 999;
+                        });
+                @endphp
+
+                <div class="row">
+                    @foreach ($groupedPermissions as $prefix => $permissions)
+                        <div class="col-md-6 mb-4">
+                            <div class="p-3 border rounded bg-light h-100">
+                                <h6 class="fw-bold text-uppercase text-primary mb-3">
+                                    {{ $prefixMap[$prefix] ?? ucfirst(str_replace('.', ' ', $prefix)) }}
+                                </h6>
+                                <div class="d-flex flex-wrap">
+                                    @foreach ($permissions as $phanQuyen)
+                                        <span class="permission-badge">
+                                            <i class="fas fa-shield-alt me-1 text-primary"></i>
+                                            {{ $phanQuyen->ten }}
+                                            <small class="text-muted">({{ $phanQuyen->slug }})</small>
+                                        </span>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            @else
+                <p class="text-muted"><i class="fas fa-ban me-1"></i> Chưa có phân quyền nào được gán.</p>
+            @endif
+
 
             <!-- Danh sách người dùng -->
             <div class="mt-5">
