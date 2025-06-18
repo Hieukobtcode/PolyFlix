@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Danh sách Suất chiếu')
+@section('title', 'Suất chiếu')
 @section('page-title', 'Danh sách Suất chiếu')
 @section('breadcrumb', 'Danh sách Suất chiếu')
 
@@ -172,7 +172,7 @@
                                                         </td>
                                                         <td>{{ $suat->phongChieu->ten_phong ?? 'N/A' }}</td>
                                                         <td>
-                                                            {{ $suat->phien_ban_phim === 'long_tieng' ? 'Lồng tiếng' : ($suat->phien_ban_phim === 'phu_de' ? 'Phụ đề' : 'N/A') }}
+                                                            {{ $suat->formatted_version }}
                                                         </td>
                                                         <td class="text-center">
                                                             <div class="form-check form-switch">

@@ -14,6 +14,24 @@
 
         <li class="nav-title">Quản lý</li>
 
+        {{-- Thống kê --}}
+        <li class="nav-group">
+            <a class="nav-link nav-group-toggle" href="#">
+                <i class="fas fa-chart-bar nav-icon"></i>
+                Thống kê & Báo cáo
+            </a>
+            <ul class="nav-group-items compact">
+                <li class="nav-item"><a class="nav-link" href="{{ route('admin.thong-ke.index') }}">Tổng quan</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('admin.thong-ke.dashboard') }}">Biểu đồ</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('admin.thong-ke.phim') }}">Thống kê phim</a>
+                </li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('admin.thong-ke.lien-he') }}">Thống kê liên
+                        hệ</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('admin.khuyen-mai.thong-ke-su-dung') }}">Thống
+                        kê khuyến mãi</a></li>
+            </ul>
+        </li>
+
         {{-- Quản lý hệ thống rạp --}}
         <li class="nav-group">
             <a class="nav-link nav-group-toggle" href="#">
@@ -21,11 +39,14 @@
                 Hệ thống rạp
             </a>
             <ul class="nav-group-items compact">
-                <li class="nav-item"><a class="nav-link" href="{{ route('admin.chi-nhanh.index') }}">Mạng lưới rạp chiếu</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('admin.chi-nhanh.index') }}">Mạng lưới rạp
+                        chiếu</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('admin.loai-phong.index') }}">Loại phòng</a>
                 </li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('admin.loai-ghe.index') }}">Loại ghế</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('admin.suat-chieu.index') }}">Suất chiếu</a></li>
+                </li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('admin.gia-ve.index') }}">Giá vé</a></li>
+                </li>
             </ul>
         </li>
 
@@ -40,11 +61,14 @@
             <ul class="nav-group-items compact">
                 <li class="nav-item"><a class="nav-link" href="{{ route('admin.the-loai-phim.index') }}">Thể Loại</a>
                 </li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('admin.dinh-dang-phim.index') }}">Định dạng phim</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('admin.dinh-dang-phim.index') }}">Định dạng
+                        phim</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('admin.phu-de-phim.index') }}">Phụ đề phim</a>
+                </li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('admin.phim.index') }}">Danh sách phim</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('admin.suat-chieu.index') }}">Suất chiếu</a>
             </ul>
         </li>
-
 
         {{-- Quản lý người dùng --}}
         <li class="nav-group">
@@ -84,7 +108,8 @@
 
                 <li class="nav-item"><a class="nav-link" href="{{ route('admin.cau-hinh.index') }}">Cài đặt chung</a>
                 </li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('admin.cap-bac-the.index') }}">Cấp bậc thẻ</a>
+                <li class="nav-item"><a class="nav-link" href="{{ route('admin.cap-bac-the.index') }}">Cấp bậc
+                        thẻ</a>
                 </li>
             </ul>
         </li>
@@ -96,8 +121,11 @@
                 Nội dung hiển thị
             </a>
             <ul class="nav-group-items compact">
-                <li class="nav-item"><a class="nav-link" href="{{ route('admin.bai-viet.index') }}">Bài viết</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('admin.bai-viet.index') }}">Bài viết</a>
+                </li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('admin.banners.index') }}">Banners</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('admin.comments.index') }}">Bình luận và
+                        đánh giá</a></li>
             </ul>
         </li>
         {{-- Quản lý đồ ăn --}}
@@ -112,7 +140,8 @@
                 <li class="nav-item"><a class="nav-link" href="{{ route('admin.do-an.index') }}">Đồ ăn</a>
                 </li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('admin.combos.index') }}">Combo</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('admin.danh-muc-do-an.index') }}">Danh mục đồ ăn</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('admin.danh-muc-do-an.index') }}">Danh mục
+                        đồ ăn</a></li>
             </ul>
         </li>
 
@@ -132,12 +161,13 @@
             </a>
             <ul class="nav-group-items compact">
                 <li class="nav-item"><a class="nav-link" href="{{ route('admin.thong-ke.index') }}">Tổng quan</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('admin.thong-ke.doanh-thu') }}">Thống kê doanh thu</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('admin.thong-ke.ve') }}">Thống kê vé</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('admin.thong-ke.suat-chieu') }}">Thống kê suất chiếu</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('admin.thong-ke.do-an-combo') }}">Thống kê đồ ăn & combo</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('admin.thong-ke.dashboard') }}">Biểu đồ</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('admin.thong-ke.phim') }}">Thống kê phim</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('admin.thong-ke.lien-he') }}">Thống kê liên hệ</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('admin.khuyen-mai.thong-ke-su-dung') }}">Thống kê khuyến mãi</a></li>
             </ul>
         </li>
+
+
     </ul>
 </div>

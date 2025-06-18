@@ -9,6 +9,7 @@ class SoDoGhe extends Model
     protected $table = 'so_do_ghes';
 
     protected $fillable = [
+        'phong_chieu_id',
         'cau_truc_ghe',
         'so_hang_thuong',
         'so_hang_vip',

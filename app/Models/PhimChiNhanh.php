@@ -25,4 +25,5 @@ class PhimChiNhanh extends Model
     {
         return $this->belongsTo(ChiNhanh::class, 'chi_nhanh_id');
     }
+    
 }
