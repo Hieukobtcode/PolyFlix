@@ -39,7 +39,7 @@ use App\Http\Controllers\Admin\RequestController;
 
 // Trang welcome
 Route::get('/', function () {
-    return view('welcome');
+    return view('client.trang-chu');
 })->name('home');
 
 // Đăng ký (client)
