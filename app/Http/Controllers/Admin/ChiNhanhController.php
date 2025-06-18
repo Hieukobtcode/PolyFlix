@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\ChiNhanh;
 use App\Models\LoaiGhe;
+use App\Models\ChiNhanh;
 use Illuminate\Support\Str;
 use App\Models\QuanLyInvite;
 use Illuminate\Http\Request;
 use App\Mail\MoiQuanLyChiNhanh;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Mail;
 
@@ -27,7 +28,16 @@ class ChiNhanhController extends Controller
 
         $chiNhanhs = $query->paginate(10);
 
-        return view('admin.chi-nhanh.index', compact('chiNhanhs'));
+        $pendingInvites = DB::table('quan_ly_invites')
+        ->where('used', 0)
+        ->pluck('chi_nhanh_id')
+        ->toArray();
+        $pendingEmails = DB::table('quan_ly_invites')
+        ->where('used', 0)
+        ->pluck('email', 'chi_nhanh_id')
+        ->toArray();
+
+        return view('admin.chi-nhanh.index', compact('chiNhanhs','pendingInvites','pendingEmails'));
     }
 
     public function create()
@@ -73,8 +83,20 @@ class ChiNhanhController extends Controller
 
     public function show($id)
     {
+        $pendingRapInvites = DB::table('quan_ly_invites')
+        ->where('used', 0)
+        ->pluck('rap_phim_id')
+        ->toArray();
+        $pendingRapEmails = DB::table('quan_ly_invites')
+        ->where('used', 0)
+        ->pluck('email', 'rap_phim_id')
+        ->toArray();
         $chiNhanh = ChiNhanh::with('rapPhims')->findOrFail($id);
-        return view('admin.chi-nhanh.show', compact('chiNhanh'));
+        $pendingInvites = DB::table('quan_ly_invites')
+        ->where('used', 0)
+        ->pluck('chi_nhanh_id')
+        ->toArray();
+        return view('admin.chi-nhanh.show', compact('chiNhanh','pendingRapInvites','pendingRapEmails','pendingInvites'));
     }
 
     public function destroy($id)

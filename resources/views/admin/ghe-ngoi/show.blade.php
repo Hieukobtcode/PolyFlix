@@ -133,7 +133,7 @@
                                             data-col='{{ $oneSeat['cot'] }}'>
                                             <i class="fa-solid fa-couch"></i>
                                             <span data-hang="{{ $oneSeat['hang'] }}"
-                                            class="seat-code">{{ $maGhe }}</span>
+                                                class="seat-code">{{ $maGhe }}</span>
                                         </div>
                                     @else
                                         <div class="seat-wrapper empty"></div>
@@ -149,7 +149,7 @@
                         <div class="panel-box">
                             <h4>Cập nhật</h4>
                             <p><strong>Trạng thái:</strong>
-                                {{ $soDoGhe->trang_thai == 1 ? 'Chưa hoạt động' : 'Hoạt động' }}
+                                {{-- {{ $soDoGhe->trang_thai == 1 ? 'Chưa hoạt động' : 'Hoạt động' }} --}}
                             </p>
                             <div class="btn-group">
                                 <button type="submit" id="btn_update" class="btn-publish">Cập nhật</button>
