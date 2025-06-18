@@ -27,7 +27,13 @@ class DoAn extends Model
         return $this->belongsToMany(Combo::class, 'combo_do_ans', 'do_an_id', 'combo_id');
     }
     public function chiNhanhs()
-{
-    return $this->belongsToMany(ChiNhanh::class, 'chi_nhanh_do_an');
-}
+    {
+        return $this->belongsToMany(ChiNhanh::class, 'chi_nhanh_do_an');
+    }
+    public function datVes()
+    {
+        return $this->belongsToMany(DatVe::class, 'dat_ve_do_an')
+            ->withPivot('so_luong')
+            ->withTimestamps();
+    }
 }
