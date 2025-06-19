@@ -42,6 +42,12 @@ a {
     height: 50px;
 }
 
+.header .logo .ticket{
+    width: 130px;
+    height: 60px;
+    margin-left: 100px;
+}
+
 .list-header {
     display: flex;
     gap: 40px;
