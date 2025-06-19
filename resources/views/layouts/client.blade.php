@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,17 +10,17 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     @vite('resources/js/client.js')
 </head>
+
 <body>
     <div class="container">
         {{-- Header --}}
         <div class="header">
             <div class="logo">
                 <img src="{{ asset('logo/polyflix_title.png') }}" alt="PolyFlix Logo">
+                <a href="">
+                    <img class="ticket" src="{{ asset('banner/ticket.png') }}" alt="">
+                </a>
             </div>
-            {{-- <div class="booking_btn">
-                <img src="{{ asset('khuyen-mai/ticket.png') }}" alt="">
-                <span>ĐẶT VÉ NGAY</span>
-            </div> --}}
             <div class="list-header">
                 <div class="search">
                     <input type="text" name="search" placeholder="Tìm phim...">
