@@ -164,6 +164,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access', 'per
         Route::get('do-an-combo', [ThongKeController::class, 'doAnCombo'])->name('do-an-combo');
         Route::get('dashboard', [ThongKeController::class, 'dashboard'])->name('dashboard');
         Route::get('phim', [ThongKeController::class, 'phim'])->name('phim');
+        Route::get('lien-he', [ThongKeController::class, 'lienHe'])->name('lien-he');
         Route::get('xuat-bao-cao', [ThongKeController::class, 'xuatBaoCao'])->name('xuat-bao-cao');
     });
 
@@ -205,7 +206,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access', 'per
     // Đặt vé
     Route::resource('dat-ves', DatVeController::class)->except(['show']);
 
-   Route::get('/dat-ve', [DatVeController::class, 'show'])->name('dat-ve.show');
+    Route::get('/dat-ve', [DatVeController::class, 'show'])->name('dat-ve.show');
 
     // ============================================================================
     //gửi email
@@ -237,5 +238,4 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access', 'per
     });
     // Hủy lời mời quản lý
     Route::post('invite/cancel', [InviteController::class, 'cancel'])->name('invite.cancel');
-
 });
