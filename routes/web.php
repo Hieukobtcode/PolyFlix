@@ -75,6 +75,8 @@ Route::post('/gui-loi-moi', [InviteController::class, 'sendInvite'])->name('invi
 Route::get('/nhap-thong-tin', [InviteController::class, 'showForm'])->name('invite.form');
 Route::post('/gui-thong-tin', [InviteController::class, 'submitForm'])->name('invite.submit');
 
+Route::get('/suat-chieu/theo-phong-ngay', [SuatChieuController::class, 'theoPhongVaNgay'])
+    ->name('admin.suat-chieu.theo-phong-ngay');
 // Group route cho admin
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access', 'permission.check'])->group(function () {
     Route::get('/', function () {
@@ -193,8 +195,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access', 'per
     Route::post('suat-chieu/bulk-delete', [SuatChieuController::class, 'bulkDelete'])->name('suat-chieu.bulk-delete');
     Route::post('suat-chieu/bulk-toggle-status', [SuatChieuController::class, 'bulkToggleStatus'])->name('suat-chieu.bulk-toggle-status');
     Route::post('suat-chieu/{suatChieu}/toggle-status', [SuatChieuController::class, 'toggleStatus']);
-    Route::get('/suat-chieu/theo-phong-ngay', [SuatChieuController::class, 'theoPhongVaNgay'])
-        ->name('suat-chieu.theo-phong-ngay');
+
     Route::resource('suat-chieu', SuatChieuController::class);
 
     Route::get('requests', [RequestController::class, 'index'])->name('requests.index');
