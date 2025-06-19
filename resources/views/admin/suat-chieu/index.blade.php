@@ -97,7 +97,7 @@
                             <!-- Option rạp sẽ được cập nhật bằng JS -->
                         </select>
                     </div>
-                    
+
                     {{-- <div class="col-md-3">
                         <label for="ngay_chieu" class="form-label fw-semibold">Ngày chiếu</label>
                         <input type="date" name="ngay_chieu" id="ngay_chieu" class="form-control rounded"
@@ -106,7 +106,7 @@
                     </div>
 
                     </div> --}}
-                    
+
                     <div class="col-md-3 d-flex align-items-end gap-2">
                         <button type="submit" class="btn btn-primary" title="Lọc">
                             <i class="fas fa-filter me-1"></i> Lọc
@@ -137,7 +137,7 @@
                             @forelse($grouped as $phimId => $group)
                                 @php
                                     $first = $group->first();
-                                    $hasActive = $group->contains(fn($s) => $s->trang_thai === 'hoat_dong');
+                                    // $hasActive = $group->contains(fn($s) => $s->trang_thai === 'hoat_dong');
                                 @endphp
                                 <tr>
                                     <td class="text-center">
@@ -249,7 +249,7 @@
                                                             <div class="form-check form-switch">
                                                                 <input class="form-check-input toggle-status"
                                                                     type="checkbox" data-id="{{ $suat->id }}"
-                                                                    {{ $suat->trang_thai == 'hoat_dong' ? 'checked disabled' : '' }}>
+                                                                    {{ $suat->trang_thai == 'hoat_dong' ? 'checked' : '' }}>
                                                             </div>
                                                         </td>
                                                         <td class="text-center">
@@ -269,20 +269,20 @@
                                                 @endforeach
                                             </tbody>
                                         </table>
-                                        @if (!$hasActive)
-                                            <div class="p-3">
-                                                <button class="btn btn-outline-danger btn-sm bulk-delete"
-                                                    data-group="check-all-{{ $phimId }}"
-                                                    title="Xóa các suất chiếu đã chọn">
-                                                    <i class="fas fa-trash me-1"></i> Xóa tất cả
-                                                </button>
-                                                <button class="btn btn-outline-secondary btn-sm bulk-toggle"
-                                                    data-group="check-all-{{ $phimId }}"
-                                                    title="Bật trạng thái các suất chiếu đã chọn">
-                                                    <i class="fas fa-power-off me-1"></i> Bật trạng thái tất cả
-                                                </button>
-                                            </div>
-                                        @endif
+
+                                        <div class="p-3">
+                                            <button class="btn btn-outline-danger btn-sm bulk-delete"
+                                                data-group="check-all-{{ $phimId }}"
+                                                title="Xóa các suất chiếu đã chọn">
+                                                <i class="fas fa-trash me-1"></i> Xóa tất cả
+                                            </button>
+                                            <button class="btn btn-outline-secondary btn-sm bulk-toggle"
+                                                data-group="check-all-{{ $phimId }}"
+                                                title="Bật trạng thái các suất chiếu đã chọn">
+                                                <i class="fas fa-power-off me-1"></i> Bật/tắt trạng thái tất cả
+                                            </button>
+                                        </div>
+
                                     </td>
                                 </tr>
                             @empty
@@ -308,7 +308,7 @@
                         </nav>
                     </div>
                 @endif --}}
-                    
+
             </div>
         </div>
     </div>
@@ -383,14 +383,13 @@
                 });
             });
 
-
             // Toggle trạng thái suất chiếu
             document.querySelectorAll('.toggle-status').forEach(switchBtn => {
                 switchBtn.addEventListener('change', function() {
-                    if (this.disabled) {
-                        alert('Không thể thay đổi trạng thái khi đang hoạt động.');
-                        return;
-                    }
+                    // if (this.disabled) {
+                    //     alert('Không thể thay đổi trạng thái khi đang hoạt động.');
+                    //     return;
+                    // }
 
                     const suatChieuId = this.getAttribute('data-id');
                     const newStatus = this.checked ? 'hoat_dong' : 'tam_dung';

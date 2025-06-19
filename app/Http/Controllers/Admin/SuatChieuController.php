@@ -205,7 +205,7 @@ class SuatChieuController extends Controller
                         'ngay_chieu' => $ngayThucTe, // ✅ ngày bắt đầu thực
                         'bat_dau' => $bdStr,
                         'ket_thuc' => $ktStr,
-                        'trang_thai' => $validated['trang_thai'] ?? 'tam_dung',
+                        'trang_thai' => $validated['trang_thai'] ?? 'hoat_dong',
                     ]);
                 }
 
@@ -389,7 +389,7 @@ class SuatChieuController extends Controller
                 'ngay_chieu' => $ngayThucTe, // ✅ ngày bắt đầu thực tế
                 'bat_dau' => $bdStr,
                 'ket_thuc' => $ktStr,
-                'trang_thai' => $validated['trang_thai'] ?? 'tam_dung',
+                'trang_thai' => $validated['trang_thai'] ?? 'hoat_dong',
             ]);
         }
 
