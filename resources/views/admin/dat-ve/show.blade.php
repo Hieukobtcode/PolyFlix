@@ -227,8 +227,10 @@
         @media print {
 
             /* Ẩn toàn bộ nội dung */
-            body * {
-                visibility: hidden !important;
+            html,
+            body {
+                height: auto !important;
+                overflow: visible !important;
             }
 
             /* Hiển thị lại phần cần in */
@@ -239,13 +241,10 @@
 
             .print-area {
                 display: block !important;
-                position: absolute !important;
-                top: 0 !important;
-                left: 0 !important;
-                width: 100% !important;
-                padding: 30px !important;
-                z-index: 9999 !important;
-                background: white !important;
+                page-break-after: always;
+                break-after: page;
+                position: relative !important;
+                /* Quan trọng */
             }
 
             /* Ẩn các thành phần giao diện khác */
@@ -410,82 +409,224 @@
     </div>
 
 @endsection
+<!-- 1️⃣ Hóa đơn tổng -->
 <div class="print-area"
     style="
     display: none;
-    position: relative;
-    padding: 24px;
+    page-break-after: always;
     font-family: Arial, sans-serif;
-    color: #000;
-    background-color: #f5f5f5;
-    border: 1px dashed #aaa;
+    background: linear-gradient(to bottom right, #fff0f0, #ffffff);
+    border: 2px dashed #e0e0e0;
+    border-radius: 16px;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.1);
+    padding: 24px;
     width: 90%;
     margin: auto;
-    overflow: hidden;
+    color: #333;
+    position: relative; /* để chứa layer ảnh */
 ">
 
-    <!-- Layer chứa nhiều logo -->
-    <div class="logo-overlay">
-        @for ($i = 0; $i < 10; $i++)
-            @for ($j = 0; $j < 5; $j++)
-                <img src="{{ asset('logo/polyflix_title.png') }}"
-                    style="position: absolute; 
-                            top: {{ $i * 120 }}px; 
-                            left: {{ $j * 200 }}px; 
-                            width: 100px; 
-                            opacity: 0.12; 
-                            z-index: 0;
-                                        ">
-            @endfor
-        @endfor
-    </div>
-    {{-- Nội dung chính --}}
+    <!-- Nội dung chính -->
     <div style="position: relative; z-index: 1;">
-        <h2 style="text-align: center; margin-bottom: 8px;">HÓA ĐƠN CHI TIẾT</h2>
-        <h3 style="text-align: center; margin-bottom: 4px;">PoLyFlix - Rạp phim số 1 thế giới</h3>
-        <p style="text-align: center; font-size: 14px; color: #555;">
+        <h2 style="text-align: center; margin-bottom: 8px;">HÓA ĐƠN THANH TOÁN</h2>
+        <h3 style="text-align: center; margin-bottom: 15px;">PoLyFlix - Rạp phim số 1 thế giới</h3>
+        <p style="text-align: center; font-size: 13px; color: #555;">
             {{ $datVe->suatChieu->phongChieu->rapPhim->ten_rap }} -
-            {{ $datVe->suatChieu->phongChieu->rapPhim->chiNhanh->ten_chi_nhanh }}<br>
+            {{ $datVe->suatChieu->phongChieu->rapPhim->chiNhanh->ten_chi_nhanh }} <br>
             Địa chỉ: {{ $datVe->suatChieu->phongChieu->rapPhim->chiNhanh->dia_chi ?? 'Chưa cập nhật' }}
         </p>
 
-        <hr style="margin: 12px 0; border-top: 2px dashed #999;">
+        <hr style="margin: 12px 0; border-top: 2px dashed #ccc;">
+
         <p><strong>Mã vé:</strong> {{ $datVe->ma_dat_ve }}</p>
         <p><strong>Tên phim:</strong> {{ $datVe->suatChieu->phim->ten_phim }}</p>
         <p><strong>Phòng chiếu:</strong> {{ $datVe->suatChieu->phongChieu->ten_phong }}</p>
-        <p><strong>Ngày chiếu:</strong> {{ $datVe->suatChieu->ngay_chieu }}</p>
+        <p><strong>Ngày chiếu:</strong> {{ \Carbon\Carbon::parse($datVe->suatChieu->ngay_chieu)->format('d/m/Y') }}</p>
         <p><strong>Giờ chiếu:</strong> {{ $datVe->suatChieu->bat_dau }} - {{ $datVe->suatChieu->ket_thuc }}</p>
-
-        <p><strong>Ghế ngồi:</strong>
+        <p><strong>Ghế:</strong>
             @foreach ($datVe->gheNgois as $ghe)
-                {{ $ghe->ma_ghe }} ({{ $ghe->loaiGhe->ten_loai_ghe ?? 'Không rõ' }})@if (!$loop->last)
+                {{ $ghe->ma_ghe }}@if (!$loop->last)
                     ,
                 @endif
             @endforeach
         </p>
 
-        <hr style="margin: 12px 0; border-top: 2px dashed #999;">
-        <p><strong>Combo:</strong>
-            @if ($datVe->combos && $datVe->combos->count())
-                @foreach ($datVe->combos as $combo)
-                    {{ $combo->tieu_de }}:
-                    @foreach ($combo->doAns as $doAn)
-                        {{ $doAn->tieu_de }} × {{ $doAn->pivot->so_luong }};
-                    @endforeach
-                @endforeach
-            @else
-                Không có combo
-            @endif
-        </p>
+        <hr style="margin: 12px 0; border-top: 2px dashed #ccc;">
 
-        <hr style="margin: 12px 0; border-top: 2px dashed #999;">
-        <p><strong>Phương thức thanh toán:</strong> {{ ucfirst(str_replace('_', ' ', $datVe->phuong_thuc_tt)) }}</p>
-        <p><strong>Giá vé:</strong> {{ number_format($tongTienGhe, 0, ',', '.') }} đ</p>
-        <p><strong>Giá combo:</strong> {{ number_format($tongTienCombo, 0, ',', '.') }} đ</p>
-        <p style="font-size: 16px;"><strong>Tổng tiền:</strong> {{ number_format($tongThanhTien, 0, ',', '.') }} đ</p>
+        <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+            <tr>
+                <td style="text-align: right; padding: 6px;">Giá vé:</td>
+                <td style="text-align: right; padding: 6px;">{{ number_format($tongTienGhe, 0, ',', '.') }} đ</td>
+            </tr>
+            <tr>
+                <td style="text-align: right; padding: 6px;">Giá combo:</td>
+                <td style="text-align: right; padding: 6px;">{{ number_format($tongTienCombo, 0, ',', '.') }} đ</td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <hr style="border-top: 2px dashed #ccc; width: 80%; margin: 10px auto;">
+                </td>
+            </tr>
+            <tr style="font-weight: bold; font-size: 16px;">
+                <td style="text-align: right; padding: 8px;">TỔNG TIỀN:</td>
+                <td style="text-align: right; padding: 8px; color: #d60000;">
+                    {{ number_format($tongThanhTien, 0, ',', '.') }} đ</td>
+            </tr>
+        </table>
 
-        <p style="text-align: center; font-style: italic; margin-top: 20px; color: #666;">
-            Cảm ơn bạn đã sử dụng dịch vụ tại PoLyFlix!
+        <p style="text-align: center; font-style: italic; margin-top: 15px; color: #666; font-size: 13px;">
+            Cảm ơn quý khách đã sử dụng dịch vụ tại PoLyFlix! <br>
+            Quý khách vui lòng giữ hóa đơn để đối soát khi cần thiết.
         </p>
     </div>
 </div>
+
+<!-- 2️⃣ Phiếu Combo / Đồ ăn -->
+<div class="print-area"
+    style="
+    display: none;
+    page-break-after: always;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to bottom right, #fff0f0, #ffffff);
+    border: 2px dashed #e0e0e0;
+    border-radius: 16px;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.1);
+    padding: 24px;
+    width: 90%;
+    margin: auto;
+    color: #333;
+">
+
+    <h2 style="text-align: center; margin-bottom: 8px;">PHIẾU COMBO / ĐỒ ĂN</h2>
+    <h3 style="text-align: center; margin-bottom: 15px;">PoLyFlix - Rạp phim số 1 thế giới</h3>
+
+    <p style="text-align: center; font-size: 13px; color: #555;">
+        {{ $datVe->suatChieu->phongChieu->rapPhim->ten_rap }} -
+        {{ $datVe->suatChieu->phongChieu->rapPhim->chiNhanh->ten_chi_nhanh }} <br>
+        Địa chỉ: {{ $datVe->suatChieu->phongChieu->rapPhim->chiNhanh->dia_chi ?? 'Chưa cập nhật' }}
+    </p>
+
+    <hr style="margin: 12px 0; border-top: 2px dashed #ccc;">
+
+    <p><strong>Mã vé:</strong> {{ $datVe->ma_dat_ve }}</p>
+    <p><strong>Tên phim:</strong> {{ $datVe->suatChieu->phim->ten_phim }}</p>
+    <p><strong>Suất chiếu:</strong> {{ \Carbon\Carbon::parse($datVe->suatChieu->ngay_chieu)->format('d/m/Y') }} -
+        {{ $datVe->suatChieu->bat_dau }}</p>
+
+    <hr style="margin: 12px 0; border-top: 2px dashed #ccc;">
+
+    @if ($datVe->combos && $datVe->combos->count())
+        @foreach ($datVe->combos as $combo)
+            <p style="font-weight: bold; color: #d60000; margin-top: 10px;">{{ $combo->tieu_de }}</p>
+            <table style="width:100%; border-collapse: collapse; font-size: 14px;">
+                <thead>
+                    <tr>
+                        <th style="border-bottom: 1px solid #ccc; text-align: left;">Món</th>
+                        <th style="border-bottom: 1px solid #ccc; text-align: right;">Số lượng</th>
+                        <th style="border-bottom: 1px solid #ccc; text-align: right;">Giá / món</th>
+                        <th style="border-bottom: 1px solid #ccc; text-align: right;">Thành tiền</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($combo->doAns as $doAn)
+                        @php
+                            $soLuong = $doAn->pivot->so_luong;
+                            $giaMon = $doAn->gia ?? 0;
+                            $thanhTien = $soLuong * $giaMon;
+                        @endphp
+                        <tr>
+                            <td>{{ $doAn->tieu_de }}</td>
+                            <td style="text-align: right;">{{ $soLuong }}</td>
+                            <td style="text-align: right;">{{ number_format($giaMon, 0, ',', '.') }} đ</td>
+                            <td style="text-align: right;">{{ number_format($thanhTien, 0, ',', '.') }} đ</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+            <hr style="margin: 12px 0; border-top: 2px dashed #ccc;">
+        @endforeach
+    @else
+        <p>Không có combo / đồ ăn.</p>
+    @endif
+    <div style="text-align: center; margin-top: 20px;">
+        {!! DNS1D::getBarcodeHTML($datVe->ma_dat_ve . '-' . $ghe->ma_ghe, 'C128', 2, 60) !!}
+        <div style="margin-top: 8px;">{{ $datVe->ma_dat_ve }} - {{ $ghe->ma_ghe }}</div>
+    </div>
+    <p style="text-align: center; font-style: italic; margin-top: 15px; color: #666; font-size: 13px;">
+        Quý khách vui lòng xuất trình phiếu này tại quầy combo để nhận món.
+    </p>
+</div>
+
+<!-- 3️⃣ Mỗi ghế 1 vé -->
+@foreach ($datVe->gheNgois as $ghe)
+    <div class="print-area"
+        style="
+        display: none;
+        page-break-after: always;
+        font-family: Arial, sans-serif;
+        background: linear-gradient(to bottom right, #fff0f0, #ffffff);
+        border: 2px dashed #e0e0e0;
+        border-radius: 16px;
+        box-shadow: 0 6px 24px rgba(0,0,0,0.1);
+        padding: 24px;
+        width: 90%;
+        margin: auto;
+        color: #333;
+    ">
+        <h2 style="text-align: center; margin-bottom: 5px;">VÉ XEM PHIM</h2>
+        <h3 style="text-align: center; margin-bottom: 15px;">PoLyFlix - Ghế {{ $ghe->ma_ghe }}</h3>
+
+        <p style="text-align: center; font-size: 13px; color: #555;">
+            {{ $datVe->suatChieu->phongChieu->rapPhim->ten_rap }} -
+            {{ $datVe->suatChieu->phongChieu->rapPhim->chiNhanh->ten_chi_nhanh }} <br>
+            Địa chỉ: {{ $datVe->suatChieu->phongChieu->rapPhim->chiNhanh->dia_chi ?? 'Chưa cập nhật' }}
+        </p>
+
+        <hr style="margin: 12px 0; border-top: 2px dashed #ccc;">
+
+        <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+            <tr>
+                <td style="padding: 6px;"><strong>Mã vé:</strong></td>
+                <td style="padding: 6px;">{{ $datVe->ma_dat_ve }} - {{ $ghe->ma_ghe }}</td>
+            </tr>
+            <tr>
+                <td style="padding: 6px;"><strong>Tên phim:</strong></td>
+                <td style="padding: 6px;">{{ $datVe->suatChieu->phim->ten_phim }}</td>
+            </tr>
+            <tr>
+                <td style="padding: 6px;"><strong>Phòng:</strong></td>
+                <td style="padding: 6px;">{{ $datVe->suatChieu->phongChieu->ten_phong }}</td>
+            </tr>
+            <tr>
+                <td style="padding: 6px;"><strong>Ngày chiếu:</strong></td>
+                <td style="padding: 6px;">{{ \Carbon\Carbon::parse($datVe->suatChieu->ngay_chieu)->format('d/m/Y') }}
+                </td>
+            </tr>
+            <tr>
+                <td style="padding: 6px;"><strong>Giờ chiếu:</strong></td>
+                <td style="padding: 6px;">{{ $datVe->suatChieu->bat_dau }} - {{ $datVe->suatChieu->ket_thuc }}</td>
+            </tr>
+            <tr>
+                <td style="padding: 6px;"><strong>Ghế:</strong></td>
+                <td style="padding: 6px;">{{ $ghe->ma_ghe }} ({{ $ghe->loaiGhe->ten_loai_ghe ?? 'Không rõ' }})</td>
+            </tr>
+            <tr>
+                @php
+                    $giaGhe = ($ghe->loaiGhe->phu_thu ?? 0) + ($datVe->suatChieu->phongChieu->rapPhim->phu_thu ?? 0);
+                @endphp
+                <td style="padding: 6px;"><strong>Giá vé:</strong></td>
+                <td style="padding: 6px;">{{ number_format($giaGhe, 0, ',', '.') }} đ</td>
+            </tr>
+        </table>
+
+        <div style="text-align: center; margin-top: 20px;">
+            {!! DNS1D::getBarcodeHTML($datVe->ma_dat_ve . '-' . $ghe->ma_ghe, 'C128', 2, 60) !!}
+            <div style="margin-top: 8px;">{{ $datVe->ma_dat_ve }} - {{ $ghe->ma_ghe }}</div>
+        </div>
+
+        <p style="text-align: center; font-style: italic; margin-top: 20px; color: #666; font-size: 13px;">
+            Cảm ơn bạn đã sử dụng dịch vụ tại PoLyFlix!<br>
+            Quý khách vui lòng giữ vé cẩn thận. Rạp không chịu trách nhiệm nếu mất vé.
+        </p>
+    </div>
+@endforeach
