@@ -10,14 +10,28 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
-        User::insert(
-            [
-            'name' => 'hieu',
-            'email' => 'hieultph49402@gmail.com',
-            'password' => Hash::make('pass'),
+        User::create([
+            'name' => 'Polyflix',
+            'email' => 'polyflixteam@gmail.com',
+            'password' => Hash::make('123456'),
             'vai_tro_id' => 1,
             'hoat_dong' => 1
-            ],
-    );
+        ]);
+
+        User::create([
+            'name' => 'hieu2',
+            'email' => 'lhieu9254@gmail.com',
+            'password' => Hash::make('123456'),
+            'vai_tro_id' => 2,
+            'hoat_dong' => 1
+        ]);
+
+        User::create([
+            'name' => 'hieu3',
+            'email' => 'hieultph49402@gmail.com',
+            'password' => Hash::make('123456'),
+            'vai_tro_id' => 1,
+            'hoat_dong' => 1
+        ]);
     }
 }

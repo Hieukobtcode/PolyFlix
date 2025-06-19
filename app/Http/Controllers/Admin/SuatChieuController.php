@@ -205,7 +205,7 @@ class SuatChieuController extends Controller
                         'ngay_chieu' => $ngayThucTe, // ✅ ngày bắt đầu thực
                         'bat_dau' => $bdStr,
                         'ket_thuc' => $ktStr,
-                        'trang_thai' => $validated['trang_thai'] ?? 'tam_dung',
+                        'trang_thai' => $validated['trang_thai'] ?? 'hoat_dong',
                     ]);
                 }
 
@@ -389,7 +389,7 @@ class SuatChieuController extends Controller
                 'ngay_chieu' => $ngayThucTe, // ✅ ngày bắt đầu thực tế
                 'bat_dau' => $bdStr,
                 'ket_thuc' => $ktStr,
-                'trang_thai' => $validated['trang_thai'] ?? 'tam_dung',
+                'trang_thai' => $validated['trang_thai'] ?? 'hoat_dong',
             ]);
         }
 
@@ -441,22 +441,18 @@ class SuatChieuController extends Controller
 
     public function theoPhongVaNgay(Request $req)
     {
-        // (1) Validate đầu vào nếu cần
         $req->validate([
             'phong_chieu_id' => 'required|exists:phong_chieus,id',
             'ngay_chieu'     => 'required|date',
         ]);
 
-        // (2) Lấy danh sách suất chiếu
         $suatChieus = SuatChieu::with('PhongChieu')
             ->where('phong_chieu_id', $req->phong_chieu_id)
             ->where('ngay_chieu', $req->ngay_chieu)
             ->orderBy('bat_dau')
             ->get();
 
-        // (3) Chuyển dữ liệu sang chuẩn JSON response
         $data = $suatChieus->map(function ($s) {
-            // Dùng Carbon để format
             $start = $s->bat_dau ? \Carbon\Carbon::parse($s->bat_dau)->format('H:i') : '00:00';
             $end   = $s->ket_thuc ? \Carbon\Carbon::parse($s->ket_thuc)->format('H:i') : '00:00';
 

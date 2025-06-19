@@ -112,18 +112,18 @@ class DatVeController extends Controller
         return back()->with('success', 'Đã gửi vé về email người dùng!');
     }
     public function print($id)
-{
-    $datVe = DatVe::with([
-        'nguoiDung',
-        'suatChieu.phim',
-        'suatChieu.phongChieu.rapPhim',
-        'gheNgois.loaiGhe',
-        'combos.doAns'
-    ])->findOrFail($id);
+    {
+        $datVe = DatVe::with([
+            'nguoiDung',
+            'suatChieu.phim',
+            'suatChieu.phongChieu.rapPhim',
+            'gheNgois.loaiGhe',
+            'combos.doAns'
+        ])->findOrFail($id);
 
-    $pdf = Pdf::loadView('admin.dat-ve.print', compact('datVe'))->setPaper('a4');
-    return $pdf->stream('ve_xem_phim_' . $datVe->ma_dat_ve . '.pdf');
-}
+        $pdf = Pdf::loadView('admin.dat-ve.print', compact('datVe'))->setPaper('a4');
+        return $pdf->stream('ve_xem_phim_' . $datVe->ma_dat_ve . '.pdf');
+    }
 
 
 

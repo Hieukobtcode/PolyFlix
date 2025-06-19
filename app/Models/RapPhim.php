@@ -2,10 +2,11 @@
 
 namespace App\Models;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class RapPhim extends Model
 {
@@ -31,11 +32,11 @@ class RapPhim extends Model
         return $this->belongsTo(ChiNhanh::class, 'chi_nhanh_id');
     }
 
-    // Quan hệ với người quản lý (giả sử là model User)
-    // public function quanLy()
-    // {
-    //     return $this->belongsTo(User::class, 'quan_ly_id');
-    // }
+    // Quan hệ với người quản lý 
+    public function quanLy()
+    {
+        return $this->belongsTo(User::class, 'quan_ly_id');
+    }
 
     public function phongChieus()
     {

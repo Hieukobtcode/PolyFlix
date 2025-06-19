@@ -71,8 +71,9 @@ class ComboController extends Controller
 
 
 
-    public function edit(Combo $combo)
+    public function edit($id)
     {
+        $combo = Combo::with(['doAns', 'chiNhanhs'])->findOrFail($id);
         $doAns = DoAn::all();
         $chiNhanhs = ChiNhanh::all();
 
@@ -80,39 +81,56 @@ class ComboController extends Controller
     }
 
 
-    public function update(Request $request, Combo $combo)
+
+    public function update(Request $request, $id)
     {
-        $request->validate([
+        $combo = Combo::findOrFail($id);
+
+        $validated = $request->validate([
             'tieu_de' => 'required|string|max:255',
-            'gia' => 'required|numeric|min:0',
-            'gia_combo' => 'nullable|numeric|min:0',
-            'do_an_ids' => 'array',
-            'do_an_ids.*' => 'exists:do_ans,id',
-            'chi_nhanh_ids' => 'required|array',
+            'gia_combo' => 'required|numeric|min:0',
+            'do_ans' => 'nullable|array',
+            'do_ans.*.so_luong' => 'nullable|integer|min:1',
+            'chi_nhanh_ids' => 'nullable|array',
             'chi_nhanh_ids.*' => 'exists:chi_nhanhs,id',
-            'hinh_anh' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        // Cập nhật hình ảnh nếu có
-        $path = $combo->hinh_anh;
-        if ($request->hasFile('hinh_anh')) {
-            $path = $request->file('hinh_anh')->store('combos', 'public');
+        // Cập nhật combo
+        $combo->update([
+            'tieu_de' => $validated['tieu_de'],
+            'noi_dung' => $request->noi_dung,
+            'gia_combo' => $validated['gia_combo'],
+            'trang_thai' => $request->trang_thai ?? 'hien',
+            'hinh_anh' => $request->hinh_anh
+                ? $request->file('hinh_anh')->store('uploads', 'public')
+                : $combo->hinh_anh, // nếu không up hình mới thì giữ hình cũ
+        ]);
+
+        // Xử lý món ăn
+        $combo->doAns()->detach(); // clear cũ
+        $tongGia = 0;
+
+        if ($request->has('do_ans')) {
+            foreach ($request->do_ans as $doAnId => $info) {
+                if (!empty($info['selected'])) {
+                    $soLuong = intval($info['so_luong'] ?? 1);
+                    $combo->doAns()->attach($doAnId, ['so_luong' => $soLuong]);
+
+                    $giaMon = DoAn::find($doAnId)?->gia ?? 0;
+                    $tongGia += $giaMon * $soLuong;
+                }
+            }
         }
 
-        $combo->update([
-            'tieu_de' => $request->tieu_de,
-            'noi_dung' => $request->noi_dung,
-            'hinh_anh' => $path,
-            'trang_thai' => $request->trang_thai ?? 'hien',
-            'gia' => $request->gia,
-            'gia_combo' => $request->gia_combo ?? 0,
-        ]);
+        // Cập nhật chi nhánh
+        $combo->chiNhanhs()->sync($request->chi_nhanh_ids ?? []);
 
-        $combo->doAns()->sync($request->do_an_ids ?? []);
-        $combo->chiNhanhs()->sync($request->chi_nhanh_ids);
+        // Cập nhật giá gốc
+        $combo->update(['gia' => $tongGia]);
 
-        return redirect()->route('admin.combos.index')->with('success', 'Đã cập nhật combo!');
+        return redirect()->route('admin.combos.index')->with('success', 'Cập nhật combo thành công!');
     }
+
 
 
 

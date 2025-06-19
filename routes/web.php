@@ -39,7 +39,7 @@ use App\Http\Controllers\Admin\RequestController;
 
 // Trang welcome
 Route::get('/', function () {
-    return view('welcome');
+    return view('client.trang-chu');
 })->name('home');
 
 // Đăng ký (client)
@@ -75,6 +75,8 @@ Route::post('/gui-loi-moi', [InviteController::class, 'sendInvite'])->name('invi
 Route::get('/nhap-thong-tin', [InviteController::class, 'showForm'])->name('invite.form');
 Route::post('/gui-thong-tin', [InviteController::class, 'submitForm'])->name('invite.submit');
 
+Route::get('/suat-chieu/theo-phong-ngay', [SuatChieuController::class, 'theoPhongVaNgay'])
+    ->name('admin.suat-chieu.theo-phong-ngay');
 // Group route cho admin
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access', 'permission.check'])->group(function () {
     Route::get('/', function () {
@@ -158,6 +160,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access', 'per
     // Thống kê
     Route::prefix('thong-ke')->name('thong-ke.')->group(function () {
         Route::get('/', [ThongKeController::class, 'index'])->name('index');
+        Route::get('doanh-thu', [ThongKeController::class, 'doanhThu'])->name('doanh-thu');
+        Route::get('ve', [ThongKeController::class, 've'])->name('ve');
+        Route::get('suat-chieu', [ThongKeController::class, 'suatChieu'])->name('suat-chieu');
+        Route::get('do-an-combo', [ThongKeController::class, 'doAnCombo'])->name('do-an-combo');
         Route::get('dashboard', [ThongKeController::class, 'dashboard'])->name('dashboard');
         Route::get('phim', [ThongKeController::class, 'phim'])->name('phim');
         Route::get('lien-he', [ThongKeController::class, 'lienHe'])->name('lien-he');
@@ -189,14 +195,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access', 'per
     Route::post('suat-chieu/bulk-delete', [SuatChieuController::class, 'bulkDelete'])->name('suat-chieu.bulk-delete');
     Route::post('suat-chieu/bulk-toggle-status', [SuatChieuController::class, 'bulkToggleStatus'])->name('suat-chieu.bulk-toggle-status');
     Route::post('suat-chieu/{suatChieu}/toggle-status', [SuatChieuController::class, 'toggleStatus']);
-    Route::get('/suat-chieu/theo-phong-ngay', [SuatChieuController::class, 'theoPhongVaNgay'])
-        ->name('suat-chieu.theo-phong-ngay');
+
     Route::resource('suat-chieu', SuatChieuController::class);
-
-    Route::resource('combos', ComboController::class);
-    Route::resource('do-an', DoAnController::class);
-    Route::resource('danh-muc-do-an', DanhMucDoAnController::class);
-
 
     Route::get('requests', [RequestController::class, 'index'])->name('requests.index');
     Route::post('requests/{id}/approve', [RequestController::class, 'approve'])->name('requests.approve');
@@ -207,7 +207,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access', 'per
     // Đặt vé
     Route::resource('dat-ves', DatVeController::class)->except(['show']);
 
-   Route::get('/dat-ve', [DatVeController::class, 'show'])->name('dat-ve.show');
+    Route::get('/dat-ve', [DatVeController::class, 'show'])->name('dat-ve.show');
 
     // ============================================================================
     //gửi email
@@ -237,4 +237,6 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access', 'per
         // Xóa bình luận
         Route::delete('{id}', [CommentController::class, 'destroy'])->name('destroy');
     });
+    // Hủy lời mời quản lý
+    Route::post('invite/cancel', [InviteController::class, 'cancel'])->name('invite.cancel');
 });

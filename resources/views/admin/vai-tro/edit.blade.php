@@ -95,28 +95,75 @@
 
                     <div class="mb-4">
                         <label class="form-label fw-semibold">Phân quyền đã gán</label>
-                        <div class="select-all-wrapper">
+                        <div class="select-all-wrapper mb-2">
                             <small class="text-muted">Tích chọn các quyền muốn gán cho vai trò</small>
                             <div>
                                 <input type="checkbox" id="checkAll" class="form-check-input me-1">
                                 <label for="checkAll" class="form-check-label">Chọn tất cả</label>
                             </div>
                         </div>
-                        <div class="permissions-box">
-                            @forelse($phanQuyens as $phanQuyen)
-                                <label>
-                                    <input type="checkbox" name="phan_quyen_ids[]" value="{{ $phanQuyen->id }}"
-                                        {{ in_array($phanQuyen->id, $phanQuyenDaGan) ? 'checked' : '' }}>
-                                    {{ $phanQuyen->ten }} <span class="text-muted ms-1">({{ $phanQuyen->slug }})</span>
-                                </label>
-                            @empty
-                                <p class="text-muted">Không có phân quyền nào để chọn.</p>
-                            @endforelse
-                        </div>
+
+                        @php
+                            $prefixMap = [
+                                'admin.phim' => 'Quản lý phim',
+                                'admin.users' => 'Quản lý người dùng',
+                                'admin.dat-ve' => 'Quản lý vé',
+                                'admin.vai-tro' => 'Quản lý vai trò',
+                                'admin.rap' => 'Quản lý rạp',
+                                'admin.chi-nhanh' => 'Quản lý chi nhánh',
+                            ];
+
+                            $prefixOrder = [
+                                'admin.phim',
+                                'admin.users',
+                                'admin.dat-ve',
+                                'admin.rap',
+                                'admin.chi-nhanh',
+                                'admin.vai-tro',
+                            ];
+
+                            $groupedPermissions = $phanQuyens
+                                ->sortBy('slug')
+                                ->groupBy(function ($item) {
+                                    return explode('.', $item->slug)[0] . '.' . explode('.', $item->slug)[1];
+                                })
+                                ->sortBy(function ($_, $key) use ($prefixOrder) {
+                                    $index = array_search($key, $prefixOrder);
+                                    return $index !== false ? $index : 999;
+                                });
+                        @endphp
+
+                        @forelse ($groupedPermissions as $prefix => $permissions)
+                            <div class="mb-3 p-3 border rounded bg-light">
+                                <h6 class="fw-bold text-primary mb-2">
+                                    {{ $prefixMap[$prefix] ?? ucfirst(str_replace('.', ' ', $prefix)) }}
+                                </h6>
+                                <div class="row">
+                                    @foreach ($permissions as $phanQuyen)
+                                        <div class="col-md-6">
+                                            <div class="form-check mb-1">
+                                                <input class="form-check-input permission-checkbox" type="checkbox"
+                                                    name="phan_quyen_ids[]" value="{{ $phanQuyen->id }}"
+                                                    id="permission_{{ $phanQuyen->id }}"
+                                                    {{ in_array($phanQuyen->id, old('phan_quyen_ids', $phanQuyenDaGan ?? [])) ? 'checked' : '' }}>
+                                                <label class="form-check-label" for="permission_{{ $phanQuyen->id }}">
+                                                    {{ $phanQuyen->ten }} <small
+                                                        class="text-muted">({{ $phanQuyen->slug }})</small>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @empty
+                            <p class="text-muted">Không có phân quyền nào để chọn.</p>
+                        @endforelse
+
                         @error('phan_quyen_ids')
                             <div class="invalid-feedback d-block">{{ $message }}</div>
                         @enderror
                     </div>
+
 
                     <div class="d-flex justify-content-end gap-2">
                         <a href="{{ route('admin.vai-tro.index') }}" class="btn btn-outline-secondary"

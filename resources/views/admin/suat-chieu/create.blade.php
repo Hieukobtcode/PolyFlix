@@ -66,6 +66,13 @@
                 <div class="row">
                     <!-- Cột trái: Form thêm suất chiếu -->
                     <div class="col-md-6 border-end">
+                        <div class="mb-4">
+                            <span class="fw-semibold text-muted">Ngày phát hành:</span>
+                            <span>{{ $phim->ngay_phat_hanh ? $phim->ngay_phat_hanh->format('d/m/Y') : 'N/A' }}</span>
+                            <span class="fw-semibold text-muted">Ngày kết thúc:</span>
+                            <span>{{ $phim->ngay_ket_thuc ? $phim->ngay_ket_thuc->format('d/m/Y') : 'N/A' }}</span>
+                        </div>
+
                         <form action="{{ route('admin.suat-chieu.store') }}" method="POST" id="suat-chieu-form">
                             @csrf
                             <input type="hidden" name="phim_id" value="{{ $phim->id }}">
@@ -240,27 +247,22 @@
             </div>
         </div>
     </div>
-    <script>
-        const apiUrl = "{{ route('admin.suat-chieu.theo-phong-ngay') }}";
-    </script>
-
+<script>
+    const apiUrl = @json(route('admin.suat-chieu.theo-phong-ngay'));
+</script>
 
 @endsection
 
 @section('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Tự động focus vào trường "Phòng chiếu"
-            document.getElementById('phong_chieu_id').focus();
-
-            // Xác nhận trước khi hủy
+        
             document.querySelector('.btn-outline-secondary').addEventListener('click', function(e) {
                 if (!confirm('Bạn có muốn hủy và quay lại danh sách?')) {
                     e.preventDefault();
                 }
             });
 
-            // Gọi toggleCheDo để khởi tạo trạng thái ban đầu
             toggleCheDo();
 
             const selPhong = document.getElementById('phong_chieu_id');
@@ -323,12 +325,12 @@
                 </div>
             `;
             container.appendChild(group);
-            toggleCheDo(); // Cập nhật lại required sau khi thêm
+            toggleCheDo();
         }
 
         function xoaGioChieu(btn) {
             btn.closest('.gio-chieu-group').remove();
-            toggleCheDo(); // Cập nhật lại required sau khi xóa
+            toggleCheDo();
         }
 
         function fetchSuatChieu() {
@@ -342,14 +344,13 @@
                     `<tr><td colspan="4" class="text-center">Vui lòng chọn phòng & ngày để xem suất chiếu.</td></tr>`;
                 return;
             }
-
+            
             fetch(`${apiUrl}?phong_chieu_id=${phongId}&ngay_chieu=${ngay}`)
-                .then(res => {
+            .then(res => {
                     if (!res.ok) throw new Error('Lỗi kết nối');
                     return res.json();
                 })
                 .then(data => {
-                    alert("Dữ liệu nhận được:", data);
                     if (data.length === 0) {
                         tbody.innerHTML =
                             `<tr><td colspan="4" class="text-center">Chưa có suất chiếu cho lựa chọn này.</td></tr>`;
