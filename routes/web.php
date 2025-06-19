@@ -35,20 +35,27 @@ use App\Http\Controllers\SocialAuthController;
 use App\Http\Controllers\Admin\CommentController;
 use App\Http\Controllers\Admin\GiaVeController;
 use App\Http\Controllers\Admin\RequestController;
+use App\Http\Controllers\Client\LoginController;
 
-
-// Trang welcome
 Route::get('/', function () {
     return view('client.trang-chu');
 })->name('home');
 
-// Đăng ký (client)
-Route::get('dang-ky', [AuthController::class, 'showRegisterForm'])->name('register.form');
-Route::post('dang-ky', [AuthController::class, 'register'])->name('register');
+// ====================================================================================================
+
+
+//Quen mk
+Route::get('forgot-pass', [AuthController::class, 'forgotPassForm'])->name('forgot-form');
+Route::post('forgot-pass', [AuthController::class, 'forgotPass'])->name('forgot-pass');
 
 // Đăng nhập (chung)
 Route::get('dang-nhap', [AuthController::class, 'showLoginForm'])->name('login.form');
 Route::post('dang-nhap', [AuthController::class, 'login'])->name('login');
+
+
+// Đăng ký (client)
+Route::post('dang-ky', [AuthController::class, 'register'])->name('register');
+
 
 // GOOGLE
 Route::get('/auth/google', [SocialAuthController::class, 'redirectToGoogle'])->name('google.redirect');
@@ -61,6 +68,8 @@ Route::get('/auth/facebook/callback', [SocialAuthController::class, 'handleFaceb
 // Đăng xuất
 Route::post('dang-xuat', [AuthController::class, 'logout'])->name('logout');
 
+
+// =================================================================================================
 // Route tạm kiểm tra dữ liệu
 Route::get('/check-data', function () {
     return [

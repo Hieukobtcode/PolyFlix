@@ -1,4 +1,4 @@
-@extends('layouts.auth')
+{{-- @extends('layouts.auth')
 
 @section('content')
     <div class="container py-5">
@@ -27,4 +27,4 @@
             <button type="submit" class="btn btn-success">Đăng ký</button>
         </form>
     </div>
-@endsection
+@endsection --}}
