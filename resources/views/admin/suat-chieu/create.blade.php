@@ -66,6 +66,13 @@
                 <div class="row">
                     <!-- Cột trái: Form thêm suất chiếu -->
                     <div class="col-md-6 border-end">
+                        <div class="mb-4">
+                            <span class="fw-semibold text-muted">Ngày phát hành:</span>
+                            <span>{{ $phim->ngay_phat_hanh ? $phim->ngay_phat_hanh->format('d/m/Y') : 'N/A' }}</span>
+                            <span class="fw-semibold text-muted">Ngày kết thúc:</span>
+                            <span>{{ $phim->ngay_ket_thuc ? $phim->ngay_ket_thuc->format('d/m/Y') : 'N/A' }}</span>
+                        </div>
+
                         <form action="{{ route('admin.suat-chieu.store') }}" method="POST" id="suat-chieu-form">
                             @csrf
                             <input type="hidden" name="phim_id" value="{{ $phim->id }}">

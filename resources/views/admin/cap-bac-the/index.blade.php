@@ -63,7 +63,7 @@
                                 <th scope="col" class="text-center" style="width: 5%">#</th>
                                 {{-- <th scope="col" class="text-center" style="width: 10%">ID</th> --}}
                                 <th scope="col">Tên cấp bậc</th>
-                                <th scope="col" class="text-center" style="width: 15%">Tổng chi tiêu</th>
+                                <th scope="col" class="text-center" style="width: 15%">Tổng số vé đã mua</th>
                                 <th scope="col" class="text-center" style="width: 10%">% Hoàn tiền</th>
                                 <th scope="col" class="text-center" style="width: 15%">% Ưu đãi DV</th>
                                 <th scope="col" class="text-center" style="width: 15%">Trạng thái</th>
@@ -76,7 +76,7 @@
                                     <td class="text-center">{{ $index + 1 }}</td>
                                     {{-- <td class="text-center">{{ $capBacThe->id }}</td> --}}
                                     <td>{{ $capBacThe->ten }}</td>
-                                    <td class="text-center">{{ number_format($capBacThe->tong_chi_tieu) }} đ</td>
+                                    <td class="text-center">{{ number_format($capBacThe->tong_so_ve_da_mua) }} vé</td>
                                     <td class="text-center">{{ $capBacThe->phan_tram_ve }}%</td>
                                     <td class="text-center">{{ $capBacThe->phan_tram_dich_vu }}%</td>
                                     <td class="text-center">
@@ -95,13 +95,14 @@
                                                 class="btn btn-sm btn-outline-primary" title="Chỉnh sửa">
                                                 <i class="fas fa-edit"></i>
                                             </a>
-                                            @if(!$capBacThe->is_default)
+                                            @if (!$capBacThe->is_default)
                                                 <form action="{{ route('admin.cap-bac-the.destroy', $capBacThe->id) }}"
                                                     method="POST" class="d-inline"
                                                     onsubmit="return confirm('Bạn có chắc chắn muốn xóa cấp bậc thẻ này?')">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Xóa">
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger"
+                                                        title="Xóa">
                                                         <i class="fas fa-trash"></i>
                                                     </button>
                                                 </form>
@@ -138,12 +139,12 @@
 
 @section('scripts')
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             // Tìm kiếm phía client
             const searchInput = document.getElementById('searchInput');
             const rows = document.querySelectorAll('#membershipTable tr:not(#emptyRow)');
 
-            searchInput.addEventListener('input', function () {
+            searchInput.addEventListener('input', function() {
                 const searchValue = this.value.toLowerCase();
                 let visibleCount = 0;
 

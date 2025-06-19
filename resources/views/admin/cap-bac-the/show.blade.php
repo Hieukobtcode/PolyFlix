@@ -68,8 +68,8 @@
                                 <td>{{ $capBacThe->mo_ta ?? 'Không có mô tả' }}</td>
                             </tr>
                             <tr>
-                                <th class="fw-semibold text-muted">Tổng chi tiêu:</th>
-                                <td>{{ number_format($capBacThe->tong_chi_tieu) }} đ</td>
+                                <th class="fw-semibold text-muted">Tổng số vé đã mua:</th>
+                                <td>{{ number_format($capBacThe->tong_so_ve_da_mua) }} đ</td>
                             </tr>
                             <tr>
                                 <th class="fw-semibold text-muted">Phần trăm hoàn tiền:</th>
@@ -127,7 +127,7 @@
             </div>
             <div class="card-footer bg-light">
                 <div class="d-flex justify-content-between align-items-center">
-                    @if(!$capBacThe->is_default)
+                    @if (!$capBacThe->is_default)
                         <form action="{{ route('admin.cap-bac-the.destroy', $capBacThe->id) }}" method="POST"
                             onsubmit="return confirm('Bạn có chắc chắn muốn xóa cấp bậc thẻ này?')">
                             @csrf
@@ -148,10 +148,10 @@
 
 @section('scripts')
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             // Xác nhận trước khi xóa
             document.querySelectorAll('.btn-outline-danger').forEach(button => {
-                button.addEventListener('click', function (e) {
+                button.addEventListener('click', function(e) {
                     if (!confirm('Bạn có chắc chắn muốn xóa cấp bậc thẻ này?')) {
                         e.preventDefault();
                     }
