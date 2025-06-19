@@ -75,6 +75,8 @@ Route::post('/gui-loi-moi', [InviteController::class, 'sendInvite'])->name('invi
 Route::get('/nhap-thong-tin', [InviteController::class, 'showForm'])->name('invite.form');
 Route::post('/gui-thong-tin', [InviteController::class, 'submitForm'])->name('invite.submit');
 
+Route::get('/suat-chieu/theo-phong-ngay', [SuatChieuController::class, 'theoPhongVaNgay'])
+    ->name('admin.suat-chieu.theo-phong-ngay');
 // Group route cho admin
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access', 'permission.check'])->group(function () {
     Route::get('/', function () {
@@ -164,6 +166,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access', 'per
         Route::get('do-an-combo', [ThongKeController::class, 'doAnCombo'])->name('do-an-combo');
         Route::get('dashboard', [ThongKeController::class, 'dashboard'])->name('dashboard');
         Route::get('phim', [ThongKeController::class, 'phim'])->name('phim');
+        Route::get('lien-he', [ThongKeController::class, 'lienHe'])->name('lien-he');
         Route::get('xuat-bao-cao', [ThongKeController::class, 'xuatBaoCao'])->name('xuat-bao-cao');
     });
 
@@ -192,8 +195,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access', 'per
     Route::post('suat-chieu/bulk-delete', [SuatChieuController::class, 'bulkDelete'])->name('suat-chieu.bulk-delete');
     Route::post('suat-chieu/bulk-toggle-status', [SuatChieuController::class, 'bulkToggleStatus'])->name('suat-chieu.bulk-toggle-status');
     Route::post('suat-chieu/{suatChieu}/toggle-status', [SuatChieuController::class, 'toggleStatus']);
-    Route::get('/suat-chieu/theo-phong-ngay', [SuatChieuController::class, 'theoPhongVaNgay'])
-        ->name('suat-chieu.theo-phong-ngay');
+
     Route::resource('suat-chieu', SuatChieuController::class);
 
     Route::get('requests', [RequestController::class, 'index'])->name('requests.index');
@@ -205,7 +207,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access', 'per
     // Đặt vé
     Route::resource('dat-ves', DatVeController::class)->except(['show']);
 
-   Route::get('/dat-ve', [DatVeController::class, 'show'])->name('dat-ve.show');
+    Route::get('/dat-ve', [DatVeController::class, 'show'])->name('dat-ve.show');
 
     // ============================================================================
     //gửi email
@@ -237,5 +239,4 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access', 'per
     });
     // Hủy lời mời quản lý
     Route::post('invite/cancel', [InviteController::class, 'cancel'])->name('invite.cancel');
-
 });
