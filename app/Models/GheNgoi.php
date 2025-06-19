@@ -24,6 +24,9 @@ class GheNgoi extends Model
 
     public function loaiGhe()
     {
-        return $this->belongsTo(LoaiGhe::class);
+        return $this->belongsTo(LoaiGhe::class, 'loai_ghe'); // ✅ đúng
     }
+
+
+
 }

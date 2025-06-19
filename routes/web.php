@@ -39,7 +39,7 @@ use App\Http\Controllers\Admin\RequestController;
 
 // Trang welcome
 Route::get('/', function () {
-    return view('welcome');
+    return view('client.trang-chu');
 })->name('home');
 
 // Đăng ký (client)
@@ -158,9 +158,12 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access', 'per
     // Thống kê
     Route::prefix('thong-ke')->name('thong-ke.')->group(function () {
         Route::get('/', [ThongKeController::class, 'index'])->name('index');
+        Route::get('doanh-thu', [ThongKeController::class, 'doanhThu'])->name('doanh-thu');
+        Route::get('ve', [ThongKeController::class, 've'])->name('ve');
+        Route::get('suat-chieu', [ThongKeController::class, 'suatChieu'])->name('suat-chieu');
+        Route::get('do-an-combo', [ThongKeController::class, 'doAnCombo'])->name('do-an-combo');
         Route::get('dashboard', [ThongKeController::class, 'dashboard'])->name('dashboard');
         Route::get('phim', [ThongKeController::class, 'phim'])->name('phim');
-        Route::get('lien-he', [ThongKeController::class, 'lienHe'])->name('lien-he');
         Route::get('xuat-bao-cao', [ThongKeController::class, 'xuatBaoCao'])->name('xuat-bao-cao');
     });
 
@@ -193,20 +196,22 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access', 'per
         ->name('suat-chieu.theo-phong-ngay');
     Route::resource('suat-chieu', SuatChieuController::class);
 
-    Route::resource('combos', ComboController::class);
-    Route::resource('do-an', DoAnController::class);
-    Route::resource('danh-muc-do-an', DanhMucDoAnController::class);
-
-
     Route::get('requests', [RequestController::class, 'index'])->name('requests.index');
     Route::post('requests/{id}/approve', [RequestController::class, 'approve'])->name('requests.approve');
     Route::delete('requests/{id}', [RequestController::class, 'reject'])->name('requests.reject');
+
+    // =========================================================================
+
     // Đặt vé
-    Route::resource('dat-ves', DatVeController::class);
-    // Chi tiết đặt vé
-    Route::get('admin/chi-tiet-dat-ve/{id}', [ChiTietDatVeController::class, 'show'])->name('admin.datve.show');
+    Route::resource('dat-ves', DatVeController::class)->except(['show']);
+
+   Route::get('/dat-ve', [DatVeController::class, 'show'])->name('dat-ve.show');
+
+    // ============================================================================
     //gửi email
     Route::get('dat-ve/{id}/gui-email', [DatVeController::class, 'guiVe'])->name('dat_ve.gui_email');
+
+    // =============================================================================
 
     Route::get('gia-ve', [GiaVeController::class, 'index'])->name('gia-ve.index');
     Route::post('gia-ve/cap-nhat', [GiaVeController::class, 'updateGiaVe'])->name('gia-ve.cap-nhat');
@@ -230,4 +235,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access', 'per
         // Xóa bình luận
         Route::delete('{id}', [CommentController::class, 'destroy'])->name('destroy');
     });
+    // Hủy lời mời quản lý
+    Route::post('invite/cancel', [InviteController::class, 'cancel'])->name('invite.cancel');
+
 });

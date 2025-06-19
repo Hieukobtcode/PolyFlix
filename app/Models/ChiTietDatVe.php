@@ -11,13 +11,12 @@ class ChiTietDatVe extends Model
     protected $fillable = [
         'dat_ve_id',
         'ghe_id',
-        'gia_ve',
     ];
 
-    public function datVes()
-    {
-        return $this->belongsTo(DatVe::class, 'dat_ve_id');
-    }
+    public function datVe()
+{
+    return $this->belongsTo(DatVe::class, 'dat_ve_id');
+}
 
     public function ghe()
     {

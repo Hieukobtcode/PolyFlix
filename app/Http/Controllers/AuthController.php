@@ -21,9 +21,9 @@ class AuthController extends Controller
             $user = Auth::user();
 
             switch ($user->vai_tro_id) {
-                case 1: return redirect()->route('admin.dashboard');        // Admin tổng
-                case 2: return redirect()->route('admin.lien-he.index');       // Admin chi nhánh
-                // case 3: return redirect()->route('cinema.dashboard');       // Admin rạp
+                case 1: return redirect()->route('admin.thong-ke.index');        // Admin tổng
+                case 2: return redirect()->route('admin.thong-ke.index');       // Admin chi nhánh
+                case 3: return redirect()->route('admin.thong-ke.index');       // Admin rạp
                 // case 4: return redirect()->route('staff.dashboard');        // Nhân viên
                 case 5: return redirect()->route('home');            // Người dùng
                 default:

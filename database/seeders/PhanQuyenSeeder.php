@@ -187,8 +187,30 @@ class PhanQuyenSeeder extends Seeder
             ['id' => 168, 'ten' => 'Đặt cấp bậc thẻ mặc định', 'slug' => 'admin.cap-bac-the.set-default'],
             ['id' => 169, 'ten' => 'Gán khuyến mãi cho chi nhánh', 'slug' => 'admin.khuyen-mai.assign-chi-nhanh'],
             ['id' => 170, 'ten' => 'Xem thống kê sử dụng khuyến mãi', 'slug' => 'admin.khuyen-mai.thong-ke-su-dung'],
+            ['id' => 174, 'ten' => 'Xem danh sách vé đã đặt', 'slug' => 'admin.dat-ves.index'],
+            ['id' => 175, 'ten' => 'Thêm vé đặt', 'slug' => 'admin.dat-ves.create'],
+            ['id' => 176, 'ten' => 'Lưu vé đặt', 'slug' => 'admin.dat-ves.store'],
+            ['id' => 177, 'ten' => 'Xem chi tiết vé đặt', 'slug' => 'admin.dat-ves.show'],
+            ['id' => 178, 'ten' => 'Sửa vé đặt', 'slug' => 'admin.dat-ves.edit'],
+            ['id' => 179, 'ten' => 'Cập nhật vé đặt', 'slug' => 'admin.dat-ves.update'],
+            ['id' => 180, 'ten' => 'Xóa vé đặt', 'slug' => 'admin.dat-ves.destroy'],
+            ['id' => 181, 'ten' => 'Xem bảng giá vé', 'slug' => 'admin.gia-ve.index'],
+            ['id' => 182, 'ten' => 'Cập nhật giá vé', 'slug' => 'admin.gia-ve.cap-nhat'],
+            ['id' => 183, 'ten' => 'Xem danh sách bình luận', 'slug' => 'admin.comments.index'],
+            ['id' => 184, 'ten' => 'Xem bình luận theo phim', 'slug' => 'admin.comments.show'],
+            ['id' => 185, 'ten' => 'Phản hồi bình luận', 'slug' => 'admin.comments.reply'],
+            ['id' => 186, 'ten' => 'Ẩn bình luận', 'slug' => 'admin.comments.hide'],
+            ['id' => 187, 'ten' => 'Hiện lại bình luận', 'slug' => 'admin.comments.unhide'],
+            ['id' => 188, 'ten' => 'Xóa bình luận', 'slug' => 'admin.comments.destroy'],
+            ['id' => 189, 'ten' => 'Hủy lời mời quản lý', 'slug' => 'admin.invite.cancel'],
+            ['id' => 191, 'ten' => 'Chuyển trạng thái nhiều suất chiếu', 'slug' => 'admin.suat-chieu.bulk-toggle-status'],
+            ['id' => 192, 'ten' => 'Chuyển trạng thái suất chiếu', 'slug' => 'admin.suat-chieu.toggle-status'],
+            ['id' => 194, 'ten' => 'Xem biểu đồ thống kê', 'slug' => 'admin.thong-ke.dashboard'],
+            ['id' => 195, 'ten' => 'Xem thống kê phim', 'slug' => 'admin.thong-ke.phim'],
+            ['id' => 196, 'ten' => 'Xem thống kê liên hệ', 'slug' => 'admin.thong-ke.lien-he'],
+            ['id' => 197, 'ten' => 'Xuất báo cáo thống kê', 'slug' => 'admin.thong-ke.xuat-bao-cao'],
         ];
-
+        
         foreach ($permissions as &$item) {
             $item['created_at'] = $now;
             $item['updated_at'] = $now;

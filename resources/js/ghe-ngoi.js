@@ -168,8 +168,11 @@ $(document).ready(function () {
             });
         }
 
-
-        const soCot = parseInt(soGheKhiThemHang.val());
+        let soCot = parseInt(soGheKhiThemHang.val());
+        if(loaiChon == 12){
+            soCot = soCot * 2;
+        }
+        
         let baseCharCode = danhSach[viTriChen - 1]
             ? danhSach[viTriChen - 1].hang.charCodeAt(0)
             : 64;

@@ -63,11 +63,14 @@
                                 <i class="fas fa-user-tie text-secondary me-1"></i>
                                 <strong>Quản lý</strong><br>
                                 @if ($chiNhanh->quan_ly_id)
-                                    <a href="#" class="text-decoration-none text-muted">
-                                        {{ $chiNhanh->quanLy->ho_ten ?? 'ID: ' . $chiNhanh->quan_ly_id }}
-                                    </a>
+                                    {{ $chiNhanh->quanLy->name ?? 'ID: ' . $chiNhanh->quan_ly_id }}
+                                @elseif (in_array($chiNhanh->id, $pendingInvites))
+                                    <button type="button" class="badge bg-warning text-dark border-0"
+                                        data-bs-toggle="modal" data-bs-target="#cancelInviteModal{{ $chiNhanh->id }}">
+                                        Đang phân công
+                                    </button>
                                 @else
-                                    <span class="text-muted fst-italic">Chưa phân công</span>
+                                    <span class="badge bg-secondary text-dark border-0">Chưa phân công</span>
                                 @endif
                             </li>
                             <li class="mb-0">
@@ -162,9 +165,58 @@
                                                 </td>
                                                 <td class="text-center">
                                                     @if ($rap->quan_ly_id)
-                                                        <a href="#" class="text-decoration-none">
-                                                            {{ $rap->quanLy->ho_ten ?? 'ID: ' . $rap->quan_ly_id }}
+                                                        <a href="{{ route('admin.users.show', $rap->quan_ly_id) }}"
+                                                            class="text-decoration-none">
+                                                            {{ $rap->quanLy->name ?? 'ID: ' . $rap->quan_ly_id }}
                                                         </a>
+                                                    @elseif (array_key_exists($rap->id, $pendingRapEmails))
+                                                        <div class="text-center">
+                                                            <button type="button"
+                                                                class="badge bg-warning text-dark border-0"
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="#cancelInviteModalRap{{ $rap->id }}">
+                                                                Đang phân công
+                                                            </button>
+
+                                                            <!-- Modal xác nhận hủy -->
+                                                            <div class="modal fade"
+                                                                id="cancelInviteModalRap{{ $rap->id }}" tabindex="-1"
+                                                                aria-hidden="true">
+                                                                <div class="modal-dialog modal-dialog-centered modal-sm">
+                                                                    <div class="modal-content">
+                                                                        <div class="modal-header">
+                                                                            <h5 class="modal-title">Lời mời đang chờ</h5>
+                                                                            <button type="button" class="btn-close"
+                                                                                data-bs-dismiss="modal"
+                                                                                aria-label="Đóng"></button>
+                                                                        </div>
+                                                                        <div class="modal-body text-center">
+                                                                            <p><strong>Email:</strong><br>{{ $pendingRapEmails[$rap->id] }}
+                                                                            </p>
+                                                                        </div>
+                                                                        <div class="modal-footer justify-content-between">
+                                                                            <button class="btn btn-secondary btn-sm"
+                                                                                data-bs-dismiss="modal">Đóng</button>
+                                                                            <form
+                                                                                action="{{ route('admin.invite.cancel') }}"
+                                                                                method="POST"
+                                                                                onsubmit="return confirm('Bạn có chắc chắn muốn hủy lời mời gửi đến {{ $pendingRapEmails[$rap->id] }}?')">
+                                                                                @csrf
+                                                                                <input type="hidden" name="rap_phim_id"
+                                                                                    value="{{ $rap->id }}">
+                                                                                <input type="hidden" name="loai_quan_ly"
+                                                                                    value="2">
+                                                                                <button type="submit"
+                                                                                    class="btn btn-danger btn-sm">
+                                                                                    <i class="fas fa-times-circle me-1"></i>
+                                                                                    Hủy lời mời
+                                                                                </button>
+                                                                            </form>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
                                                     @else
                                                         <span class="text-muted fst-italic">Chưa phân công</span>
                                                     @endif
@@ -183,12 +235,7 @@
                                                         class="btn btn-sm btn-outline-success" title="Thêm phòng">
                                                         <i class="fas fa-plus-circle"></i>
                                                     </a>
-                                                    @if ($rap->quan_ly_id)
-                                                        <a href="#" class="btn btn-sm btn-outline-warning"
-                                                            title="Xem thông tin">
-                                                            <i class="fa-solid fa-user"></i>
-                                                        </a>
-                                                    @else
+                                                    @if (!$rap->quan_ly_id && !in_array($rap->id, $pendingRapInvites))
                                                         <button class="btn btn-sm btn-outline-warning"
                                                             data-bs-toggle="modal"
                                                             data-bs-target="#inviteModal{{ $rap->id }}"
@@ -234,6 +281,12 @@
                                                                 </form>
                                                             </div>
                                                         </div>
+                                                    {{-- @elseif($rap->quanLy)
+                                                        <a href="{{ route('admin.users.show', $rap->quan_ly_id) }}"
+                                                            class="btn btn-sm btn-outline-warning"
+                                                            title="Xem thông tin quản lý">
+                                                            <i class="fa-solid fa-user" style="color: #FFD43B;"></i>
+                                                        </a> --}}
                                                     @endif
                                                 </td>
 

@@ -62,7 +62,8 @@
                                     onchange="this.form.submit()">
                                     <option value="">-- Tất cả rạp --</option>
                                     @foreach ($chiNhanhs->flatMap->rapPhims as $rap)
-                                        <option value="{{ $rap->id }}" {{ request('rap') == $rap->id ? 'selected' : '' }}>
+                                        <option value="{{ $rap->id }}"
+                                            {{ request('rap') == $rap->id ? 'selected' : '' }}>
                                             {{ $rap->ten_rap }}
                                         </option>
                                     @endforeach
@@ -126,7 +127,7 @@
                                                 <td>{{ $datVe->created_at->format('H:i d/m/Y') }}</td>
                                                 <td>
                                                     <a class="btn btn-warning"
-                                                        href="{{ route('admin.dat-ves.show', $datVe->id) }}">
+                                                        href="{{ route('admin.dat-ve.show', ['id' => $datVe->id, 'ma_ve' => $datVe->ma_dat_ve]) }}">
                                                         <i class="fa-solid fa-eye fa-spin-pulse"></i>
                                                     </a>
                                                 </td>
@@ -146,98 +147,6 @@
 
     @endsection
 
-    @section('scripts')
-        <script src="https://unpkg.com/@ericblade/quagga2/dist/quagga.min.js"></script>
-        <script>
-            let scanned = false;
-
-            function startScanner() {
-                const $scannerEl = $('#barcode-scanner');
-
-                if ($scannerEl.length === 0) {
-                    console.warn("Không tìm thấy phần tử barcode-scanner.");
-                    return;
-                }
-
-                Quagga.init({
-                    inputStream: {
-                        name: "Live",
-                        type: "LiveStream",
-                        target: $scannerEl[0],
-                        constraints: {
-                            facingMode: "environment"
-                        }
-                    },
-                    decoder: {
-                        readers: ["code_128_reader"]
-                    }
-                }, function(err) {
-                    if (err) {
-                        console.error("Lỗi Quagga:", err);
-                        alert("Không thể bật camera: " + err.message);
-                        return;
-                    }
-                    Quagga.start();
-                });
-
-                Quagga.offDetected();
-                Quagga.onDetected(onScan);
-            }
-
-            function stopScanner() {
-                if (Quagga) {
-                    Quagga.stop();
-                    Quagga.offDetected();
-                }
-                scanned = false;
-                $('#scan-result').text('Chưa quét');
-            }
-
-            function onScan(data) {
-                if (scanned) return;
-                scanned = true;
-
-                const code = data.codeResult.code;
-                $('#scan-result').text(code);
-
-                $.ajax({
-                    url: '/checkin-ve',
-                    method: 'POST',
-                    contentType: 'application/json',
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    data: JSON.stringify({
-                        ma_ve: code
-                    }),
-                    success: function(res) {
-                        alert(res.message);
-                    },
-                    error: function() {
-                        alert("Mã không hợp lệ hoặc đã check-in!");
-                    },
-                    complete: function() {
-                        setTimeout(() => scanned = false, 2000);
-                    }
-                });
-            }
-
-            $(document).ready(function() {
-                // Khi modal mở
-                $('#scannerModal').on('shown.bs.modal', function() {
-                    setTimeout(startScanner, 400);
-                });
-
-                // Khi modal đóng
-                $('#scannerModal').on('hidden.bs.modal', function() {
-                    stopScanner();
-                });
-
-                // Nút Quét lại
-                $('#restartScan').on('click', function() {
-                    stopScanner();
-                    setTimeout(startScanner, 400);
-                });
-            });
-        </script>
-    @endsection
+    {{-- @section('scripts')
+     
+    @endsection --}}

@@ -3511,11 +3511,6 @@ namespace App\Models {
      * @property-read \App\Models\RapPhim $rapPhim
      * @property-read \App\Models\ChiNhanh $chiNhanh
      * @property-read \App\Models\SuatChieu $suatChieu
-     * @property-read \App\Models\DoAn $DoAn
-     * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\DoAn> $doAns
-     * @property-read int|null $doAns_count
-     * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Combo> $combos
-     * @property-read int|null $combos_count
      * @method static \Illuminate\Database\Eloquent\Builder<DatVe>|DatVe whereId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<DatVe>|DatVe whereMaDatVe($value)
      * @method static \Illuminate\Database\Eloquent\Builder<DatVe>|DatVe whereUserId($value)
@@ -10800,6 +10795,7 @@ namespace App\Models {
      * @property int $chi_nhanh_id
      * @property int $id
      * @property-read \App\Models\ChiNhanh $chiNhanh
+     * @property-read \App\Models\User $quanLy
      * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\PhongChieu> $phongChieus
      * @property-read int|null $phongChieus_count
      * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Phim> $phims
