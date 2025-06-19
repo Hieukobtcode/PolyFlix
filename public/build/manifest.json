@@ -1,16 +1,97 @@
 {
+  "_bootstrap-eMHK6VFw.js": {
+    "file": "assets/bootstrap-eMHK6VFw.js",
+    "name": "bootstrap"
+  },
+  "_jquery-ARPk3Jhh.js": {
+    "file": "assets/jquery-ARPk3Jhh.js",
+    "name": "jquery"
+  },
   "resources/css/app.css": {
     "file": "assets/app-CbnFO6_P.css",
     "src": "resources/css/app.css",
     "isEntry": true
   },
+  "resources/css/client.css": {
+    "file": "assets/client-CT77KYqg.css",
+    "src": "resources/css/client.css",
+    "isEntry": true
+  },
+  "resources/css/dat-ve.css": {
+    "file": "assets/dat-ve-BbF5NHHL.css",
+    "src": "resources/css/dat-ve.css",
+    "isEntry": true
+  },
+  "resources/css/ghe-ngoi.css": {
+    "file": "assets/ghe-ngoi-k5nYWYdM.css",
+    "src": "resources/css/ghe-ngoi.css",
+    "isEntry": true
+  },
+  "resources/css/trang-chu.css": {
+    "file": "assets/trang-chu-BwybP2i1.css",
+    "src": "resources/css/trang-chu.css",
+    "isEntry": true
+  },
   "resources/js/app.js": {
-    "file": "assets/app-DEztUiix.js",
+    "file": "assets/app-BZav9Bpp.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
+    "imports": [
+      "_jquery-ARPk3Jhh.js",
+      "_bootstrap-eMHK6VFw.js"
+    ],
     "css": [
-      "assets/app-JcCP9adH.css"
+      "assets/app-C621yXhz.css"
+    ]
+  },
+  "resources/js/client.js": {
+    "file": "assets/client-BmRg6ezy.js",
+    "name": "client",
+    "src": "resources/js/client.js",
+    "isEntry": true,
+    "css": [
+      "assets/client-CT77KYqg.css"
+    ]
+  },
+  "resources/js/dat-ve.js": {
+    "file": "assets/dat-ve-CjYRlGnb.js",
+    "name": "dat-ve",
+    "src": "resources/js/dat-ve.js",
+    "isEntry": true,
+    "imports": [
+      "_jquery-ARPk3Jhh.js",
+      "_bootstrap-eMHK6VFw.js"
+    ],
+    "css": [
+      "assets/dat-ve-BbF5NHHL.css"
+    ]
+  },
+  "resources/js/ghe-ngoi.js": {
+    "file": "assets/ghe-ngoi-DxV6V80X.js",
+    "name": "ghe-ngoi",
+    "src": "resources/js/ghe-ngoi.js",
+    "isEntry": true
+  },
+  "resources/js/page.js": {
+    "file": "assets/page-DnbVVlfQ.js",
+    "name": "page",
+    "src": "resources/js/page.js",
+    "isEntry": true,
+    "css": [
+      "assets/page-DhAbcaWn.css"
+    ]
+  },
+  "resources/js/trang-chu.js": {
+    "file": "assets/trang-chu-EswTDk5P.js",
+    "name": "trang-chu",
+    "src": "resources/js/trang-chu.js",
+    "isEntry": true,
+    "imports": [
+      "_jquery-ARPk3Jhh.js"
+    ],
+    "css": [
+      "assets/trang-chu-BwybP2i1.css"
     ]
   }
 }

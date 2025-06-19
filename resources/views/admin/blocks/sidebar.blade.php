@@ -22,17 +22,12 @@
                     Thống kê & Báo cáo
                 </a>
                 <ul class="nav-group-items compact">
-                    <li class="nav-item"><a class="nav-link" href="{{ route('admin.thong-ke.index') }}">Tổng quan</a>
-                    </li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('admin.thong-ke.dashboard') }}">Biểu đồ</a>
-                    </li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('admin.thong-ke.phim') }}">Thống kê phim</a>
-                    </li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('admin.thong-ke.lien-he') }}">Thống kê liên
-                            hệ</a></li>
-                    <li class="nav-item"><a class="nav-link"
-                            href="{{ route('admin.khuyen-mai.thong-ke-su-dung') }}">Thống
-                            kê khuyến mãi</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('admin.thong-ke.index') }}">Tổng quan</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('admin.thong-ke.doanh-thu') }}">Thống kê doanh thu</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('admin.thong-ke.ve') }}">Thống kê vé</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('admin.thong-ke.suat-chieu') }}">Thống kê suất chiếu</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('admin.thong-ke.do-an-combo') }}">Thống kê đồ ăn & combo</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('admin.thong-ke.phim') }}">Thống kê phim</a></li>
                 </ul>
             </li>
 
@@ -172,12 +167,12 @@
             Thống kê & Báo cáo
         </a>
         <ul class="nav-group-items compact">
-            <li class="nav-item"><a class="nav-link" href="{{ route('admin.thong-ke.index') }}">Tổng quan</a>
-            </li>
-            <li class="nav-item"><a class="nav-link" href="{{ route('admin.thong-ke.dashboard') }}">Biểu đồ</a>
-            </li>
-            <li class="nav-item"><a class="nav-link" href="{{ route('admin.thong-ke.phim') }}">Thống kê phim</a>
-            </li>
+            <li class="nav-item"><a class="nav-link" href="{{ route('admin.thong-ke.index') }}">Tổng quan</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ route('admin.thong-ke.doanh-thu') }}">Thống kê doanh thu</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ route('admin.thong-ke.ve') }}">Thống kê vé</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ route('admin.thong-ke.suat-chieu') }}">Thống kê suất chiếu</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ route('admin.thong-ke.do-an-combo') }}">Thống kê đồ ăn & combo</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ route('admin.thong-ke.phim') }}">Thống kê phim</a></li>
         </ul>
     </li>
 
@@ -244,12 +239,12 @@
             Thống kê & Báo cáo
         </a>
         <ul class="nav-group-items compact">
-            <li class="nav-item"><a class="nav-link" href="{{ route('admin.thong-ke.index') }}">Tổng quan</a>
-            </li>
-            <li class="nav-item"><a class="nav-link" href="{{ route('admin.thong-ke.dashboard') }}">Biểu đồ</a>
-            </li>
-            <li class="nav-item"><a class="nav-link" href="{{ route('admin.thong-ke.phim') }}">Thống kê phim</a>
-            </li>
+            <li class="nav-item"><a class="nav-link" href="{{ route('admin.thong-ke.index') }}">Tổng quan</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ route('admin.thong-ke.doanh-thu') }}">Thống kê doanh thu</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ route('admin.thong-ke.ve') }}">Thống kê vé</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ route('admin.thong-ke.suat-chieu') }}">Thống kê suất chiếu</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ route('admin.thong-ke.do-an-combo') }}">Thống kê đồ ăn & combo</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ route('admin.thong-ke.phim') }}">Thống kê phim</a></li>
         </ul>
     </li>
     {{-- Rạp --}}
@@ -317,20 +312,7 @@
             </a>
         </li>
 
-        {{-- Thống kê --}}
-        <li class="nav-group">
-            <a class="nav-link nav-group-toggle" href="#">
-                <i class="fas fa-chart-bar nav-icon"></i>
-                Thống kê & Báo cáo
-            </a>
-            <ul class="nav-group-items compact">
-                <li class="nav-item"><a class="nav-link" href="{{ route('admin.thong-ke.index') }}">Tổng quan</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('admin.thong-ke.dashboard') }}">Biểu đồ</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('admin.thong-ke.phim') }}">Thống kê phim</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('admin.thong-ke.lien-he') }}">Thống kê liên hệ</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('admin.khuyen-mai.thong-ke-su-dung') }}">Thống kê khuyến mãi</a></li>
-            </ul>
-        </li>
+
 
     </ul>
 </div>
