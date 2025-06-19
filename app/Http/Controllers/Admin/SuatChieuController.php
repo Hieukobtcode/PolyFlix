@@ -99,12 +99,19 @@ class SuatChieuController extends Controller
         ]);
 
         $ngayChieu = Carbon::parse($validated['ngay_chieu']);
-        $ngayPhatHanh = Carbon::parse($phim->ngay_phat_hanh)->startOfDay();
+
+        if ($ngayChieu->lt(Carbon::today())) {
+            return redirect()->back()
+                ->withErrors(['ngay_chieu' => 'Ngày chiếu không được nhỏ hơn ngày hiện tại.'])
+                ->withInput();
+        }
+
+        // $ngayPhatHanh = Carbon::parse($phim->ngay_phat_hanh)->startOfDay();
         $ngayKetThuc = Carbon::parse($phim->ngay_ket_thuc)->endOfDay();
 
-        if ($ngayChieu->lt($ngayPhatHanh) || $ngayChieu->gt($ngayKetThuc)) {
+        if ($ngayChieu->gt($ngayKetThuc)) {
             return redirect()->back()
-                ->withErrors(['ngay_chieu' => 'Ngày chiếu phải nằm trong khoảng phát hành và kết thúc phim.'])
+                ->withErrors(['ngay_chieu' => 'Ngày chiếu không được sau ngày kết thúc của phim.'])
                 ->withInput();
         }
 
@@ -269,12 +276,19 @@ class SuatChieuController extends Controller
         ]);
 
         $ngayChieu = Carbon::parse($validated['ngay_chieu']);
-        $ngayPhatHanh = Carbon::parse($phim->ngay_phat_hanh)->startOfDay();
+
+        if ($ngayChieu->lt(Carbon::today())) {
+            return redirect()->back()
+                ->withErrors(['ngay_chieu' => 'Ngày chiếu không được nhỏ hơn ngày hiện tại.'])
+                ->withInput();
+        }
+
+        // $ngayPhatHanh = Carbon::parse($phim->ngay_phat_hanh)->startOfDay();
         $ngayKetThuc = Carbon::parse($phim->ngay_ket_thuc)->endOfDay();
 
-        if ($ngayChieu->lt($ngayPhatHanh) || $ngayChieu->gt($ngayKetThuc)) {
+        if ($ngayChieu->gt($ngayKetThuc)) {
             return redirect()->back()
-                ->withErrors(['ngay_chieu' => 'Ngày chiếu phải nằm trong khoảng phát hành và kết thúc phim.'])
+                ->withErrors(['ngay_chieu' => 'Ngày chiếu không được sau ngày kết thúc của phim.'])
                 ->withInput();
         }
 
@@ -437,7 +451,7 @@ class SuatChieuController extends Controller
         $suatChieus = SuatChieu::with('PhongChieu')
             ->where('phong_chieu_id', $req->phong_chieu_id)
             ->where('ngay_chieu', $req->ngay_chieu)
-            ->orderBy('bat_dau') 
+            ->orderBy('bat_dau')
             ->get();
 
         // (3) Chuyển dữ liệu sang chuẩn JSON response
