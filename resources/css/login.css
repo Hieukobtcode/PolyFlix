@@ -1,0 +1,224 @@
+.login-container {
+    width: 600px;
+    margin: 50px auto;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.forgot-pass {
+    color: black;
+    font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    float: right;
+    text-decoration: underline;
+}
+.remember-pass {
+    display: flex;
+    align-items: center;
+    font-family: sans-serif;
+}
+
+.custom-checkbox input {
+    display: none;
+}
+
+.custom-checkbox {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.custom-checkbox .checkmark {
+    width: 20px;
+    height: 20px;
+    background-color: #eee;
+    border: 1px solid #ccc;
+    margin-right: 8px;
+    position: relative;
+    border-radius: 3px;
+    transition: background 0.2s ease;
+}
+
+.custom-checkbox input:checked + .checkmark {
+    background-color: orange;
+}
+
+.custom-checkbox .checkmark::after {
+    content: "";
+    position: absolute;
+    display: none;
+    left: 6px;
+    top: 2px;
+    width: 6px;
+    height: 12px;
+    border: solid black;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+.custom-checkbox input:checked + .checkmark::after {
+    display: block;
+}
+
+.custom-checkbox p {
+    margin: 0;
+    font-size: 14px;
+    color: #979494;
+    font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-weight: 400;
+}
+
+input {
+    width: 100%;
+    height: 50px;
+}
+.tab-main {
+    display: flex;
+    gap: 5px;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    cursor: pointer;
+}
+
+.tab {
+    flex: 1;
+    text-align: center;
+    padding: 10px;
+    border-radius: 5px 5px 0 0;
+    transition: background 0.3s;
+    color: black;
+}
+
+.tab.active {
+    font-weight: bold;
+    background: white;
+}
+
+.tab-content {
+    border-radius: 0 0 5px 5px;
+    padding: 20px;
+    background-color: #fff;
+    margin-top: -20px;
+}
+
+.tab-pane {
+    display: none;
+}
+
+.tab-pane.show {
+    display: block;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: black;
+    font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+}
+
+input.form-control {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+button {
+    position: relative;
+    width: 100%;
+    height: 50px;
+    border-radius: 5px;
+    background-color: #e2d115;
+    font-family: "Poppins", sans-serif;
+    color: rgb(0, 0, 0);
+    font-weight: bold;
+    overflow: hidden;
+    border: none;
+    cursor: pointer;
+    z-index: 1;
+    transition: color 0.4s ease;
+    font-size: 18px;
+    margin-top: 50px;
+    margin-bottom: 25px;
+}
+
+button::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background-image: linear-gradient(to right, #6a11cb, #2575fc);
+    z-index: -1;
+    transition: left 0.4s ease;
+}
+
+button:hover::before {
+    left: 0;
+}
+
+button:hover {
+    color: #fff;
+}
+
+.password-wrapper {
+    position: relative;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+}
+
+.tab-main .register {
+    border: none;
+    background-color: none;
+    color: rgb(0, 0, 0);
+    font-weight: bold;
+}
+
+.tab:not(.active):hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(3px);
+}
+
+@keyframes slideDown {
+    0% {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideUp {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.tab-pane.show.slide-down {
+    animation: slideDown 0.4s ease-out;
+}
+
+.tab-pane.show.slide-up {
+    animation: slideUp 0.4s ease-out;
+}

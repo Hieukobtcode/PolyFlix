@@ -16,9 +16,9 @@
         {{-- Header --}}
         <div class="header">
             <div class="logo">
-                <img src="{{ asset('logo/polyflix_title.png') }}" alt="PolyFlix Logo">
-                <a href="">
-                    <img class="ticket" src="{{ asset('banner/ticket.png') }}" alt="">
+                <a href="{{ route('home') }}">
+                    <img src="{{ asset('logo/CinematicPolyFlixLogo-removebg-preview-removebg-preview.png') }}"
+                        alt="PolyFlix Logo">
                 </a>
             </div>
             <div class="list-header">
@@ -26,11 +26,32 @@
                     <input type="text" name="search" placeholder="Tìm phim...">
                     <i class="fa-solid fa-magnifying-glass"></i>
                 </div>
-                <div class="login">
+
+                <div class="login dropdown">
                     <i class="fa-solid fa-user"></i>
-                    <span>Đăng nhập</span>
+
+                    @auth
+                        <div class="user-toggle" onclick="toggleUserDropdown()">
+                            <span class="user-name">{{ Auth::user()->name }}</span>
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </div>
+                        <div class="dropdown-menu" id="userDropdown">
+                            <a href="#"><i class="fa-solid fa-user"></i> Thông tin cá nhân</a>
+                            <a href="{{ route('logout') }}"
+                                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                <i class="fa-solid fa-arrow-right-from-bracket"></i> Đăng xuất
+                            </a>
+                            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                                @csrf
+                            </form>
+                        </div>
+                    @else
+                        <a href="{{ route('login.form') }}"><span>Đăng nhập</span></a>
+                    @endauth
                 </div>
+
             </div>
+
         </div>
     </div>
 
@@ -65,7 +86,8 @@
     {{-- Footer --}}
     <div class="footer">
         <div class="footer1">
-            <img src="{{ asset('logo/polyflix_title.png') }}" width="80px" alt="">
+            <img src="{{ asset('logo/CinematicPolyFlixLogo-removebg-preview-removebg-preview.png') }}" width="150px"
+                alt="">
             <p class="none">NO SEAT, NO CHILL</p>
             <div class="social">
                 <i class="fa-brands fa-facebook"></i>

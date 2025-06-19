@@ -1,31 +1,41 @@
 <?php
-namespace App\Http\Controllers;
 
+namespace App\Http\Controllers;
+use App\Http\Requests\LoginRequest;
+use App\Http\Requests\RegisterRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\ForgotPasswordMail;
+
 
 class AuthController extends Controller
 {
     public function showLoginForm()
     {
+        if (Auth::check()) {
+            return redirect()->route('home');
+        }
         return view('auth.login');
     }
 
-    public function login(Request $request)
+    public function login(LoginRequest $request)
     {
         $credentials = $request->only('email', 'password');
+        $remember = $request->has('remember');
 
-        if (Auth::attempt($credentials)) {
+        if (Auth::attempt($credentials, $remember)) {
             $user = Auth::user();
 
             switch ($user->vai_tro_id) {
-                case 1: return redirect()->route('admin.thong-ke.index');        // Admin tổng
-                case 2: return redirect()->route('admin.thong-ke.index');       // Admin chi nhánh
-                case 3: return redirect()->route('admin.thong-ke.index');       // Admin rạp
-                // case 4: return redirect()->route('staff.dashboard');        // Nhân viên
-                case 5: return redirect()->route('home');            // Người dùng
+                case 1:
+                case 2:
+                case 3:
+                    return redirect()->route('admin.thong-ke.index');
+                case 5:
+                    return redirect()->route('home');
                 default:
                     Auth::logout();
                     return back()->withErrors(['email' => 'Vai trò không hợp lệ']);
@@ -35,35 +45,62 @@ class AuthController extends Controller
         return back()->withErrors(['email' => 'Thông tin không chính xác'])->withInput();
     }
 
-    public function showRegisterForm()
-    {
-        return view('auth.register');
-    }
 
-    public function register(Request $request)
+    // public function showRegisterForm()
+    // {
+    //     return view('auth.register');
+    // }
+
+    public function register(RegisterRequest $request)
     {
-        $validated = $request->validate([
-            'name'     => 'required|string|max:255',
-            'email'    => 'required|email|unique:users,email',
-            'password' => 'required|string|min:6|confirmed',
-        ]);
+        $validated = $request->validated();
 
         $user = User::create([
             'name'        => $validated['name'],
             'email'       => $validated['email'],
             'password'    => bcrypt($validated['password']),
-            'vai_tro_id'  => 5, // Mặc định là người dùng
+            'dob'         => $validated['dob'] ?? null,
+            'phone'       => $validated['phone'] ?? null,
+            'username'    => $validated['username'] ?? null,
+            'vai_tro_id'  => 5,
             'trang_thai'  => 'active',
             'hoat_dong'   => 1,
         ]);
 
         Auth::login($user);
-        return redirect()->route('home');
+
+        return redirect()->route('login.form');
     }
 
     public function logout()
     {
         Auth::logout();
-        return redirect()->route('login.form');
+        return redirect()->route('home');
+    }
+
+    public function forgotPassForm()
+    {
+        return view('client.forgot-pass');
+    }
+
+    public function forgotPass(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email|exists:users,email',
+        ], [
+            'email.exists' => 'Email này không tồn tại trong hệ thống.',
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+
+        $newPassword = substr(str_shuffle('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'), 0, 8);
+
+        $user->update([
+            'password' => Hash::make($newPassword),
+        ]);
+
+        Mail::to($user->email)->send(new ForgotPasswordMail($user, $newPassword));
+
+        return back()->with('success', 'Mật khẩu mới đã được gửi đến email của bạn!');
     }
 }
