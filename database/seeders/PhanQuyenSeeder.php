@@ -187,7 +187,6 @@ class PhanQuyenSeeder extends Seeder
             ['id' => 168, 'ten' => 'Đặt cấp bậc thẻ mặc định', 'slug' => 'admin.cap-bac-the.set-default'],
             ['id' => 169, 'ten' => 'Gán khuyến mãi cho chi nhánh', 'slug' => 'admin.khuyen-mai.assign-chi-nhanh'],
             ['id' => 170, 'ten' => 'Xem thống kê sử dụng khuyến mãi', 'slug' => 'admin.khuyen-mai.thong-ke-su-dung'],
-
         ];
 
         foreach ($permissions as &$item) {
@@ -198,7 +197,7 @@ class PhanQuyenSeeder extends Seeder
         DB::table('phan_quyens')->truncate();
         DB::table('phan_quyens')->insert($permissions);
 
-            // Bật lại kiểm tra khóa ngoại
+        // Bật lại kiểm tra khóa ngoại
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
     }
 }

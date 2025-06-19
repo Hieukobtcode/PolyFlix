@@ -14,7 +14,7 @@ class CapBacThe extends Model
     protected $fillable = [
         'ten',
         'mo_ta',
-        'tong_chi_tieu',
+        'tong_so_ve_da_mua',
         'phan_tram_ve',
         'phan_tram_dich_vu',
         'is_default',
