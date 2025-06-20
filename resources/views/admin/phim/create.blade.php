@@ -218,6 +218,23 @@
                                 @enderror
                             </div>
 
+                            <div class="mb-4">
+                                <label for="phu_de_ids" class="form-label fw-semibold">Phụ đề <span
+                                        class="text-danger">*</span></label>
+                                <select class="form-control select2 rounded @error('phu_de_ids') is-invalid @enderror"
+                                    id="phu_de_ids" name="phu_de_ids[]" multiple>
+                                    @foreach ($phuDePhims as $phuDe)
+                                        <option value="{{ $phuDe->id }}"
+                                            {{ in_array($phuDe->id, old('phu_de_ids', [])) ? 'selected' : '' }}>
+                                            {{ $phuDe->ten_phu_de }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('dinh_dang_ids')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
                             {{-- <div class="mb-4">
                                 <label for="trang_thai" class="form-label fw-semibold">Trạng thái <span
                                         class="text-danger">*</span></label>
@@ -304,13 +321,16 @@
 
             // Select2 cho thể loại
             $('.select2').select2({
-                placeholder: "Chọn thể loại phim",
+                // placeholder: "Chọn thể loại phim",
+                // allowClear: true,
+                // placeholder: "Chọn định dạng phim",
+                // allowClear: true,
+                // placeholder: "Chọn phụ đề phim",
+                // allowClear: true,
+                // placeholder: "Chọn chi nhánh",
+                // allowClear: true,
+                // placeholder: "Chọn rạp",
                 allowClear: true,
-                placeholder: "Chọn định dạng phim",
-                allowClear: true,
-                placeholder: "Chọn chi nhánh",
-                allowClear: true,
-                placeholder: "Chọn rạp",
             });
 
             // Dữ liệu ngôn ngữ tĩnh

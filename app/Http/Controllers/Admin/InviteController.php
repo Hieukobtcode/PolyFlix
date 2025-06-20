@@ -9,8 +9,11 @@ use App\Models\AdminRequest;
 use App\Models\QuanLyInvite;
 use Illuminate\Http\Request;
 use App\Mail\MoiQuanLyChiNhanh;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Validation\Rule;
+
 
 
 
@@ -23,8 +26,14 @@ class InviteController extends Controller
     {
         // dd($request);
         $request->validate([
-            'email' => 'required|email|unique:quan_ly_invites,email',
-            'loai_quan_ly' => 'required|in:1,2', // 1 = chi nhánh, 2 = rạp phim
+            'email' => [
+                'required',
+                'email',
+                Rule::unique('quan_ly_invites', 'email')->where(function ($query) {
+                    return $query->where('used', 0);
+                }),
+            ],
+            'loai_quan_ly' => 'required|in:1,2',
             'chi_nhanh_id' => 'required_if:loai_quan_ly,1|nullable|exists:chi_nhanhs,id',
             'rap_phim_id' => 'required_if:loai_quan_ly,2|nullable|exists:rap_phims,id',
         ]);
@@ -44,6 +53,7 @@ class InviteController extends Controller
 
             $inviteData['rap_phim_id'] = $request->rap_phim_id;
         }
+        
 
         QuanLyInvite::create($inviteData);
 
@@ -57,6 +67,39 @@ class InviteController extends Controller
         }
 
         return back()->with('success', 'Đã gửi lời mời thành công đến ' . $request->email);
+    }
+
+    public function cancel(Request $request)
+    {
+        $request->validate([
+            'loai_quan_ly' => 'required|in:1,2',
+        ]);
+    
+        if ($request->loai_quan_ly == 1) {
+            // Hủy lời mời quản lý chi nhánh
+            $request->validate([
+                'chi_nhanh_id' => 'required|integer|exists:chi_nhanhs,id',
+            ]);
+    
+            DB::table('quan_ly_invites')
+                ->where('chi_nhanh_id', $request->chi_nhanh_id)
+                ->where('loai_quan_ly', 1)
+                ->where('used', 0)
+                ->update(['used' => 1]);
+        } elseif ($request->loai_quan_ly == 2) {
+            // Hủy lời mời quản lý rạp
+            $request->validate([
+                'rap_phim_id' => 'required|integer|exists:rap_phims,id',
+            ]);
+    
+            DB::table('quan_ly_invites')
+                ->where('rap_phim_id', $request->rap_phim_id)
+                ->where('loai_quan_ly', 2)
+                ->where('used', 0)
+                ->update(['used' => 1]);
+        }
+    
+        return back()->with('success', 'Đã hủy lời mời quản lý.');
     }
     public function showForm(Request $request)
     {

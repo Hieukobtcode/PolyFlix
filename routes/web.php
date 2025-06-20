@@ -1,51 +1,74 @@
 <?php
 
+use App\Http\Controllers\Admin\ChiTietDatVeController;
+use App\Http\Controllers\Admin\DatVeController;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\BannerController;
+use App\Http\Controllers\Admin\CapBacTheController;
+use App\Http\Controllers\Admin\ChiNhanhController;
 use App\Http\Controllers\Admin\ComboController;
 use App\Http\Controllers\Admin\DanhMucDoAnController;
 use App\Http\Controllers\Admin\DoAnController;
-use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\PhimController;
 use App\Http\Controllers\Admin\InviteController;
+use App\Http\Controllers\Admin\KhuyenMaiController;
 use App\Http\Controllers\Admin\LienHeController;
-use App\Http\Controllers\Admin\VaiTroController;
 use App\Http\Controllers\Admin\BaiVietController;
 use App\Http\Controllers\Admin\CauHinhController;
+use App\Http\Controllers\Admin\DinhDangPhimController;
+use App\Http\Controllers\Admin\PhuDePhimController;
 use App\Http\Controllers\Admin\GheNgoiController;
 use App\Http\Controllers\Admin\LoaiGheController;
-use App\Http\Controllers\Admin\RapphimController;
-use App\Http\Controllers\Admin\RequestController;
-use App\Http\Controllers\Admin\SoDoGheController;
-use App\Http\Controllers\Admin\ChiNhanhController;
-use App\Http\Controllers\Admin\CapBacTheController;
-use App\Http\Controllers\Admin\KhuyenMaiController;
 use App\Http\Controllers\Admin\LoaiPhongController;
 use App\Http\Controllers\Admin\PhanQuyenController;
-use App\Http\Controllers\Admin\SuatChieuController;
-use App\Http\Controllers\Admin\ThongKeController;
 use App\Http\Controllers\Admin\PhongChieuController;
+use App\Http\Controllers\Admin\RapphimController;
+use App\Http\Controllers\Admin\SoDoGheController;
+use App\Http\Controllers\Admin\SuatChieuController;
 use App\Http\Controllers\Admin\TheLoaiPhimController;
-use App\Http\Controllers\Admin\DinhDangPhimController;
+use App\Http\Controllers\Admin\ThongKeController;
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\VaiTroController;
 use App\Http\Controllers\SocialAuthController;
-use App\Http\Controllers\Admin\DatVeController;
 use App\Http\Controllers\Admin\CommentController;
 use App\Http\Controllers\Admin\GiaVeController;
+use App\Http\Controllers\Admin\RequestController;
+use App\Http\Controllers\Client\LoginController;
+use App\Http\Controllers\Client\ProfileController;
 
-// Trang welcome
 Route::get('/', function () {
-    return view('welcome');
+    return view('client.trang-chu');
 })->name('home');
 
-// Đăng ký (client)
-Route::get('dang-ky', [AuthController::class, 'showRegisterForm'])->name('register.form');
-Route::post('dang-ky', [AuthController::class, 'register'])->name('register');
+// Profile
+Route::get('profile', [ProfileController::class, 'index'])->name('profile');
+Route::post('profile', [ProfileController::class, 'updatePassword'])->name('updatePassword');
+Route::post('update-avatar', [ProfileController::class, 'updateAvatar'])->name('update.avatar');
+
+
+
+// ====================================================================================================
+
+
+//Quen mk
+Route::get('forgot-pass', [AuthController::class, 'forgotPassForm'])->name('forgot-form');
+Route::post('forgot-pass', [AuthController::class, 'forgotPass'])->name('forgot-pass');
 
 // Đăng nhập (chung)
 Route::get('dang-nhap', [AuthController::class, 'showLoginForm'])->name('login.form');
 Route::post('dang-nhap', [AuthController::class, 'login'])->name('login');
+
+
+// Đăng ký (client)
+Route::post('dang-ky', [AuthController::class, 'register'])->name('register');
+
+Route::get('xac-thuc-email', [AuthController::class, 'showVerifyForm'])->name('verify.form');
+
+Route::post('xac-thuc-email', [AuthController::class, 'verifyOtp'])->name('verify.submit');
+
+
 
 // GOOGLE
 Route::get('/auth/google', [SocialAuthController::class, 'redirectToGoogle'])->name('google.redirect');
@@ -58,6 +81,8 @@ Route::get('/auth/facebook/callback', [SocialAuthController::class, 'handleFaceb
 // Đăng xuất
 Route::post('dang-xuat', [AuthController::class, 'logout'])->name('logout');
 
+
+// =================================================================================================
 // Route tạm kiểm tra dữ liệu
 Route::get('/check-data', function () {
     return [
@@ -72,6 +97,8 @@ Route::post('/gui-loi-moi', [InviteController::class, 'sendInvite'])->name('invi
 Route::get('/nhap-thong-tin', [InviteController::class, 'showForm'])->name('invite.form');
 Route::post('/gui-thong-tin', [InviteController::class, 'submitForm'])->name('invite.submit');
 
+Route::get('/suat-chieu/theo-phong-ngay', [SuatChieuController::class, 'theoPhongVaNgay'])
+    ->name('admin.suat-chieu.theo-phong-ngay');
 // Group route cho admin
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access', 'permission.check'])->group(function () {
     Route::get('/', function () {
@@ -93,6 +120,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access', 'per
 
     // Quản lý loại phòng
     Route::resource('loai-phong', LoaiPhongController::class);
+    // Quản lý phụ đề phim
+    Route::resource('phu-de-phim', PhuDePhimController::class);
 
     // Quản lý phim và chức năng xóa mềm
 
@@ -153,6 +182,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access', 'per
     // Thống kê
     Route::prefix('thong-ke')->name('thong-ke.')->group(function () {
         Route::get('/', [ThongKeController::class, 'index'])->name('index');
+        Route::get('doanh-thu', [ThongKeController::class, 'doanhThu'])->name('doanh-thu');
+        Route::get('ve', [ThongKeController::class, 've'])->name('ve');
+        Route::get('suat-chieu', [ThongKeController::class, 'suatChieu'])->name('suat-chieu');
+        Route::get('do-an-combo', [ThongKeController::class, 'doAnCombo'])->name('do-an-combo');
         Route::get('dashboard', [ThongKeController::class, 'dashboard'])->name('dashboard');
         Route::get('phim', [ThongKeController::class, 'phim'])->name('phim');
         Route::get('lien-he', [ThongKeController::class, 'lienHe'])->name('lien-he');
@@ -185,17 +218,25 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access', 'per
     Route::post('suat-chieu/bulk-delete', [SuatChieuController::class, 'bulkDelete'])->name('suat-chieu.bulk-delete');
     Route::post('suat-chieu/bulk-toggle-status', [SuatChieuController::class, 'bulkToggleStatus'])->name('suat-chieu.bulk-toggle-status');
     Route::post('suat-chieu/{suatChieu}/toggle-status', [SuatChieuController::class, 'toggleStatus']);
-    Route::resource('suat-chieu', SuatChieuController::class);
 
-    Route::resource('combos', ComboController::class);
-    Route::resource('do-an', DoAnController::class);
-    Route::resource('danh-muc-do-an', DanhMucDoAnController::class);
+    Route::resource('suat-chieu', SuatChieuController::class);
 
     Route::get('requests', [RequestController::class, 'index'])->name('requests.index');
     Route::post('requests/{id}/approve', [RequestController::class, 'approve'])->name('requests.approve');
     Route::delete('requests/{id}', [RequestController::class, 'reject'])->name('requests.reject');
 
-    Route::resource('dat-ves', DatVeController::class);
+    // =========================================================================
+
+    // Đặt vé
+    Route::resource('dat-ves', DatVeController::class)->except(['show']);
+
+    Route::get('/dat-ve', [DatVeController::class, 'show'])->name('dat-ve.show');
+
+    // ============================================================================
+    //gửi email
+    Route::get('dat-ve/{id}/gui-email', [DatVeController::class, 'guiVe'])->name('dat_ve.gui_email');
+
+    // =============================================================================
 
     Route::get('gia-ve', [GiaVeController::class, 'index'])->name('gia-ve.index');
     Route::post('gia-ve/cap-nhat', [GiaVeController::class, 'updateGiaVe'])->name('gia-ve.cap-nhat');
@@ -219,4 +260,6 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access', 'per
         // Xóa bình luận
         Route::delete('{id}', [CommentController::class, 'destroy'])->name('destroy');
     });
+    // Hủy lời mời quản lý
+    Route::post('invite/cancel', [InviteController::class, 'cancel'])->name('invite.cancel');
 });

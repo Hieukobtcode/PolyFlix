@@ -69,7 +69,7 @@ public function show($phimId)
 
     $comments = Comment::with('user.ratings')
         ->where('phim_id', $phimId)
-        ->where('visible', true)
+        // ->where('visible', true)
         ->latest()
         ->get();
 
@@ -78,6 +78,15 @@ public function show($phimId)
 
     return view('admin.comments.show', compact('phim', 'comments', 'averageRating', 'ratingCount'));
 }
+public function unhide($id)
+{
+    $comment = Comment::findOrFail($id);
+    $comment->visible = true;
+    $comment->save();
+
+    return back()->with('success', 'Đã hiện lại bình luận.');
+}
+
 
 
 }

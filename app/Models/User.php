@@ -22,7 +22,10 @@ class User extends Authenticatable
         'so_dien_thoai',
         'trang_thai',
         'hoat_dong',
+        'ngay_sinh',
+        'email_verified_at'
     ];
+
 
     protected $hidden = [
         'password',
@@ -61,5 +64,4 @@ class User extends Authenticatable
     {
         return $this->hasMany(Rating::class);
     }
-
 }

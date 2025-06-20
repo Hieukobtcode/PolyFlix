@@ -124,9 +124,52 @@
 
                                     <td class="text-center">
                                         @if ($chiNhanh->quan_ly_id)
-                                            {{ $chiNhanh->quanLy->name ?? 'ID: ' . $chiNhanh->quan_ly_id }}
+                                            <a href="{{ route('admin.users.show', $chiNhanh->quan_ly_id) }}"
+                                                class="text-decoration-none">
+
+                                                {{ $chiNhanh->quanLy->name ?? 'ID: ' . $chiNhanh->quan_ly_id }}
+                                            </a>
+                                        @elseif (in_array($chiNhanh->id, $pendingInvites))
+                                            <button type="button" class="badge bg-warning text-dark border-0"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#cancelInviteModal{{ $chiNhanh->id }}">
+                                                Đang phân công
+                                            </button>
+
+                                            <!-- Modal xác nhận hủy -->
+                                            <div class="modal fade" id="cancelInviteModal{{ $chiNhanh->id }}"
+                                                tabindex="-1" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered modal-sm">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title">Thông tin lời mời</h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                                aria-label="Đóng"></button>
+                                                        </div>
+                                                        <div class="modal-body text-center">
+                                                            <p><strong>Email:</strong><br>{{ $pendingEmails[$chiNhanh->id] ?? 'Không rõ' }}
+                                                            </p>
+                                                        </div>
+                                                        <div class="modal-footer justify-content-between">
+                                                            <button class="btn btn-secondary btn-sm"
+                                                                data-bs-dismiss="modal">Đóng</button>
+                                                            <form id="cancel-form-{{ $chiNhanh->id }}"
+                                                                action="{{ route('admin.invite.cancel') }}" method="POST"
+                                                                onsubmit="return confirmCancelInvite(this, '{{ $pendingEmails[$chiNhanh->id] ?? '' }}')">
+                                                                @csrf
+                                                                <input type="hidden" name="chi_nhanh_id"
+                                                                    value="{{ $chiNhanh->id }}">
+                                                                <input type="hidden" name="loai_quan_ly" value="1">
+                                                                <button type="submit" class="btn btn-danger btn-sm">
+                                                                    <i class="fas fa-times-circle me-1"></i> Hủy lời mời
+                                                                </button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         @else
-                                            <span class="text-muted fst-italic">Chưa phân công</span>
+                                            <span class="badge bg-secondary text-dark border-0">Chưa phân công</span>
                                         @endif
                                     </td>
 
@@ -166,9 +209,10 @@
                                         </a>
 
                                         {{-- Quản lý --}}
-                                        @if (!$chiNhanh->quan_ly_id)
+                                        @if (!$chiNhanh->quan_ly_id && !in_array($chiNhanh->id, $pendingInvites))
                                             <button class="btn btn-sm btn-outline-warning" data-bs-toggle="modal"
-                                                data-bs-target="#inviteModal{{ $chiNhanh->id }}" title="Phân công quản lý">
+                                                data-bs-target="#inviteModal{{ $chiNhanh->id }}"
+                                                title="Phân công quản lý">
                                                 <i class="fa-solid fa-user-plus" style="color: #FFD43B;"></i>
                                             </button>
 
@@ -205,11 +249,11 @@
                                                     </form>
                                                 </div>
                                             </div>
-                                        @else
+                                        {{-- @elseif($chiNhanh->quanLy)
                                             <a href="{{ route('admin.users.show', $chiNhanh->quan_ly_id) }}"
                                                 class="btn btn-sm btn-outline-warning" title="Xem thông tin quản lý">
                                                 <i class="fa-solid fa-user" style="color: #FFD43B;"></i>
-                                            </a>
+                                            </a> --}}
                                         @endif
 
                                     </td>
@@ -259,5 +303,14 @@
                 new bootstrap.Tooltip(el);
             });
         });
+
+        function toggleCancelBtn(id) {
+            const form = document.getElementById('cancel-form-' + id);
+            form.style.display = (form.style.display === 'none') ? 'inline-block' : 'none';
+        }
+
+        function confirmCancelInvite(form, email) {
+            return confirm(`Bạn có chắc chắn muốn hủy lời mời đã gửi đến ${email}?`);
+        }
     </script>
 @endsection

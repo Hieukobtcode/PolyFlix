@@ -1,0 +1,451 @@
+.banner,
+.booking-fast,
+.menu,
+.list-movie,
+.khuyen-mai,
+.new {
+    width: 100%;
+    max-width: 1200px;
+    padding: 0 15px;
+    box-sizing: border-box;
+    margin: 0 auto;
+}
+.banner {
+    width: 100%;
+    max-width: 1215px; 
+    margin: 20px auto;
+    text-align: center;
+    padding: 0 10px;
+}
+
+.banner img {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+    display: block;
+}
+
+.booking-fast {
+    margin: 30px auto;
+    background-color: #ecf2ff;
+    width: 80%;
+    border: black 1px solid;
+    height: 100px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0px 40px;
+    border-radius: 10px;
+}
+
+.booking-fast .btn span {
+    font-family: "Anton", sans-serif;
+    color: #333;
+    font-size: 23px;
+    font-weight: normal;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.booking-fast .select {
+    display: flex;
+    gap: 20px;
+}
+
+.booking-fast .select select {
+    width: 190px;
+    height: 50px;
+    border-radius: 10px;
+    text-align: center;
+    text-align-last: center;
+    font-size: 20px;
+    font-weight: bold;
+    color: #6a1b9a;
+    font-family: "Poppins", sans-serif;
+    border: 2px solid #ccc;
+    background-color: #f9f9f9;
+    padding: 0 12px;
+}
+
+.booking-fast .select select:valid {
+    background-color: #f3ea28;
+}
+
+.booking-fast .select button {
+    position: relative;
+    width: 110px;
+    height: 50px;
+    border-radius: 10px;
+    background-color: #663399;
+    font-family: "Poppins", sans-serif;
+    color: white;
+    font-weight: bold;
+    overflow: hidden;
+    border: none;
+    cursor: pointer;
+    z-index: 1;
+    transition: color 0.4s ease;
+    font-size: 18px;
+}
+
+.booking-fast .select button::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to right, #ff6600, #ffcc00);
+    z-index: -1;
+    transition: left 0.4s ease;
+}
+
+.booking-fast .select button:hover::before {
+    left: 0;
+}
+
+.booking-fast .select button:hover {
+    color: #fff;
+}
+
+.menu {
+    width: 80%;
+    margin: 70px auto 0 auto;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.menu button {
+    border: none;
+    width: 5px;
+    height: 30px;
+    background-color: #ffcc00;
+    border-radius: 5px;
+}
+
+.menu p {
+    padding: 0;
+    font-size: 25px;
+    font-weight: bold;
+    line-height: 1;
+}
+
+.menu .list {
+    display: flex;
+    margin-left: 50px;
+    gap: 40px;
+}
+
+.menu .list p {
+    font-size: 18px;
+    color: #b5b5b5;
+}
+
+.list-movie {
+    width: 80%;
+    margin: 50px auto;
+    display: flex;
+    gap: 70px;
+    flex-wrap: wrap; /* Đảm bảo responsive */
+    justify-content: center;
+}
+
+.list-movie .movie {
+    width: 240px;
+    cursor: pointer;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.list-movie .movie .img-wrapper {
+    position: relative;
+    width: 100%;
+    height: 360px;
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.list-movie .movie img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    border-radius: 15px;
+    transition: 0.3s ease;
+}
+
+.list-movie .movie .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 15px;
+    background-color: rgba(87, 84, 84, 0.522);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    gap: 10px;
+    transition: 0.3s ease;
+    z-index: 2;
+}
+
+.list-movie .movie:hover img {
+    filter: brightness(50%);
+}
+
+.list-movie .movie:hover .overlay {
+    opacity: 1;
+}
+
+.list-movie .movie p {
+    font-size: 17px;
+    font-weight: bold;
+    color: white;
+    text-align: left;
+    align-self: flex-start;
+    margin: 8px 0 0 0;
+}
+
+/* Nút overlay */
+.list-movie .movie .overlay button {
+    padding: 8px 16px;
+    width: 130px;
+    height: 40px;
+    border: none;
+    font-size: 14px;
+    color: white;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.list-movie .movie .overlay .buy {
+    background-color: #e37248;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-weight: bold;
+    border: none;
+    transition: background-color 0.3s ease;
+}
+
+.list-movie .movie .overlay .trailer {
+    background-color: transparent;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-weight: bold;
+    border: 1px solid white;
+    transition: background-color 0.3s ease, border 0.3s ease;
+}
+
+.list-movie .movie .overlay button:hover {
+    background-color: #fb9440;
+    border-color: transparent;
+    color: white;
+}
+
+.btn-see {
+    display: block;
+    margin: 0 auto;
+    width: 250px;
+    height: 44px;
+    border: 1px solid yellow;
+    border-radius: 5px;
+    background-color: #414184;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.btn-see::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to right, #ff6600, #ffcc00);
+    z-index: -1;
+    transition: left 0.4s ease;
+}
+
+.btn-see:hover::before {
+    left: 0;
+}
+
+.khuyen-mai {
+    width: 80%;
+    margin: 0px auto;
+}
+
+.khuyen-mai p {
+    margin-top: 70px;
+    font-family: "Anton", sans-serif;
+    color: #ffffff;
+    font-size: 30px;
+    font-weight: normal;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.khuyen-mai .img {
+    margin-top: 30px;
+    display: flex;
+    gap: 70px;
+    justify-content: center;
+}
+
+.khuyen-mai .img img {
+    width: 330px;
+    border-radius: 10px;
+}
+
+.btn-km {
+    display: block;
+    margin: 43px auto 0px auto;
+    width: 250px;
+    height: 44px;
+    border: 1px solid yellow;
+    border-radius: 5px;
+    background-color: #414184;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.btn-km::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to right, #ff6600, #ffcc00);
+    z-index: -1;
+    transition: left 0.4s ease;
+}
+
+.btn-km:hover::before {
+    left: 0;
+}
+
+.new {
+    width: 80%;
+    margin: 80px auto 0 auto;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.new button {
+    border: none;
+    width: 5px;
+    height: 30px;
+    background-color: #ffcc00;
+    border-radius: 5px;
+}
+
+.new p {
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: 25px;
+    font-weight: bold;
+    line-height: 1;
+}
+
+.new .list {
+    display: flex;
+    margin-left: 50px;
+    gap: 40px;
+}
+
+.new .list p {
+    font-size: 18px;
+    color: #b5b5b5;
+}
+.list-movie,
+.khuyen-mai .img,
+.booking-fast .select {
+    flex-wrap: wrap;
+}
+
+@media (max-width: 1024px) {
+    .list-movie {
+        justify-content: center;
+        gap: 30px;
+    }
+
+    .list-movie .movie {
+        width: 45%;
+        height: auto;
+    }
+
+    .khuyen-mai .img {
+        justify-content: center;
+        gap: 30px;
+        flex-wrap: wrap;
+    }
+
+    .khuyen-mai .img img {
+        width: 80%;
+    }
+
+    .booking-fast {
+        flex-direction: column;
+        height: auto;
+        gap: 15px;
+        padding: 20px;
+        align-items: flex-start;
+    }
+
+    .booking-fast .select {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .booking-fast .select select,
+    .booking-fast .select button {
+        width: 100%;
+    }
+
+    .menu,
+    .new {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .menu .list,
+    .new .list {
+        margin-left: 0;
+        gap: 20px;
+    }
+
+    .list-movie .movie p {
+        text-align: left;
+    }
+}
+
+@media (max-width: 768px) {
+    .list-movie .movie {
+        width: 100%;
+    }
+
+    .khuyen-mai .img img {
+        width: 100%;
+    }
+
+    .btn-see,
+    .btn-km {
+        width: 90%;
+    }
+}
