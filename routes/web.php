@@ -36,10 +36,18 @@ use App\Http\Controllers\Admin\CommentController;
 use App\Http\Controllers\Admin\GiaVeController;
 use App\Http\Controllers\Admin\RequestController;
 use App\Http\Controllers\Client\LoginController;
+use App\Http\Controllers\Client\ProfileController;
 
 Route::get('/', function () {
     return view('client.trang-chu');
 })->name('home');
+
+// Profile
+Route::get('profile', [ProfileController::class, 'index'])->name('profile');
+Route::post('profile', [ProfileController::class, 'updatePassword'])->name('updatePassword');
+Route::post('update-avatar', [ProfileController::class, 'updateAvatar'])->name('update.avatar');
+
+
 
 // ====================================================================================================
 
