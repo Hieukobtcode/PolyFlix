@@ -1,43 +1,52 @@
 @extends('layouts.client')
 
 @section('content')
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     @vite('resources/js/login.js')
     <div class="login-container">
         <div class="tab-main">
-            <div class="tab active" onclick="showTab('login')">ĐĂNG NHẬP</div>
-            <div class="tab register" onclick="showTab('register')">ĐĂNG KÝ</div>
+            <div class="tab {{ session('active_tab') != 'register' ? 'active' : '' }}" data-tab="login"
+                onclick="showTab('login')">ĐĂNG NHẬP</div>
+            <div class="tab {{ session('active_tab') == 'register' ? 'active' : '' }}" data-tab="register"
+                onclick="showTab('register')">ĐĂNG KÝ</div>
         </div>
+
+        @if ($errors->any())
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    Swal.fire({
+                        html: `{!! implode('<br>', $errors->all()) !!}`,
+                        confirmButtonText: 'OK',
+                        customClass: {
+                            popup: 'custom-popup',
+                            confirmButton: 'custom-confirm-button'
+                        },
+                        buttonsStyling: false
+                    });
+                });
+            </script>
+        @endif
 
         <div class="tab-content">
             <form action="{{ route('login') }}" method="POST">
-                @if ($errors->any())
-                    <div class="alert alert-danger">
-                        {{ $errors->first() }}
-                    </div>
-                @endif
                 @csrf
-                <!-- Đăng nhập -->
-                <div class="tab-pane show" id="login">
+                <div class="tab-pane {{ session('active_tab') != 'register' ? 'show slide-down' : '' }}" id="login">
+                    <!-- Đăng nhập -->
                     <div class="form-group">
                         <label for="login_email">Email</label>
-                        <input type="email" id="login_email" name="email" class="form-control" autocomplete="email" placeholder="Nhập email">
-                        @error('email')
-                            <small class="text-danger">{{ $message }}</small>
-                        @enderror
+                        <input type="email" id="login_email" name="email" class="form-control" autocomplete="email"
+                            placeholder="Nhập email">
                     </div>
 
                     <div class="form-group">
                         <label for="login_pass">Mật khẩu</label>
                         <div class="password-wrapper">
-                            <input type="password" id="login_pass" name="password" autocomplete="current-password" class="form-control"
-                                placeholder="Nhập mật khẩu">
+                            <input type="password" id="login_pass" name="password" autocomplete="current-password"
+                                class="form-control" placeholder="Nhập mật khẩu">
                             <span class="toggle-password" data-target="#login_pass">
                                 <i class="fa-solid fa-eye-slash" style="color: #B197FC;"></i>
                             </span>
                         </div>
-                        @error('pass')
-                            <small class="text-danger">{{ $message }}</small>
-                        @enderror
                     </div>
 
                     <div class="remember-pass">
@@ -52,22 +61,11 @@
 
                     <button type="submit">Đăng nhập</button>
                 </div>
-
             </form>
 
             <form action="{{ route('register') }}" method="POST">
                 @csrf
-                <div class="tab-pane" id="register">
-                    @if ($errors->any())
-                        <div class="alert alert-danger">
-                            <ul class="mb-0">
-                                @foreach ($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
-                        </div>
-                    @endif
-
+                <div class="tab-pane {{ session('active_tab') == 'register' ? 'show slide-up' : '' }}" id="register">
                     <div class="form-group">
                         <label for="name">Họ và tên</label>
                         <input type="text" id="name" name="name" class="form-control" value="{{ old('name') }}"
@@ -142,14 +140,14 @@
                 </div>
             </form>
 
-
+            @if (session('active_tab'))
+                <script>
+                    document.addEventListener("DOMContentLoaded", function() {
+                        showTab("{{ session('active_tab') }}");
+                    });
+                </script>
+            @endif
 
         </div>
     </div>
 @endsection
-
-
-
-
-{{-- <a href="{{ route('google.redirect') }}" class="btn btn-danger">Đăng nhập bằng Google</a>
-<a href="{{ route('facebook.redirect') }}" class="btn btn-primary">Đăng nhập bằng Facebook</a> --}}

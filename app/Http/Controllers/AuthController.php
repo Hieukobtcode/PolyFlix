@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use Illuminate\Http\Request;
@@ -42,17 +43,13 @@ class AuthController extends Controller
             }
         }
 
-        return back()->withErrors(['email' => 'Thông tin không chính xác'])->withInput();
+        return back()->withErrors(['email' => 'Đăng nhập thất bại'])->withInput();
     }
-
-
-    // public function showRegisterForm()
-    // {
-    //     return view('auth.register');
-    // }
 
     public function register(RegisterRequest $request)
     {
+        session()->flash('active_tab', 'register');
+
         $validated = $request->validated();
 
         $user = User::create([
