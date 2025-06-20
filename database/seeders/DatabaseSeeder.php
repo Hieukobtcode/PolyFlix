@@ -24,11 +24,15 @@ class DatabaseSeeder extends Seeder
         
 
         $this->call([
-            CauHinhSeeder::class,
-            VaiTroSeeder::class,
-            PhanQuyenSeeder::class,
-            VaiTroPhanQuyenSeeder::class,
-            UserSeeder::class,
+            KhuyenMaiSeeder::class,
+            // BannerSeeder::class,
+            // LoaiPhongSeeder::class,
+            // CauHinhSeeder::class,
+            // VaiTroSeeder::class,
+            // PhanQuyenSeeder::class,
+            // VaiTroPhanQuyenSeeder::class,
+            // UserSeeder::class,
+             
         ]);
     }
 }

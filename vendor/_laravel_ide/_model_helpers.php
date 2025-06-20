@@ -5,36 +5,8 @@ namespace App\Models {
     /**
      * App\Models\AdminRequest
      *
-     * @property mixed $loai_quan_ly
-     * @property \Illuminate\Support\Carbon|null $updated_at
-     * @property \Illuminate\Support\Carbon|null $created_at
-     * @property \Illuminate\Support\Carbon|null $approved_at
-     * @property boolean $approved
-     * @property int|null $rap_phim_id
-     * @property int|null $chi_nhanh_id
-     * @property string|null $so_dien_thoai
-     * @property string|null $dia_chi
-     * @property string|null $avatar
-     * @property \Illuminate\Support\Carbon|null $ngay_sinh
-     * @property string $original_email
-     * @property string $name
-     * @property int $id
      * @property-read \App\Models\ChiNhanh $chiNhanh
      * @property-read \App\Models\RapPhim $rapPhim
-     * @method static \Illuminate\Database\Eloquent\Builder<AdminRequest>|AdminRequest whereId($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<AdminRequest>|AdminRequest whereName($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<AdminRequest>|AdminRequest whereOriginalEmail($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<AdminRequest>|AdminRequest whereNgaySinh($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<AdminRequest>|AdminRequest whereAvatar($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<AdminRequest>|AdminRequest whereDiaChi($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<AdminRequest>|AdminRequest whereSoDienThoai($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<AdminRequest>|AdminRequest whereChiNhanhId($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<AdminRequest>|AdminRequest whereRapPhimId($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<AdminRequest>|AdminRequest whereApproved($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<AdminRequest>|AdminRequest whereApprovedAt($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<AdminRequest>|AdminRequest whereCreatedAt($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<AdminRequest>|AdminRequest whereUpdatedAt($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<AdminRequest>|AdminRequest whereLoaiQuanLy($value)
      * @method static \Illuminate\Database\Eloquent\Builder<AdminRequest>|AdminRequest newModelQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<AdminRequest>|AdminRequest newQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<AdminRequest>|AdminRequest query()
@@ -334,7 +306,6 @@ namespace App\Models {
      * App\Models\BaiViet
      *
      * @property string $status
-     * @property string $ngay_cap_nhat
      * @property string $ngay_tao
      * @property string|null $hinh_anh
      * @property string $noi_dung
@@ -345,7 +316,6 @@ namespace App\Models {
      * @method static \Illuminate\Database\Eloquent\Builder<BaiViet>|BaiViet whereNoiDung($value)
      * @method static \Illuminate\Database\Eloquent\Builder<BaiViet>|BaiViet whereHinhAnh($value)
      * @method static \Illuminate\Database\Eloquent\Builder<BaiViet>|BaiViet whereNgayTao($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<BaiViet>|BaiViet whereNgayCapNhat($value)
      * @method static \Illuminate\Database\Eloquent\Builder<BaiViet>|BaiViet whereStatus($value)
      * @method static \Illuminate\Database\Eloquent\Builder<BaiViet>|BaiViet newModelQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<BaiViet>|BaiViet newQuery()
@@ -960,14 +930,14 @@ namespace App\Models {
      * @property boolean $is_default
      * @property int $phan_tram_dich_vu
      * @property int $phan_tram_ve
-     * @property int $tong_so_ve_da_mua
+     * @property int $tong_chi_tieu
      * @property string $mo_ta
      * @property string $ten
      * @property int $id
      * @method static \Illuminate\Database\Eloquent\Builder<CapBacThe>|CapBacThe whereId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<CapBacThe>|CapBacThe whereTen($value)
      * @method static \Illuminate\Database\Eloquent\Builder<CapBacThe>|CapBacThe whereMoTa($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<CapBacThe>|CapBacThe whereTongSoVeDaMua($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<CapBacThe>|CapBacThe whereTongChiTieu($value)
      * @method static \Illuminate\Database\Eloquent\Builder<CapBacThe>|CapBacThe wherePhanTramVe($value)
      * @method static \Illuminate\Database\Eloquent\Builder<CapBacThe>|CapBacThe wherePhanTramDichVu($value)
      * @method static \Illuminate\Database\Eloquent\Builder<CapBacThe>|CapBacThe whereIsDefault($value)
@@ -1928,16 +1898,8 @@ namespace App\Models {
     /**
      * App\Models\ChiTietDatVe
      *
-     * @property float $gia_ve
-     * @property int $ghe_id
-     * @property int $dat_ve_id
-     * @property int $id
-     * @property-read \App\Models\DatVe $datVes
+     * @property-read \App\Models\DatVe $datVe
      * @property-read \App\Models\GheNgoi $ghe
-     * @method static \Illuminate\Database\Eloquent\Builder<ChiTietDatVe>|ChiTietDatVe whereId($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<ChiTietDatVe>|ChiTietDatVe whereDatVeId($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<ChiTietDatVe>|ChiTietDatVe whereGheId($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<ChiTietDatVe>|ChiTietDatVe whereGiaVe($value)
      * @method static \Illuminate\Database\Eloquent\Builder<ChiTietDatVe>|ChiTietDatVe newModelQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<ChiTietDatVe>|ChiTietDatVe newQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<ChiTietDatVe>|ChiTietDatVe query()
@@ -2236,10 +2198,8 @@ namespace App\Models {
     /**
      * App\Models\Combo
      *
-     * @property int|null $chi_nhanh_id
      * @property \Illuminate\Support\Carbon|null $updated_at
      * @property \Illuminate\Support\Carbon|null $created_at
-     * @property int $so_luong
      * @property float $gia_combo
      * @property float $gia
      * @property mixed $trang_thai
@@ -2260,10 +2220,8 @@ namespace App\Models {
      * @method static \Illuminate\Database\Eloquent\Builder<Combo>|Combo whereTrangThai($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Combo>|Combo whereGia($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Combo>|Combo whereGiaCombo($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Combo>|Combo whereSoLuong($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Combo>|Combo whereCreatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Combo>|Combo whereUpdatedAt($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Combo>|Combo whereChiNhanhId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Combo>|Combo newModelQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<Combo>|Combo newQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<Combo>|Combo query()
@@ -3496,31 +3454,18 @@ namespace App\Models {
     /**
      * App\Models\DatVe
      *
-     * @property \Illuminate\Support\Carbon|null $updated_at
-     * @property \Illuminate\Support\Carbon|null $created_at
-     * @property mixed $trang_thai
-     * @property string $phuong_thuc_tt
-     * @property float $tong_tien
-     * @property int|null $khuyen_mai_id
-     * @property int $suat_chieu_id
-     * @property int $user_id
-     * @property string $ma_dat_ve
-     * @property int $id
      * @property-read \App\Models\User $nguoiDung
      * @property-read \App\Models\Phim $phim
      * @property-read \App\Models\RapPhim $rapPhim
      * @property-read \App\Models\ChiNhanh $chiNhanh
      * @property-read \App\Models\SuatChieu $suatChieu
-     * @method static \Illuminate\Database\Eloquent\Builder<DatVe>|DatVe whereId($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<DatVe>|DatVe whereMaDatVe($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<DatVe>|DatVe whereUserId($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<DatVe>|DatVe whereSuatChieuId($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<DatVe>|DatVe whereKhuyenMaiId($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<DatVe>|DatVe whereTongTien($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<DatVe>|DatVe wherePhuongThucTt($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<DatVe>|DatVe whereTrangThai($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<DatVe>|DatVe whereCreatedAt($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<DatVe>|DatVe whereUpdatedAt($value)
+     * @property-read \App\Models\DoAn $DoAn
+     * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\DoAn> $doAns
+     * @property-read int|null $doAns_count
+     * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Combo> $combos
+     * @property-read int|null $combos_count
+     * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\GheNgoi> $gheNgois
+     * @property-read int|null $gheNgois_count
      * @method static \Illuminate\Database\Eloquent\Builder<DatVe>|DatVe newModelQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<DatVe>|DatVe newQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<DatVe>|DatVe query()
@@ -7024,7 +6969,6 @@ namespace App\Models {
      *
      * @property \Illuminate\Support\Carbon|null $update_at
      * @property \Illuminate\Support\Carbon|null $create_at
-     * @property float $phu_thu
      * @property string|null $mo_ta
      * @property string $ten_loai_phong
      * @property int $id
@@ -7033,7 +6977,6 @@ namespace App\Models {
      * @method static \Illuminate\Database\Eloquent\Builder<LoaiPhong>|LoaiPhong whereId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<LoaiPhong>|LoaiPhong whereTenLoaiPhong($value)
      * @method static \Illuminate\Database\Eloquent\Builder<LoaiPhong>|LoaiPhong whereMoTa($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<LoaiPhong>|LoaiPhong wherePhuThu($value)
      * @method static \Illuminate\Database\Eloquent\Builder<LoaiPhong>|LoaiPhong whereCreateAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<LoaiPhong>|LoaiPhong whereUpdateAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<LoaiPhong>|LoaiPhong newModelQuery()
@@ -7646,7 +7589,6 @@ namespace App\Models {
      *
      * @property \Illuminate\Support\Carbon|null $update_at
      * @property \Illuminate\Support\Carbon $create_at
-     * @property string|null $deleted_at
      * @property mixed $trang_thai
      * @property string|null $do_tuoi
      * @property string|null $quoc_gia
@@ -7693,7 +7635,6 @@ namespace App\Models {
      * @method static \Illuminate\Database\Eloquent\Builder<Phim>|Phim whereQuocGia($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Phim>|Phim whereDoTuoi($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Phim>|Phim whereTrangThai($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Phim>|Phim whereDeletedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Phim>|Phim whereCreateAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Phim>|Phim whereUpdateAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Phim>|Phim newModelQuery()
@@ -8606,14 +8547,8 @@ namespace App\Models {
     /**
      * App\Models\PhimPhuDe
      *
-     * @property int $phu_de_phim_id
-     * @property int $phim_id
-     * @property int $id
      * @property-read \App\Models\Phim $phim
      * @property-read \App\Models\PhuDePhim $phuDePhim
-     * @method static \Illuminate\Database\Eloquent\Builder<PhimPhuDe>|PhimPhuDe whereId($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<PhimPhuDe>|PhimPhuDe wherePhimId($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<PhimPhuDe>|PhimPhuDe wherePhuDePhimId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<PhimPhuDe>|PhimPhuDe newModelQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<PhimPhuDe>|PhimPhuDe newQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<PhimPhuDe>|PhimPhuDe query()
@@ -9847,20 +9782,8 @@ namespace App\Models {
     /**
      * App\Models\PhuDePhim
      *
-     * @property \Illuminate\Support\Carbon|null $update_at
-     * @property \Illuminate\Support\Carbon $create_at
-     * @property mixed $trang_thai
-     * @property string|null $mo_ta
-     * @property string $ten_phu_de
-     * @property int $id
      * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Phim> $phims
      * @property-read int|null $phims_count
-     * @method static \Illuminate\Database\Eloquent\Builder<PhuDePhim>|PhuDePhim whereId($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<PhuDePhim>|PhuDePhim whereTenPhuDe($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<PhuDePhim>|PhuDePhim whereMoTa($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<PhuDePhim>|PhuDePhim whereTrangThai($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<PhuDePhim>|PhuDePhim whereCreateAt($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<PhuDePhim>|PhuDePhim whereUpdateAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<PhuDePhim>|PhuDePhim newModelQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<PhuDePhim>|PhuDePhim newQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<PhuDePhim>|PhuDePhim query()
@@ -10159,26 +10082,6 @@ namespace App\Models {
     /**
      * App\Models\QuanLyInvite
      *
-     * @property \Illuminate\Support\Carbon|null $updated_at
-     * @property \Illuminate\Support\Carbon|null $created_at
-     * @property int|null $rap_phim_id
-     * @property int|null $chi_nhanh_id
-     * @property boolean $used
-     * @property \Illuminate\Support\Carbon $expires_at
-     * @property string $token
-     * @property string|null $loai_quan_ly
-     * @property string $email
-     * @property int $id
-     * @method static \Illuminate\Database\Eloquent\Builder<QuanLyInvite>|QuanLyInvite whereId($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<QuanLyInvite>|QuanLyInvite whereEmail($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<QuanLyInvite>|QuanLyInvite whereLoaiQuanLy($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<QuanLyInvite>|QuanLyInvite whereToken($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<QuanLyInvite>|QuanLyInvite whereExpiresAt($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<QuanLyInvite>|QuanLyInvite whereUsed($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<QuanLyInvite>|QuanLyInvite whereChiNhanhId($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<QuanLyInvite>|QuanLyInvite whereRapPhimId($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<QuanLyInvite>|QuanLyInvite whereCreatedAt($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<QuanLyInvite>|QuanLyInvite whereUpdatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<QuanLyInvite>|QuanLyInvite newModelQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<QuanLyInvite>|QuanLyInvite newQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<QuanLyInvite>|QuanLyInvite query()
@@ -10787,7 +10690,6 @@ namespace App\Models {
      * @property \Illuminate\Support\Carbon|null $updated_at
      * @property \Illuminate\Support\Carbon|null $created_at
      * @property \Illuminate\Support\Carbon|null $deleted_at
-     * @property int $phu_thu
      * @property mixed $trang_thai
      * @property string $dia_chi
      * @property string $ten_rap
@@ -10806,7 +10708,6 @@ namespace App\Models {
      * @method static \Illuminate\Database\Eloquent\Builder<RapPhim>|RapPhim whereTenRap($value)
      * @method static \Illuminate\Database\Eloquent\Builder<RapPhim>|RapPhim whereDiaChi($value)
      * @method static \Illuminate\Database\Eloquent\Builder<RapPhim>|RapPhim whereTrangThai($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<RapPhim>|RapPhim wherePhuThu($value)
      * @method static \Illuminate\Database\Eloquent\Builder<RapPhim>|RapPhim whereDeletedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<RapPhim>|RapPhim whereCreatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<RapPhim>|RapPhim whereUpdatedAt($value)
@@ -11424,11 +11325,9 @@ namespace App\Models {
      * @property \Illuminate\Support\Carbon|null $created_at
      * @property bool $trang_thai
      * @property array|null $cau_truc_ghe
-     * @property int|null $phong_chieu_id
      * @property int $id
      * @property-read \App\Models\PhongChieu $phongChieu
      * @method static \Illuminate\Database\Eloquent\Builder<SoDoGhe>|SoDoGhe whereId($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<SoDoGhe>|SoDoGhe wherePhongChieuId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<SoDoGhe>|SoDoGhe whereCauTrucGhe($value)
      * @method static \Illuminate\Database\Eloquent\Builder<SoDoGhe>|SoDoGhe whereTrangThai($value)
      * @method static \Illuminate\Database\Eloquent\Builder<SoDoGhe>|SoDoGhe whereCreatedAt($value)
@@ -11737,7 +11636,7 @@ namespace App\Models {
      * @property string $ket_thuc
      * @property string $bat_dau
      * @property string $ngay_chieu
-     * @property string $phien_ban_phim
+     * @property mixed $phien_ban_phim
      * @property int $phong_chieu_id
      * @property int $phim_id
      * @property int $id
@@ -12378,7 +12277,6 @@ namespace App\Models {
      * @property string $password
      * @property \Illuminate\Support\Carbon|null $email_verified_at
      * @property string|null $avatar
-     * @property string|null $ngay_sinh
      * @property string $email
      * @property string $name
      * @property int|null $vai_tro_id
@@ -12394,7 +12292,6 @@ namespace App\Models {
      * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereVaiTroId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereName($value)
      * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereEmail($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereNgaySinh($value)
      * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereAvatar($value)
      * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereEmailVerifiedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<User>|User wherePassword($value)
