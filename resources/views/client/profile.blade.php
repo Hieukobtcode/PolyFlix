@@ -295,7 +295,9 @@
                 <form id="avatarForm" enctype="multipart/form-data">
                     <label for="avatarUpload">
                         <div class="user-avatar">
-                            <img id="avatarPreview" src="{{ Auth::user()->avatar ?? 'default.png' }}" alt="Avatar">
+                            <img id="avatarPreview"
+                                src="{{ Auth::user()->avatar ? asset('storage/' . Auth::user()->avatar) : asset('images/default.png') }}"
+                                alt="Avatar">
                             <div class="avatar-overlay"><i class="fa-solid fa-camera fa-bounce" style="color: #74C0FC;"></i>
                             </div>
                         </div>
@@ -511,9 +513,32 @@
                             } else {
                                 console.warn('Không có avatar_url trong phản hồi');
                             }
+
+                            if (data.message) {
+                                Swal.fire({
+                                    toast: true,
+                                    position: 'top-end',
+                                    icon: 'success',
+                                    title: data.message,
+                                    background: '#10b981',
+                                    color: '#fff',
+                                    showCloseButton: true,
+                                    timer: 7000,
+                                    timerProgressBar: true,
+                                    showConfirmButton: false,
+                                    customClass: {
+                                        popup: 'custom-toast'
+                                    }
+                                });
+                            }
                         })
                         .catch(error => {
                             console.error('Lỗi khi upload:', error);
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Lỗi khi upload ảnh!',
+                                text: error.message || 'Có lỗi xảy ra khi kết nối máy chủ.',
+                            });
                         });
                 });
             } else {
