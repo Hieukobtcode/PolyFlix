@@ -13,6 +13,7 @@ use Illuminate\Contracts\Support\CanBeEscapedWhenCastToString;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Database\ConnectionResolverInterface as Resolver;
 use Illuminate\Database\Eloquent\Attributes\Scope as LocalScope;
+use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\Concerns\AsPivot;
@@ -26,6 +27,7 @@ use Illuminate\Support\Traits\ForwardsCalls;
 use JsonException;
 use JsonSerializable;
 use LogicException;
+use ReflectionClass;
 use ReflectionMethod;
 use Stringable;
 
@@ -265,7 +267,7 @@ abstract class Model implements Arrayable, ArrayAccess, CanBeEscapedWhenCastToSt
     /**
      * Create a new Eloquent model instance.
      *
-     * @param  array  $attributes
+     * @param  array<string, mixed>  $attributes
      */
     public function __construct(array $attributes = [])
     {
@@ -568,7 +570,7 @@ abstract class Model implements Arrayable, ArrayAccess, CanBeEscapedWhenCastToSt
     /**
      * Fill the model with an array of attributes.
      *
-     * @param  array  $attributes
+     * @param  array<string, mixed>  $attributes
      * @return $this
      *
      * @throws \Illuminate\Database\Eloquent\MassAssignmentException
@@ -618,7 +620,7 @@ abstract class Model implements Arrayable, ArrayAccess, CanBeEscapedWhenCastToSt
     /**
      * Fill the model with an array of attributes. Force mass assignment.
      *
-     * @param  array  $attributes
+     * @param  array<string, mixed>  $attributes
      * @return $this
      */
     public function forceFill(array $attributes)
@@ -657,7 +659,7 @@ abstract class Model implements Arrayable, ArrayAccess, CanBeEscapedWhenCastToSt
     /**
      * Create a new instance of the given model.
      *
-     * @param  array  $attributes
+     * @param  array<string, mixed>  $attributes
      * @param  bool  $exists
      * @return static
      */
@@ -686,7 +688,7 @@ abstract class Model implements Arrayable, ArrayAccess, CanBeEscapedWhenCastToSt
     /**
      * Create a new model instance that is existing.
      *
-     * @param  array  $attributes
+     * @param  array<string, mixed>  $attributes
      * @param  string|null  $connection
      * @return static
      */
@@ -1049,8 +1051,8 @@ abstract class Model implements Arrayable, ArrayAccess, CanBeEscapedWhenCastToSt
     /**
      * Update the model in the database.
      *
-     * @param  array  $attributes
-     * @param  array  $options
+     * @param  array<string, mixed>  $attributes
+     * @param  array<string, mixed>  $options
      * @return bool
      */
     public function update(array $attributes = [], array $options = [])
@@ -1065,8 +1067,8 @@ abstract class Model implements Arrayable, ArrayAccess, CanBeEscapedWhenCastToSt
     /**
      * Update the model in the database within a transaction.
      *
-     * @param  array  $attributes
-     * @param  array  $options
+     * @param  array<string, mixed>  $attributes
+     * @param  array<string, mixed>  $options
      * @return bool
      *
      * @throws \Throwable
@@ -1083,8 +1085,8 @@ abstract class Model implements Arrayable, ArrayAccess, CanBeEscapedWhenCastToSt
     /**
      * Update the model in the database without raising any events.
      *
-     * @param  array  $attributes
-     * @param  array  $options
+     * @param  array<string, mixed>  $attributes
+     * @param  array<string, mixed>  $options
      * @return bool
      */
     public function updateQuietly(array $attributes = [], array $options = [])
@@ -1400,7 +1402,7 @@ abstract class Model implements Arrayable, ArrayAccess, CanBeEscapedWhenCastToSt
      * Insert the given attributes and set the ID on the model.
      *
      * @param  \Illuminate\Database\Eloquent\Builder<static>  $query
-     * @param  array  $attributes
+     * @param  array<string, mixed>  $attributes
      * @return void
      */
     protected function insertAndSetId(Builder $query, $attributes)
@@ -1651,7 +1653,28 @@ abstract class Model implements Arrayable, ArrayAccess, CanBeEscapedWhenCastToSt
      */
     public function newEloquentBuilder($query)
     {
+        $builderClass = $this->resolveCustomBuilderClass();
+
+        if ($builderClass && is_subclass_of($builderClass, Builder::class)) {
+            return new $builderClass($query);
+        }
+
         return new static::$builder($query);
+    }
+
+    /**
+     * Resolve the custom Eloquent builder class from the model attributes.
+     *
+     * @return class-string<\Illuminate\Database\Eloquent\Builder>|false
+     */
+    protected function resolveCustomBuilderClass()
+    {
+        $attributes = (new ReflectionClass($this))
+            ->getAttributes(UseEloquentBuilder::class);
+
+        return ! empty($attributes)
+            ? $attributes[0]->newInstance()->builderClass
+            : false;
     }
 
     /**
@@ -1668,7 +1691,7 @@ abstract class Model implements Arrayable, ArrayAccess, CanBeEscapedWhenCastToSt
      * Create a new pivot model instance.
      *
      * @param  \Illuminate\Database\Eloquent\Model  $parent
-     * @param  array  $attributes
+     * @param  array<string, mixed>  $attributes
      * @param  string  $table
      * @param  bool  $exists
      * @param  string|null  $using
@@ -2267,6 +2290,30 @@ abstract class Model implements Arrayable, ArrayAccess, CanBeEscapedWhenCastToSt
     }
 
     /**
+     * Determine if the model is soft deletable.
+     */
+    public static function isSoftDeletable(): bool
+    {
+        return in_array(SoftDeletes::class, class_uses_recursive(static::class));
+    }
+
+    /**
+     * Determine if the model is prunable.
+     */
+    protected function isPrunable(): bool
+    {
+        return in_array(Prunable::class, class_uses_recursive(static::class)) || static::isMassPrunable();
+    }
+
+    /**
+     * Determine if the model is mass prunable.
+     */
+    protected function isMassPrunable(): bool
+    {
+        return in_array(MassPrunable::class, class_uses_recursive(static::class));
+    }
+
+    /**
      * Determine if lazy loading is disabled.
      *
      * @return bool
@@ -2502,6 +2549,7 @@ abstract class Model implements Arrayable, ArrayAccess, CanBeEscapedWhenCastToSt
         $this->classCastCache = [];
         $this->attributeCastCache = [];
         $this->relationAutoloadCallback = null;
+        $this->relationAutoloadContext = null;
 
         return array_keys(get_object_vars($this));
     }
