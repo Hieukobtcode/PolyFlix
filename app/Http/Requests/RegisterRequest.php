@@ -14,12 +14,12 @@ class RegisterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'                  => 'required|string|max:255',
-            'email'                 => 'required|email|unique:users,email',
-            'password'              => 'required|string|min:6|confirmed',
-            'dob'                   => 'nullable|date',
-            'phone'                 => 'nullable|string|max:20',
-            'username'              => 'nullable|string|max:100',
+            'name'     => 'required|string|max:255',
+            'email'    => 'required|email|unique:users,email',
+            'password' => 'required|string|min:6|confirmed',
+            'dob'      => 'nullable|date',
+            'phone'    => 'nullable|string|max:20',
+            'username' => 'nullable|string|max:100',
         ];
     }
 
@@ -34,5 +34,24 @@ class RegisterRequest extends FormRequest
             'password.min'          => 'Mật khẩu phải có ít nhất :min ký tự.',
             'password.confirmed'    => 'Xác nhận mật khẩu không khớp.',
         ];
+    }
+
+    public function withValidator($validator): void
+    {
+        $validator->after(function ($v) {
+            $name     = $this->input('name');
+            $email    = $this->input('email');
+            $password = $this->input('password');
+            $confirm  = $this->input('password_confirmation');
+
+            if (empty($name) || empty($email) || empty($password) || empty($confirm)) {
+                $v->errors()->forget('name');
+                $v->errors()->forget('email');
+                $v->errors()->forget('password');
+                $v->errors()->forget('password_confirmation');
+
+                $v->errors()->add('form', 'Vui lòng nhập đầy đủ thông tin.');
+            }
+        });
     }
 }
