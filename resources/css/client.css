@@ -234,12 +234,36 @@ a {
     color: yellow;
 }
 .user-name {
-    max-width: 120px;       
-    overflow: hidden;      
+    max-width: 120px;
+    overflow: hidden;
     text-overflow: ellipsis;
-    white-space: nowrap;    
-    display: inline-block;  
+    white-space: nowrap;
+    display: inline-block;
     vertical-align: middle;
+}
+
+.swal2-icon.swal2-error {
+    background-color: transparent !important;
+    color: red;
+}
+
+.custom-toast {
+    padding: 16px 24px;
+    font-size: 14px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.custom-toast {
+    padding: 16px 24px;
+    font-size: 14px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.swal2-icon.swal2-success {
+    color: #22c55e;
+    border-color: #22c55e;
 }
 
 @media (max-width: 992px) {

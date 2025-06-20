@@ -11,6 +11,22 @@
                 onclick="showTab('register')">ĐĂNG KÝ</div>
         </div>
 
+        @if (session('success'))
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    Swal.fire({
+                        title: '{{ session('success') }}',
+                        confirmButtonText: 'OK',
+                        customClass: {
+                            popup: 'custom-popup',
+                            confirmButton: 'custom-confirm-button'
+                        },
+                        buttonsStyling: false
+                    });
+                });
+            </script>
+        @endif
+
         @if ($errors->any())
             <script>
                 document.addEventListener("DOMContentLoaded", function() {
@@ -35,7 +51,7 @@
                     <div class="form-group">
                         <label for="login_email">Email</label>
                         <input type="email" id="login_email" name="email" class="form-control" autocomplete="email"
-                            placeholder="Nhập email">
+                            placeholder="Nhập email" value="{{ old('email') }}">
                     </div>
 
                     <div class="form-group">
@@ -68,8 +84,8 @@
                 <div class="tab-pane {{ session('active_tab') == 'register' ? 'show slide-up' : '' }}" id="register">
                     <div class="form-group">
                         <label for="name">Họ và tên</label>
-                        <input type="text" id="name" name="name" class="form-control" value="{{ old('name') }}"
-                            placeholder="Nhập họ và tên">
+                        <input type="text" id="name" name="name" class="form-control"
+                            value="{{ old('name') }}" placeholder="Nhập họ và tên">
                         @error('name')
                             <small class="text-danger">{{ $message }}</small>
                         @enderror
@@ -89,15 +105,6 @@
                         <input type="tel" id="phone" name="phone" class="form-control"
                             value="{{ old('phone') }}" placeholder="Nhập số điện thoại">
                         @error('phone')
-                            <small class="text-danger">{{ $message }}</small>
-                        @enderror
-                    </div>
-
-                    <div class="form-group">
-                        <label for="username">Tên đăng nhập</label>
-                        <input type="text" id="username" name="username" class="form-control"
-                            value="{{ old('username') }}" placeholder="Nhập tên đăng nhập">
-                        @error('username')
                             <small class="text-danger">{{ $message }}</small>
                         @enderror
                     </div>
@@ -128,8 +135,8 @@
                     <div class="form-group">
                         <label for="confirm_password">Xác nhận mật khẩu</label>
                         <div class="password-wrapper">
-                            <input type="password" id="confirm_password" name="password_confirmation"
-                                class="form-control" placeholder="Nhập lại mật khẩu">
+                            <input type="password" id="confirm_password" name="password_confirmation" class="form-control"
+                                placeholder="Nhập lại mật khẩu" value="{{ old('password_confirmation') }}">
                             <span class="toggle-password" data-target="#confirm_password">
                                 <i class="fa-solid fa-eye-slash" style="color: #B197FC;"></i>
                             </span>
@@ -139,6 +146,7 @@
                     <button type="submit">Đăng ký</button>
                 </div>
             </form>
+
 
             @if (session('active_tab'))
                 <script>
