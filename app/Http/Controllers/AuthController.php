@@ -38,7 +38,7 @@ class AuthController extends Controller
                 case 3:
                     return redirect()->route('admin.thong-ke.index');
                 case 5:
-                    return redirect()->route('home')->with('success',"Đăng nhập thành công");
+                    return redirect()->route('home')->with('success', "Đăng nhập thành công");
                 default:
                     Auth::logout();
                     return back()->withErrors(['email' => 'Vai trò không hợp lệ']);
@@ -123,15 +123,16 @@ class AuthController extends Controller
             $data = session('register_data');
 
             $user = User::create([
-                'name'        => $data['name'],
-                'email'       => $data['email'],
-                'password'    => bcrypt($data['password']),
-                'dob'         => $data['dob'] ?? null,
-                'phone'       => $data['phone'] ?? null,
-                'username'    => $data['username'] ?? null,
-                'vai_tro_id'  => 5,
-                'trang_thai'  => 'active',
-                'hoat_dong'   => 1,
+                'vai_tro_id'         => 5,
+                'name'               => $data['name'],
+                'email'              => $data['email'],
+                'ngay_sinh'          => $data['dob'] ?? null,
+                'email_verified_at'  => now(),
+                'password'           => bcrypt($data['password']),
+                'so_dien_thoai'      => $data['phone'] ?? null,
+                'trang_thai'         => 'Active',
+                'hoat_dong'          => 1,
+                'avatar'             => null, 
             ]);
 
             session()->forget(['register_data', 'register_otp']);
