@@ -24,7 +24,6 @@ class DatabaseSeeder extends Seeder
         
        $this->call([
         BannerSeeder::class,
-        DatVesTableSeeder::class, // <-- thêm dòng này
     ]);
         $this->call([
             BannerSeeder::class,

@@ -20,6 +20,14 @@
                 $pendingCount = $pendingRequests->count();
             @endphp
 
+            <!-- Nút mở modal -->
+            <li class="nav-item">
+                <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#scannerModal"
+                    title="Quét mã vạch">
+                    <i class="fa-solid fa-barcode fa-shake fa-lg"></i>
+                </a>
+            </li>
+
             <li class="nav-item dropdown" style='margin-right: 10px'>
                 <a class="nav-link" data-coreui-toggle="dropdown" href="#" role="button" aria-haspopup="true"
                     aria-expanded="false">
@@ -70,12 +78,14 @@
                     <svg class="icon icon-lg">
                         <use xlink:href="{{ asset('dist/vendors/@coreui/icons/svg/free.svg#cil-list-rich') }}">
                         </use>
-                    </svg></a></li>
+                    </svg></a>
+            </li>
             <li class="nav-item"><a class="nav-link" href="#">
                     <svg class="icon icon-lg">
                         <use xlink:href="{{ asset('dist/vendors/@coreui/icons/svg/free.svg#cil-envelope-open') }}">
                         </use>
-                    </svg></a></li>
+                    </svg></a>
+            </li>
         </ul>
         <ul class="header-nav">
             <li class="nav-item py-1">
