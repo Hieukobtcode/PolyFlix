@@ -1,6 +1,7 @@
 <?php
 
 namespace Database\Seeders;
+
 use Illuminate\Database\Seeder;
 use Database\Seeders\UserSeeder;
 use Database\Seeders\VaiTroSeeder;
@@ -10,7 +11,7 @@ use Database\Seeders\VaiTroPhanQuyenSeeder;
 
 class DatabaseSeeder extends Seeder
 {
-   
+
     public function run(): void
     {
         // User::factory(10)->create();
@@ -21,14 +22,20 @@ class DatabaseSeeder extends Seeder
         // ]);
 
         // Gọi các seeder để tạo dữ liệu mẫu
-        
+
 
         $this->call([
-            CauHinhSeeder::class,
-            VaiTroSeeder::class,
-            PhanQuyenSeeder::class,
-            VaiTroPhanQuyenSeeder::class,
-            UserSeeder::class,
+            KhuyenMaiSeeder::class,
+            // BannerSeeder::class,
+            // LoaiPhongSeeder::class,
+            // CauHinhSeeder::class,
+            // VaiTroSeeder::class,
+            // PhanQuyenSeeder::class,
+            // VaiTroPhanQuyenSeeder::class,
+            // UserSeeder::class,
+            // TheLoaiPhimSeeder::class,
+            // DinhDangPhimSeeder::class,
+            // PhuDePhimSeeder::class,
         ]);
     }
 }

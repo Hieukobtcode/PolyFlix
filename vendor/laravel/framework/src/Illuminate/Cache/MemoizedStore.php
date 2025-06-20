@@ -2,9 +2,11 @@
 
 namespace Illuminate\Cache;
 
+use BadMethodCallException;
+use Illuminate\Contracts\Cache\LockProvider;
 use Illuminate\Contracts\Cache\Store;
 
-class MemoizedStore implements Store
+class MemoizedStore implements LockProvider, Store
 {
     /**
      * The memoized cache values.
@@ -75,12 +77,17 @@ class MemoizedStore implements Store
             });
         }
 
-        $result = [
-            ...$memoized,
-            ...$retrieved,
-        ];
+        $result = [];
 
-        return array_replace(array_flip($keys), $result);
+        foreach ($keys as $key) {
+            if (array_key_exists($key, $memoized)) {
+                $result[$key] = $memoized[$key];
+            } else {
+                $result[$key] = $retrieved[$key];
+            }
+        }
+
+        return $result;
     }
 
     /**
@@ -101,6 +108,7 @@ class MemoizedStore implements Store
     /**
      * Store multiple items in the cache for a given number of seconds.
      *
+     * @param  array  $values
      * @param  int  $seconds
      * @return bool
      */
@@ -153,6 +161,39 @@ class MemoizedStore implements Store
         unset($this->cache[$this->prefix($key)]);
 
         return $this->repository->forever($key, $value);
+    }
+
+    /**
+     * Get a lock instance.
+     *
+     * @param  string  $name
+     * @param  int  $seconds
+     * @param  string|null  $owner
+     * @return \Illuminate\Contracts\Cache\Lock
+     */
+    public function lock($name, $seconds = 0, $owner = null)
+    {
+        if (! $this->repository->getStore() instanceof LockProvider) {
+            throw new BadMethodCallException('This cache store does not support locks.');
+        }
+
+        return $this->repository->getStore()->lock(...func_get_args());
+    }
+
+    /**
+     * Restore a lock instance using the owner identifier.
+     *
+     * @param  string  $name
+     * @param  string  $owner
+     * @return \Illuminate\Contracts\Cache\Lock
+     */
+    public function restoreLock($name, $owner)
+    {
+        if (! $this->repository instanceof LockProvider) {
+            throw new BadMethodCallException('This cache store does not support locks.');
+        }
+
+        return $this->repository->resoreLock(...func_get_args());
     }
 
     /**
