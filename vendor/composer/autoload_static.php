@@ -226,9 +226,9 @@ class ComposerStaticInit8ccaa84c004fde119164421f30c4c011
         ),
         'phpDocumentor\\Reflection\\' => 
         array (
-            0 => __DIR__ . '/..' . '/phpdocumentor/reflection-common/src',
-            1 => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src',
-            2 => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src',
+            0 => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src',
+            1 => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src',
+            2 => __DIR__ . '/..' . '/phpdocumentor/reflection-common/src',
         ),
         'Whoops\\' => 
         array (
@@ -702,6 +702,7 @@ class ComposerStaticInit8ccaa84c004fde119164421f30c4c011
         'App\\Http\\Controllers\\Admin\\VaiTroController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/VaiTroController.php',
         'App\\Http\\Controllers\\AuthController' => __DIR__ . '/../..' . '/app/Http/Controllers/AuthController.php',
         'App\\Http\\Controllers\\Client\\LoginController' => __DIR__ . '/../..' . '/app/Http/Controllers/Client/LoginController.php',
+        'App\\Http\\Controllers\\Client\\ProfileController' => __DIR__ . '/../..' . '/app/Http/Controllers/Client/ProfileController.php',
         'App\\Http\\Controllers\\Controller' => __DIR__ . '/../..' . '/app/Http/Controllers/Controller.php',
         'App\\Http\\Controllers\\SocialAuthController' => __DIR__ . '/../..' . '/app/Http/Controllers/SocialAuthController.php',
         'App\\Http\\Middleware\\AuthRedirect' => __DIR__ . '/../..' . '/app/Http/Middleware/AuthRedirect.php',
@@ -885,10 +886,13 @@ class ComposerStaticInit8ccaa84c004fde119164421f30c4c011
         'Database\\Seeders\\CauHinhSeeder' => __DIR__ . '/../..' . '/database/seeders/CauHinhSeeder.php',
         'Database\\Seeders\\DatVesSeeder' => __DIR__ . '/../..' . '/database/seeders/DatVesSeeder.php',
         'Database\\Seeders\\DatabaseSeeder' => __DIR__ . '/../..' . '/database/seeders/DatabaseSeeder.php',
+        'Database\\Seeders\\DinhDangPhimSeeder' => __DIR__ . '/../..' . '/database/seeders/DinhDangPhimSeeder.php',
         'Database\\Seeders\\KhuyenMaiSeeder' => __DIR__ . '/../..' . '/database/seeders/KhuyenMaiSeeder.php',
         'Database\\Seeders\\LoaiGheSeeder' => __DIR__ . '/../..' . '/database/seeders/LoaiGheSeeder.php',
         'Database\\Seeders\\LoaiPhongSeeder' => __DIR__ . '/../..' . '/database/seeders/LoaiPhongSeeder.php',
         'Database\\Seeders\\PhanQuyenSeeder' => __DIR__ . '/../..' . '/database/seeders/PhanQuyenSeeder.php',
+        'Database\\Seeders\\PhuDePhimSeeder' => __DIR__ . '/../..' . '/database/seeders/PhuDePhimSeeder.php',
+        'Database\\Seeders\\TheLoaiPhimSeeder' => __DIR__ . '/../..' . '/database/seeders/TheLoaiPhimSeeder.php',
         'Database\\Seeders\\UserSeeder' => __DIR__ . '/../..' . '/database/seeders/UserSeeder.php',
         'Database\\Seeders\\VaiTroPhanQuyenSeeder' => __DIR__ . '/../..' . '/database/seeders/VaiTroPhanQuyenSeeder.php',
         'Database\\Seeders\\VaiTroSeeder' => __DIR__ . '/../..' . '/database/seeders/VaiTroSeeder.php',

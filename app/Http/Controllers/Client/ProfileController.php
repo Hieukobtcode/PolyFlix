@@ -47,20 +47,17 @@ class ProfileController extends Controller
         $user = Auth::user();
 
         if ($request->hasFile('avatar')) {
-            $image = $request->file('avatar');
-            $filename = time() . '.' . $image->getClientOriginalExtension();
+            $path = $request->file('avatar')->store('avatars', 'public');
 
-            // Lưu ảnh vào đúng thư mục bạn yêu cầu
-            $destinationPath = 'D:\ProgramCode\laragon\www\PolyFlix\public\avatars';
-            $image->move($destinationPath, $filename);
-
-            // Ghi đường dẫn công khai vào cột `avatar`
-            $user->avatar = '/avatars/' . $filename;
+            $user->avatar = $path;
             $user->save();
 
-            return response()->json(['avatar_url' => $user->avatar]); // Đổi key nếu JS frontend cần khớp
+            return response()->json([
+                'avatar_url' => asset('storage/' . $path),
+                'message'    => 'Cập nhật ảnh đại diện thành công!'
+            ]);
         }
 
-        return response()->json(['error' => 'No file uploaded.'], 400);
+        return response()->json(['error' => 'Không có ảnh nào được tải lên.'], 400);
     }
 }
