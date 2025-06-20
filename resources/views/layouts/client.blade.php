@@ -5,11 +5,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PolyFlix - Hệ thống rạp số 1 thế giới</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="icon" type="image/png" href="{{ asset('logo/polyflix_title.png') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <!-- Font Awesome 6 (miễn phí) -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     @vite('resources/js/client.js')
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    {{-- CSS --}}
+    @yield('styles')
 </head>
 
 <body>
@@ -56,7 +61,7 @@
                             <i class="fa-solid fa-chevron-down"></i>
                         </div>
                         <div class="dropdown-menu" id="userDropdown">
-                            <a href="#"><i class="fa-solid fa-user"></i> Thông tin cá nhân</a>
+                            <a href="{{ route('profile') }}"><i class="fa-solid fa-user"></i> Thông tin cá nhân</a>
                             <a href="{{ route('logout') }}"
                                 onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                 <i class="fa-solid fa-arrow-right-from-bracket"></i> Đăng xuất
@@ -141,3 +146,5 @@
 </body>
 
 </html>
+{{-- JS --}}
+@yield('scripts')
