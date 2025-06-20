@@ -154,14 +154,21 @@
             </script>
         @endif
 
-
-        <h3>QUÊN MẬT KHẨU</h3>
-        <p>Nhập địa chỉ email của bạn và chúng tôi sẽ gửi cho bạn hướng dẫn để tạo mật khẩu mới.</p>
-
         <form action="{{ route('forgot-pass') }}" method="POST">
-            @csrf
-            <input type="email" name="email" placeholder="Email của bạn" required>
-            <button type="submit">XÁC NHẬN</button>
+            @if (session('success'))
+                <a href="{{ route('login') }}">
+                    <button type="button">TIẾN HÀNH ĐĂNG NHẬP</button>
+                </a>
+            @else
+                <h3>QUÊN MẬT KHẨU</h3>
+                <p>Nhập địa chỉ email của bạn và chúng tôi sẽ gửi cho bạn hướng dẫn để tạo mật khẩu mới.</p>
+
+                <form action="{{ route('forgot-pass') }}" method="POST">
+                    @csrf
+                    <input type="email" name="email" placeholder="Email của bạn" required>
+                    <button type="submit">XÁC NHẬN</button>
+                </form>
+            @endif
         </form>
     </div>
 @endsection
