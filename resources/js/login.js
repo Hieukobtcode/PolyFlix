@@ -8,18 +8,22 @@ $(document).ready(function () {
         $(".tab").removeClass("active");
         $(".tab-pane").removeClass("show slide-down slide-up");
 
-        $(`.tab[onclick="showTab('${tabId}')"]`).addClass("active");
+        $(`.tab[data-tab="${tabId}"]`).addClass("active");
 
         const targetPane = $(`#${tabId}`);
         targetPane.addClass("show");
 
-        // Thêm hiệu ứng riêng
         if (tabId === "login") {
             targetPane.addClass("slide-down");
         } else if (tabId === "register") {
             targetPane.addClass("slide-up");
         }
     };
+
+    $(".tab").on("click", function () {
+        const tabId = $(this).data("tab");
+        showTab(tabId);
+    });
 
     $(".toggle-password").on("click", function () {
         const target = $(this).data("target");

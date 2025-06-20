@@ -222,3 +222,52 @@ button:hover {
 .tab-pane.show.slide-up {
     animation: slideUp 0.4s ease-out;
 }
+
+.custom-popup {
+    background: linear-gradient(135deg, #5a3fd8, #2673dd);
+    color: white;
+    border-radius: 12px;
+    font-family: "Arial", sans-serif;
+    padding: 20px 15px;
+    width: 350px;
+}
+
+.custom-confirm-button {
+    position: relative;
+    width: 300px;
+    height: 40px;
+    background: transparent;
+    color: #ffd700;
+    font-weight: bold;
+    padding: 8px 24px;
+    font-size: 14px;
+    border-radius: 8px;
+    transition: all 0.3s ease-in-out;
+    margin: 30px auto 0 auto;
+    display: block;
+    box-shadow: none !important;
+    outline: none !important;
+    border: 1px solid #ffd700;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.custom-confirm-button::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to right, #ff6600, #ffcc00);
+    z-index: -1;
+    transition: left 0.4s ease;
+}
+
+.custom-confirm-button:hover::before {
+    left: 0;
+}
+
+.custom-confirm-button:hover {
+    color: white;
+}
