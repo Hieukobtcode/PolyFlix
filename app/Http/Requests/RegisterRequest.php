@@ -18,21 +18,22 @@ class RegisterRequest extends FormRequest
             'email'    => 'required|email|unique:users,email',
             'password' => 'required|string|min:6|confirmed',
             'dob'      => 'nullable|date',
-            'phone'    => 'nullable|string|max:20',
-            'username' => 'nullable|string|max:100',
+            'phone'    => 'nullable|string|max:20|unique:users,so_dien_thoai',
         ];
     }
 
     public function messages(): array
     {
         return [
-            'name.required'         => 'Vui lòng nhập họ và tên.',
-            'email.required'        => 'Vui lòng nhập email.',
-            'email.email'           => 'Email không đúng định dạng.',
-            'email.unique'          => 'Email đã được sử dụng.',
-            'password.required'     => 'Vui lòng nhập mật khẩu.',
-            'password.min'          => 'Mật khẩu phải có ít nhất :min ký tự.',
-            'password.confirmed'    => 'Xác nhận mật khẩu không khớp.',
+            'name.required'          => 'Vui lòng nhập họ và tên.',
+            'email.required'         => 'Vui lòng nhập email.',
+            'email.email'            => 'Email không đúng định dạng.',
+            'email.unique'           => 'Email đã được sử dụng.',
+            'password.required'      => 'Vui lòng nhập mật khẩu.',
+            'password.min'           => 'Mật khẩu phải có ít nhất :min ký tự.',
+            'password.confirmed'     => 'Xác nhận mật khẩu không khớp.',
+            'phone.unique'           => 'Số điện thoại đã được sử dụng.',
+            'username.unique'        => 'Tên đăng nhập đã tồn tại.',
         ];
     }
 

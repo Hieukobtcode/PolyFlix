@@ -56,6 +56,11 @@ Route::post('dang-nhap', [AuthController::class, 'login'])->name('login');
 // Đăng ký (client)
 Route::post('dang-ky', [AuthController::class, 'register'])->name('register');
 
+Route::get('xac-thuc-email', [AuthController::class, 'showVerifyForm'])->name('verify.form');
+
+Route::post('xac-thuc-email', [AuthController::class, 'verifyOtp'])->name('verify.submit');
+
+
 
 // GOOGLE
 Route::get('/auth/google', [SocialAuthController::class, 'redirectToGoogle'])->name('google.redirect');
