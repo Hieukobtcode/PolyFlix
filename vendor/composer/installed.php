@@ -3,17 +3,7 @@
         'name' => 'laravel/laravel',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-<<<<<<< HEAD
-<<<<<<< HEAD
-        'reference' => '197cd54f60e0b2f314e086ebb45d47b27a030582',
-=======
-        'reference' => '03c5c6be3a31dda788bece16d000712b3bd45ec5',
->>>>>>> 94d52a29aa935c9c9e9f81d8670bad351b367db3
-=======
-
-        'reference' => '03c5c6be3a31dda788bece16d000712b3bd45ec5',
-
->>>>>>> fb22f4925bb6e01432406983e3c41597e0f9de7e
+        'reference' => '3302bf54e65689c84165742d4955eed64af09900',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -479,17 +469,7 @@
         'laravel/laravel' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-<<<<<<< HEAD
-<<<<<<< HEAD
-            'reference' => '197cd54f60e0b2f314e086ebb45d47b27a030582',
-=======
-            'reference' => '03c5c6be3a31dda788bece16d000712b3bd45ec5',
->>>>>>> 94d52a29aa935c9c9e9f81d8670bad351b367db3
-=======
-
-            'reference' => '03c5c6be3a31dda788bece16d000712b3bd45ec5',
-
->>>>>>> fb22f4925bb6e01432406983e3c41597e0f9de7e
+            'reference' => '3302bf54e65689c84165742d4955eed64af09900',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -627,6 +607,15 @@
             'reference' => '08cfc6c4f3d811584fb09c37e2849e6a7f9b0742',
             'type' => 'library',
             'install_path' => __DIR__ . '/../league/uri-interfaces',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+        'livewire/livewire' => array(
+            'pretty_version' => 'v3.6.3',
+            'version' => '3.6.3.0',
+            'reference' => '56aa1bb63a46e06181c56fa64717a7287e19115e',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../livewire/livewire',
             'aliases' => array(),
             'dev_requirement' => false,
         ),
