@@ -14,22 +14,26 @@ class TrangChuController extends Controller
     /**
      * Display a listing of the resource.
      */
- public function index()
-{
-    $phims = Phim::whereHas('comments')
-        ->with(['comments.user']) 
-        ->latest()
-        ->take(3)
-        ->get();
+    public function index()
+    {
+        $phims = Phim::whereHas('comments')
+            ->with(['comments.user'])
+            ->latest()
+            ->take(3)
+            ->get();
 
-    $phims->each(function ($phim) {
-        $latestComments = $phim->comments->sortByDesc('created_at')->take(3);
-        $phim->setRelation('comments', $latestComments);
-    });
+        $phims->each(function ($phim) {
+            $latestComments = $phim->comments->sortByDesc('created_at')->take(3);
+            $phim->setRelation('comments', $latestComments);
+        });
 
-    $ratings = Rating::all(); 
-    $baiViet = BaiViet::where('status', '!=', 'draft')->get();
+        $ratings = Rating::all();
+        $baiViet = BaiViet::where('status', '!=', 'draft')
+            ->orderBy('ngay_tao', 'desc')
+            ->limit(4)
+            ->get();
 
-    return view('client.trang-chu', compact('phims', 'ratings', 'baiViet'));
-}
+
+        return view('client.trang-chu', compact('phims', 'ratings', 'baiViet'));
+    }
 }
