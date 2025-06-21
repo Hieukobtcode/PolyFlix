@@ -15,17 +15,17 @@ class BaiVietController extends Controller
     public function index(Request $request)
     {
         $query = BaiViet::query();
-    
+
         if ($request->filled('keyword')) {
             $query->where('tieu_de', 'like', '%' . $request->keyword . '%');
         }
-    
+
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
-    
+
         $baiViets = $query->orderByDesc('ngay_tao')->paginate(10);
-    
+
         return view('admin.bai-viet.index', compact('baiViets'));
     }
 
@@ -37,26 +37,26 @@ class BaiVietController extends Controller
 
     // Lưu bài viết mới
     public function store(BaiVietRequest $request)
-{
-    try {
-        $data = $request->validated();
+    {
+        try {
+            $data = $request->validated();
 
-        // Xử lý ảnh nếu có
-        if ($request->hasFile('hinh_anh')) {
-            $data['hinh_anh'] = $request->file('hinh_anh')->store('hinh_anhs', 'public');
+            if ($request->hasFile('hinh_anh')) {
+                $data['hinh_anh'] = $request->file('hinh_anh')->store('hinh_anhs', 'public');
+            }
+
+
+            $data['ngay_tao'] = now(); // Nếu không dùng timestamps mặc định
+
+            BaiViet::create($data);
+
+            return redirect()->route('admin.bai-viet.index')
+                ->with('success', 'Bài viết đã được tạo thành công!');
+        } catch (\Exception $e) {
+            // \Log::error('Lỗi khi tạo bài viết: ' . $e->getMessage());
+            return back()->withInput()->with('error', 'Đã xảy ra lỗi, vui lòng thử lại.');
         }
-
-        $data['ngay_tao'] = now(); // Nếu không dùng timestamps mặc định
-
-        BaiViet::create($data);
-
-        return redirect()->route('admin.bai-viet.index')
-            ->with('success', 'Bài viết đã được tạo thành công!');
-    } catch (\Exception $e) {
-        // \Log::error('Lỗi khi tạo bài viết: ' . $e->getMessage());
-        return back()->withInput()->with('error', 'Đã xảy ra lỗi, vui lòng thử lại.');
     }
-}
 
     // Xem chi tiết bài viết
     public function show($id)
@@ -74,26 +74,26 @@ class BaiVietController extends Controller
 
     // Cập nhật bài viết
     public function update(BaiVietRequest $request, $id)
-{
-    
-    $baiViet = BaiViet::findOrFail($id);
-    $data['ngay_cap_nhat'] = now(); 
-    $data = $request->only(['tieu_de', 'noi_dung', 'status']);
-    
-    // Nếu có file mới được upload
-    if ($request->hasFile('hinh_anh')) {
-        if ($baiViet->hinh_anh) {
-            Storage::disk('public')->delete($baiViet->hinh_anh);
+    {
+
+        $baiViet = BaiViet::findOrFail($id);
+        $data['ngay_cap_nhat'] = now();
+        $data = $request->only(['tieu_de', 'noi_dung', 'status']);
+
+        // Nếu có file mới được upload
+        if ($request->hasFile('hinh_anh')) {
+            if ($baiViet->hinh_anh) {
+                Storage::disk('public')->delete($baiViet->hinh_anh);
+            }
+            $data['hinh_anh'] = $request->file('hinh_anh')->store('hinh_anhs', 'public');
         }
-        $data['hinh_anh'] = $request->file('hinh_anh')->store('hinh_anhs', 'public');
+
+        // Cập nhật dữ liệu
+        $baiViet->update($data);
+
+        return redirect()->route('admin.bai-viet.index')
+            ->with('success', 'Bài viết đã được cập nhật thành công!');
     }
-
-    // Cập nhật dữ liệu
-    $baiViet->update($data);
-
-    return redirect()->route('admin.bai-viet.index')
-        ->with('success', 'Bài viết đã được cập nhật thành công!');
-}
 
 
     // Xoá bài viết

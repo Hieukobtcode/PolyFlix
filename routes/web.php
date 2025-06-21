@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\Admin\ChiTietDatVeController;
 use App\Http\Controllers\Admin\DatVeController;
+use App\Http\Controllers\Client\DanhSachBaiVietController;
+use App\Http\Controllers\Client\TrangChuController;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
@@ -38,16 +40,18 @@ use App\Http\Controllers\Admin\RequestController;
 use App\Http\Controllers\Client\LoginController;
 use App\Http\Controllers\Client\ProfileController;
 
-Route::get('/', function () {
-    return view('client.trang-chu');
-})->name('home');
+
+Route::get('/', [TrangChuController::class , 'index'])->name('home');
+Route::get('/bai-viet', [DanhSachBaiVietController::class, 'index'])->name('client.bai-viet');
+Route::get('/bai-viet/{id}', [DanhSachBaiVietController::class, 'show'])->name('show-bai-viet');
+
+
+
 
 // Profile
 Route::get('profile', [ProfileController::class, 'index'])->name('profile');
 Route::post('profile', [ProfileController::class, 'updatePassword'])->name('updatePassword');
 Route::post('update-avatar', [ProfileController::class, 'updateAvatar'])->name('update.avatar');
-
-
 
 // ====================================================================================================
 

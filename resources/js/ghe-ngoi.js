@@ -118,7 +118,7 @@ $(document).ready(function () {
             rightOrLeft.hide();
         }
     });
-
+    
     chonHangGhe.change(function () {
         if (chonHangGhe.val() == 1) {
         } else if (chonHangGhe.val() == 2) {
