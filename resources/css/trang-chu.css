@@ -462,6 +462,12 @@
     font-size: 16px;
     color: white;
     font-weight: bold;
+
+    display: -webkit-box;
+    -webkit-line-clamp: 2; 
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .tin-tuc-item .meta {
@@ -688,9 +694,7 @@
     left: 0;
 }
 
-
-
-.slide-button-group{
+.slide-button-group {
     display: flex;
     gap: 20px;
 }
