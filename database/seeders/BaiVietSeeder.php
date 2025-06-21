@@ -49,7 +49,7 @@ class BaiVietSeeder extends Seeder
             [
                 'tieu_de' => 'Review Mượn Hồn Đoạt Xác (Bring Her Back) - Nỗi ám ảnh lôi cuốn đến từ nhà A24',
                 'noi_dung' => 'Hành trình quay về thế giới trong tranh mang lại xúc cảm mới cho fan Doraemon nhiều thế hệ.',
-                'hinh_anh' => 'https://via.placeholder.com/600x400?text=Doraemon',
+                'hinh_anh' => 'hinh_anhs/1DK7csdF9P880xqQXcCNUPzwzLdaEIuI7ZpEpflM.jpg',
                 'ngay_tao' => Carbon::now()->subDays(12),
                 'ngay_cap_nhat' => Carbon::now(),
                 'status' => 'published',
