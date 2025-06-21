@@ -48,7 +48,75 @@ class BaiVietSeeder extends Seeder
             ],
             [
                 'tieu_de' => 'Review Mượn Hồn Đoạt Xác (Bring Her Back) - Nỗi ám ảnh lôi cuốn đến từ nhà A24',
-                'noi_dung' => 'Hành trình quay về thế giới trong tranh mang lại xúc cảm mới cho fan Doraemon nhiều thế hệ.',
+                'noi_dung' => 'Mượn Hồn Đoạt Xác (Bring Her Back) không dành cho người yếu tim, không chỉ bởi các cảnh kinh dị, mà vì cảm xúc nặng nề đè nén suốt thời lượng phim.
+
+Mượn Hồn Đoạt Xác (Bring Her Back) chứng minh chỉ cần hội tụ đủ một dàn diễn viên tài ba và một góc nhìn táo bạo, bàn tay thật vững thì ngay cả ý tưởng kinh dị quen thuộc cũng có thể lột xác. Câu chuyện trong đây vừa dễ đoán vừa bất ngờ đọng lại nỗi sợ hãi hùng lẫn một cơn đau âm ỉ.
+
+
+
+Mượn Hồn Đoạt Xác - Trailer chính thức
+Khởi đầu mới hóa ác mộng
+Mượn Hồn Đoạt Xácbắt đầu với một cái chết của một người cha hai con. Hai anh em Andy và em gái Piper đã tìm thấy ông trên sàn nhà tắm, nằm sõng soài trên vũng máu lạnh tanh. Không ai ngờ được, mất mát đột ngột ấy đã khiến cuộc đời hai anh em rẽ sang một hướng bi kịch quỷ quái.
+
+Sau cú sốc, địa phương gửi hai anh em cho Laura (Sally Hawkins), một người mẹ nuôi có tiếng lập dị nhưng được cơ quan bảo hộ trẻ em đánh giá cao. Hơn nữa, cô cũng đang chăm sóc cho một trường hợp sang chấn khác là Oliver nên không xa lạ gì với những đứa trẻ vừa mất gia đình.
+
+
+Hai anh em rơi vào bi kịch không ai ngờ tới
+Hai anh em rơi vào bi kịch không ai ngờ tới
+Andy, giờ là chỗ nương tựa duy nhất cho em gái khiếm thị Piper, trấn an cô đây chỉ là tạm thời. Sau ba tháng, khi cậu đủ 18 tuổi, hai anh em sẽ cùng nhau bước qua một trang mới, dù cho điều đó sẽ đau đớn đến đâu. Nhưng Laura ngay từ đầu đã khiến Andy bất an. 
+
+Dần dần, dưới mái nhà trông yên bình này, Andy và Piper phát hiện ra rằng họ đang bị cuốn vào một âm mưu khủng khiếp của người đàn bà điên loạn. Bên dưới vẻ ngoài thân thiện và chu đáo là sự tàn ác không tả nhân danh tình mẹ.
+
+
+Mượn Hồn Đoạt Xác có sáng, có tối, và tóm gọn trong hai từ ám ảnh và kinh kinh hãi
+Mượn Hồn Đoạt Xác có sáng, có tối, và tóm gọn trong hai từ ám ảnh và kinh kinh hãi
+Mượn Hồn Đoạt Xác kinh hãi và ám ảnh
+Với Mượn Hồn Đoạt Xác (Bring Her Back), nhà A24 có thể tự hào gọi họ là ngôi nhà của những bộ phim gốc độc đáo xuất sắc. Còn hai anh em đạo diễn Danny và Michael Philippou nên cho nhau những cái vỗ lưng tự chúc mừng. Bộ phim thứ 2 của hai người sau Talk To Me (2023) là một dự án súc tích tóm gọn kinh dị và hàm xúc.
+
+Người viết luôn tin rằng phim kinh dị không chỉ đơn giản là làm người ta giật mình thon thót với những cú jump scare, mà còn là một góc nhìn lột tả khía cạnh đáng sợ của những nỗi niềm không tên, khiến người xem thẩm thấu chúng theo cách khó chịu và ám ảnh cùng cực.
+
+
+Laura, hình tượng người mẹ méo mó đến đáng sợ
+Laura, hình tượng người mẹ méo mó đến đáng sợ
+Mượn Hồn Đoạt Xác là một bộ phim như thế. Không quá khó để nhận ra chủ đề được hai nhà làm phim đem ra mổ xẻ. Phim cũng không quanh co dài dòng che giấu ý định của Laura bằng lối kể bí hiểm. Bởi lẽ nó không phải là một câu chuyện khám phá tà giáo, mà là đang mô tả nỗi mất mát có thể làm biến dạng một con người đến đâu.
+
+Khía cạnh cảm xúc này làm phim vượt khỏi khung kinh dị truyền thống. Bộ phim đặt ra câu hỏi quen thuộc: Nếu bạn có thể đưa người thân trở lại, bạn có làm không – dù cái giá là mạng sống của người khác? Rồi cho chúng ta chứng kiến người ta làm gì khi trả lời “có”. Đó là một quá trình rất đau đớn.
+
+
+Nét đáng sợ của Mượn Hồn Đoạt Xác là tâm lý
+Nét đáng sợ của Mượn Hồn Đoạt Xác là tâm lý
+Mượn Hồn Đoạt Xác là một bộ phim kinh dị tâm lý, được thực hiện như một cơn mê sản không hồi kết, buồn bã cực hạn với sự cố chấp và sợ hãi cô đơn khiến tình mẫu tử méo mó như chính con quỷ được gọi đến nhân giới, từ đó tạo nên một phản diện vừa hãi hùng vừa tội nghiệp.
+
+Phim tâm lý nhưng thực sự biết cách khiến người ta sợ hãi. Nó có yếu tố tà giáo, thứ len lỏi khắp mạch phim trong thầm lặng rồi nhào ra vồ vập khán giả. Không nhiều, nhưng mỗi lần xuất hiện là mỗi lần đau tim.
+
+
+Cộng hưởng với yếu tố kinh dị
+Cộng hưởng với yếu tố kinh dị
+Mượn Hồn Đoạt Xác gợi nhắc mãnh liệt đến Hereditary 7 năm về trước. Cả hai đều diễn tả tà giáo, nghi lễ, các quy luật hiện lên như một âm mưu rình rập các linh hồn khốn khổ, đều tập trung vào “người mẹ”. Nhưng khi Hereditary âm thầm và tinh tế, bộ phim này khắc họa sự thao túng tâm lý rõ ràng đến ớn lạnh.
+
+Hai anh em Philippou lựa chọn màu sắc lạnh lẽo, xám xịt và ánh sáng yếu liên tục khiến phim chìm trong không khí ngột ngạt, phụ họa tuyệt vời cho một Laura được Sally Hawkins thể hiện xuất sắc ngày biến hóa thành một hình bóng không còn nhân tính.
+
+
+Với phần hình ảnh gây ấn tượng thị giác mạnh mẽ
+Với phần hình ảnh gây ấn tượng thị giác mạnh mẽ
+Rồi một dải màu đỏ tương phản khiến người xem luôn cảm thấy bất an tột độ hiện lên. Mỗi một chuyển động được máy quay nắm bắt sáng tạo đề cao tính ấn tượng thị giác. Âm thanh trong phim gần như trở thành một nhân vật đúng nghĩa, mang đến sự sống cho những thứ trái tự nhiên.
+
+Kết hợp với nhau, Mượn Hồn Đoạt Xác trở nên rùng rợn. Song, bộ phim này còn thúc đẩy tính kinh dị lên một tầm cao mới với “body horror”. Nếu không sởn gai ốc với sự tàn nhẫn ở Laura khi cố chia rẽ hai anh em Andy và Piper, bạn sẽ lạnh người với cách bà ta biến một đứa trẻ vô tội thành “bình chứa” của quỷ.
+
+
+và Body Horror ám ảnh
+và Body Horror ám ảnh
+Phim không hù dọa. Nhưng song hành một người đàn bà đang loạn thần và những màn kinh hãi được mô tả tỉ mỉ, được thổi hồn bằng hiệu ứng thực tế chất lượng, bộ phim đúng nghĩa tra tấn người xem ở mức độ tâm lý, cảm xúc và giác quan.
+
+Chính ý nghĩa mà Mượn Hồn Đoạt Xác lột tả hết mình làm nên những điểm nhấn sáng giá nhất cho bộ phim. Đây không chỉ là một câu chuyện về ma, mà là một lời nhắc: mất mát nếu không được đối mặt đúng cách có thể trở thành thứ tà ác nhất.
+
+
+Mượn Hồn Đoạt Xác là một bộ phim tuyệt vời cho fan kinh dị
+Mượn Hồn Đoạt Xác là một bộ phim tuyệt vời cho fan kinh dị
+Một bộ phim đáng xem vô cùng
+Nhưng bộ phim này không dành cho người yếu tim, không chỉ bởi các cảnh kinh dị, mà vì cảm xúc nặng nề đè nén suốt thời lượng phim. Sau khi mọi thứ kết thúc, sự thanh thản của nhân vật được truyền tải. Theo đó cũng là sự thê lương đắng chát. 
+
+Tương tự như Talk To Me, bộ phim không đao to búa lớn, cái gì cũng âm thầm mà đả động tận tâm hồn đúng ý bộ đôi đạo diễn. Thành thật mà nói, điều đó làm Mượn Hồn Đoạt Xác (Bring Her Back) trở thành một bộ phim tuyệt vời.',
                 'hinh_anh' => 'hinh_anhs/1DK7csdF9P880xqQXcCNUPzwzLdaEIuI7ZpEpflM.jpg',
                 'ngay_tao' => Carbon::now()->subDays(12),
                 'ngay_cap_nhat' => Carbon::now(),
