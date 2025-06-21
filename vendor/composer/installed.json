@@ -3301,6 +3301,8 @@
             "install-path": "../livewire/livewire"
         },
         {
+<<<<<<< HEAD
+=======
             "name": "masterminds/html5",
             "version": "2.9.0",
             "version_normalized": "2.9.0.0",
@@ -3371,6 +3373,7 @@
             "install-path": "../masterminds/html5"
         },
         {
+>>>>>>> 3e469c2528f1ce9ce312781d75f5e265e379b98a
             "name": "milon/barcode",
             "version": "v12.0.0",
             "version_normalized": "12.0.0.0",

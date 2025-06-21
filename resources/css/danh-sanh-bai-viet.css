@@ -1,0 +1,60 @@
+.bai-viet-item {
+    display: flex;
+    gap: 20px;
+    border: 1px solid #ccc;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    background-color: #1c1c1c; /* nền tối nếu cần */
+    color: white;
+    align-items: flex-start;
+    flex-wrap: wrap;
+}
+
+.bai-viet-item .hinh-anh {
+    flex-shrink: 0;
+    width: 200px;
+}
+
+.bai-viet-item .hinh-anh img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+.bai-viet-item .noi-dung {
+    flex: 1;
+}
+
+.bai-viet-item .noi-dung h4 {
+    margin-top: 0;
+    font-size: 20px;
+    color: #ffcc00;
+}
+
+.bai-viet-item .noi-dung p {
+    margin: 5px 0;
+    color: #eee;
+}
+
+.bai-viet-item .noi-dung a {
+    color: #ffcc00;
+    text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .bai-viet-item {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .bai-viet-item .hinh-anh {
+        width: 100%;
+    }
+
+    .bai-viet-item .noi-dung {
+        width: 100%;
+    }
+}
