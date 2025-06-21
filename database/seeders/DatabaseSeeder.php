@@ -32,6 +32,7 @@ class DatabaseSeeder extends Seeder
             CapBacTheSeeder::class,
             TheLoaiPhimSeeder::class,
             PhimSeeder::class,
+
         ]);
     }
 }

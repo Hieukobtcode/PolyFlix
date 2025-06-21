@@ -12,7 +12,7 @@
 }
 .banner {
     width: 100%;
-    max-width: 1215px; 
+    max-width: 1215px;
     margin: 20px auto;
     text-align: center;
     padding: 0 10px;
@@ -378,6 +378,356 @@
 .booking-fast .select {
     flex-wrap: wrap;
 }
+
+/* ==================================== */
+.tab-item {
+    cursor: pointer;
+}
+
+.tab-item.active {
+    color: #ffcc00;
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+.tab-content {
+    display: none;
+    margin: 20px auto;
+    max-width: 1200px;
+    padding: 0 15px;
+}
+
+.tab-content.active {
+    display: block;
+}
+.tin-tuc-wrapper {
+    width: 100%;
+    gap: 30px;
+    margin-top: 30px;
+    flex-wrap: wrap;
+    display: flex;
+    justify-content: center;
+}
+
+.tin-tuc-noi-bat {
+    min-width: 48%;
+    flex: 1 1 48%;
+}
+
+.tin-tuc-noi-bat img {
+    display: block;
+    width: 580px;
+    height: 400px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.tin-tuc-noi-bat h3 {
+    width: 100%;
+    margin-top: 12px;
+    font-size: 20px;
+    color: white;
+    font-weight: bold;
+    line-height: 1.4;
+    overflow-wrap: break-word;
+    white-space: normal;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.tin-tuc-danh-sach {
+    display: flex;
+    flex: 1 1 48%;
+    max-width: 48%;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.tin-tuc-item {
+    display: flex;
+    gap: 20px;
+    padding-bottom: 30px;
+}
+
+.tin-tuc-item .thumb img {
+    display: block;
+    height: 100px;
+    width: 160px;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+.tin-tuc-item .info h4 {
+    margin: 0;
+    font-size: 16px;
+    color: white;
+    font-weight: bold;
+}
+
+.tin-tuc-item .meta {
+    margin-top: 5px;
+    font-size: 12px;
+    color: #555;
+    display: flex;
+    gap: 10px;
+}
+
+.tin-tuc-item .meta span {
+    background: #f2f2f2;
+    padding: 3px 8px;
+    border-radius: 4px;
+}
+
+.info .noi-dung {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    color: #ccc;
+    margin-top: 5px;
+    font-size: 14px;
+    line-height: 1.5;
+    width: 100%;
+    max-width: 100%;
+    word-break: break-word;
+}
+
+/* =================================================== */
+.ten-phim {
+    font-size: 20px;
+    color: #ffcc00;
+    font-weight: bold;
+    border-bottom: 1px dashed #555;
+    padding-bottom: 5px;
+    height: 10%;
+}
+
+.khung-binh-luan {
+    display: flex;
+    width: 100%;
+    max-width: 1200px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 15px;
+    background-color: #1c1c1c;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.khung-binh-luan .poster {
+    width: 180px;
+    flex-shrink: 0;
+}
+
+.khung-binh-luan .poster img {
+    width: 330px;
+    height: 400px;
+    display: block;
+    border-radius: 8px;
+}
+
+.khung-binh-luan .binh-luan {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-left: 150px;
+}
+
+.binh-luan-item {
+    border-bottom: 1px solid #444;
+    padding-bottom: 10px;
+}
+
+.binh-luan-item strong {
+    color: #ffcc00;
+}
+
+.binh-luan-item p {
+    margin: 5px 0;
+    color: #eee;
+}
+
+.binh-luan-item small {
+    color: #999;
+}
+.binh-luan-item {
+    display: flex;
+    gap: 15px;
+    align-items: flex-start;
+    border-bottom: 1px solid #444;
+    padding-bottom: 10px;
+}
+
+.binh-luan-item .avatar img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #ffcc00;
+}
+
+.binh-luan-item .noi-dung {
+    flex: 1;
+}
+
+.binh-luan-item .noi-dung strong {
+    color: #ffcc00;
+}
+
+.binh-luan-item .noi-dung p {
+    margin: 5px 0;
+    color: #eee;
+}
+
+.binh-luan-item .noi-dung small {
+    color: #999;
+}
+
+/* Slide container */
+#slide-container {
+    position: relative;
+    width: 100%;
+    max-width: 1200px;
+    margin: 30px auto;
+}
+
+#slide-container .slide {
+    display: none;
+}
+
+#slide-container .slide:first-child {
+    display: block;
+}
+
+/* Slide controls */
+.slide-controls {
+    display: flex;
+    justify-content: center;
+    gap: 12px; /* Thêm khoảng cách hợp lý giữa các nút */
+    margin-top: -20px;
+}
+
+.slide-controls button {
+    padding: 8px 16px;
+    background-color: #5c50ff;
+    color: #fff;
+    border: 1px solid #888;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 18px;
+    transition: background-color 0.3s ease;
+}
+
+/* Custom "Xem thêm" button */
+.btn-see1 {
+    display: block;
+    margin: 20px auto 0; /* Căn giữa và có khoảng cách phía trên */
+    padding: 5px 20px;
+    border: 1px solid yellow;
+    border-radius: 5px;
+    background-color: #414184;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+    cursor: pointer;
+    text-align: center;
+}
+
+/* Base style cho nút */
+.btn-see1 {
+    padding: 6px 16px;
+    border: 1px solid yellow;
+    border-radius: 6px;
+    background-color: #414184;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+    cursor: pointer;
+    text-align: center;
+    transition: color 0.3s ease;
+}
+
+/* Hiệu ứng hover: nền chạy */
+.btn-see1::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background: linear-gradient(to right, #ff6600, #ffcc00);
+    transition: all 0.4s ease;
+}
+
+/* Nút trái: chạy từ trái sang phải */
+.btn-see1.left::before {
+    right: -100%;
+    left: auto;
+}
+
+.btn-see1.left:hover::before {
+    right: 0;
+}
+
+/* Nút phải: chạy từ phải sang trái */
+.btn-see1.right::before {
+    left: -100%;
+    right: auto;
+}
+
+.btn-see1.right:hover::before {
+    left: 0;
+}
+
+
+
+.slide-button-group{
+    display: flex;
+    gap: 20px;
+}
+@keyframes fadeIn {
+    from {
+        opacity: 0.4;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Ảnh poster chuyển động nhẹ khi slide */
+.khung-binh-luan .poster img {
+    width: 330px;
+    height: 400px;
+    display: block;
+    border-radius: 8px;
+    object-fit: cover;
+
+    /* Thêm hiệu ứng chuyển */
+    opacity: 0;
+    transform: translateY(10px);
+    animation: fadeInPoster 0.6s ease forwards;
+}
+
+/* Keyframe cho hiệu ứng mượt */
+@keyframes fadeInPoster {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ========================================= */
 
 @media (max-width: 1024px) {
     .list-movie {
