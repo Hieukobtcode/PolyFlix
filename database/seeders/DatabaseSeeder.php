@@ -14,28 +14,24 @@ class DatabaseSeeder extends Seeder
 
     public function run(): void
     {
-        // User::factory(10)->create();
-
-        // User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
-
-        // Gọi các seeder để tạo dữ liệu mẫu
-
-
         $this->call([
+            BaiVietSeeder::class,
+            CauHinhSeeder::class,
+            VaiTroSeeder::class,
+            PhanQuyenSeeder::class,
+            VaiTroPhanQuyenSeeder::class,
+            BannerSeeder::class,
             KhuyenMaiSeeder::class,
-            // BannerSeeder::class,
-            // LoaiPhongSeeder::class,
-            // CauHinhSeeder::class,
-            // VaiTroSeeder::class,
-            // PhanQuyenSeeder::class,
-            // VaiTroPhanQuyenSeeder::class,
-            // UserSeeder::class,
-            // TheLoaiPhimSeeder::class,
-            // DinhDangPhimSeeder::class,
-            // PhuDePhimSeeder::class,
+            ChiNhanhSeeder::class,
+            RapSeeder::class,
+            LoaiGheSeeder::class,
+            LoaiPhongSeeder::class,
+            PhuDePhimSeeder::class,
+            DinhDangPhimSeeder::class,
+            LoaiPhongSeeder::class,
+            CapBacTheSeeder::class,
+            TheLoaiPhimSeeder::class,
+            PhimSeeder::class,
         ]);
     }
 }

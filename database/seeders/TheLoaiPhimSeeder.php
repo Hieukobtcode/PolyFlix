@@ -65,5 +65,7 @@ class TheLoaiPhimSeeder extends Seeder
         foreach ($theLoaiList as $item) {
             TheLoaiPhim::create($item);
         }
+
+        
     }
 }
