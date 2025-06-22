@@ -549,8 +549,14 @@
         <p>Không có combo / đồ ăn.</p>
     @endif
     <div style="text-align: center; margin-top: 20px;">
-        {!! DNS1D::getBarcodeHTML($datVe->ma_dat_ve . '-' . $ghe->ma_ghe, 'C128', 2, 60) !!}
-        <div style="margin-top: 8px;">{{ $datVe->ma_dat_ve }} - {{ $ghe->ma_ghe }}</div>
+        @if($datVe->gheNgois->isNotEmpty())
+            @php $firstGhe = $datVe->gheNgois->first(); @endphp
+            {!! DNS1D::getBarcodeHTML($datVe->ma_dat_ve . '-' . $firstGhe->ma_ghe, 'C128', 2, 60) !!}
+            <div style="margin-top: 8px;">{{ $datVe->ma_dat_ve }} - {{ $firstGhe->ma_ghe }}</div>
+        @else
+            {!! DNS1D::getBarcodeHTML($datVe->ma_dat_ve, 'C128', 2, 60) !!}
+            <div style="margin-top: 8px;">{{ $datVe->ma_dat_ve }}</div>
+        @endif
     </div>
     <p style="text-align: center; font-style: italic; margin-top: 15px; color: #666; font-size: 13px;">
         Quý khách vui lòng xuất trình phiếu này tại quầy combo để nhận món.

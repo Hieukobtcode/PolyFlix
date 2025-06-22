@@ -4,11 +4,13 @@ window.jQuery = $;
 import "../css/trang-chu.css";
 
 $(document).ready(function () {
+    console.log("Trang chu JS loaded");
     // Khởi tạo đặt vé nhanh
     initBookingFast();
 });
 
 function initBookingFast() {
+    console.log("Init booking fast");
     // Load danh sách chi nhánh khi trang được tải
     loadChiNhanhs();
 
@@ -17,6 +19,7 @@ function initBookingFast() {
 }
 
 function loadChiNhanhs() {
+    console.log("Loading chi nhanhs");
     showLoading();
 
     $.ajax({

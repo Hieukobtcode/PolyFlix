@@ -8,17 +8,17 @@
     "name": "jquery"
   },
   "resources/css/app.css": {
-    "file": "assets/app-CbnFO6_P.css",
+    "file": "assets/app-DmHdbO0F.css",
     "src": "resources/css/app.css",
     "isEntry": true
   },
   "resources/css/client.css": {
-    "file": "assets/client-CT77KYqg.css",
+    "file": "assets/client-Cag89w_C.css",
     "src": "resources/css/client.css",
     "isEntry": true
   },
   "resources/css/dat-ve.css": {
-    "file": "assets/dat-ve-BbF5NHHL.css",
+    "file": "assets/dat-ve-DaEeU6Iv.css",
     "src": "resources/css/dat-ve.css",
     "isEntry": true
   },
@@ -28,7 +28,7 @@
     "isEntry": true
   },
   "resources/css/trang-chu.css": {
-    "file": "assets/trang-chu-BwybP2i1.css",
+    "file": "assets/trang-chu-DZeRVgpu.css",
     "src": "resources/css/trang-chu.css",
     "isEntry": true
   },
@@ -46,16 +46,22 @@
     ]
   },
   "resources/js/client.js": {
-    "file": "assets/client-BmRg6ezy.js",
+    "file": "assets/client-wiI7-Pqy.js",
     "name": "client",
     "src": "resources/js/client.js",
     "isEntry": true,
+    "imports": [
+      "_jquery-ARPk3Jhh.js"
+    ],
+    "dynamicImports": [
+      "resources/js/trang-chu.js"
+    ],
     "css": [
-      "assets/client-CT77KYqg.css"
+      "assets/client-Cag89w_C.css"
     ]
   },
   "resources/js/dat-ve.js": {
-    "file": "assets/dat-ve-CjYRlGnb.js",
+    "file": "assets/dat-ve-DS8fbNLg.js",
     "name": "dat-ve",
     "src": "resources/js/dat-ve.js",
     "isEntry": true,
@@ -64,7 +70,7 @@
       "_bootstrap-eMHK6VFw.js"
     ],
     "css": [
-      "assets/dat-ve-BbF5NHHL.css"
+      "assets/dat-ve-DaEeU6Iv.css"
     ]
   },
   "resources/js/ghe-ngoi.js": {
@@ -83,15 +89,15 @@
     ]
   },
   "resources/js/trang-chu.js": {
-    "file": "assets/trang-chu-EswTDk5P.js",
+    "file": "assets/trang-chu-Bj01_Jcr.js",
     "name": "trang-chu",
     "src": "resources/js/trang-chu.js",
-    "isEntry": true,
+    "isDynamicEntry": true,
     "imports": [
       "_jquery-ARPk3Jhh.js"
     ],
     "css": [
-      "assets/trang-chu-BwybP2i1.css"
+      "assets/trang-chu-DZeRVgpu.css"
     ]
   }
 }

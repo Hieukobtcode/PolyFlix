@@ -12,6 +12,7 @@ use App\Models\ChiTietDatVe;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 
 class DatVeController extends Controller
@@ -22,7 +23,7 @@ class DatVeController extends Controller
     public function index(Request $request)
     {
         $suatChieuId = $request->input('suat_chieu_id');
-        
+
         if (!$suatChieuId) {
             return redirect()->route('home')->with('error', 'Vui lòng chọn suất chiếu!');
         }
@@ -38,7 +39,7 @@ class DatVeController extends Controller
         // Kiểm tra suất chiếu còn hiệu lực
         $now = Carbon::now();
         $ngayGioChieu = Carbon::parse($suatChieu->ngay_chieu . ' ' . $suatChieu->bat_dau);
-        
+
         if ($ngayGioChieu->isPast()) {
             return redirect()->route('home')->with('error', 'Suất chiếu đã qua. Vui lòng chọn suất chiếu khác!');
         }
@@ -54,18 +55,18 @@ class DatVeController extends Controller
         // Lấy danh sách ghế theo phòng chiếu
         $gheNgois = $suatChieu->phongChieu->gheNgois()
             ->with('loaiGhe')
-            ->orderBy('hang_ghe')
-            ->orderBy('so_ghe')
+            ->orderBy('hang')
+            ->orderBy('cot')
             ->get()
-            ->map(function($ghe) use ($gheDaDat) {
+            ->map(function ($ghe) use ($gheDaDat) {
                 $ghe->da_dat = in_array($ghe->id, $gheDaDat);
                 return $ghe;
             });
 
         // Lấy danh sách đồ ăn và combo
-        $doAns = DoAn::whereHas('chiNhanhs', function($query) use ($suatChieu) {
-                $query->where('chi_nhanh_id', $suatChieu->phongChieu->rapPhim->chi_nhanh_id);
-            })
+        $doAns = DoAn::whereHas('chiNhanhs', function ($query) use ($suatChieu) {
+            $query->where('chi_nhanh_id', $suatChieu->phongChieu->rapPhim->chi_nhanh_id);
+        })
             ->where('trang_thai', 1)
             ->with('danhMuc')
             ->get();
@@ -75,9 +76,9 @@ class DatVeController extends Controller
             ->get();
 
         return view('client.dat-ve.index', compact(
-            'suatChieu', 
-            'gheNgois', 
-            'doAns', 
+            'suatChieu',
+            'gheNgois',
+            'doAns',
             'combos'
         ));
     }
@@ -87,6 +88,9 @@ class DatVeController extends Controller
      */
     public function store(Request $request)
     {
+        Log::info('=== BẮT ĐẦU ĐẶT VÉ ===');
+        Log::info('Request data:', $request->all());
+
         $request->validate([
             'suat_chieu_id' => 'required|exists:suat_chieus,id',
             'ghe_ids' => 'required|array|min:1',
@@ -96,16 +100,19 @@ class DatVeController extends Controller
         ]);
 
         if (!Auth::check()) {
+            Log::error('User chưa đăng nhập');
             return response()->json([
                 'success' => false,
                 'message' => 'Vui lòng đăng nhập để đặt vé!'
             ], 401);
         }
 
+        Log::info('User đã đăng nhập:', ['user_id' => Auth::id()]);
+
         DB::beginTransaction();
         try {
             $suatChieu = SuatChieu::findOrFail($request->suat_chieu_id);
-            
+
             // Kiểm tra ghế còn trống
             $gheDaDat = DB::table('chi_tiet_dat_ves')
                 ->join('dat_ves', 'chi_tiet_dat_ves.dat_ve_id', '=', 'dat_ves.id')
@@ -120,22 +127,30 @@ class DatVeController extends Controller
 
             // Tính tổng tiền
             $tongTien = $this->tinhTongTien($request);
+            Log::info('Tổng tiền tính được:', ['tong_tien' => $tongTien]);
 
             // Tạo đơn đặt vé
             $datVe = DatVe::create([
+                'ma_dat_ve' => 'DV' . time() . rand(100, 999),
                 'user_id' => Auth::id(),
                 'suat_chieu_id' => $request->suat_chieu_id,
                 'tong_tien' => $tongTien,
                 'phuong_thuc_tt' => 'Chưa chọn',
                 'trang_thai' => 'Chờ thanh toán'
             ]);
+            Log::info('Đã tạo đặt vé:', ['dat_ve_id' => $datVe->id]);
 
             // Tạo chi tiết đặt vé (ghế)
             foreach ($request->ghe_ids as $gheId) {
-                ChiTietDatVe::create([
+                $ghe = GheNgoi::with('loaiGhe')->find($gheId);
+                $giaVe = ($ghe->loaiGhe->gia ?? 0);
+
+                $chiTiet = ChiTietDatVe::create([
                     'dat_ve_id' => $datVe->id,
-                    'ghe_id' => $gheId
+                    'ghe_id' => $gheId,
+                    'gia_ve' => $giaVe
                 ]);
+                Log::info('Đã tạo chi tiết đặt vé:', ['chi_tiet_id' => $chiTiet->id, 'ghe_id' => $gheId, 'gia_ve' => $giaVe]);
             }
 
             // Thêm đồ ăn nếu có
@@ -157,15 +172,19 @@ class DatVeController extends Controller
             }
 
             DB::commit();
+            Log::info('=== ĐẶT VÉ THÀNH CÔNG ===', ['dat_ve_id' => $datVe->id]);
 
             return response()->json([
                 'success' => true,
                 'message' => 'Đặt vé thành công!',
                 'dat_ve_id' => $datVe->id
             ]);
-
         } catch (\Exception $e) {
             DB::rollback();
+            Log::error('=== LỖI ĐẶT VÉ ===', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
             return response()->json([
                 'success' => false,
                 'message' => $e->getMessage()
@@ -186,7 +205,7 @@ class DatVeController extends Controller
             ->join('loai_ghes', 'ghe_ngois.loai_ghe_id', '=', 'loai_ghes.id')
             ->whereIn('ghe_ngois.id', $gheIds)
             ->sum('loai_ghes.gia');
-        
+
         $tongTien += $giaGhe;
 
         // Tính tiền đồ ăn
