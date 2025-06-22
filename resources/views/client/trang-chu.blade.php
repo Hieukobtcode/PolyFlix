@@ -18,7 +18,7 @@
     <div class="swiper-wrapper">
         @foreach ($banners as $banner)
             <div class="swiper-slide">
-                <img src="{{ asset('storage/' . $banner->hinh_anh) }}" alt="Banner {{ $banner->id }}" 
+                <img src="{{ asset($banner->hinh_anh) }}" alt="Banner {{ $banner->id }}" 
                      style="width: 100%; height: 100%; object-fit: cover;">
             </div>
         @endforeach
@@ -133,8 +133,7 @@
     <button class="btn-see">XEM THÊM</button>
 
     <div class="khuyen-mai">
-      <a >KHUYẾN MÃI</a>
-
+        <p>KHUYẾN MÃI</p>
         <div class="img">
             <img width="350px" src="{{ asset('khuyen-mai/c_student.png') }}" alt="">
             <img width="350px" src="{{ asset('khuyen-mai/C_TEN.png') }}" alt="">

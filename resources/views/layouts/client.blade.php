@@ -100,7 +100,7 @@
                                 Khuyến mãi
                             </a>
                         </li>
-                        <li>Góc điện ảnh</li>
+                        <li><a href="{{ route('client.bai-viet') }}">Góc điện ảnh</a></li>
                         <li>Liên hệ</li>
                         <li>Giới thiệu</li>
                     </ul>

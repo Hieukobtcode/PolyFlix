@@ -13,7 +13,6 @@ class HomeController extends Controller
     //
       public function index()
     {
-        $banners = Banner::where('trang_thai', 1)->orderBy('id', 'desc')->get();
       $phims = Phim::where('trang_thai', 1)
     ->orderBy('ngay_phat_hanh', 'desc')
     ->get();
