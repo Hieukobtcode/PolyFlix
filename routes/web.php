@@ -43,6 +43,17 @@ use App\Http\Controllers\Client\KhuyenMaiController;
 use App\Http\Controllers\Client\LienHeController as ClientLienHeController;
 
 Route::get('/', [TrangChuController::class, 'index'])->name('home');
+
+// API cho đặt vé nhanh
+Route::get('/api/chi-nhanhs', [TrangChuController::class, 'getChiNhanhs'])->name('api.chi-nhanhs');
+Route::get('/api/phims-by-chi-nhanh', [TrangChuController::class, 'getPhimsByChiNhanh'])->name('api.phims-by-chi-nhanh');
+Route::get('/api/ngay-chieu-by-phim', [TrangChuController::class, 'getNgayChieuByPhim'])->name('api.ngay-chieu-by-phim');
+Route::get('/api/suat-chieu-by-ngay', [TrangChuController::class, 'getSuatChieuByNgay'])->name('api.suat-chieu-by-ngay');
+
+// Đặt vé client
+Route::get('/dat-ve', [\App\Http\Controllers\Client\DatVeController::class, 'index'])->name('client.dat-ve');
+Route::post('/dat-ve', [\App\Http\Controllers\Client\DatVeController::class, 'store'])->name('client.dat-ve.store');
+
 Route::get('/bai-viet', [DanhSachBaiVietController::class, 'index'])->name('client.bai-viet');
 Route::get('/bai-viet/{id}', [DanhSachBaiVietController::class, 'show'])->name('show-bai-viet');
 
