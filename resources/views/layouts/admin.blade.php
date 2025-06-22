@@ -42,6 +42,9 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <!-- Custom CSS -->
     <style>
         .required::after {
@@ -131,13 +134,13 @@
 
 <script>
     // Auto-hide alerts after 5 seconds
-    $(document).ready(function () {
-        setTimeout(function () {
+    $(document).ready(function() {
+        setTimeout(function() {
             $('.alert').alert('close');
         }, 5000);
 
         // Confirm delete
-        $('.delete-form').on('submit', function (e) {
+        $('.delete-form').on('submit', function(e) {
             if (!confirm('Bạn có chắc chắn muốn xóa mục này?')) {
                 e.preventDefault();
             }
