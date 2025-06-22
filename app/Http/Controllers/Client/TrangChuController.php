@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
 use App\Models\BaiViet;
+use App\Models\Banner;
 use App\Models\Comment;
 use App\Models\Phim;
 use App\Models\Rating;
@@ -16,6 +17,7 @@ class TrangChuController extends Controller
      */
     public function index()
     {
+        $banners = Banner::where('trang_thai', 1)->orderBy('id', 'desc')->get();
         $phims = Phim::whereHas('comments')
             ->with(['comments.user'])
             ->latest()
@@ -34,6 +36,6 @@ class TrangChuController extends Controller
             ->get();
 
 
-        return view('client.trang-chu', compact('phims', 'ratings', 'baiViet'));
+        return view('client.trang-chu', compact('phims', 'ratings', 'baiViet','banners'));
     }
 }

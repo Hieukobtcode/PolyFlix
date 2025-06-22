@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Rating;
 use Illuminate\Database\Seeder;
 use Database\Seeders\UserSeeder;
 use Database\Seeders\VaiTroSeeder;
@@ -33,7 +34,8 @@ class DatabaseSeeder extends Seeder
             CapBacTheSeeder::class,
             TheLoaiPhimSeeder::class,
             PhimSeeder::class,
-
+            CommentSeeder::class,
+            RatingSeeder::class,
         ]);
     }
 }

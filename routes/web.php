@@ -38,7 +38,8 @@ use App\Http\Controllers\Admin\GiaVeController;
 use App\Http\Controllers\Admin\RequestController;
 use App\Http\Controllers\Client\LoginController;
 use App\Http\Controllers\Client\ProfileController;
-
+use App\Http\Controllers\Client\HomeController;
+use App\Http\Controllers\Client\KhuyenMaiController;
 
 Route::get('/', [TrangChuController::class , 'index'])->name('home');
 Route::get('/bai-viet', [DanhSachBaiVietController::class, 'index'])->name('client.bai-viet');
@@ -50,12 +51,11 @@ Route::post('profile', [ProfileController::class, 'updatePassword'])->name('upda
 Route::post('update-avatar', [ProfileController::class, 'updateAvatar'])->name('update.avatar');
 
 // ====================================================================================================
-use App\Http\Controllers\Client\HomeController;
-use App\Http\Controllers\Client\KhuyenMaiController;
+
 // Route::get('/', function () {
 //     return view('client.trang-chu');
 // })->name('home');
-Route::get('/', [HomeController::class, 'index'])->name('home');
+// Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/client.khuyen-mai', [KhuyenMaiController::class, 'index'])->name('khuyen-mai.index');
 
 // Route::prefix('client')->name('client.')->group(function () {
