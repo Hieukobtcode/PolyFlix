@@ -13,7 +13,6 @@ use App\Http\Controllers\Admin\DanhMucDoAnController;
 use App\Http\Controllers\Admin\DoAnController;
 use App\Http\Controllers\Admin\PhimController;
 use App\Http\Controllers\Admin\InviteController;
-use App\Http\Controllers\Admin\KhuyenMaiController;
 use App\Http\Controllers\Admin\LienHeController;
 use App\Http\Controllers\Admin\BaiVietController;
 use App\Http\Controllers\Admin\CauHinhController;
@@ -36,13 +35,22 @@ use App\Http\Controllers\Admin\CommentController;
 use App\Http\Controllers\Admin\GiaVeController;
 use App\Http\Controllers\Admin\RequestController;
 use App\Http\Controllers\Client\LoginController;
+use App\Http\Controllers\Client\HomeController;
+use App\Http\Controllers\Client\KhuyenMaiController;
+// Route::get('/', function () {
+//     return view('client.trang-chu');
+// })->name('home');
+Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/client.khuyen-mai', [KhuyenMaiController::class, 'index'])->name('khuyen-mai.index');
 
-Route::get('/', function () {
-    return view('client.trang-chu');
-})->name('home');
+// Route::prefix('client')->name('client.')->group(function () {
+//     // Trang chủ client
+//     Route::get('/', [HomeController::class, 'index'])->name('home');
 
-// ====================================================================================================
-
+//     // Trang khuyến mãi
+//     Route::get('/khuyen-mai', [KhuyenMaiController::class, 'index'])->name('khuyen-mai');
+// // ====================================================================================================
+// });
 
 //Quen mk
 Route::get('forgot-pass', [AuthController::class, 'forgotPassForm'])->name('forgot-form');

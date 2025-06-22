@@ -90,7 +90,12 @@
                 </div>
                 <div class="nav2">
                     <ul>
-                        <li>Khuyến mãi</li>
+                       <li>
+    <a href="{{ route('khuyen-mai.index') }}" style="text-decoration: none; color: inherit;">
+        Khuyến mãi
+    </a>
+</li>
+
                         <li>Góc điện ảnh</li>
                         <li>Liên hệ</li>
                         <li>Giới thiệu</li>

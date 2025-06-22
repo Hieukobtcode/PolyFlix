@@ -16,18 +16,23 @@ class BannerSeeder extends Seeder
     {
          DB::table('banners')->insert([
             [
-                'hinh_anh'    => '1215wx365h_6_.jpg',
+                'hinh_anh'    => 'banners/banner1.jpg',
                 'trang_thai'  => 1,
                 'created_at'  => Carbon::now(),
                 'updated_at'  => Carbon::now(),
             ],
             [
-                'hinh_anh'    => 'logo1.png',
+                'hinh_anh'    => 'banners/banner2.jpg',
                 'trang_thai'  => 1,
                 'created_at'  => Carbon::now(),
                 'updated_at'  => Carbon::now(),
             ],
-           
+            [
+                'hinh_anh'    => 'banners/banner3.jpg',
+                'trang_thai'  => 1,
+                'created_at'  => Carbon::now(),
+                'updated_at'  => Carbon::now(),
+            ],
         ]);
     }
 }
