@@ -15,6 +15,7 @@ export default defineConfig({
                 "resources/js/client.js",
                 "resources/js/trang-chu.js",
                 "resources/js/dat-ve.js",
+                "resources/js/dat-ve-client.js",
                 "resources/js/ghe-ngoi.js",
                 "resources/js/page.js",
             ],

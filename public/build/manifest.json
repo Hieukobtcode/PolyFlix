@@ -60,8 +60,20 @@
       "assets/client-Cag89w_C.css"
     ]
   },
+  "resources/js/dat-ve-client.js": {
+    "file": "assets/dat-ve-client-Dd5mqgJt.js",
+    "name": "dat-ve-client",
+    "src": "resources/js/dat-ve-client.js",
+    "isEntry": true,
+    "imports": [
+      "_jquery-ARPk3Jhh.js"
+    ],
+    "css": [
+      "assets/dat-ve-DaEeU6Iv.css"
+    ]
+  },
   "resources/js/dat-ve.js": {
-    "file": "assets/dat-ve-DS8fbNLg.js",
+    "file": "assets/dat-ve-Dl47R_s4.js",
     "name": "dat-ve",
     "src": "resources/js/dat-ve.js",
     "isEntry": true,

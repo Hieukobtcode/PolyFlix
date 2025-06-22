@@ -3,7 +3,7 @@
 @section('title', 'Đặt vé xem phim')
 
 @section('styles')
-<link rel="stylesheet" href="{{ asset('css/dat-ve.css') }}">
+@vite('resources/css/dat-ve.css')
 @endsection
 
 @section('content')
@@ -39,20 +39,20 @@
             <div class="seat-map" id="seat-map">
                 @php
                     $currentRow = '';
-                    $seatsByRow = $gheNgois->groupBy('hang_ghe');
+                    $seatsByRow = $gheNgois->groupBy('hang');
                 @endphp
-                
+
                 @foreach($seatsByRow as $hangGhe => $ghes)
                     <div class="seat-row">
                         <div class="row-label">{{ $hangGhe }}</div>
                         <div class="seats">
                             @foreach($ghes as $ghe)
-                                <div class="seat {{ $ghe->da_dat ? 'occupied' : 'available' }} {{ $ghe->loaiGhe->ten_loai_ghe }}" 
+                                <div class="seat {{ $ghe->da_dat ? 'occupied' : 'available' }} {{ $ghe->loaiGhe->ten_loai_ghe ?? 'thuong' }}"
                                      data-seat-id="{{ $ghe->id }}"
-                                     data-seat-name="{{ $hangGhe }}{{ $ghe->so_ghe }}"
-                                     data-seat-price="{{ $ghe->loaiGhe->gia }}"
+                                     data-seat-name="{{ $ghe->ma_ghe }}"
+                                     data-seat-price="{{ $ghe->loaiGhe->phu_thu ?? 0 }}"
                                      @if($ghe->da_dat) disabled @endif>
-                                    {{ $ghe->so_ghe }}
+                                    {{ $ghe->cot }}
                                 </div>
                             @endforeach
                         </div>
@@ -163,5 +163,5 @@
 @endsection
 
 @section('scripts')
-<script src="{{ asset('js/dat-ve-client.js') }}"></script>
+@vite('resources/js/dat-ve-client.js')
 @endsection

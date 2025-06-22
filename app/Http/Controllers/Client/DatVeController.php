@@ -143,7 +143,9 @@ class DatVeController extends Controller
             // Tạo chi tiết đặt vé (ghế)
             foreach ($request->ghe_ids as $gheId) {
                 $ghe = GheNgoi::with('loaiGhe')->find($gheId);
-                $giaVe = ($ghe->loaiGhe->gia ?? 0);
+                $phuThuGhe = ($ghe->loaiGhe->phu_thu ?? 0);
+                $phuThuRap = $suatChieu->phongChieu->rapPhim->phu_thu ?? 0;
+                $giaVe = $phuThuGhe + $phuThuRap;
 
                 $chiTiet = ChiTietDatVe::create([
                     'dat_ve_id' => $datVe->id,
@@ -193,6 +195,29 @@ class DatVeController extends Controller
     }
 
     /**
+     * Hiển thị trang kết quả đặt vé
+     */
+    public function ketQua($id)
+    {
+        // Kiểm tra user đã đăng nhập và vé thuộc về user này
+        if (!Auth::check()) {
+            return redirect()->route('home')->with('error', 'Vui lòng đăng nhập để xem vé!');
+        }
+
+        $datVe = DatVe::with([
+            'nguoiDung',
+            'suatChieu.phim',
+            'suatChieu.phongChieu.rapPhim.chiNhanh',
+            'gheNgois.loaiGhe',
+            'combos.doAns'
+        ])->where('id', $id)
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
+
+        return view('client.dat-ve.ket-qua', compact('datVe'));
+    }
+
+    /**
      * Tính tổng tiền đặt vé
      */
     private function tinhTongTien($request)
@@ -201,18 +226,23 @@ class DatVeController extends Controller
 
         // Tính tiền ghế
         $gheIds = $request->ghe_ids;
-        $giaGhe = DB::table('ghe_ngois')
-            ->join('loai_ghes', 'ghe_ngois.loai_ghe_id', '=', 'loai_ghes.id')
-            ->whereIn('ghe_ngois.id', $gheIds)
-            ->sum('loai_ghes.gia');
+        $suatChieu = SuatChieu::find($request->suat_chieu_id);
+        $phuThuRap = $suatChieu->phongChieu->rapPhim->phu_thu ?? 0;
 
-        $tongTien += $giaGhe;
+        foreach ($gheIds as $gheId) {
+            $ghe = GheNgoi::with('loaiGhe')->find($gheId);
+            $phuThuGhe = $ghe->loaiGhe->phu_thu ?? 0;
+            $tongTien += $phuThuGhe;
+        }
+
+        // Thêm phụ thu rạp
+        $tongTien += $phuThuRap;
 
         // Tính tiền đồ ăn
         if ($request->do_an) {
             foreach ($request->do_an as $doAnId => $soLuong) {
                 if ($soLuong > 0) {
-                    $giaDoAn = DoAn::find($doAnId)->gia;
+                    $giaDoAn = DoAn::find($doAnId)->gia ?? 0;
                     $tongTien += $giaDoAn * $soLuong;
                 }
             }
@@ -222,7 +252,7 @@ class DatVeController extends Controller
         if ($request->combo) {
             foreach ($request->combo as $comboId => $soLuong) {
                 if ($soLuong > 0) {
-                    $giaCombo = Combo::find($comboId)->gia;
+                    $giaCombo = Combo::find($comboId)->gia ?? 0;
                     $tongTien += $giaCombo * $soLuong;
                 }
             }

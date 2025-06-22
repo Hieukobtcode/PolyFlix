@@ -4,6 +4,7 @@ window.jQuery = $;
 import "../css/dat-ve.css";
 
 $(document).ready(function () {
+    console.log("dat-ve-client.js loaded successfully");
     initDatVe();
 });
 
@@ -83,6 +84,7 @@ function setupBookingButton() {
         const formData = prepareBookingData();
 
         // Gửi request
+        console.log("Sending booking request...", formData);
         $.ajax({
             url: "/dat-ve",
             method: "POST",
@@ -91,11 +93,16 @@ function setupBookingButton() {
                 "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
             },
             success: function (response) {
+                console.log("Booking response:", response);
                 if (response.success) {
                     showSuccess("Đặt vé thành công!");
-                    // Chuyển đến trang chi tiết vé
+                    // Chuyển đến trang kết quả đặt vé client
                     setTimeout(() => {
-                        window.location.href = `/admin/dat-ve?id=${response.dat_ve_id}`;
+                        console.log(
+                            "Redirecting to:",
+                            `/dat-ve/ket-qua/${response.dat_ve_id}`
+                        );
+                        window.location.href = `/dat-ve/ket-qua/${response.dat_ve_id}`;
                     }, 1500);
                 } else {
                     showError(response.message || "Có lỗi xảy ra!");
@@ -103,6 +110,7 @@ function setupBookingButton() {
                 }
             },
             error: function (xhr) {
+                console.error("Booking error:", xhr);
                 const response = xhr.responseJSON;
                 showError(response?.message || "Có lỗi xảy ra khi đặt vé!");
                 resetBookingButton();

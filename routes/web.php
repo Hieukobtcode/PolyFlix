@@ -53,6 +53,7 @@ Route::get('/api/suat-chieu-by-ngay', [TrangChuController::class, 'getSuatChieuB
 // Đặt vé client
 Route::get('/dat-ve', [\App\Http\Controllers\Client\DatVeController::class, 'index'])->name('client.dat-ve');
 Route::post('/dat-ve', [\App\Http\Controllers\Client\DatVeController::class, 'store'])->name('client.dat-ve.store');
+Route::get('/dat-ve/ket-qua/{id}', [\App\Http\Controllers\Client\DatVeController::class, 'ketQua'])->name('client.dat-ve.ket-qua');
 
 Route::get('/bai-viet', [DanhSachBaiVietController::class, 'index'])->name('client.bai-viet');
 Route::get('/bai-viet/{id}', [DanhSachBaiVietController::class, 'show'])->name('show-bai-viet');
