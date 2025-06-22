@@ -163,5 +163,5 @@
 @endsection
 
 @section('scripts')
-<script src="{{ asset('js/dat-ve.js') }}"></script>
+<script src="{{ asset('js/dat-ve-client.js') }}"></script>
 @endsection
