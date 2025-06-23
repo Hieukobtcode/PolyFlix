@@ -16,6 +16,10 @@
     {{-- <div class="km-img" style="width: 100%; height: 200px; background: #f5f5f5; display: flex; align-items: center; justify-content: center;">
                     <img src="{{ asset('khuyen-mai/c_student.png') }}" alt="{{ $km->ten }}" style="max-width: 100%; max-height: 100%;">
                 </div> --}}
+                <div class="km-img" style="width: 100%; height: 200px; background: #f5f5f5; display: flex; align-items: center; justify-content: center;">
+    <img src="{{ asset($km->hinh_anh) }}" alt="{{ $km->ten }}" style="max-width: 100%; max-height: 100%;">
+</div>
+
                 <div class="km-content" style="padding: 15px;">
                     <h5 style="font-weight: bold;">{{ $km->ten }}</h5>
                     <p style="font-size: 14px; color: white;">{{ $km->mo_ta }}</p>
