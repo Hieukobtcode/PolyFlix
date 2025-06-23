@@ -28,6 +28,7 @@ class DatabaseSeeder extends Seeder
             RapSeeder::class,
             LoaiGheSeeder::class,
             LoaiPhongSeeder::class,
+            PhongChieuSeeder::class,
             PhuDePhimSeeder::class,
             DinhDangPhimSeeder::class,
             LoaiPhongSeeder::class,

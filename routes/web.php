@@ -41,8 +41,9 @@ use App\Http\Controllers\Client\ProfileController;
 use App\Http\Controllers\Client\KhuyenMaiController;
 use App\Http\Controllers\Client\PhimsController;
 Route::get('/', [TrangChuController::class , 'index'])->name('home');
+
 Route::get('/bai-viet', [DanhSachBaiVietController::class, 'index'])->name('client.bai-viet');
-Route::get('/bai-viet/{id}', [DanhSachBaiVietController::class, 'show'])->name('show-bai-viet');
+Route::get('/bai-viet/{uuid}', [DanhSachBaiVietController::class, 'show'])->name('show-bai-viet');
 
 // Profile
 Route::get('profile', [ProfileController::class, 'index'])->name('profile');
@@ -226,7 +227,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access', 'per
         Route::get('thong-ke-su-dung', [KhuyenMaiController::class, 'thongKeSuDung'])->name('thong-ke-su-dung');
     });
     Route::resource('khuyen-mai', KhuyenMaiController::class);
-    
+
 
     Route::post('suat-chieu/bulk-delete', [SuatChieuController::class, 'bulkDelete'])->name('suat-chieu.bulk-delete');
     Route::post('suat-chieu/bulk-toggle-status', [SuatChieuController::class, 'bulkToggleStatus'])->name('suat-chieu.bulk-toggle-status');
