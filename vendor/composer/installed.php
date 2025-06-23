@@ -3,7 +3,7 @@
         'name' => 'laravel/laravel',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => 'a84c433c4733a8855bceb3404c51e47f817e404c',
+        'reference' => 'e8e5a45fa2e101491780cc5bf18b5fcc21aa7137',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -238,6 +238,15 @@
             'aliases' => array(),
             'dev_requirement' => true,
         ),
+        'hashids/hashids' => array(
+            'pretty_version' => '5.0.2',
+            'version' => '5.0.2.0',
+            'reference' => '197171016b77ddf14e259e186559152eb3f8cf33',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../hashids/hashids',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
         'illuminate/auth' => array(
             'dev_requirement' => false,
             'replaced' => array(
@@ -469,7 +478,7 @@
         'laravel/laravel' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => 'a84c433c4733a8855bceb3404c51e47f817e404c',
+            'reference' => 'e8e5a45fa2e101491780cc5bf18b5fcc21aa7137',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

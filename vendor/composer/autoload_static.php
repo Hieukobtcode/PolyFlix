@@ -166,6 +166,10 @@ class ComposerStaticInit8ccaa84c004fde119164421f30c4c011
             'Illuminate\\Support\\' => 19,
             'Illuminate\\' => 11,
         ),
+        'H' => 
+        array (
+            'Hashids\\' => 8,
+        ),
         'G' => 
         array (
             'GuzzleHttp\\UriTemplate\\' => 23,
@@ -226,9 +230,9 @@ class ComposerStaticInit8ccaa84c004fde119164421f30c4c011
         ),
         'phpDocumentor\\Reflection\\' => 
         array (
-            0 => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src',
-            1 => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src',
-            2 => __DIR__ . '/..' . '/phpdocumentor/reflection-common/src',
+            0 => __DIR__ . '/..' . '/phpdocumentor/reflection-common/src',
+            1 => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src',
+            2 => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src',
         ),
         'Whoops\\' => 
         array (
@@ -550,6 +554,10 @@ class ComposerStaticInit8ccaa84c004fde119164421f30c4c011
         array (
             0 => __DIR__ . '/..' . '/laravel/framework/src/Illuminate',
         ),
+        'Hashids\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/hashids/hashids/src',
+        ),
         'GuzzleHttp\\UriTemplate\\' => 
         array (
             0 => __DIR__ . '/..' . '/guzzlehttp/uri-template/src',
@@ -701,8 +709,11 @@ class ComposerStaticInit8ccaa84c004fde119164421f30c4c011
         'App\\Http\\Controllers\\Admin\\UserController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/UserController.php',
         'App\\Http\\Controllers\\Admin\\VaiTroController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/VaiTroController.php',
         'App\\Http\\Controllers\\AuthController' => __DIR__ . '/../..' . '/app/Http/Controllers/AuthController.php',
+        'App\\Http\\Controllers\\Client\\DanhSachBaiVietController' => __DIR__ . '/../..' . '/app/Http/Controllers/Client/DanhSachBaiVietController.php',
+        'App\\Http\\Controllers\\Client\\KhuyenMaiController' => __DIR__ . '/../..' . '/app/Http/Controllers/Client/KhuyenMaiController.php',
         'App\\Http\\Controllers\\Client\\LoginController' => __DIR__ . '/../..' . '/app/Http/Controllers/Client/LoginController.php',
         'App\\Http\\Controllers\\Client\\ProfileController' => __DIR__ . '/../..' . '/app/Http/Controllers/Client/ProfileController.php',
+        'App\\Http\\Controllers\\Client\\TrangChuController' => __DIR__ . '/../..' . '/app/Http/Controllers/Client/TrangChuController.php',
         'App\\Http\\Controllers\\Controller' => __DIR__ . '/../..' . '/app/Http/Controllers/Controller.php',
         'App\\Http\\Controllers\\SocialAuthController' => __DIR__ . '/../..' . '/app/Http/Controllers/SocialAuthController.php',
         'App\\Http\\Middleware\\AuthRedirect' => __DIR__ . '/../..' . '/app/Http/Middleware/AuthRedirect.php',
@@ -882,16 +893,26 @@ class ComposerStaticInit8ccaa84c004fde119164421f30c4c011
         'Cron\\MinutesField' => __DIR__ . '/..' . '/dragonmantank/cron-expression/src/Cron/MinutesField.php',
         'Cron\\MonthField' => __DIR__ . '/..' . '/dragonmantank/cron-expression/src/Cron/MonthField.php',
         'Database\\Factories\\UserFactory' => __DIR__ . '/../..' . '/database/factories/UserFactory.php',
+        'Database\\Seeders\\BaiVietSeeder' => __DIR__ . '/../..' . '/database/seeders/BaiVietSeeder.php',
         'Database\\Seeders\\BannerSeeder' => __DIR__ . '/../..' . '/database/seeders/BannerSeeder.php',
+        'Database\\Seeders\\BinhLuanSeeder' => __DIR__ . '/../..' . '/database/seeders/BinhLuanSeeder.php',
+        'Database\\Seeders\\CapBacTheSeeder' => __DIR__ . '/../..' . '/database/seeders/CapBacTheSeeder.php',
         'Database\\Seeders\\CauHinhSeeder' => __DIR__ . '/../..' . '/database/seeders/CauHinhSeeder.php',
-        'Database\\Seeders\\DatVesSeeder' => __DIR__ . '/../..' . '/database/seeders/DatVesSeeder.php',
+        'Database\\Seeders\\ChiNhanhSeeder' => __DIR__ . '/../..' . '/database/seeders/ChiNhanhSeeder.php',
+        'Database\\Seeders\\CommentSeeder' => __DIR__ . '/../..' . '/database/seeders/CommentSeeder.php',
+        'Database\\Seeders\\DanhGiaSeeder' => __DIR__ . '/../..' . '/database/seeders/DanhGiaSeeder.php',
         'Database\\Seeders\\DatabaseSeeder' => __DIR__ . '/../..' . '/database/seeders/DatabaseSeeder.php',
         'Database\\Seeders\\DinhDangPhimSeeder' => __DIR__ . '/../..' . '/database/seeders/DinhDangPhimSeeder.php',
         'Database\\Seeders\\KhuyenMaiSeeder' => __DIR__ . '/../..' . '/database/seeders/KhuyenMaiSeeder.php',
         'Database\\Seeders\\LoaiGheSeeder' => __DIR__ . '/../..' . '/database/seeders/LoaiGheSeeder.php',
         'Database\\Seeders\\LoaiPhongSeeder' => __DIR__ . '/../..' . '/database/seeders/LoaiPhongSeeder.php',
         'Database\\Seeders\\PhanQuyenSeeder' => __DIR__ . '/../..' . '/database/seeders/PhanQuyenSeeder.php',
+        'Database\\Seeders\\PhimSeeder' => __DIR__ . '/../..' . '/database/seeders/PhimSeeder.php',
+        'Database\\Seeders\\PhongChieuSeeder' => __DIR__ . '/../..' . '/database/seeders/PhongChieuSeeder.php',
         'Database\\Seeders\\PhuDePhimSeeder' => __DIR__ . '/../..' . '/database/seeders/PhuDePhimSeeder.php',
+        'Database\\Seeders\\PhuDeSeeder' => __DIR__ . '/../..' . '/database/seeders/PhuDeSeeder.php',
+        'Database\\Seeders\\RapSeeder' => __DIR__ . '/../..' . '/database/seeders/RapSeeder.php',
+        'Database\\Seeders\\RatingSeeder' => __DIR__ . '/../..' . '/database/seeders/RatingSeeder.php',
         'Database\\Seeders\\TheLoaiPhimSeeder' => __DIR__ . '/../..' . '/database/seeders/TheLoaiPhimSeeder.php',
         'Database\\Seeders\\UserSeeder' => __DIR__ . '/../..' . '/database/seeders/UserSeeder.php',
         'Database\\Seeders\\VaiTroPhanQuyenSeeder' => __DIR__ . '/../..' . '/database/seeders/VaiTroPhanQuyenSeeder.php',
@@ -1930,6 +1951,11 @@ class ComposerStaticInit8ccaa84c004fde119164421f30c4c011
         'Hamcrest\\Type\\IsString' => __DIR__ . '/..' . '/hamcrest/hamcrest-php/hamcrest/Hamcrest/Type/IsString.php',
         'Hamcrest\\Util' => __DIR__ . '/..' . '/hamcrest/hamcrest-php/hamcrest/Hamcrest/Util.php',
         'Hamcrest\\Xml\\HasXPath' => __DIR__ . '/..' . '/hamcrest/hamcrest-php/hamcrest/Hamcrest/Xml/HasXPath.php',
+        'Hashids\\Hashids' => __DIR__ . '/..' . '/hashids/hashids/src/Hashids.php',
+        'Hashids\\HashidsInterface' => __DIR__ . '/..' . '/hashids/hashids/src/HashidsInterface.php',
+        'Hashids\\Math\\BCMath' => __DIR__ . '/..' . '/hashids/hashids/src/Math/BCMath.php',
+        'Hashids\\Math\\Gmp' => __DIR__ . '/..' . '/hashids/hashids/src/Math/Gmp.php',
+        'Hashids\\Math\\MathInterface' => __DIR__ . '/..' . '/hashids/hashids/src/Math/MathInterface.php',
         'Illuminate\\Auth\\Access\\AuthorizationException' => __DIR__ . '/..' . '/laravel/framework/src/Illuminate/Auth/Access/AuthorizationException.php',
         'Illuminate\\Auth\\Access\\Events\\GateEvaluated' => __DIR__ . '/..' . '/laravel/framework/src/Illuminate/Auth/Access/Events/GateEvaluated.php',
         'Illuminate\\Auth\\Access\\Gate' => __DIR__ . '/..' . '/laravel/framework/src/Illuminate/Auth/Access/Gate.php',
