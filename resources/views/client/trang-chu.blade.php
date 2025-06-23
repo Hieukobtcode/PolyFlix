@@ -1,5 +1,8 @@
 @extends('layouts.client')
 @section('content')
+    @php
+        use App\Helpers\IdFormatter;
+    @endphp
     <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
         integrity="sha512-dYkA5Kj8SGrWJQ2r7S4JblmQo2+3ZJfzv+y5eA6TeK4kD4i2yHMyhzTKoH9yKxKdRYg3C1f58TbzOdKJejO3dg=="
@@ -8,49 +11,49 @@
     @vite('resources/js/trang-chu.js')
 
     {{-- <div class="banner"> --}}
-        {{-- <img src="{{ asset('banner/1215wx365h_6_.jpg') }}" alt="">
+    {{-- <img src="{{ asset('banner/1215wx365h_6_.jpg') }}" alt="">
     </div> --}}
-<!-- Swiper CSS -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <!-- Swiper CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 
-<!-- Banner Slider -->
-<div class="swiper banner-slider" style="max-width: 1200px; width: 100%; height: 500px; margin: 0 auto 20px auto;">
-    <div class="swiper-wrapper">
-        @foreach ($banners as $banner)
-            <div class="swiper-slide">
-                <img src="{{ asset($banner->hinh_anh) }}" alt="Banner {{ $banner->id }}" 
-                     style="width: 100%; height: 100%; object-fit: cover;">
-            </div>
-        @endforeach
+    <!-- Banner Slider -->
+    <div class="swiper banner-slider"
+        style="max-width: 79%; ;height:450px; margin: 20px auto 20px auto; border-radius: 10px; overflow: hidden;">
+        <div class="swiper-wrapper">
+            @foreach ($banners as $banner)
+                <div class="swiper-slide" style="width: 100%">
+                    <img src="{{ asset($banner->hinh_anh) }}" alt="Banner {{ $banner->id }}"
+                        style="width: 1200px; height: 450px;">
+                </div>
+            @endforeach
+        </div>
+
+        <div class="swiper-pagination"></div>
+        <div class="swiper-button-next"></div>
+        <div class="swiper-button-prev"></div>
     </div>
 
-    <div class="swiper-pagination"></div>
-    <div class="swiper-button-next"></div>
-    <div class="swiper-button-prev"></div>
-</div>
+    <!-- Swiper JS -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
-
-<!-- Swiper JS -->
-<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-
-<!-- Swiper Init -->
-<script>
-    const swiper = new Swiper('.banner-slider', {
-        loop: true,
-        autoplay: {
-            delay: 3000,
-            disableOnInteraction: false,
-        },
-        pagination: {
-            el: '.swiper-pagination',
-            clickable: true,
-        },
-        navigation: {
-            nextEl: '.swiper-button-next',
-            prevEl: '.swiper-button-prev',
-        },
-    });
-</script>
+    <!-- Swiper Init -->
+    <script>
+        const swiper = new Swiper('.banner-slider', {
+            loop: true,
+            autoplay: {
+                delay: 3000,
+                disableOnInteraction: false,
+            },
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true,
+            },
+            navigation: {
+                nextEl: '.swiper-button-next',
+                prevEl: '.swiper-button-prev',
+            },
+        });
+    </script>
 
 
     <div class="booking-fast">
@@ -140,10 +143,10 @@
             <img width="350px" src="{{ asset('khuyen-mai/monday_1_.jpg') }}" alt="">
         </div>
     </div>
-    
+
     <a href="{{ route('khuyen-mai.index') }}">
-    <button class="btn-km">TẤT CẢ ƯU ĐÃI</button>
-</a>
+        <button class="btn-km">TẤT CẢ ƯU ĐÃI</button>
+    </a>
     <div class="new">
         <button type="button"></button>
         <p>GÓC ĐIỆN ẢNH</p>
@@ -215,7 +218,7 @@
                 {{-- Bài viết nổi bật --}}
                 <div class="tin-tuc-noi-bat">
                     <img src="{{ asset('storage/' . $baiViet[0]->hinh_anh) }}" alt="{{ $baiViet[0]->tieu_de }}">
-                    <a href="{{ route('show-bai-viet', $baiViet[0]->id) }}">
+                    <a href="{{ route('show-bai-viet', IdFormatter::uuidify($baiViet[0]->id)) }}">
                         <h3>{{ $baiViet[0]->tieu_de }}</h3>
                     </a>
                 </div>
@@ -225,12 +228,12 @@
                     @foreach ($baiViet->skip(1) as $bv)
                         <div class="tin-tuc-item">
                             <div class="thumb">
-                                <a href="{{ route('show-bai-viet', $bv->id) }}">
+                                <a href="{{ route('show-bai-viet', IdFormatter::uuidify($bv->id)) }}">
                                     <img src="{{ asset('storage/' . $bv->hinh_anh) }}" alt="{{ $bv->tieu_de }}">
                                 </a>
                             </div>
                             <div class="info">
-                                <a href="{{ route('show-bai-viet', $bv->id) }}">
+                                <a href="{{ route('show-bai-viet', IdFormatter::uuidify($bv->id)) }}">
                                     <h4>{{ $bv->tieu_de }}</h4>
                                     <p class="noi-dung">{{ $bv->noi_dung }}</p>
                                 </a>

@@ -20,7 +20,7 @@ class PhongChieuSeeder extends Seeder
 
                 $tenPhong = Str::upper(Str::random(1)) . rand(1, 20) . ' - ' . $loai->ten_loai_phong;
 
-                DB::table('phong_chieu')->insert([
+                DB::table('phong_chieus')->insert([
                     'rap_phim_id'    => $rap->id,
                     'ten_phong'      => $tenPhong,
                     'loai_phong_id'  => $loai->id,

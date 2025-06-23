@@ -9,7 +9,6 @@ use App\Models\Comment;
 use App\Models\Phim;
 use App\Models\Rating;
 use Illuminate\Http\Request;
-
 class TrangChuController extends Controller
 {
     /**
