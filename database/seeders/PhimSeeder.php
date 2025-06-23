@@ -389,7 +389,8 @@ Phim mới Demon Slayer -Kimetsu no Yaiba- The Movie: Infinity Castle/ Thanh Gư
                 ]);
             }
 
-            $randomTheLoais = Arr::random($theLoaiPhims, rand(1, 3));
+            // $randomTheLoais = Arr::random($theLoaiPhims, rand(1, 3));
+            $randomTheLoais = Arr::random($theLoaiPhims, min(count($theLoaiPhims), rand(1, 3)));
             foreach ((array) $randomTheLoais as $theLoaiId) {
                 DB::table('phim_the_loais')->insert([
                     'phim_id' => $phimId,
@@ -397,7 +398,8 @@ Phim mới Demon Slayer -Kimetsu no Yaiba- The Movie: Infinity Castle/ Thanh Gư
                 ]);
             }
 
-            $randomDinhDang = Arr::random($dinhDangPhims, rand(1, 2));
+            // $randomDinhDang = Arr::random($dinhDangPhims, rand(1, 2));
+            $randomDinhDang = Arr::random($dinhDangPhims, min(count($dinhDangPhims), rand(1, 2)));
             foreach ((array) $randomDinhDang as $dinhDangId) {
                 DB::table('phim_dinh_dangs')->insert([
                     'phim_id' => $phimId,
@@ -405,7 +407,8 @@ Phim mới Demon Slayer -Kimetsu no Yaiba- The Movie: Infinity Castle/ Thanh Gư
                 ]);
             }
 
-            $randomPhuDe = Arr::random($phuDePhims, rand(1, 2));
+            // $randomPhuDe = Arr::random($phuDePhims, rand(1, 2));
+            $randomPhuDe = Arr::random($phuDePhims, min(count($phuDePhims), rand(1, 2)));
             foreach ((array) $randomPhuDe as $phuDeId) {
                 DB::table('phim_phu_des')->insert([
                     'phim_id' => $phimId,

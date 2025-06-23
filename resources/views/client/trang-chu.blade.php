@@ -81,56 +81,44 @@
     <div class="menu">
         <button type="button"></button>
         <p class="movie">PHIM</p>
-        <div class="list">
-            <p>Đang chiếu</p>
-            <p>Sắp chiếu</p>
-        </div>
+        {{-- <div class="list">
+        <a href="{{ route('home', ['tab' => 'dang-chieu']) }}" class="tab-item {{ $tab == 'dang-chieu' ? 'active' : '' }}">Đang chiếu</a>
+        <a href="{{ route('home', ['tab' => 'sap-chieu']) }}" class="tab-item {{ $tab == 'sap-chieu' ? 'active' : '' }}">Sắp chiếu</a>
+    </div> --}}
+    
+    <div class="list">
+        <a href="#" class="tab-item active" data-tab="dang-chieu">Đang chiếu</a>
+        <a href="#" class="tab-item" data-tab="sap-chieu">Sắp chiếu</a>
+    </div>
+</div>
+
     </div>
 
     <div class="list-movie">
+    @foreach ($allPhims as $phim)
         <div class="movie">
             <div class="img-wrapper">
-                <img src="https://cdn.galaxycine.vn/media/2025/2/17/bi-kip-luyen-rong-500_1739776695143.jpg" alt="">
+                <img src="{{ asset('storage/' . $phim->poster) }}" alt="{{ $phim->ten_phim }}">
                 <div class="overlay">
                     <button class="btn buy"><i class="fa-solid fa-ticket"></i> Mua vé</button>
                     <button class="btn trailer"><i class="fa-solid fa-video"></i> Trailer</button>
                 </div>
             </div>
-            <p>Bí Kíp Luyện Rồng</p>
+            <p>{{ $phim->ten_phim }}</p>
         </div>
-        <div class="movie">
-            <div class="img-wrapper">
-                <img src="https://cdn.galaxycine.vn/media/2025/2/17/bi-kip-luyen-rong-500_1739776695143.jpg" alt="">
-                <div class="overlay">
-                    <button class="btn buy"><i class="fa-solid fa-ticket"></i> Mua vé</button>
-                    <button class="btn trailer"><i class="fa-solid fa-video"></i> Trailer</button>
-                </div>
-            </div>
-            <p>Bí Kíp Luyện Rồng</p>
-        </div>
-        <div class="movie">
-            <div class="img-wrapper">
-                <img src="https://cdn.galaxycine.vn/media/2025/2/17/bi-kip-luyen-rong-500_1739776695143.jpg" alt="">
-                <div class="overlay">
-                    <button class="btn buy"><i class="fa-solid fa-ticket"></i> Mua vé</button>
-                    <button class="btn trailer"><i class="fa-solid fa-video"></i> Trailer</button>
-                </div>
-            </div>
-            <p>Bí Kíp Luyện Rồng</p>
-        </div>
-        <div class="movie">
-            <div class="img-wrapper">
-                <img src="https://cdn.galaxycine.vn/media/2025/2/17/bi-kip-luyen-rong-500_1739776695143.jpg" alt="">
-                <div class="overlay">
-                    <button class="btn buy"><i class="fa-solid fa-ticket"></i> Mua vé</button>
-                    <button class="btn trailer"><i class="fa-solid fa-video"></i> Trailer</button>
-                </div>
-            </div>
-            <p>Bí Kíp Luyện Rồng</p>
-        </div>
+    @endforeach
+</div>
 
-    </div>
-    <button class="btn-see">XEM THÊM</button>
+    {{-- <button class="btn-see">XEM THÊM</button> --}}
+@if ($tab == 'dang-chieu')
+    <a href="{{ route('phim.dang-chieu') }}">
+        <button class="btn-see">XEM THÊM</button>
+    </a>
+@elseif ($tab == 'sap-chieu')
+    <a href="{{ route('phim.sap-chieu') }}">
+        <button class="btn-see">XEM THÊM</button>
+    </a>
+@endif
 
     <div class="khuyen-mai">
         <p>KHUYẾN MÃI</p>
@@ -276,6 +264,41 @@
                 document.getElementById('tab-' + this.dataset.tab).classList.add('active');
             });
         });
-    </script>
+    
+    document.querySelectorAll('.menu .list a.tab-item').forEach(tab => {
+        tab.addEventListener('click', function (e) {
+            e.preventDefault();
 
+            const selectedTab = this.dataset.tab;
+
+            fetch(`/phim-tab?tab=${selectedTab}`)
+                .then(response => response.json())
+                .then(data => {
+                    const movieList = document.querySelector('.list-movie');
+                    movieList.innerHTML = '';
+
+                    data.phims.forEach(phim => {
+                        const poster = phim.poster ? `/storage/${phim.poster}` : '/logo/no-image.png';
+                        const movieItem = `
+                            <div class="movie">
+                                <div class="img-wrapper">
+                                    <img src="${poster}" alt="${phim.ten_phim}">
+                                    <div class="overlay">
+                                        <button class="btn buy"><i class="fa-solid fa-ticket"></i> Mua vé</button>
+                                        <button class="btn trailer"><i class="fa-solid fa-video"></i> Trailer</button>
+                                    </div>
+                                </div>
+                                <p>${phim.ten_phim}</p>
+                            </div>
+                        `;
+                        movieList.insertAdjacentHTML('beforeend', movieItem);
+                    });
+
+                    // Cập nhật active tab
+                    document.querySelectorAll('.menu .list a.tab-item').forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                });
+        });
+    });
+</script>
 @endsection

@@ -11,31 +11,31 @@ class BannerSeeder extends Seeder
     {
         DB::table('banners')->insert([
             [
-                'hinh_anh'    => 'banner/28-year-later-2048_1750407231251.jpg',
+                'hinh_anh'    => 'banner/banner5.jpg',
                 'trang_thai'  => 1,
                 'created_at'  => now(),
                 'updated_at'  => now(),
             ],
             [
-                'hinh_anh'    => 'banner/980x448_3_1.png',
+                'hinh_anh'    => 'banner/banner6.jpg',
                 'trang_thai'  => 1,
                 'created_at'  => now(),
                 'updated_at'  => now(),
             ],
             [
-                'hinh_anh'    => 'banner/980x448_290.jpg',
+                'hinh_anh'    => 'banner/banner7.jpg',
                 'trang_thai'  => 1,
                 'created_at'  => now(),
                 'updated_at'  => now(),
             ],
             [
-                'hinh_anh'    => 'banner/bi-kip-luyen-rong-2048_1749195168873.jpg',
+                'hinh_anh'    => 'banner/banner8.jpg',
                 'trang_thai'  => 1,
                 'created_at'  => now(),
                 'updated_at'  => now(),
             ],
             [
-                'hinh_anh'    => 'banner/ut-lan-2048_1750048449368.jpg',
+                'hinh_anh'    => 'banner/banner9.jpg',
                 'trang_thai'  => 1,
                 'created_at'  => now(),
                 'updated_at'  => now(),

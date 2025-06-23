@@ -38,9 +38,8 @@ use App\Http\Controllers\Admin\GiaVeController;
 use App\Http\Controllers\Admin\RequestController;
 use App\Http\Controllers\Client\LoginController;
 use App\Http\Controllers\Client\ProfileController;
-use App\Http\Controllers\Client\HomeController;
 use App\Http\Controllers\Client\KhuyenMaiController;
-
+use App\Http\Controllers\Client\PhimsController;
 Route::get('/', [TrangChuController::class , 'index'])->name('home');
 Route::get('/bai-viet', [DanhSachBaiVietController::class, 'index'])->name('client.bai-viet');
 Route::get('/bai-viet/{id}', [DanhSachBaiVietController::class, 'show'])->name('show-bai-viet');
@@ -50,13 +49,14 @@ Route::get('profile', [ProfileController::class, 'index'])->name('profile');
 Route::post('profile', [ProfileController::class, 'updatePassword'])->name('updatePassword');
 Route::post('update-avatar', [ProfileController::class, 'updateAvatar'])->name('update.avatar');
 
-// ====================================================================================================
 
-// Route::get('/', function () {
-//     return view('client.trang-chu');
-// })->name('home');
-// Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/client.khuyen-mai', [KhuyenMaiController::class, 'index'])->name('khuyen-mai.index');
+Route::get('/phim-dang-chieu', [PhimsController::class, 'phimDangChieu'])->name('phim.dang-chieu');
+
+Route::get('/phim-sap-chieu', [PhimsController::class, 'phimSapChieu'])->name('phim.sap-chieu');
+// Route load phim cho tab (AJAX)
+Route::get('/phim-tab', [TrangChuController::class, 'loadPhimTab'])->name('client.load-phim-tab');
+
 
 // Route::prefix('client')->name('client.')->group(function () {
 //     // Trang chủ client
