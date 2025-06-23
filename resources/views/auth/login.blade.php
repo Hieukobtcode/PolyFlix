@@ -143,6 +143,14 @@
                         </div>
                     </div>
 
+                    {!! NoCaptcha::display() !!}
+                    @if ($errors->has('g-recaptcha-response'))
+                        <span class="text-danger">
+                            {{ $errors->first('g-recaptcha-response') }}
+                        </span>
+                    @endif
+
+
                     <button type="submit">Đăng ký</button>
                 </div>
             </form>
@@ -158,4 +166,7 @@
 
         </div>
     </div>
+
+    {{-- THÊM DÒNG NÀY Ở ĐÂY --}}
+    {!! NoCaptcha::renderJs() !!}
 @endsection

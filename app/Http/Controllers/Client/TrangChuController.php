@@ -43,9 +43,9 @@ class TrangChuController extends Controller
             ->limit(4)
             ->get();
 
-        $rapPhims = RapPhim::all()->groupBy('chi_nhanh_id');
+        // $rapPhims = RapPhim::all()->groupBy('chi_nhanh_id');
 
-        return view('client.trang-chu', compact('phims', 'ratings', 'baiViet', 'banners', 'rapPhims'));
+        return view('client.trang-chu', compact('phims', 'ratings', 'baiViet', 'banners'));
     }
 
     public function showRap($uuid, Request $request)
@@ -57,7 +57,7 @@ class TrangChuController extends Controller
 
         // Lấy dữ liệu rạp phim
         $rap = RapPhim::findOrFail($id);
-        $rapPhims = RapPhim::all()->groupBy('chi_nhanh_id');
+        // $rapPhims = RapPhim::all()->groupBy('chi_nhanh_id');
 
         // Lấy phim đang chiếu tại rạp này
         $phimDangChieu = Phim::where('trang_thai', 'đang chiếu')
@@ -112,7 +112,6 @@ class TrangChuController extends Controller
 
         return view('client.show-rap', compact(
             'rap',
-            'rapPhims',
             'phimDangChieu',
             'phimSapChieu',
             'suatChieuTheoPhim',

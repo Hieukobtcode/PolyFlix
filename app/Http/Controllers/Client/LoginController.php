@@ -14,9 +14,7 @@ class LoginController extends Controller
 {
     public function view()
     {
-        $rapPhims = RapPhim::all()->groupBy('chi_nhanh_id');
-
-        return view('auth.login', compact('rapPhims'));
+        return view('auth.login');
     }
 
     public function login(LoginRequest $request)

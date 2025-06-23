@@ -32,5 +32,9 @@ class AppServiceProvider extends ServiceProvider
         Route::aliasMiddleware('custom.auth', AuthRedirect::class);
         Route::aliasMiddleware('permission.check', CheckPermission::class);
         Carbon::setLocale('vi');
+
+        $rapPhims = RapPhim::all()->groupBy('chi_nhanh_id'); // Hoặc xử lý theo đúng logic bạn cần
+
+        View::share('rapPhims', $rapPhims);
     }
 }

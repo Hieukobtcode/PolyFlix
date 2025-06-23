@@ -19,11 +19,10 @@ class AuthController extends Controller
 {
     public function showLoginForm()
     {
-        $rapPhims = RapPhim::all()->groupBy('chi_nhanh_id');
         if (Auth::check()) {
             return redirect()->route('home');
         }
-        return view('auth.login', compact('rapPhims'));
+        return view('auth.login');
     }
 
     public function login(LoginRequest $request)
