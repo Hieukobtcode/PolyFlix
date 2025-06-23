@@ -61,23 +61,25 @@
             <span>ĐẶT VÉ NHANH</span>
         </div>
         <div class="select">
-            <select required name="select-rap" class="movie-select">
+            <select required name="select-chi-nhanh" id="select-chi-nhanh" class="movie-select">
                 <option value="" disabled selected>1-Chọn rạp</option>
-                <option value="">Poly Long Biên</option>
             </select>
-            <select required name="select-phim" class="movie-select">
+            <select required name="select-phim" id="select-phim" class="movie-select" disabled>
                 <option disabled selected value="">2-Chọn phim</option>
-                <option value="">Mượn hồn đoạt xác</option>
             </select>
-            <select required name="select-date" class="movie-select">
+            <select required name="select-date" id="select-date" class="movie-select" disabled>
                 <option disabled selected value="">3-Chọn ngày</option>
-                <option value="">Thứ tư - 18/6</option>
             </select>
-            <select required name="select-suat" class="movie-select">
+            <select required name="select-suat" id="select-suat" class="movie-select" disabled>
                 <option disabled selected value="">4-Chọn suất</option>
-                <option value="">21h50 - 3D Vietsub</option>
             </select>
-            <button>Đặt ngay</button>
+            <button id="btn-dat-ngay" disabled>Đặt ngay</button>
+        </div>
+
+        <!-- Loading indicator -->
+        <div id="booking-loading" class="booking-loading" style="display: none;">
+            <div class="spinner"></div>
+            <span>Đang tải...</span>
         </div>
     </div>
 

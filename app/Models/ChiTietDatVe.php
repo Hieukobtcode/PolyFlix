@@ -6,17 +6,19 @@ use Illuminate\Database\Eloquent\Model;
 
 class ChiTietDatVe extends Model
 {
-    protected $table = 'chi_tiet_dat_ves'; 
+    protected $table = 'chi_tiet_dat_ves';
+    public $timestamps = false;
 
     protected $fillable = [
         'dat_ve_id',
         'ghe_id',
+        'gia_ve',
     ];
 
     public function datVe()
-{
-    return $this->belongsTo(DatVe::class, 'dat_ve_id');
-}
+    {
+        return $this->belongsTo(DatVe::class, 'dat_ve_id');
+    }
 
     public function ghe()
     {

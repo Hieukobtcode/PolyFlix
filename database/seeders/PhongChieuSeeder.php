@@ -10,8 +10,8 @@ class PhongChieuSeeder extends Seeder
 {
     public function run(): void
     {
-        $rapPhims = DB::table('rap_phims')->get(); 
-        $loaiPhongs = DB::table('loai_phongs')->get(); 
+        $rapPhims = DB::table('rap_phims')->get();
+        $loaiPhongs = DB::table('loai_phongs')->get();
 
         foreach ($rapPhims as $rap) {
             for ($i = 1; $i <= 3; $i++) {
@@ -24,7 +24,7 @@ class PhongChieuSeeder extends Seeder
                     'rap_phim_id'    => $rap->id,
                     'ten_phong'      => $tenPhong,
                     'loai_phong_id'  => $loai->id,
-                    'so_do_ghe_id'   => null, 
+                    'so_do_ghe_id'   => null,
                     'status'         => 1,
                     'so_ghe'         => null,
                     'created_at'     => now(),
