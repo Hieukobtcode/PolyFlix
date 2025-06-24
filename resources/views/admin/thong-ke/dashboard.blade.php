@@ -14,6 +14,34 @@
         </div>
     </div>
 
+    <!-- Bộ lọc theo ngày -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <form method="GET" action="{{ route('admin.thong-ke.dashboard') }}" class="row g-3 align-items-end">
+                        <div class="col-md-4">
+                            <label for="tu_ngay" class="form-label fw-semibold">Từ ngày</label>
+                            <input type="date" class="form-control" id="tu_ngay" name="tu_ngay" value="{{ $tuNgay }}">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="den_ngay" class="form-label fw-semibold">Đến ngày</label>
+                            <input type="date" class="form-control" id="den_ngay" name="den_ngay" value="{{ $denNgay }}">
+                        </div>
+                        <div class="col-md-4">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-filter me-1"></i>Lọc dữ liệu
+                            </button>
+                            <a href="{{ route('admin.thong-ke.dashboard') }}" class="btn btn-outline-secondary ms-2">
+                                <i class="fas fa-refresh me-1"></i>Đặt lại
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Thống kê tổng quan -->
     <div class="row mb-4">
         <div class="col-xl-3 col-md-6 mb-3">
@@ -37,11 +65,11 @@
                 <div class="card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0">
-                            <i class="fas fa-utensils fa-2x"></i>
+                            <i class="fas fa-building fa-2x"></i>
                         </div>
                         <div class="flex-grow-1 ms-3">
-                            <div class="small">Combo & Đồ ăn</div>
-                            <div class="h3 mb-0 fw-bold">{{ ($tongQuan['tong_combo'] ?? 0) + ($tongQuan['tong_do_an'] ?? 0) }}</div>
+                            <div class="small">Chi nhánh & Rạp</div>
+                            <div class="h3 mb-0 fw-bold">{{ $tongQuan['tong_chi_nhanh'] ?? 0 }} / {{ $tongQuan['tong_rap'] ?? 0 }}</div>
                         </div>
                     </div>
                 </div>
@@ -74,6 +102,72 @@
                         <div class="flex-grow-1 ms-3">
                             <div class="small">Khuyến mãi</div>
                             <div class="h3 mb-0 fw-bold">{{ $tongQuan['tong_khuyen_mai'] ?? 0 }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Thống kê doanh thu -->
+    <div class="row mb-4">
+        <div class="col-xl-4 col-md-6 mb-3">
+            <div class="card border-0 shadow-sm h-100 bg-gradient" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <div class="card-body text-white">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="bg-white bg-opacity-20 rounded-circle p-3">
+                                <i class="fas fa-ticket-alt text-white fa-lg"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <div class="small opacity-75">Doanh thu vé</div>
+                            <div class="h4 mb-0 fw-bold">{{ number_format($tongQuan['doanh_thu_ve'] ?? 0) }}đ</div>
+                            <div class="small opacity-75">
+                                <i class="fas fa-chart-line me-1"></i>Từ {{ $tuNgay }} đến {{ $denNgay }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-4 col-md-6 mb-3">
+            <div class="card border-0 shadow-sm h-100 bg-gradient" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                <div class="card-body text-white">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="bg-white bg-opacity-20 rounded-circle p-3">
+                                <i class="fas fa-utensils text-white fa-lg"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <div class="small opacity-75">Doanh thu combo</div>
+                            <div class="h4 mb-0 fw-bold">{{ number_format($tongQuan['doanh_thu_combo'] ?? 0) }}đ</div>
+                            <div class="small opacity-75">
+                                <i class="fas fa-chart-line me-1"></i>Từ {{ $tuNgay }} đến {{ $denNgay }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-4 col-md-12 mb-3">
+            <div class="card border-0 shadow-sm h-100 bg-gradient" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                <div class="card-body text-white">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="bg-white bg-opacity-20 rounded-circle p-3">
+                                <i class="fas fa-coins text-white fa-lg"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <div class="small opacity-75">Tổng doanh thu</div>
+                            <div class="h4 mb-0 fw-bold">{{ number_format($tongQuan['tong_doanh_thu'] ?? 0) }}đ</div>
+                            <div class="small opacity-75">
+                                <i class="fas fa-chart-line me-1"></i>Từ {{ $tuNgay }} đến {{ $denNgay }}
+                            </div>
                         </div>
                     </div>
                 </div>

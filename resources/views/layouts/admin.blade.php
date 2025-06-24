@@ -8,7 +8,7 @@
 <html lang="en">
 
 <head>
-    <link rel="stylesheet" href="https://api.cmsnt.co/cdn/3041975/style.css">
+    {{-- <link rel="stylesheet" href="https://api.cmsnt.co/cdn/3041975/style.css"> --}}
     <base href="./">
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -102,7 +102,7 @@
         <!-- Footer -->
         @include('admin.blocks.footer')
     </div>
-    <script src="https://api.cmsnt.co/cdn/3041975/script.js" defer></script>
+    {{-- <script src="https://api.cmsnt.co/cdn/3041975/script.js" defer></script> --}}
     <!-- CoreUI and necessary plugins-->
     <script src="{{ asset('dist/vendors/@coreui/coreui/js/coreui.bundle.min.js') }}"></script>
     <script src="{{ asset('dist/vendors/simplebar/js/simplebar.min.js') }}"></script>

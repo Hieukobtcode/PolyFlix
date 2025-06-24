@@ -221,7 +221,7 @@
                 const infoText = document.querySelector('.text-muted');
                 if (infoText) {
                     const totalCount = rows.length - (document.getElementById('emptyRow') ? 1 : 0);
-                    infoText.textContent = `Hiển thị ${visibleCount} trong tổng số ${totalCount} thể loại`;
+                    infoText.textContent = `Hiển thị ${visibleCount} trong tổng số ${totalCount} định dạng`;
                 }
             }
 

@@ -32,7 +32,7 @@ class DatVe extends Model
     // Quan hệ: Đơn đặt vé thuộc về người dùng
     public function nguoiDung()
     {
-        return $this->belongsTo(User::class, 'nguoi_dung_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function phim()
@@ -43,15 +43,34 @@ class DatVe extends Model
     {
         return $this->belongsTo(RapPhim::class, 'rap_phim_id');
     }
-    public function chiNhanh() 
+    public function chiNhanh()
     {
         return $this->belongsTo(ChiNhanh::class, 'chi_nhanh_id');
     }
 
-    public function suatChieu(){
+    public function suatChieu()
+    {
         return $this->belongsTo(SuatChieu::class, 'suat_chieu_id');
     }
-
-    
+    public function DoAn()
+    {
+        return $this->belongsTo(DoAn::class, 'do_an_id');
+    }
+    public function doAns()
+    {
+        return $this->belongsToMany(DoAn::class, 'dat_ve_do_an')
+            ->withPivot('so_luong')
+            ->withTimestamps();
+    }
+    public function combos()
+    {
+        return $this->belongsToMany(Combo::class, 'dat_ve_combo')
+            ->withPivot('so_luong')
+            ->withTimestamps();
+    }
+    public function gheNgois()
+    {
+        return $this->belongsToMany(GheNgoi::class, 'chi_tiet_dat_ves', 'dat_ve_id', 'ghe_id');
+    }
 
 }

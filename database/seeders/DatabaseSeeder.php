@@ -2,8 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Rating;
 use Illuminate\Database\Seeder;
 use Database\Seeders\UserSeeder;
 use Database\Seeders\VaiTroSeeder;
@@ -13,27 +12,30 @@ use Database\Seeders\VaiTroPhanQuyenSeeder;
 
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     */
+
     public function run(): void
     {
-        // User::factory(10)->create();
-
-        // User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
-
-        // Gọi các seeder để tạo dữ liệu mẫu
-        
-
         $this->call([
+            UserSeeder::class,
+            BaiVietSeeder::class,
             CauHinhSeeder::class,
             VaiTroSeeder::class,
             PhanQuyenSeeder::class,
             VaiTroPhanQuyenSeeder::class,
-            UserSeeder::class,
+            BannerSeeder::class,
+            KhuyenMaiSeeder::class,
+            ChiNhanhSeeder::class,
+            RapSeeder::class,
+            LoaiGheSeeder::class,
+            LoaiPhongSeeder::class,
+            PhuDePhimSeeder::class,
+            DinhDangPhimSeeder::class,
+            LoaiPhongSeeder::class,
+            CapBacTheSeeder::class,
+            TheLoaiPhimSeeder::class,
+            PhimSeeder::class,
+            CommentSeeder::class,
+            RatingSeeder::class,
         ]);
     }
 }

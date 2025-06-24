@@ -4,6 +4,29 @@
 @section('page-title', 'Thêm Combo')
 @section('breadcrumb', 'Thêm mới')
 
+<style>
+    #selected-food-list .list-group-item {
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        margin-bottom: 8px;
+        padding: 12px 16px;
+        background-color: #fffdfd;
+        transition: all 0.2s ease-in-out;
+    }
+
+    #selected-food-list .list-group-item:hover {
+        background-color: #f9f9f9;
+    }
+
+    .input-group-sm .btn {
+        padding: 0.25rem 0.6rem;
+    }
+
+    .so-luong-input {
+        max-width: 40px;
+    }
+</style>
+
 @section('content')
     <!-- Select2 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
@@ -17,6 +40,7 @@
 
             <div class="card-body p-4">
                 <form action="{{ route('admin.combos.store') }}" method="POST" enctype="multipart/form-data">
+
                     @csrf
 
                     <div class="mb-3">
@@ -44,17 +68,25 @@
                         @enderror
                     </div>
                     <div class="mb-3">
-    <label class="form-label">Chọn chi nhánh</label>
-    <select id="select-chi-nhanh" class="form-select">
-        <option value="">-- Chọn chi nhánh --</option>
-        @foreach ($chiNhanhs as $cn)
-            <option value="{{ $cn->id }}" data-ten="{{ $cn->ten_chi_nhanh }}">{{ $cn->ten_chi_nhanh }}</option>
-        @endforeach
-    </select>
-</div>
+                        <label class="form-label">Chọn chi nhánh</label>
+                        <select id="select-chi-nhanh" class="form-select">
+                            <option value="">-- Chọn chi nhánh --</option>
+                            @foreach ($chiNhanhs as $cn)
+                                <option value="{{ $cn->id }}" data-ten="{{ $cn->ten_chi_nhanh }}">
+                                    {{ $cn->ten_chi_nhanh }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
 
-<div id="danh-sach-chi-nhanh"></div>
-<div id="hidden-chi-nhanh-inputs"></div>
+                    <!-- Hiển thị danh sách chi nhánh đã chọn -->
+                    <div class="mb-3">
+                        <label class="form-label">Chi nhánh đã chọn</label>
+                        <ul id="selected-branches" class="list-group"></ul>
+                    </div>
+
+                    <!-- Input hidden để submit -->
+                    <div id="hidden-branch-inputs"></div>
 
                     <div class="mb-3">
                         <label class="form-label">Giá (VNĐ)</label>
@@ -68,27 +100,23 @@
                         <input type="number" name="gia_combo" class="form-control"
                             value="{{ old('gia_combo', $combo->gia_combo ?? 0) }}" min="0" step="1000">
                     </div>
+
+                    <!-- Hidden input để submit các ID món ăn đã chọn -->
                     <div class="mb-3">
                         <label class="form-label">Chọn món ăn</label>
-                        <select id="select-mon-an" class="form-select">
+                        <select id="chon-do-an" class="form-select">
                             <option value="">-- Chọn món --</option>
                             @foreach ($doAns as $doAn)
-                                <option value="{{ $doAn->id }}" data-gia="{{ $doAn->gia }}"
-                                    data-ten="{{ $doAn->tieu_de }}">
+                                <option value="{{ $doAn->id }}" data-ten="{{ $doAn->tieu_de }}"
+                                    data-gia="{{ $doAn->gia }}">
                                     {{ $doAn->tieu_de }} ({{ number_format($doAn->gia) }} đ)
                                 </option>
                             @endforeach
                         </select>
                     </div>
 
-                    <!-- Hidden input để submit các ID món ăn đã chọn -->
-                    <div id="selected-inputs"></div>
-
-                    <!-- Danh sách món ăn đã chọn -->
-                    <div class="mb-3">
-                        <label class="form-label">Món ăn đã chọn</label>
-                        <ul id="selected-food-list" class="list-group"></ul>
-                    </div>
+                    <ul id="danh-sach-do-an" class="list-group mb-3"></ul>
+                    <div id="inputs-hidden"></div>
                     <div class="mb-3">
                         <label class="form-label">Trạng thái</label>
                         <select name="trang_thai" class="form-select">
@@ -110,115 +138,146 @@
 @endsection
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const select = document.getElementById('select-mon-an');
-        const foodList = document.getElementById('selected-food-list');
-        const selectedInputs = document.getElementById('selected-inputs');
+        const selectDoAn = document.getElementById('chon-do-an');
+        const list = document.getElementById('danh-sach-do-an');
+        const inputs = document.getElementById('inputs-hidden');
         const giaInput = document.getElementById('gia');
 
-        let selectedIds = new Set();
-        let tongGia = 0;
+        let selected = new Set();
 
-        function capNhatGia() {
+        function capNhatTongGia() {
+            let tongGia = 0;
+            list.querySelectorAll('li').forEach(li => {
+                const gia = parseFloat(li.dataset.gia);
+                const soLuong = parseInt(li.querySelector('.so-luong').value);
+                tongGia += gia * soLuong;
+            });
             giaInput.value = tongGia.toFixed(0);
         }
 
-        select.addEventListener('change', function() {
-            const option = select.options[select.selectedIndex];
+        selectDoAn.addEventListener('change', function() {
+            const option = this.options[this.selectedIndex];
             const id = option.value;
             const ten = option.dataset.ten;
-            const gia = parseFloat(option.dataset.gia) || 0;
+            const gia = parseFloat(option.dataset.gia);
 
-            if (id && !selectedIds.has(id)) {
-                selectedIds.add(id);
-                tongGia += gia;
-                capNhatGia();
+            if (!id || selected.has(id)) return;
 
-                // Thêm vào danh sách hiển thị
-                const li = document.createElement('li');
-                li.className = 'list-group-item d-flex justify-content-between align-items-center';
-                li.dataset.id = id;
-                li.innerHTML = `
-                    <span>${ten} - ${gia.toLocaleString()} đ</span>
-                    <button type="button" class="btn btn-sm btn-danger btn-xoa-mon" data-id="${id}" data-gia="${gia}">Xóa</button>
-                `;
-                foodList.appendChild(li);
+            selected.add(id);
 
-                // Tạo input hidden
-                const input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = 'do_an_ids[]';
-                input.value = id;
-                input.id = 'input-do-an-' + id;
-                selectedInputs.appendChild(input);
-            }
+            const li = document.createElement('li');
+            li.className = 'list-group-item d-flex justify-content-between align-items-center';
+            li.dataset.id = id;
+            li.dataset.gia = gia;
 
-            select.selectedIndex = 0;
+            li.innerHTML = `
+            <div><strong>${ten}</strong><div class="text-muted small">${gia.toLocaleString()} đ</div></div>
+            <div class="d-flex align-items-center gap-2">
+                <div class="input-group input-group-sm">
+                    <button type="button" class="btn btn-outline-secondary btn-giam" data-id="${id}">-</button>
+                    <input type="number" name="do_ans[${id}][so_luong]" class="form-control text-center so-luong" value="1" min="1" style="width:60px;">
+                    <button type="button" class="btn btn-outline-secondary btn-tang" data-id="${id}">+</button>
+                </div>
+                <button type="button" class="btn btn-sm btn-danger xoa-mon" data-id="${id}">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        `;
+
+            list.appendChild(li);
+
+            // input hidden để báo là món này đã được chọn
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = `do_ans[${id}][selected]`;
+            input.value = 1;
+            input.id = `input-selected-${id}`;
+            inputs.appendChild(input);
+
+            capNhatTongGia();
+            this.value = ''; // reset
         });
 
-        // Sự kiện xóa món
-        foodList.addEventListener('click', function(e) {
-            if (e.target.classList.contains('btn-xoa-mon')) {
-                const id = e.target.dataset.id;
-                const gia = parseFloat(e.target.dataset.gia) || 0;
+        // Xử lý tăng / giảm số lượng & xóa
+        list.addEventListener('click', function(e) {
+            const btn = e.target.closest('button');
+            if (!btn) return;
 
-                // Xóa khỏi danh sách
-                const li = foodList.querySelector(`li[data-id="${id}"]`);
-                if (li) li.remove();
+            const id = btn.dataset.id;
+            const input = list.querySelector(`li[data-id="${id}"] input.so-luong`);
+            let sl = parseInt(input.value);
 
-                // Xóa input hidden
-                const input = document.getElementById('input-do-an-' + id);
-                if (input) input.remove();
+            if (btn.classList.contains('btn-giam')) {
+                if (sl > 1) sl--;
+            }
 
-                // Cập nhật dữ liệu
-                selectedIds.delete(id);
-                tongGia -= gia;
-                capNhatGia();
+            if (btn.classList.contains('btn-tang')) {
+                sl++;
+            }
+
+            if (btn.classList.contains('xoa-mon')) {
+                list.querySelector(`li[data-id="${id}"]`)?.remove();
+                document.getElementById(`input-selected-${id}`)?.remove();
+                selected.delete(id);
+                capNhatTongGia();
+                return;
+            }
+
+            input.value = sl;
+            capNhatTongGia();
+        });
+
+        // Nếu người dùng thay đổi số lượng thủ công
+        list.addEventListener('input', function(e) {
+            if (e.target.classList.contains('so-luong')) {
+                capNhatTongGia();
             }
         });
     });
 </script>
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const selectChiNhanh = document.getElementById('select-chi-nhanh');
-        const danhSachChiNhanh = document.getElementById('danh-sach-chi-nhanh');
-        const hiddenInputs = document.getElementById('hidden-chi-nhanh-inputs');
+    document.addEventListener('DOMContentLoaded', function() {
+        const select = document.getElementById('select-chi-nhanh');
+        const list = document.getElementById('selected-branches');
+        const hiddenInputs = document.getElementById('hidden-branch-inputs');
         const selectedIds = new Set();
 
-        selectChiNhanh.addEventListener('change', function () {
-            const selectedOption = this.options[this.selectedIndex];
+        select.addEventListener('change', function() {
+            const selectedOption = select.options[select.selectedIndex];
             const id = selectedOption.value;
             const ten = selectedOption.dataset.ten;
 
             if (!id || selectedIds.has(id)) return;
 
             selectedIds.add(id);
-            selectedOption.disabled = true;
-            this.value = '';
 
-            const div = document.createElement('div');
-            div.classList.add('d-flex', 'align-items-center', 'mb-2');
-            div.dataset.id = id;
-            div.innerHTML = `
-                <span class="me-2">${ten}</span>
-                <button type="button" class="btn btn-sm btn-danger">Xóa</button>
-            `;
+            // Hiển thị ra danh sách đã chọn
+            const li = document.createElement('li');
+            li.className = 'list-group-item d-flex justify-content-between align-items-center';
+            li.dataset.id = id;
+            li.innerHTML = `
+            <span>${ten}</span>
+            <button type="button" class="btn btn-sm btn-danger btn-xoa-cn" data-id="${id}">Xoá</button>
+        `;
+            list.appendChild(li);
 
-            div.querySelector('button').addEventListener('click', () => {
-                selectedIds.delete(id);
-                div.remove();
-                document.getElementById('input-chi_nhanh-' + id)?.remove();
-                const option = selectChiNhanh.querySelector(`option[value="${id}"]`);
-                if (option) option.disabled = false;
-            });
-
-            danhSachChiNhanh.appendChild(div);
-
+            // Thêm input hidden
             const input = document.createElement('input');
             input.type = 'hidden';
             input.name = 'chi_nhanh_ids[]';
             input.value = id;
             input.id = 'input-chi_nhanh-' + id;
             hiddenInputs.appendChild(input);
+
+            // Xoá khi nhấn nút
+            li.querySelector('.btn-xoa-cn').addEventListener('click', function() {
+                selectedIds.delete(id);
+                li.remove();
+                document.getElementById('input-chi_nhanh-' + id)?.remove();
+            });
+
+            // Reset select
+            select.selectedIndex = 0;
         });
     });
 </script>

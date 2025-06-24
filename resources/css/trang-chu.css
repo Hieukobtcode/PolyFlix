@@ -1,0 +1,805 @@
+.banner,
+.booking-fast,
+.menu,
+.list-movie,
+.khuyen-mai,
+.new {
+    width: 100%;
+    max-width: 1200px;
+    padding: 0 15px;
+    box-sizing: border-box;
+    margin: 0 auto;
+}
+.banner {
+    width: 100%;
+    max-width: 1215px;
+    margin: 20px auto;
+    text-align: center;
+    padding: 0 10px;
+}
+
+.banner img {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+    display: block;
+}
+
+.booking-fast {
+    margin: 30px auto;
+    background-color: #ecf2ff;
+    width: 80%;
+    border: black 1px solid;
+    height: 100px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0px 40px;
+    border-radius: 10px;
+}
+
+.booking-fast .btn span {
+    font-family: "Anton", sans-serif;
+    color: #333;
+    font-size: 23px;
+    font-weight: normal;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.booking-fast .select {
+    display: flex;
+    gap: 20px;
+}
+
+.booking-fast .select select {
+    width: 190px;
+    height: 50px;
+    border-radius: 10px;
+    text-align: center;
+    text-align-last: center;
+    font-size: 20px;
+    font-weight: bold;
+    color: #6a1b9a;
+    font-family: "Poppins", sans-serif;
+    border: 2px solid #ccc;
+    background-color: #f9f9f9;
+    padding: 0 12px;
+}
+
+.booking-fast .select select:valid {
+    background-color: #f3ea28;
+}
+
+.booking-fast .select button {
+    position: relative;
+    width: 110px;
+    height: 50px;
+    border-radius: 10px;
+    background-color: #663399;
+    font-family: "Poppins", sans-serif;
+    color: white;
+    font-weight: bold;
+    overflow: hidden;
+    border: none;
+    cursor: pointer;
+    z-index: 1;
+    transition: color 0.4s ease;
+    font-size: 18px;
+}
+
+.booking-fast .select button::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to right, #ff6600, #ffcc00);
+    z-index: -1;
+    transition: left 0.4s ease;
+}
+
+.booking-fast .select button:hover::before {
+    left: 0;
+}
+
+.booking-fast .select button:hover {
+    color: #fff;
+}
+
+.menu {
+    width: 80%;
+    margin: 70px auto 0 auto;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.menu button {
+    border: none;
+    width: 5px;
+    height: 30px;
+    background-color: #ffcc00;
+    border-radius: 5px;
+}
+
+.menu p {
+    padding: 0;
+    font-size: 25px;
+    font-weight: bold;
+    line-height: 1;
+}
+
+.menu .list {
+    display: flex;
+    margin-left: 50px;
+    gap: 40px;
+}
+
+.menu .list p {
+    font-size: 18px;
+    color: #b5b5b5;
+}
+
+.list-movie {
+    width: 80%;
+    margin: 50px auto;
+    display: flex;
+    gap: 70px;
+    flex-wrap: wrap; /* Đảm bảo responsive */
+    justify-content: center;
+}
+
+.list-movie .movie {
+    width: 240px;
+    cursor: pointer;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.list-movie .movie .img-wrapper {
+    position: relative;
+    width: 100%;
+    height: 360px;
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.list-movie .movie img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    border-radius: 15px;
+    transition: 0.3s ease;
+}
+
+.list-movie .movie .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 15px;
+    background-color: rgba(87, 84, 84, 0.522);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    gap: 10px;
+    transition: 0.3s ease;
+    z-index: 2;
+}
+
+.list-movie .movie:hover img {
+    filter: brightness(50%);
+}
+
+.list-movie .movie:hover .overlay {
+    opacity: 1;
+}
+
+.list-movie .movie p {
+    font-size: 17px;
+    font-weight: bold;
+    color: white;
+    text-align: left;
+    align-self: flex-start;
+    margin: 8px 0 0 0;
+}
+
+/* Nút overlay */
+.list-movie .movie .overlay button {
+    padding: 8px 16px;
+    width: 130px;
+    height: 40px;
+    border: none;
+    font-size: 14px;
+    color: white;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.list-movie .movie .overlay .buy {
+    background-color: #e37248;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-weight: bold;
+    border: none;
+    transition: background-color 0.3s ease;
+}
+
+.list-movie .movie .overlay .trailer {
+    background-color: transparent;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-weight: bold;
+    border: 1px solid white;
+    transition: background-color 0.3s ease, border 0.3s ease;
+}
+
+.list-movie .movie .overlay button:hover {
+    background-color: #fb9440;
+    border-color: transparent;
+    color: white;
+}
+
+.btn-see {
+    display: block;
+    margin: 0 auto;
+    width: 250px;
+    height: 44px;
+    border: 1px solid yellow;
+    border-radius: 5px;
+    background-color: #414184;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.btn-see::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to right, #ff6600, #ffcc00);
+    z-index: -1;
+    transition: left 0.4s ease;
+}
+
+.btn-see:hover::before {
+    left: 0;
+}
+
+.khuyen-mai {
+    width: 80%;
+    margin: 0px auto;
+}
+
+.khuyen-mai p {
+    margin-top: 70px;
+    font-family: "Anton", sans-serif;
+    color: #ffffff;
+    font-size: 30px;
+    font-weight: normal;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.khuyen-mai .img {
+    margin-top: 30px;
+    display: flex;
+    gap: 70px;
+    justify-content: center;
+}
+
+.khuyen-mai .img img {
+    width: 330px;
+    border-radius: 10px;
+}
+
+.btn-km {
+    display: block;
+    margin: 43px auto 0px auto;
+    width: 250px;
+    height: 44px;
+    border: 1px solid yellow;
+    border-radius: 5px;
+    background-color: #414184;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.btn-km::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to right, #ff6600, #ffcc00);
+    z-index: -1;
+    transition: left 0.4s ease;
+}
+
+.btn-km:hover::before {
+    left: 0;
+}
+
+.new {
+    width: 80%;
+    margin: 80px auto 0 auto;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.new button {
+    border: none;
+    width: 5px;
+    height: 30px;
+    background-color: #ffcc00;
+    border-radius: 5px;
+}
+
+.new p {
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: 25px;
+    font-weight: bold;
+    line-height: 1;
+}
+
+.new .list {
+    display: flex;
+    margin-left: 50px;
+    gap: 40px;
+}
+
+.new .list p {
+    font-size: 18px;
+    color: #b5b5b5;
+}
+.list-movie,
+.khuyen-mai .img,
+.booking-fast .select {
+    flex-wrap: wrap;
+}
+
+/* ==================================== */
+.tab-item {
+    cursor: pointer;
+}
+
+.tab-item.active {
+    color: #ffcc00;
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+.tab-content {
+    display: none;
+    margin: 20px auto;
+    max-width: 1200px;
+    padding: 0 15px;
+}
+
+.tab-content.active {
+    display: block;
+}
+.tin-tuc-wrapper {
+    width: 100%;
+    gap: 30px;
+    margin-top: 30px;
+    flex-wrap: wrap;
+    display: flex;
+    justify-content: center;
+}
+
+.tin-tuc-noi-bat {
+    min-width: 48%;
+    flex: 1 1 48%;
+}
+
+.tin-tuc-noi-bat img {
+    display: block;
+    width: 580px;
+    height: 400px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.tin-tuc-noi-bat h3 {
+    width: 100%;
+    margin-top: 12px;
+    font-size: 20px;
+    color: white;
+    font-weight: bold;
+    line-height: 1.4;
+    overflow-wrap: break-word;
+    white-space: normal;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.tin-tuc-danh-sach {
+    display: flex;
+    flex: 1 1 48%;
+    max-width: 48%;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.tin-tuc-item {
+    display: flex;
+    gap: 20px;
+    padding-bottom: 30px;
+}
+
+.tin-tuc-item .thumb img {
+    display: block;
+    height: 100px;
+    width: 160px;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+.tin-tuc-item .info h4 {
+    margin: 0;
+    font-size: 16px;
+    color: white;
+    font-weight: bold;
+
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.tin-tuc-item .meta {
+    margin-top: 5px;
+    font-size: 12px;
+    color: #555;
+    display: flex;
+    gap: 10px;
+}
+
+.tin-tuc-item .meta span {
+    background: #f2f2f2;
+    padding: 3px 8px;
+    border-radius: 4px;
+}
+
+.info .noi-dung {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    color: #ccc;
+    margin-top: 5px;
+    font-size: 14px;
+    line-height: 1.5;
+    width: 100%;
+    max-width: 100%;
+    word-break: break-word;
+}
+
+/* =================================================== */
+.ten-phim {
+    font-size: 20px;
+    color: #ffcc00;
+    font-weight: bold;
+    border-bottom: 1px dashed #555;
+    padding-bottom: 5px;
+    height: 10%;
+}
+
+.khung-binh-luan {
+    display: flex;
+    width: 100%;
+    max-width: 1200px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 15px;
+    background-color: #1c1c1c;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.khung-binh-luan .poster {
+    width: 180px;
+    flex-shrink: 0;
+}
+
+.khung-binh-luan .poster img {
+    width: 330px;
+    height: 400px;
+    display: block;
+    border-radius: 8px;
+}
+
+.khung-binh-luan .binh-luan {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-left: 150px;
+}
+
+.binh-luan-item {
+    border-bottom: 1px solid #444;
+    padding-bottom: 10px;
+}
+
+.binh-luan-item strong {
+    color: #ffcc00;
+}
+
+.binh-luan-item p {
+    margin: 5px 0;
+    color: #eee;
+}
+
+.binh-luan-item small {
+    color: #999;
+}
+.binh-luan-item {
+    display: flex;
+    gap: 15px;
+    align-items: flex-start;
+    border-bottom: 1px solid #444;
+    padding-bottom: 10px;
+}
+
+.binh-luan-item .avatar img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #ffcc00;
+}
+
+.binh-luan-item .noi-dung {
+    flex: 1;
+}
+
+.binh-luan-item .noi-dung strong {
+    color: #ffcc00;
+}
+
+.binh-luan-item .noi-dung p {
+    margin: 5px 0;
+    color: #eee;
+}
+
+.binh-luan-item .noi-dung small {
+    color: #999;
+}
+
+/* Slide container */
+#slide-container {
+    position: relative;
+    width: 100%;
+    max-width: 1200px;
+    margin: 30px auto;
+}
+
+#slide-container .slide {
+    display: none;
+}
+
+#slide-container .slide:first-child {
+    display: block;
+}
+
+/* Slide controls */
+.slide-controls {
+    display: flex;
+    justify-content: center;
+    gap: 12px; /* Thêm khoảng cách hợp lý giữa các nút */
+    margin-top: -20px;
+}
+
+.slide-controls button {
+    padding: 8px 16px;
+    background-color: #5c50ff;
+    color: #fff;
+    border: 1px solid #888;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 18px;
+    transition: background-color 0.3s ease;
+}
+
+/* Custom "Xem thêm" button */
+.btn-see1 {
+    display: block;
+    margin: 20px auto 0; /* Căn giữa và có khoảng cách phía trên */
+    padding: 5px 20px;
+    border: 1px solid yellow;
+    border-radius: 5px;
+    background-color: #414184;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+    cursor: pointer;
+    text-align: center;
+}
+
+/* Base style cho nút */
+.btn-see1 {
+    padding: 6px 16px;
+    border: 1px solid yellow;
+    border-radius: 6px;
+    background-color: #414184;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+    cursor: pointer;
+    text-align: center;
+    transition: color 0.3s ease;
+}
+
+/* Hiệu ứng hover: nền chạy */
+.btn-see1::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background: linear-gradient(to right, #ff6600, #ffcc00);
+    transition: all 0.4s ease;
+}
+
+/* Nút trái: chạy từ trái sang phải */
+.btn-see1.left::before {
+    right: -100%;
+    left: auto;
+}
+
+.btn-see1.left:hover::before {
+    right: 0;
+}
+
+/* Nút phải: chạy từ phải sang trái */
+.btn-see1.right::before {
+    left: -100%;
+    right: auto;
+}
+
+.btn-see1.right:hover::before {
+    left: 0;
+}
+
+.slide-button-group {
+    display: flex;
+    gap: 20px;
+}
+@keyframes fadeIn {
+    from {
+        opacity: 0.4;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Ảnh poster chuyển động nhẹ khi slide */
+.khung-binh-luan .poster img {
+    width: 330px;
+    height: 400px;
+    display: block;
+    border-radius: 8px;
+    object-fit: cover;
+
+    /* Thêm hiệu ứng chuyển */
+    opacity: 0;
+    transform: translateY(10px);
+    animation: fadeInPoster 0.6s ease forwards;
+}
+
+/* Keyframe cho hiệu ứng mượt */
+@keyframes fadeInPoster {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ========================================= */
+
+@media (max-width: 1024px) {
+    .list-movie {
+        justify-content: center;
+        gap: 30px;
+    }
+
+    .list-movie .movie {
+        width: 45%;
+        height: auto;
+    }
+
+    .khuyen-mai .img {
+        justify-content: center;
+        gap: 30px;
+        flex-wrap: wrap;
+    }
+
+    .khuyen-mai .img img {
+        width: 80%;
+    }
+
+    .booking-fast {
+        flex-direction: column;
+        height: auto;
+        gap: 15px;
+        padding: 20px;
+        align-items: flex-start;
+    }
+
+    .booking-fast .select {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .booking-fast .select select,
+    .booking-fast .select button {
+        width: 100%;
+    }
+
+    .menu,
+    .new {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .menu .list,
+    .new .list {
+        margin-left: 0;
+        gap: 20px;
+    }
+
+    .list-movie .movie p {
+        text-align: left;
+    }
+}
+
+@media (max-width: 768px) {
+    .list-movie .movie {
+        width: 100%;
+    }
+
+    .khuyen-mai .img img {
+        width: 100%;
+    }
+
+    .btn-see,
+    .btn-km {
+        width: 90%;
+    }
+}

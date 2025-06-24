@@ -66,7 +66,7 @@ trait InteractsWithPivotTable
     /**
      * Sync the intermediate tables with a list of IDs without detaching.
      *
-     * @param  \Illuminate\Support\Collection|\Illuminate\Database\Eloquent\Model|array  $ids
+     * @param  \Illuminate\Support\Collection|\Illuminate\Database\Eloquent\Model|array|int|string  $ids
      * @return array{attached: array, detached: array, updated: array}
      */
     public function syncWithoutDetaching($ids)
@@ -77,7 +77,7 @@ trait InteractsWithPivotTable
     /**
      * Sync the intermediate tables with a list of IDs or collection of models.
      *
-     * @param  \Illuminate\Support\Collection|\Illuminate\Database\Eloquent\Model|array  $ids
+     * @param  \Illuminate\Support\Collection|\Illuminate\Database\Eloquent\Model|array|int|string  $ids
      * @param  bool  $detaching
      * @return array{attached: array, detached: array, updated: array}
      */
@@ -130,7 +130,7 @@ trait InteractsWithPivotTable
     /**
      * Sync the intermediate tables with a list of IDs or collection of models with the given pivot values.
      *
-     * @param  \Illuminate\Support\Collection|\Illuminate\Database\Eloquent\Model|array  $ids
+     * @param  \Illuminate\Support\Collection|\Illuminate\Database\Eloquent\Model|array|int|string  $ids
      * @param  array  $values
      * @param  bool  $detaching
      * @return array{attached: array, detached: array, updated: array}
@@ -470,21 +470,10 @@ trait InteractsWithPivotTable
     {
         $results = 0;
 
-        if (! empty($this->pivotWheres) ||
-            ! empty($this->pivotWhereIns) ||
-            ! empty($this->pivotWhereNulls)) {
-            $records = $this->getCurrentlyAttachedPivotsForIds($ids);
+        $records = $this->getCurrentlyAttachedPivotsForIds($ids);
 
-            foreach ($records as $record) {
-                $results += $record->delete();
-            }
-        } else {
-            foreach ($this->parseIds($ids) as $id) {
-                $results += $this->newPivot([
-                    $this->foreignPivotKey => $this->parent->{$this->parentKey},
-                    $this->relatedPivotKey => $id,
-                ], true)->delete();
-            }
+        foreach ($records as $record) {
+            $results += $record->delete();
         }
 
         return $results;

@@ -59,6 +59,26 @@ function forgetMock(string $abstract)
 }
 
 /**
+ * Register an empty handler for the `defer` helper in the container.
+ *
+ * @return TestCase
+ */
+function withoutDefer()
+{
+    return test()->withoutDefer(...func_get_args());
+}
+
+/**
+ * Restore the `defer` helper in the container.
+ *
+ * @return TestCase
+ */
+function withDefer()
+{
+    return test()->withDefer(...func_get_args());
+}
+
+/**
  * Register an empty handler for Laravel Mix in the container.
  *
  * @return TestCase

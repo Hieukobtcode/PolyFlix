@@ -45,7 +45,7 @@
     <div class="container-fluid">
         <div class="card shadow-sm border-0">
             <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                <h5 class="mb-0 fw-bold">Thêm suất chiếu cho phim: {{ $phims->ten_phim }}</h5>
+                <h5 class="mb-0 fw-bold">Thêm suất chiếu cho phim: {{ $phim->ten_phim }}</h5>
                 <a href="{{ route('admin.suat-chieu.index') }}" class="btn btn-light btn-sm" title="Quay lại">
                     <i class="fas fa-arrow-left me-1"></i> Quay lại
                 </a>
@@ -63,12 +63,20 @@
                     </div>
                 @endif
 
-                <form action="{{ route('admin.suat-chieu.store') }}" method="POST" id="suat-chieu-form">
-                    @csrf
-                    <input type="hidden" name="phim_id" value="{{ $phims->id }}">
+                <div class="row">
+                    <!-- Cột trái: Form thêm suất chiếu -->
+                    <div class="col-md-6 border-end">
+                        <div class="mb-4">
+                            <span class="fw-semibold text-muted">Ngày phát hành:</span>
+                            <span>{{ $phim->ngay_phat_hanh ? $phim->ngay_phat_hanh->format('d/m/Y') : 'N/A' }}</span>
+                            <span class="fw-semibold text-muted">Ngày kết thúc:</span>
+                            <span>{{ $phim->ngay_ket_thuc ? $phim->ngay_ket_thuc->format('d/m/Y') : 'N/A' }}</span>
+                        </div>
 
-                    <div class="row g-4">
-                        <div class="col-md-12">
+                        <form action="{{ route('admin.suat-chieu.store') }}" method="POST" id="suat-chieu-form">
+                            @csrf
+                            <input type="hidden" name="phim_id" value="{{ $phim->id }}">
+
                             <div class="mb-4">
                                 <label for="phong_chieu_id" class="form-label fw-semibold">Phòng chiếu <span
                                         class="text-danger">*</span></label>
@@ -90,18 +98,23 @@
                             <div class="mb-4">
                                 <label class="form-label fw-semibold">Phiên bản phim <span
                                         class="text-danger">*</span></label>
-                                <div class="d-flex gap-3">
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="phien_ban_phim" id="long_tieng"
-                                            value="long_tieng"
-                                            {{ old('phien_ban_phim', 'long_tieng') == 'long_tieng' ? 'checked' : '' }}>
-                                        <label class="form-check-label" for="long_tieng">Lồng tiếng</label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="phien_ban_phim" id="phu_de"
-                                            value="phu_de" {{ old('phien_ban_phim') == 'phu_de' ? 'checked' : '' }}>
-                                        <label class="form-check-label" for="phu_de">Phụ đề</label>
-                                    </div>
+                                <div class="d-flex flex-wrap gap-3">
+                                    @foreach ($dinhDangs as $fmt)
+                                        @foreach ($phuDes as $sub)
+                                            @php
+                                                $fSlug = \Str::slug($fmt->ten_dinh_dang, '-');
+                                                $sSlug = \Str::slug($sub->ten_phu_de, '-');
+                                                $code = strtolower($fSlug . '-' . $sSlug);
+                                            @endphp
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="phien_ban_phim"
+                                                    id="{{ $code }}" value="{{ $code }}" required>
+                                                <label class="form-check-label" for="{{ $code }}">
+                                                    {{ $fmt->ten_dinh_dang }} – {{ $sub->ten_phu_de }}
+                                                </label>
+                                            </div>
+                                        @endforeach
+                                    @endforeach
                                 </div>
                                 @error('phien_ban_phim')
                                     <div class="invalid-feedback d-block">{{ $message }}</div>
@@ -208,29 +221,55 @@
                                     <i class="fas fa-save me-1"></i> Lưu suất chiếu
                                 </button>
                             </div>
-                        </div>
+                        </form>
                     </div>
-                </form>
+
+                    <!-- Cột phải: Danh sách suất chiếu -->
+                    <div class="col-md-6 ps-md-4 mt-4 mt-md-0">
+                        <table class="table table-bordered" id="tbl-suat-chieu">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">Ngày chiếu</th>
+                                    <th class="text-center">Giờ bắt đầu – Kết thúc</th>
+                                    <th class="text-center">Phòng</th>
+                                    <th class="text-center">Phiên bản</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="4" class="text-center">Vui lòng chọn phòng & ngày để xem suất chiếu.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+<script>
+    const apiUrl = @json(route('admin.suat-chieu.theo-phong-ngay'));
+</script>
+
 @endsection
 
 @section('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Tự động focus vào trường "Phòng chiếu"
-            document.getElementById('phong_chieu_id').focus();
-
-            // Xác nhận trước khi hủy
+        
             document.querySelector('.btn-outline-secondary').addEventListener('click', function(e) {
                 if (!confirm('Bạn có muốn hủy và quay lại danh sách?')) {
                     e.preventDefault();
                 }
             });
 
-            // Gọi toggleCheDo để khởi tạo trạng thái ban đầu
             toggleCheDo();
+
+            const selPhong = document.getElementById('phong_chieu_id');
+            const inpNgay = document.getElementById('ngay_chieu');
+
+            selPhong.addEventListener('change', fetchSuatChieu);
+            inpNgay.addEventListener('change', fetchSuatChieu);
         });
 
         function toggleCheDo() {
@@ -286,12 +325,51 @@
                 </div>
             `;
             container.appendChild(group);
-            toggleCheDo(); // Cập nhật lại required sau khi thêm
+            toggleCheDo();
         }
 
         function xoaGioChieu(btn) {
             btn.closest('.gio-chieu-group').remove();
-            toggleCheDo(); // Cập nhật lại required sau khi xóa
+            toggleCheDo();
+        }
+
+        function fetchSuatChieu() {
+            const phongId = document.getElementById('phong_chieu_id').value;
+            const ngay = document.getElementById('ngay_chieu').value;
+            const tbody = document.querySelector('#tbl-suat-chieu tbody');
+            tbody.innerHTML = `<tr><td colspan="4" class="text-center">Đang tải...</td></tr>`;
+
+            if (!phongId || !ngay) {
+                tbody.innerHTML =
+                    `<tr><td colspan="4" class="text-center">Vui lòng chọn phòng & ngày để xem suất chiếu.</td></tr>`;
+                return;
+            }
+            
+            fetch(`${apiUrl}?phong_chieu_id=${phongId}&ngay_chieu=${ngay}`)
+            .then(res => {
+                    if (!res.ok) throw new Error('Lỗi kết nối');
+                    return res.json();
+                })
+                .then(data => {
+                    if (data.length === 0) {
+                        tbody.innerHTML =
+                            `<tr><td colspan="4" class="text-center">Chưa có suất chiếu cho lựa chọn này.</td></tr>`;
+                    } else {
+                        tbody.innerHTML = data.map(s => `
+                    <tr>
+                        <td>${s.ngay_chieu}</td>
+                        <td>${s.gio_bat_dau} – ${s.gio_ket_thuc}</td>
+                        <td>${s.phong}</td>
+                        <td>${s.phien_ban}</td>
+                    </tr>
+                `).join('');
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    tbody.innerHTML =
+                        `<tr><td colspan="4" class="text-center text-danger">Lỗi khi tải dữ liệu.</td></tr>`;
+                });
         }
     </script>
 @endsection

@@ -1,49 +1,43 @@
-// 1. Import jQuery đầu tiên nếu các script sau cần dùng $
 import $ from "jquery";
 window.$ = $;
 window.jQuery = $;
 
-// 2. Import Bootstrap setup (nếu bootstrap dùng jQuery thì jQuery phải có trước)
 import "./bootstrap";
-
-// 4. Import custom CSS (tuỳ bạn có thể để đầu hoặc cuối)
 import "../css/dat-ve.css";
+
+import Quagga from "@ericblade/quagga2";
 
 let scanned = false;
 
 function startScanner() {
-    const $scannerEl = $("#barcode-scanner");
+    const $scannerEl = $('#barcode-scanner');
 
     if ($scannerEl.length === 0) {
-        console.warn("Không tìm thấy phần tử barcode-scanner.");
+        console.warn("Không tìm thấy phần tử #barcode-scanner.");
         return;
     }
 
-    Quagga.init(
-        {
-            inputStream: {
-                name: "Live",
-                type: "LiveStream",
-                target: $scannerEl[0],
-                constraints: {
-                    facingMode: "environment",
-                },
-            },
-            decoder: {
-                readers: ["code_128_reader"],
-            },
-        },
-        function (err) {
-            if (err) {
-                console.error("Lỗi Quagga:", err);
-                alert("Không thể bật camera: " + err.message);
-                return;
+    Quagga.init({
+        inputStream: {
+            name: "Live",
+            type: "LiveStream",
+            target: $scannerEl[0],
+            constraints: {
+                facingMode: "environment"
             }
-            Quagga.start();
+        },
+        decoder: {
+            readers: ["code_128_reader"]
         }
-    );
+    }, function (err) {
+        if (err) {
+            console.error("❌ Lỗi khởi tạo Quagga:", err);
+            return;
+        }
+        Quagga.start();
+    });
 
-    Quagga.offDetected();
+    Quagga.offDetected(); // reset
     Quagga.onDetected(onScan);
 }
 
@@ -53,7 +47,7 @@ function stopScanner() {
         Quagga.offDetected();
     }
     scanned = false;
-    $("#scan-result").text("Chưa quét");
+    $('#scan-result').text('Chưa quét');
 }
 
 function onScan(data) {
@@ -61,44 +55,23 @@ function onScan(data) {
     scanned = true;
 
     const code = data.codeResult.code;
-    $("#scan-result").text(code);
+    $('#scan-result').text(code);
 
-    $.ajax({
-        url: "/checkin-ve",
-        method: "POST",
-        contentType: "application/json",
-        headers: {
-            "X-CSRF-TOKEN": "{{ csrf_token() }}",
-        },
-        data: JSON.stringify({
-            ma_ve: code,
-        }),
-        success: function (res) {
-            alert(res.message);
-        },
-        error: function () {
-            alert("Mã không hợp lệ hoặc đã check-in!");
-        },
-        complete: function () {
-            setTimeout(() => (scanned = false), 2000);
-        },
-    });
+    window.location.href = `/admin/dat-ve?ma_ve=${code}`;
 }
 
+
 $(document).ready(function () {
-    // Khi modal mở
-    $("#scannerModal").on("shown.bs.modal", function () {
-        setTimeout(startScanner, 400);
+    $('#scannerModal').on('shown.bs.modal', function () {
+        setTimeout(startScanner, 500);
     });
 
-    // Khi modal đóng
-    $("#scannerModal").on("hidden.bs.modal", function () {
+    $('#scannerModal').on('hidden.bs.modal', function () {
         stopScanner();
     });
 
-    // Nút Quét lại
-    $("#restartScan").on("click", function () {
+    $('#restartScan').on('click', function () {
         stopScanner();
-        setTimeout(startScanner, 400);
+        setTimeout(startScanner, 500);
     });
 });

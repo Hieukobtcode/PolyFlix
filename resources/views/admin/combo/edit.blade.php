@@ -1,25 +1,28 @@
 @extends('layouts.admin')
 
-@section('title', 'Cập nhật Combo')
-@section('page-title', 'Cập nhật Combo')
-@section('breadcrumb', 'Chỉnh sửa')
+@section('title', isset($combo) ? 'Cập nhật Combo' : 'Thêm Combo')
+@section('page-title', isset($combo) ? 'Cập nhật Combo' : 'Thêm Combo')
+@section('breadcrumb', isset($combo) ? 'Chỉnh sửa' : 'Thêm mới')
 
 @section('content')
     <div class="container-fluid">
         <div class="card shadow-sm border-0">
-            <div class="card-header bg-warning text-white">
-                <h5 class="mb-0 fw-bold">Cập nhật combo</h5>
+            <div class="card-header {{ isset($combo) ? 'bg-warning' : 'bg-primary' }} text-white">
+                <h5 class="mb-0 fw-bold">{{ isset($combo) ? 'Cập nhật combo' : 'Thêm combo mới' }}</h5>
             </div>
 
             <div class="card-body p-4">
-                <form action="{{ route('admin.combos.update', $combo->id) }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ isset($combo) ? route('admin.combos.update', $combo->id) : route('admin.combos.store') }}"
+                    method="POST" enctype="multipart/form-data">
                     @csrf
-                    @method('PUT')
+                    @if (isset($combo))
+                        @method('PUT')
+                    @endif
 
                     <div class="mb-3">
                         <label class="form-label">Tiêu đề</label>
                         <input type="text" name="tieu_de" class="form-control @error('tieu_de') is-invalid @enderror"
-                            value="{{ old('tieu_de', $combo->tieu_de) }}" required>
+                            value="{{ old('tieu_de', $combo->tieu_de ?? '') }}" required>
                         @error('tieu_de')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -27,7 +30,7 @@
 
                     <div class="mb-3">
                         <label class="form-label">Mô tả</label>
-                        <textarea name="noi_dung" rows="3" class="form-control @error('noi_dung') is-invalid @enderror">{{ old('noi_dung', $combo->noi_dung) }}</textarea>
+                        <textarea name="noi_dung" rows="3" class="form-control @error('noi_dung') is-invalid @enderror">{{ old('noi_dung', $combo->noi_dung ?? '') }}</textarea>
                         @error('noi_dung')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -40,53 +43,63 @@
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
 
-                        @if ($combo->hinh_anh)
+                        @if (isset($combo) && $combo->hinh_anh)
                             <div class="mt-2">
                                 <img src="{{ asset('storage/' . $combo->hinh_anh) }}" alt="Hình combo"
                                     style="max-height: 150px;">
                             </div>
                         @endif
                     </div>
+
+                    @php
+                        $chiNhanhSelected = old(
+                            'chi_nhanh_ids',
+                            isset($combo) ? $combo->chiNhanhs->pluck('id')->toArray() : [],
+                        );
+                    @endphp
+
                     <div class="mb-3">
                         <label class="form-label">Chọn chi nhánh</label>
                         <select id="select-chi-nhanh" class="form-select">
                             <option value="">-- Chọn chi nhánh --</option>
                             @foreach ($chiNhanhs as $cn)
-                                <option value="{{ $cn->id }}" data-ten="{{ $cn->ten_chi_nhanh }}"
-                                    {{ in_array($cn->id, $combo->chiNhanhs->pluck('id')->toArray()) ? 'disabled' : '' }}>
+                                <option value="{{ $cn->id }}" data-ten="{{ $cn->ten_chi_nhanh }}">
                                     {{ $cn->ten_chi_nhanh }}
                                 </option>
                             @endforeach
                         </select>
                     </div>
 
-                    <div id="danh-sach-chi-nhanh">
-                        {{-- Hiển thị chi nhánh đã gán --}}
-                        @foreach ($combo->chiNhanhs as $cn)
-                            <div class="d-flex align-items-center mb-2" data-id="{{ $cn->id }}">
-                                <span class="me-2">{{ $cn->ten_chi_nhanh }}</span>
-                                <button type="button" class="btn btn-sm btn-danger"
-                                    onclick="removeChiNhanh({{ $cn->id }})">Xóa</button>
-                            </div>
-                            <input type="hidden" name="chi_nhanh_ids[]" value="{{ $cn->id }}"
-                                id="input-chi_nhanh-{{ $cn->id }}">
-                        @endforeach
+                    <div class="mb-3">
+                        <label class="form-label">Chi nhánh đã chọn</label>
+                        <ul id="selected-branches" class="list-group">
+                            @foreach ($chiNhanhSelected as $id)
+                                @php
+                                    $cn = $chiNhanhs->where('id', $id)->first();
+                                @endphp
+                                <li class="list-group-item d-flex justify-content-between align-items-center"
+                                    data-id="{{ $id }}">
+                                    <span>{{ $cn->ten_chi_nhanh }}</span>
+                                    <button type="button" class="btn btn-sm btn-danger btn-xoa-cn"
+                                        data-id="{{ $id }}">Xoá</button>
+                                </li>
+                                <input type="hidden" name="chi_nhanh_ids[]" value="{{ $id }}"
+                                    id="input-chi_nhanh-{{ $id }}">
+                            @endforeach
+                        </ul>
                     </div>
 
-                    <div id="hidden-chi-nhanh-inputs"></div>
+                    <div id="hidden-branch-inputs"></div>
 
                     <div class="mb-3">
-                        <label class="form-label">Giá gốc (VNĐ)</label>
-                        <input type="number" name="gia" id="gia" class="form-control" readonly>
-                        @error('gia')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
+                        <label class="form-label">Giá (VNĐ)</label>
+                        <input type="number" name="gia" id="gia" class="form-control" value="0" readonly>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label">Giá sau giảm (Combo)</label>
                         <input type="number" name="gia_combo" class="form-control @error('gia_combo') is-invalid @enderror"
-                            value="{{ old('gia_combo', $combo->gia_combo) }}" min="0" step="1000">
+                            value="{{ old('gia_combo', $combo->gia_combo ?? 0) }}" min="0" step="1000">
                         @error('gia_combo')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -94,57 +107,62 @@
 
                     <div class="mb-3">
                         <label class="form-label">Chọn món ăn</label>
-                        <select id="select-mon-an" class="form-select">
+                        <select id="chon-do-an" class="form-select">
                             <option value="">-- Chọn món --</option>
                             @foreach ($doAns as $doAn)
-                                <option value="{{ $doAn->id }}" data-gia="{{ $doAn->gia }}"
-                                    data-ten="{{ $doAn->tieu_de }}"
-                                    {{ in_array($doAn->id, old('do_an_ids', $combo->doAns->pluck('id')->toArray())) ? 'disabled' : '' }}>
+                                <option value="{{ $doAn->id }}" data-ten="{{ $doAn->tieu_de }}"
+                                    data-gia="{{ $doAn->gia }}">
                                     {{ $doAn->tieu_de }} ({{ number_format($doAn->gia) }} đ)
                                 </option>
                             @endforeach
                         </select>
                     </div>
 
-                    <!-- Hidden inputs -->
-                    <div id="selected-inputs">
-                        @foreach ($combo->doAns as $doAn)
-                            <input type="hidden" name="do_an_ids[]" value="{{ $doAn->id }}"
-                                id="input-do-an-{{ $doAn->id }}">
-                        @endforeach
-                    </div>
-
-                    <!-- Danh sách món ăn đã chọn -->
-                    <div class="mb-3">
-                        <label class="form-label">Món ăn đã chọn</label>
-                        <ul id="selected-food-list" class="list-group">
+                    <ul id="danh-sach-do-an" class="list-group mb-3">
+                        @if (isset($combo))
                             @foreach ($combo->doAns as $doAn)
                                 <li class="list-group-item d-flex justify-content-between align-items-center"
-                                    data-id="{{ $doAn->id }}">
-                                    <span>{{ $doAn->tieu_de }} - {{ number_format($doAn->gia) }} đ</span>
-                                    <button type="button" class="btn btn-sm btn-danger btn-xoa-mon"
-                                        data-id="{{ $doAn->id }}" data-gia="{{ $doAn->gia }}">
-                                        Xóa
-                                    </button>
+                                    data-id="{{ $doAn->id }}" data-gia="{{ $doAn->gia }}">
+                                    <div><strong>{{ $doAn->tieu_de }}</strong>
+                                        <div class="text-muted small">{{ number_format($doAn->gia) }} đ</div>
+                                    </div>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="input-group input-group-sm">
+                                            <button type="button" class="btn btn-outline-secondary btn-giam"
+                                                data-id="{{ $doAn->id }}">-</button>
+                                            <input type="number" name="do_ans[{{ $doAn->id }}][so_luong]"
+                                                class="form-control text-center so-luong"
+                                                value="{{ $doAn->pivot->so_luong }}" min="1" style="width:60px;">
+                                            <button type="button" class="btn btn-outline-secondary btn-tang"
+                                                data-id="{{ $doAn->id }}">+</button>
+                                        </div>
+                                        <button type="button" class="btn btn-sm btn-danger xoa-mon"
+                                            data-id="{{ $doAn->id }}">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
                                 </li>
+                                <input type="hidden" name="do_ans[{{ $doAn->id }}][selected]" value="1"
+                                    id="input-selected-{{ $doAn->id }}">
                             @endforeach
-                        </ul>
-                    </div>
+                        @endif
+                    </ul>
 
-
+                    <div id="inputs-hidden"></div>
 
                     <div class="mb-3">
                         <label class="form-label">Trạng thái</label>
                         <select name="trang_thai" class="form-select">
-                            <option value="hien" {{ old('trang_thai', $combo->trang_thai) == 'hien' ? 'selected' : '' }}>
-                                Hiện</option>
-                            <option value="an" {{ old('trang_thai', $combo->trang_thai) == 'an' ? 'selected' : '' }}>Ẩn
+                            <option value="hien"
+                                {{ old('trang_thai', $combo->trang_thai ?? 'hien') == 'hien' ? 'selected' : '' }}>Hiện
                             </option>
+                            <option value="an"
+                                {{ old('trang_thai', $combo->trang_thai ?? '') == 'an' ? 'selected' : '' }}>Ẩn</option>
                         </select>
                     </div>
 
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save me-1"></i> Cập nhật
+                    <button type="submit" class="btn btn-{{ isset($combo) ? 'primary' : 'success' }}">
+                        <i class="fas fa-save me-1"></i> {{ isset($combo) ? 'Cập nhật' : 'Lưu combo' }}
                     </button>
                     <a href="{{ route('admin.combos.index') }}" class="btn btn-secondary">
                         <i class="fas fa-arrow-left me-1"></i> Quay lại
@@ -154,138 +172,156 @@
         </div>
     </div>
 @endsection
-
-@section('scripts')
 @section('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const select = document.getElementById('select-mon-an');
-            const foodList = document.getElementById('selected-food-list');
-            const selectedInputs = document.getElementById('selected-inputs');
+            // ======== MÓN ĂN =========
+            const selectDoAn = document.getElementById('chon-do-an');
+            const list = document.getElementById('danh-sach-do-an');
+            const inputs = document.getElementById('inputs-hidden');
             const giaInput = document.getElementById('gia');
 
-            let selectedIds = new Set(@json($combo->doAns->pluck('id'))); // Món đã chọn
-            let tongGia = @json($combo->doAns->sum('gia'));
+            let selected = new Set();
 
-            function capNhatGia() {
-                giaInput.value = Math.round(tongGia);
+            // Đọc sẵn các món đã chọn (trường hợp edit)
+            document.querySelectorAll('input[id^="input-selected-"]').forEach(input => {
+                const id = input.id.replace('input-selected-', '');
+                selected.add(id);
+            });
+
+            function capNhatTongGia() {
+                let tongGia = 0;
+                list.querySelectorAll('li').forEach(li => {
+                    const gia = parseFloat(li.dataset.gia);
+                    const soLuong = parseInt(li.querySelector('.so-luong').value);
+                    tongGia += gia * soLuong;
+                });
+                giaInput.value = tongGia.toFixed(0);
             }
 
-            select.addEventListener('change', function() {
-                const option = select.options[select.selectedIndex];
+            selectDoAn.addEventListener('change', function() {
+                const option = this.options[this.selectedIndex];
                 const id = option.value;
                 const ten = option.dataset.ten;
-                const gia = parseFloat(option.dataset.gia) || 0;
+                const gia = parseFloat(option.dataset.gia);
 
-                if (id && !selectedIds.has(id)) {
-                    selectedIds.add(id);
-                    tongGia += gia;
-                    capNhatGia();
+                if (!id || selected.has(id)) return;
 
-                    // Thêm dòng món ăn
-                    const li = document.createElement('li');
-                    li.className = 'list-group-item d-flex justify-content-between align-items-center';
-                    li.dataset.id = id;
-                    li.innerHTML = `
-                    <span>${ten} - ${gia.toLocaleString()} đ</span>
-                    <button type="button" class="btn btn-sm btn-danger btn-xoa-mon" data-id="${id}" data-gia="${gia}">Xóa</button>
-                `;
-                    foodList.appendChild(li);
+                selected.add(id);
 
-                    // Tạo input hidden
-                    const input = document.createElement('input');
-                    input.type = 'hidden';
-                    input.name = 'do_an_ids[]';
-                    input.value = id;
-                    input.id = 'input-do-an-' + id;
-                    selectedInputs.appendChild(input);
+                const li = document.createElement('li');
+                li.className = 'list-group-item d-flex justify-content-between align-items-center';
+                li.dataset.id = id;
+                li.dataset.gia = gia;
 
-                    // Disable option
-                    option.disabled = true;
-                    select.selectedIndex = 0;
+                li.innerHTML = `
+                <div><strong>${ten}</strong><div class="text-muted small">${gia.toLocaleString()} đ</div></div>
+                <div class="d-flex align-items-center gap-2">
+                    <div class="input-group input-group-sm">
+                        <button type="button" class="btn btn-outline-secondary btn-giam" data-id="${id}">-</button>
+                        <input type="number" name="do_ans[${id}][so_luong]" class="form-control text-center so-luong" value="1" min="1" style="width:60px;">
+                        <button type="button" class="btn btn-outline-secondary btn-tang" data-id="${id}">+</button>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-danger xoa-mon" data-id="${id}">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            `;
+
+                list.appendChild(li);
+
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = `do_ans[${id}][selected]`;
+                input.value = 1;
+                input.id = `input-selected-${id}`;
+                inputs.appendChild(input);
+
+                capNhatTongGia();
+                this.value = '';
+            });
+
+            list.addEventListener('click', function(e) {
+                const btn = e.target.closest('button');
+                if (!btn) return;
+
+                const id = btn.dataset.id;
+                const input = list.querySelector(`li[data-id="${id}"] input.so-luong`);
+                let sl = parseInt(input.value);
+
+                if (btn.classList.contains('btn-giam')) {
+                    if (sl > 1) sl--;
+                }
+
+                if (btn.classList.contains('btn-tang')) {
+                    sl++;
+                }
+
+                if (btn.classList.contains('xoa-mon')) {
+                    list.querySelector(`li[data-id="${id}"]`)?.remove();
+                    document.getElementById(`input-selected-${id}`)?.remove();
+                    selected.delete(id);
+                    capNhatTongGia();
+                    return;
+                }
+
+                input.value = sl;
+                capNhatTongGia();
+            });
+
+            list.addEventListener('input', function(e) {
+                if (e.target.classList.contains('so-luong')) {
+                    capNhatTongGia();
                 }
             });
 
-            // Xử lý xóa món
-            foodList.addEventListener('click', function(e) {
-                if (e.target.classList.contains('btn-xoa-mon')) {
-                    const id = e.target.dataset.id;
-                    const gia = parseFloat(e.target.dataset.gia) || 0;
+            // ======== CHI NHÁNH =========
+            const selectChiNhanh = document.getElementById('select-chi-nhanh');
+            const listCN = document.getElementById('selected-branches');
+            const inputsCN = document.getElementById('hidden-branch-inputs');
+            const selectedCN = new Set();
 
-                    const li = foodList.querySelector(`li[data-id="${id}"]`);
-                    if (li) li.remove();
-
-                    const input = document.getElementById('input-do-an-' + id);
-                    if (input) input.remove();
-
-                    selectedIds.delete(id);
-                    tongGia -= gia;
-                    capNhatGia();
-
-                    // Re-enable lại option trong select
-                    const option = select.querySelector(`option[value="${id}"]`);
-                    if (option) option.disabled = false;
-                }
+            document.querySelectorAll('input[name="chi_nhanh_ids[]"]').forEach(input => {
+                selectedCN.add(input.value);
             });
 
-            // Khởi động tổng giá
-            capNhatGia();
+            selectChiNhanh.addEventListener('change', function() {
+                const selectedOption = this.options[this.selectedIndex];
+                const id = selectedOption.value;
+                const ten = selectedOption.dataset.ten;
+
+                if (!id || selectedCN.has(id)) return;
+
+                selectedCN.add(id);
+
+                const li = document.createElement('li');
+                li.className = 'list-group-item d-flex justify-content-between align-items-center';
+                li.dataset.id = id;
+                li.innerHTML = `
+                <span>${ten}</span>
+                <button type="button" class="btn btn-sm btn-danger btn-xoa-cn" data-id="${id}">Xoá</button>
+            `;
+
+                li.querySelector('.btn-xoa-cn').addEventListener('click', function() {
+                    selectedCN.delete(id);
+                    li.remove();
+                    document.getElementById('input-chi_nhanh-' + id)?.remove();
+                });
+
+                listCN.appendChild(li);
+
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'chi_nhanh_ids[]';
+                input.value = id;
+                input.id = 'input-chi_nhanh-' + id;
+                inputsCN.appendChild(input);
+
+                selectChiNhanh.selectedIndex = 0;
+            });
+
+            // Tính giá lần đầu (trường hợp edit có sẵn món)
+            capNhatTongGia();
         });
     </script>
 @endsection
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    const selectChiNhanh = document.getElementById('select-chi-nhanh');
-    const danhSachChiNhanh = document.getElementById('danh-sach-chi-nhanh');
-    const hiddenInputs = document.getElementById('hidden-chi-nhanh-inputs');
-    const selectedIds = new Set(
-        Array.from(document.querySelectorAll('input[name="chi_nhanh_ids[]"]')).map(input => input.value)
-    );
-
-    selectChiNhanh.addEventListener('change', function () {
-        const selectedOption = this.options[this.selectedIndex];
-        const id = selectedOption.value;
-        const ten = selectedOption.dataset.ten;
-
-        if (!id || selectedIds.has(id)) return;
-
-        selectedIds.add(id);
-        selectedOption.disabled = true;
-        this.value = '';
-
-        const div = document.createElement('div');
-        div.classList.add('d-flex', 'align-items-center', 'mb-2');
-        div.dataset.id = id;
-        div.innerHTML = `
-            <span class="me-2">${ten}</span>
-            <button type="button" class="btn btn-sm btn-danger">Xóa</button>
-        `;
-
-        div.querySelector('button').addEventListener('click', () => {
-            selectedIds.delete(id);
-            div.remove();
-            document.getElementById('input-chi_nhanh-' + id)?.remove();
-            const option = selectChiNhanh.querySelector(`option[value="${id}"]`);
-            if (option) option.disabled = false;
-        });
-
-        danhSachChiNhanh.appendChild(div);
-
-        const input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = 'chi_nhanh_ids[]';
-        input.value = id;
-        input.id = 'input-chi_nhanh-' + id;
-        hiddenInputs.appendChild(input);
-    });
-
-    // Xóa chi nhánh gán sẵn
-    window.removeChiNhanh = function (id) {
-        selectedIds.delete(id);
-        document.querySelector(`div[data-id="${id}"]`)?.remove();
-        document.getElementById('input-chi_nhanh-' + id)?.remove();
-        const option = selectChiNhanh.querySelector(`option[value="${id}"]`);
-        if (option) option.disabled = false;
-    };
-});
-</script>

@@ -54,8 +54,9 @@
                             <div class="mb-4">
                                 <label for="ten" class="form-label fw-semibold">Tên cấp bậc <span
                                         class="text-danger">*</span></label>
-                                <input type="text" class="form-control rounded @error('ten') is-invalid @enderror" id="ten"
-                                    name="ten" value="{{ old('ten', $capBacThe->ten) }}" placeholder="Nhập tên cấp bậc">
+                                <input type="text" class="form-control rounded @error('ten') is-invalid @enderror"
+                                    id="ten" name="ten" value="{{ old('ten', $capBacThe->ten) }}"
+                                    placeholder="Nhập tên cấp bậc">
                                 @error('ten')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -64,8 +65,7 @@
                             <div class="mb-4">
                                 <label for="mo_ta" class="form-label fw-semibold">Mô tả <span
                                         class="text-danger">*</span></label>
-                                <textarea class="form-control rounded @error('mo_ta') is-invalid @enderror" id="mo_ta"
-                                    name="mo_ta" rows="4"
+                                <textarea class="form-control rounded @error('mo_ta') is-invalid @enderror" id="mo_ta" name="mo_ta" rows="4"
                                     placeholder="Nhập mô tả cấp bậc">{{ old('mo_ta', $capBacThe->mo_ta) }}</textarea>
                                 @error('mo_ta')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -73,15 +73,15 @@
                             </div>
 
                             <div class="mb-4">
-                                <label for="tong_chi_tieu" class="form-label fw-semibold">Tổng chi tiêu (VNĐ) <span
+                                <label for="tong_so_ve_da_mua" class="form-label fw-semibold">Tổng số vé đã mua <span
                                         class="text-danger">*</span></label>
                                 <input type="number"
-                                    class="form-control rounded @error('tong_chi_tieu') is-invalid @enderror"
-                                    id="tong_chi_tieu" name="tong_chi_tieu"
-                                    value="{{ old('tong_chi_tieu', $capBacThe->tong_chi_tieu) }}"
+                                    class="form-control rounded @error('tong_so_ve_da_mua') is-invalid @enderror"
+                                    id="tong_so_ve_da_mua" name="tong_so_ve_da_mua"
+                                    value="{{ old('tong_so_ve_da_mua', $capBacThe->tong_so_ve_da_mua) }}"
                                     placeholder="Nhập tổng chi tiêu">
                                 <div class="form-text">Tổng số tiền(VNĐ) chi tiêu để đạt được cấp bậc đó.</div>
-                                @error('tong_chi_tieu')
+                                @error('tong_so_ve_da_mua')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
@@ -116,10 +116,10 @@
                                 </div>
                             </div>
 
-                            @if(!$capBacThe->is_default && !$hasDefault)
+                            @if (!$capBacThe->is_default && !$hasDefault)
                                 <div class="mb-4 form-check">
-                                    <input type="checkbox" class="form-check-input" id="is_default" name="is_default" value="1"
-                                        {{ old('is_default', $capBacThe->is_default) ? 'checked' : '' }}>
+                                    <input type="checkbox" class="form-check-input" id="is_default" name="is_default"
+                                        value="1" {{ old('is_default', $capBacThe->is_default) ? 'checked' : '' }}>
                                     <label class="form-check-label" for="is_default">Đặt làm mặc định</label>
                                 </div>
                             @else
@@ -148,12 +148,12 @@
 
 @section('scripts')
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             // Tự động focus vào trường tên cấp bậc
             document.getElementById('ten').focus();
 
             // Xác nhận trước khi hủy
-            document.querySelector('.btn-outline-secondary').addEventListener('click', function (e) {
+            document.querySelector('.btn-outline-secondary').addEventListener('click', function(e) {
                 if (!confirm('Bạn có muốn hủy và quay lại danh sách?')) {
                     e.preventDefault();
                 }

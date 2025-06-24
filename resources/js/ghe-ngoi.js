@@ -118,7 +118,7 @@ $(document).ready(function () {
             rightOrLeft.hide();
         }
     });
-
+    
     chonHangGhe.change(function () {
         if (chonHangGhe.val() == 1) {
         } else if (chonHangGhe.val() == 2) {
@@ -168,8 +168,11 @@ $(document).ready(function () {
             });
         }
 
-
-        const soCot = parseInt(soGheKhiThemHang.val());
+        let soCot = parseInt(soGheKhiThemHang.val());
+        if(loaiChon == 12){
+            soCot = soCot * 2;
+        }
+        
         let baseCharCode = danhSach[viTriChen - 1]
             ? danhSach[viTriChen - 1].hang.charCodeAt(0)
             : 64;
