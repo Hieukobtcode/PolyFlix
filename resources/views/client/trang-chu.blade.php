@@ -41,22 +41,27 @@
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 
-    <!-- Banner -->
-    <div class="swiper banner-slider"
-        style="max-width: 79%; height:450px; margin: 20px auto; border-radius: 10px; overflow: hidden;">
+    <!-- Banner Slider -->
+    <div class="swiper banner-slider" style="max-width: 1200px; width: 100%; height: 500px; margin: 0 auto 20px auto;">
         <div class="swiper-wrapper">
             @foreach ($banners as $banner)
-                <div class="swiper-slide" style="width: 100%">
-                    <img src="{{ asset($banner->hinh_anh) }}" alt="Banner" style="width: 1200px; height: 450px;">
+                <div class="swiper-slide">
+                    <img src="{{ asset($banner->hinh_anh) }}" alt="Banner {{ $banner->id }}"
+                        style="width: 100%; height: 100%; object-fit: cover;">
                 </div>
             @endforeach
         </div>
+
         <div class="swiper-pagination"></div>
         <div class="swiper-button-next"></div>
         <div class="swiper-button-prev"></div>
     </div>
 
+
+    <!-- Swiper JS -->
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+    <!-- Swiper Init -->
     <script>
         const swiper = new Swiper('.banner-slider', {
             loop: true,
@@ -138,9 +143,10 @@
             <img width="350px" src="{{ asset('khuyen-mai/monday_1_.jpg') }}" alt="">
         </div>
     </div>
-    <a href="{{ route('khuyen-mai.index') }}"><button class="btn-km">TẤT CẢ ƯU ĐÃI</button></a>
 
-    <!-- Góc điện ảnh -->
+    <a href="{{ route('khuyen-mai.index') }}">
+        <button class="btn-km">TẤT CẢ ƯU ĐÃI</button>
+    </a>
     <div class="new">
         <button type="button"></button>
         <p>GÓC ĐIỆN ẢNH</p>

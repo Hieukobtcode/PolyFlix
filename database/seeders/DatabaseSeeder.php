@@ -16,6 +16,8 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
+            BaiVietSeeder::class,
+            CauHinhSeeder::class,
             VaiTroSeeder::class,
             PhanQuyenSeeder::class,
             VaiTroPhanQuyenSeeder::class,
@@ -23,6 +25,7 @@ class DatabaseSeeder extends Seeder
             BaiVietSeeder::class,
             CauHinhSeeder::class,
             BannerSeeder::class,
+            UserSeeder::class,
             KhuyenMaiSeeder::class,
             ChiNhanhSeeder::class,
             RapSeeder::class,
@@ -38,6 +41,7 @@ class DatabaseSeeder extends Seeder
             SuatChieuSeeder::class,
             CommentSeeder::class,
             RatingSeeder::class,
+            // php artisan db:seed --class=PhongChieuSeeder
         ]);
     }
 }

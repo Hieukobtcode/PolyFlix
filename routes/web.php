@@ -56,6 +56,8 @@ Route::get('/dat-ve', [\App\Http\Controllers\Client\DatVeController::class, 'ind
 Route::post('/dat-ve', [\App\Http\Controllers\Client\DatVeController::class, 'store'])->name('client.dat-ve.store');
 Route::get('/dat-ve/ket-qua/{id}', [\App\Http\Controllers\Client\DatVeController::class, 'ketQua'])->name('client.dat-ve.ket-qua');
 
+Route::get('/', [TrangChuController::class, 'index'])->name('home');
+Route::get('/rap/{uuid}', [TrangChuController::class, 'showrap'])->name('showrap');
 Route::get('/bai-viet', [DanhSachBaiVietController::class, 'index'])->name('client.bai-viet');
 Route::get('/bai-viet/{uuid}', [DanhSachBaiVietController::class, 'show'])->name('show-bai-viet');
 

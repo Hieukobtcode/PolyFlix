@@ -7,11 +7,14 @@ use App\Models\BaiViet;
 use App\Models\Banner;
 use App\Models\Comment;
 use App\Models\Phim;
+use App\Models\RapPhim;
 use App\Models\Rating;
 use App\Models\ChiNhanh;
 use App\Models\SuatChieu;
 use Illuminate\Http\Request;
+use Hashids\Hashids;
 use Carbon\Carbon;
+use App\Helpers\IdFormatter;
 
 class TrangChuController extends Controller
 {
@@ -58,9 +61,6 @@ class TrangChuController extends Controller
         return view('client.trang-chu', compact('phims', 'ratings', 'baiViet', 'banners', 'allPhims', 'tab'));
     }
 
-    /**
-     * Lấy danh sách chi nhánh cho dropdown đặt vé nhanh
-     */
     public function getChiNhanhs()
     {
         $chiNhanhs = ChiNhanh::where('trang_thai', 1)
@@ -71,9 +71,6 @@ class TrangChuController extends Controller
         return response()->json($chiNhanhs);
     }
 
-    /**
-     * Lấy danh sách phim theo chi nhánh
-     */
     public function getPhimsByChiNhanh(Request $request)
     {
         $chiNhanhId = $request->input('chi_nhanh_id');
@@ -90,9 +87,6 @@ class TrangChuController extends Controller
         return response()->json($phims);
     }
 
-    /**
-     * Lấy danh sách ngày chiếu theo phim và chi nhánh
-     */
     public function getNgayChieuByPhim(Request $request)
     {
         $phimId = $request->input('phim_id');
@@ -118,9 +112,6 @@ class TrangChuController extends Controller
         return response()->json($ngayChieus);
     }
 
-    /**
-     * Lấy danh sách suất chiếu theo ngày, phim và chi nhánh
-     */
     public function getSuatChieuByNgay(Request $request)
     {
         $phimId = $request->input('phim_id');
@@ -152,9 +143,6 @@ class TrangChuController extends Controller
         return response()->json($suatChieus);
     }
 
-    /**
-     * Ajax load phim theo tab (đang chiếu / sắp chiếu)
-     */
     public function loadPhimTab(Request $request)
     {
         $tab = $request->get('tab', 'dang-chieu');
@@ -175,5 +163,68 @@ class TrangChuController extends Controller
         return response()->json([
             'phims' => $allPhims
         ]);
+    }
+
+    public function showRap($uuid, Request $request)
+    {
+        $id = IdFormatter::deuuidify($uuid);
+        if (!$id) {
+            abort(404, 'Mã không hợp lệ');
+        }
+
+        $rap = RapPhim::findOrFail($id);
+
+        $phimDangChieu = Phim::where('trang_thai', 'đang chiếu')
+            ->whereHas('rapPhims', function ($query) use ($rap) {
+                $query->where('rap_phim_id', $rap->id);
+            })
+            ->get();
+
+        $phimSapChieu = Phim::where('trang_thai', 'sắp chiếu')
+            ->whereHas('rapPhims', function ($query) use ($rap) {
+                $query->where('rap_phim_id', $rap->id);
+            })
+            ->get();
+
+        $today = Carbon::today();
+        $threeDaysLater = $today->copy()->addDays(3);
+
+        $suatChieuTheoPhim = SuatChieu::whereIn('phim_id', $phimDangChieu->pluck('id'))
+            ->whereBetween('ngay_chieu', [$today, $threeDaysLater])
+            ->whereHas('phongChieu', function ($query) use ($rap) {
+                $query->where('rap_phim_id', $rap->id);
+            })
+            ->with(['phongChieu.loaiPhong'])
+            ->orderBy('bat_dau')
+            ->get()
+            ->groupBy('phim_id');
+
+        $phimCoSuatDacBiet = collect();
+
+        foreach ($phimSapChieu as $phim) {
+            $suatDacBiet = SuatChieu::where('phim_id', $phim->id)
+                ->whereHas('phongChieu', function ($query) use ($rap) {
+                    $query->where('rap_phim_id', $rap->id);
+                })
+                ->with(['phongChieu.loaiPhong'])
+                ->get()
+                ->filter(function ($suat) use ($phim) {
+                    return $phim->ngay_phat_hanh &&
+                        Carbon::parse($suat->ngay_chieu)->lt(Carbon::parse($phim->ngay_phat_hanh));
+                });
+
+            if ($suatDacBiet->isNotEmpty()) {
+                $phim->setRelation('suatChieus', $suatDacBiet);
+                $phimCoSuatDacBiet->push($phim);
+            }
+        }
+
+        return view('client.show-rap', compact(
+            'rap',
+            'phimDangChieu',
+            'phimSapChieu',
+            'suatChieuTheoPhim',
+            'phimCoSuatDacBiet'
+        ));
     }
 }

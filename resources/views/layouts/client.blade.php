@@ -2,6 +2,12 @@
 <html lang="en">
 
 <head>
+    @php
+        use Hashids\Hashids;
+
+        $config = config('hashids');
+        $hashids = new Hashids($config['salt'], $config['length'], $config['alphabet']);
+    @endphp
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PolyFlix - Hệ thống rạp số 1 thế giới</title>
@@ -15,6 +21,72 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     {{-- CSS --}}
     @yield('styles')
+
+    <style>
+        .rap-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .rap {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            color: white;
+            transition: color 0.3s ease;
+        }
+
+        .rap:hover {
+            color: #ffcc00;
+            /* Màu vàng */
+        }
+
+        .rap-dropdown {
+            display: none;
+            position: absolute;
+            top: 120%;
+            /* canh dưới nút */
+            left: 0;
+            background-color: #0c1120;
+            /* màu nền tối giống giao diện */
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            min-width: 600px;
+            z-index: 999;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            margin-top: -10px;
+        }
+
+        .rap-dropdown ul {
+            display: grid;
+            grid-template-columns: repeat(5, auto);
+            /* các cột vừa đủ nội dung */
+            justify-content: center;
+            /* căn giữa toàn bộ grid */
+            gap: 30px 30px;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .rap-dropdown li {
+            white-space: nowrap;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 15px;
+            transition: color 0.3s ease;
+        }
+
+        .rap-dropdown li:hover {
+            color: #ffcc00;
+            cursor: pointer;
+        }
+
+        .rap-wrapper:hover .rap-dropdown {
+            display: block;
+        }
+    </style>
 </head>
 
 <body>
@@ -84,10 +156,26 @@
         <div class="container">
             <div class="nav1">
                 <div class="list-nav">
-                    <div class="rap">
-                        <i class="fa-solid fa-location-dot"></i>
-                        <p>Chọn rạp</p>
+                    <div class="rap-wrapper">
+                        <div class="rap">
+                            <i class="fa-solid fa-location-dot"></i>
+                            <p>Chọn rạp</p>
+                        </div>
+
+                        <div class="rap-dropdown">
+                            <ul>
+                                @foreach ($rapPhims as $chiNhanhId => $dsRap)
+                                    {{-- Danh sách rạp thuộc chi nhánh này --}}
+                                    @foreach ($dsRap as $rap)
+                                        <a href="{{ route('showrap', \App\Helpers\IdFormatter::uuidify($rap->id)) }}">
+                                            <li>{{ $rap->ten_rap }}</li>
+                                        </a>
+                                    @endforeach
+                                @endforeach
+                            </ul>
+                        </div>
                     </div>
+
                     <div class="lich-chieu">
                         <i class="fa-solid fa-calendar-days"></i>
                         <p>Lịch chiếu</p>

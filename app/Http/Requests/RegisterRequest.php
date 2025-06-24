@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Validator;
 
 class RegisterRequest extends FormRequest
 {
@@ -19,6 +20,7 @@ class RegisterRequest extends FormRequest
             'password' => 'required|string|min:6|confirmed',
             'dob'      => 'nullable|date',
             'phone'    => 'nullable|string|max:20|unique:users,so_dien_thoai',
+            'g-recaptcha-response'  => 'required|captcha',
         ];
     }
 
@@ -34,6 +36,8 @@ class RegisterRequest extends FormRequest
             'password.confirmed'     => 'Xác nhận mật khẩu không khớp.',
             'phone.unique'           => 'Số điện thoại đã được sử dụng.',
             'username.unique'        => 'Tên đăng nhập đã tồn tại.',
+            'g-recaptcha-response.required' => 'Vui lòng xác minh bạn không phải người máy.',
+            'g-recaptcha-response.captcha'  => 'CAPTCHA không hợp lệ hoặc đã hết hạn.',
         ];
     }
 
