@@ -13,6 +13,36 @@
     {{-- <div class="banner"> --}}
     {{-- <img src="{{ asset('banner/1215wx365h_6_.jpg') }}" alt="">
     </div> --}}
+    <style>
+.ten-phim {
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* Giới hạn 2 dòng */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.5em;
+    height: 3em;
+}
+.img-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.age-label {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background: red;
+    color: white;
+    font-weight: bold;
+    padding: 4px 8px;
+    font-size: 14px;
+    border-radius: 4px;
+    z-index: 10;
+}
+
+</style>
+
     <!-- Swiper CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 
@@ -92,8 +122,11 @@
     </div> --}}
     
     <div class="list">
-        <a href="#" class="tab-item active" data-tab="dang-chieu">Đang chiếu</a>
+        <p>
+        <a href="#" class="tab-item active" data-tab="dang-chieu">Đang chiếu</a></p>
+       <p>
         <a href="#" class="tab-item" data-tab="sap-chieu">Sắp chiếu</a>
+       </p>
     </div>
 </div>
 
@@ -104,26 +137,22 @@
         <div class="movie">
             <div class="img-wrapper">
                 <img src="{{ asset('storage/' . $phim->poster) }}" alt="{{ $phim->ten_phim }}">
+                  <div class="age-label">{{ $phim->do_tuoi }}</div> 
                 <div class="overlay">
                     <button class="btn buy"><i class="fa-solid fa-ticket"></i> Mua vé</button>
-                    <button class="btn trailer"><i class="fa-solid fa-video"></i> Trailer</button>
+                    <button class="btn trailer" data-video="{{ $phim->trailer }}"><i class="fa-solid fa-video"></i> Trailer</button>
                 </div>
             </div>
-            <p>{{ $phim->ten_phim }}</p>
+            <p class="ten-phim">{{ $phim->ten_phim }}</p>
         </div>
     @endforeach
 </div>
 
-    {{-- <button class="btn-see">XEM THÊM</button> --}}
-@if ($tab == 'dang-chieu')
-    <a href="{{ route('phim.dang-chieu') }}">
-        <button class="btn-see">XEM THÊM</button>
-    </a>
-@elseif ($tab == 'sap-chieu')
-    <a href="{{ route('phim.sap-chieu') }}">
-        <button class="btn-see">XEM THÊM</button>
-    </a>
-@endif
+
+<a href="{{ route('phim.dang-chieu') }}" class="btn-see-more">
+    <button class="btn-see">XEM THÊM</button>
+</a>
+
 
     <div class="khuyen-mai">
         <p>KHUYẾN MÃI</p>
@@ -240,6 +269,14 @@
             <p>Chưa có bài viết nào.</p>
         @endif
     </div>
+    <!-- Popup trailer -->
+<div id="trailerPopup" style="display:none; position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
+background:#000;padding:10px;border-radius:8px;z-index:999;">
+    <iframe id="trailerIframe" width="800" height="450" frameborder="0" allowfullscreen></iframe>
+</div>
+<!-- Overlay mờ nền -->
+<div id="overlayBg" style="display:none; position:fixed;top:0;left:0;width:100%;height:100%;
+background:rgba(0,0,0,0.7);z-index:998;"></div>
 
     <script>
         let currentSlide = 0;
@@ -261,25 +298,30 @@
         setInterval(() => changeSlide(1), 5000);
 
         document.querySelectorAll('.tab-item').forEach(tab => {
-            tab.addEventListener('click', function() {
-                document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
-                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    tab.addEventListener('click', function() {
+        document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
 
-                this.classList.add('active');
-                document.getElementById('tab-' + this.dataset.tab).classList.add('active');
-            });
-        });
-    
-    document.querySelectorAll('.menu .list a.tab-item').forEach(tab => {
-        tab.addEventListener('click', function (e) {
-            e.preventDefault();
+        this.classList.add('active');
 
-            const selectedTab = this.dataset.tab;
+        const tabContent = document.getElementById('tab-' + this.dataset.tab);
+        if (tabContent) {
+            tabContent.classList.add('active');
+        }
+    });
+});
 
-            fetch(`/phim-tab?tab=${selectedTab}`)
-                .then(response => response.json())
-                .then(data => {
-                    const movieList = document.querySelector('.list-movie');
+document.querySelectorAll('.menu .list a.tab-item').forEach(tab => {
+    tab.addEventListener('click', function (e) {
+        e.preventDefault();
+
+        const selectedTab = this.dataset.tab;
+
+        fetch(`/phim-tab?tab=${selectedTab}`)
+            .then(response => response.json())
+            .then(data => {
+                const movieList = document.querySelector('.list-movie');
+                if (movieList) {
                     movieList.innerHTML = '';
 
                     data.phims.forEach(phim => {
@@ -288,22 +330,83 @@
                             <div class="movie">
                                 <div class="img-wrapper">
                                     <img src="${poster}" alt="${phim.ten_phim}">
+                                    <div class="age-label">${phim.do_tuoi ?? ''}</div>
                                     <div class="overlay">
                                         <button class="btn buy"><i class="fa-solid fa-ticket"></i> Mua vé</button>
-                                        <button class="btn trailer"><i class="fa-solid fa-video"></i> Trailer</button>
-                                    </div>
+                                       <button class="btn trailer" data-video="${phim.trailer}"><i class="fa-solid fa-video"></i> Trailer</button>
+            </div>
                                 </div>
-                                <p>${phim.ten_phim}</p>
+                                <p class="ten-phim">${phim.ten_phim}</p>
                             </div>
                         `;
                         movieList.insertAdjacentHTML('beforeend', movieItem);
                     });
+                    
+
+                    document.querySelectorAll('.btn.trailer').forEach(btn => {
+    btn.addEventListener('click', function() {
+        let videoUrl = this.getAttribute('data-video');
+        // Nếu là link youtube -> chuyển về dạng embed
+        videoUrl = convertYoutubeUrl(videoUrl);
+
+        document.getElementById('trailerIframe').src = videoUrl + '?autoplay=1';
+        document.getElementById('trailerPopup').style.display = 'block';
+        document.getElementById('overlayBg').style.display = 'block';
+    });
+});
 
                     // Cập nhật active tab
                     document.querySelectorAll('.menu .list a.tab-item').forEach(t => t.classList.remove('active'));
                     this.classList.add('active');
-                });
-        });
+
+                    // ✅ Cập nhật nút Xem thêm:
+                    const btnSeeMore = document.querySelector('.btn-see-more');
+                    if (btnSeeMore) {
+                        if (selectedTab === 'sap-chieu') {
+                            btnSeeMore.href = '/phim-sap-chieu';
+                        } else {
+                            btnSeeMore.href = '/phim-dang-chieu';
+                        }
+                    }
+                }
+            });
     });
+});
+document.querySelectorAll('.btn.trailer').forEach(btn => {
+    btn.addEventListener('click', function() {
+        let videoUrl = this.getAttribute('data-video');
+        // Nếu là link youtube -> chuyển về dạng embed
+        videoUrl = convertYoutubeUrl(videoUrl);
+
+        document.getElementById('trailerIframe').src = videoUrl + '?autoplay=1';
+        document.getElementById('trailerPopup').style.display = 'block';
+        document.getElementById('overlayBg').style.display = 'block';
+    });
+});
+
+
+
+// Tắt popup khi click nền
+document.getElementById('overlayBg').addEventListener('click', function() {
+    document.getElementById('trailerIframe').src = '';
+    document.getElementById('trailerPopup').style.display = 'none';
+    this.style.display = 'none';
+});
+
+// Hàm chuyển link youtube -> embed
+function convertYoutubeUrl(url) {
+    let video_id = '';
+    if (url.includes('watch?v=')) {
+        video_id = url.split('watch?v=')[1];
+    } else if (url.includes('youtu.be/')) {
+        video_id = url.split('youtu.be/')[1];
+    } else {
+        video_id = url; // nếu đã là embed
+    }
+
+    return 'https://www.youtube.com/embed/' + video_id;
+}
+
+
 </script>
 @endsection
