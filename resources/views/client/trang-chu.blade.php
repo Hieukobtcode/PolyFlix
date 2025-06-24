@@ -22,7 +22,7 @@
         <div class="swiper-wrapper">
             @foreach ($banners as $banner)
                 <div class="swiper-slide" style="width: 100%">
-                    <img src="{{ asset($banner->hinh_anh) }}" alt="Banner {{ $banner->id }}"
+                    <img src="{{ asset($banner->hinh_anh) }}" alt="Banner {{ $banner->hinh_anh }}"
                         style="width: 1200px; height: 450px;">
                 </div>
             @endforeach
@@ -90,40 +90,40 @@
         <a href="{{ route('home', ['tab' => 'dang-chieu']) }}" class="tab-item {{ $tab == 'dang-chieu' ? 'active' : '' }}">Đang chiếu</a>
         <a href="{{ route('home', ['tab' => 'sap-chieu']) }}" class="tab-item {{ $tab == 'sap-chieu' ? 'active' : '' }}">Sắp chiếu</a>
     </div> --}}
-    
-    <div class="list">
-        <a href="#" class="tab-item active" data-tab="dang-chieu">Đang chiếu</a>
-        <a href="#" class="tab-item" data-tab="sap-chieu">Sắp chiếu</a>
+
+        <div class="list">
+            <a href="#" class="tab-item active" data-tab="dang-chieu">Đang chiếu</a>
+            <a href="#" class="tab-item" data-tab="sap-chieu">Sắp chiếu</a>
+        </div>
     </div>
-</div>
 
     </div>
 
     <div class="list-movie">
-    @foreach ($allPhims as $phim)
-        <div class="movie">
-            <div class="img-wrapper">
-                <img src="{{ asset('storage/' . $phim->poster) }}" alt="{{ $phim->ten_phim }}">
-                <div class="overlay">
-                    <button class="btn buy"><i class="fa-solid fa-ticket"></i> Mua vé</button>
-                    <button class="btn trailer"><i class="fa-solid fa-video"></i> Trailer</button>
+        @foreach ($allPhims as $phim)
+            <div class="movie">
+                <div class="img-wrapper">
+                    <img src="{{ asset('storage/' . $phim->poster) }}" alt="{{ $phim->ten_phim }}">
+                    <div class="overlay">
+                        <button class="btn buy"><i class="fa-solid fa-ticket"></i> Mua vé</button>
+                        <button class="btn trailer"><i class="fa-solid fa-video"></i> Trailer</button>
+                    </div>
                 </div>
+                <p>{{ $phim->ten_phim }}</p>
             </div>
-            <p>{{ $phim->ten_phim }}</p>
-        </div>
-    @endforeach
-</div>
+        @endforeach
+    </div>
 
     {{-- <button class="btn-see">XEM THÊM</button> --}}
-@if ($tab == 'dang-chieu')
-    <a href="{{ route('phim.dang-chieu') }}">
-        <button class="btn-see">XEM THÊM</button>
-    </a>
-@elseif ($tab == 'sap-chieu')
-    <a href="{{ route('phim.sap-chieu') }}">
-        <button class="btn-see">XEM THÊM</button>
-    </a>
-@endif
+    @if ($tab == 'dang-chieu')
+        <a href="{{ route('phim.dang-chieu') }}">
+            <button class="btn-see">XEM THÊM</button>
+        </a>
+    @elseif ($tab == 'sap-chieu')
+        <a href="{{ route('phim.sap-chieu') }}">
+            <button class="btn-see">XEM THÊM</button>
+        </a>
+    @endif
 
     <div class="khuyen-mai">
         <p>KHUYẾN MÃI</p>
@@ -269,22 +269,23 @@
                 document.getElementById('tab-' + this.dataset.tab).classList.add('active');
             });
         });
-    
-    document.querySelectorAll('.menu .list a.tab-item').forEach(tab => {
-        tab.addEventListener('click', function (e) {
-            e.preventDefault();
 
-            const selectedTab = this.dataset.tab;
+        document.querySelectorAll('.menu .list a.tab-item').forEach(tab => {
+            tab.addEventListener('click', function(e) {
+                e.preventDefault();
 
-            fetch(`/phim-tab?tab=${selectedTab}`)
-                .then(response => response.json())
-                .then(data => {
-                    const movieList = document.querySelector('.list-movie');
-                    movieList.innerHTML = '';
+                const selectedTab = this.dataset.tab;
 
-                    data.phims.forEach(phim => {
-                        const poster = phim.poster ? `/storage/${phim.poster}` : '/logo/no-image.png';
-                        const movieItem = `
+                fetch(`/phim-tab?tab=${selectedTab}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const movieList = document.querySelector('.list-movie');
+                        movieList.innerHTML = '';
+
+                        data.phims.forEach(phim => {
+                            const poster = phim.poster ? `/storage/${phim.poster}` :
+                                '/logo/no-image.png';
+                            const movieItem = `
                             <div class="movie">
                                 <div class="img-wrapper">
                                     <img src="${poster}" alt="${phim.ten_phim}">
@@ -296,14 +297,15 @@
                                 <p>${phim.ten_phim}</p>
                             </div>
                         `;
-                        movieList.insertAdjacentHTML('beforeend', movieItem);
-                    });
+                            movieList.insertAdjacentHTML('beforeend', movieItem);
+                        });
 
-                    // Cập nhật active tab
-                    document.querySelectorAll('.menu .list a.tab-item').forEach(t => t.classList.remove('active'));
-                    this.classList.add('active');
-                });
+                        // Cập nhật active tab
+                        document.querySelectorAll('.menu .list a.tab-item').forEach(t => t.classList
+                            .remove('active'));
+                        this.classList.add('active');
+                    });
+            });
         });
-    });
-</script>
+    </script>
 @endsection
