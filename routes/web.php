@@ -42,6 +42,9 @@ Route::get('/', function () {
     return view('client.trang-chu');
 })->name('home');
 
+// Trang chi tiết phim (client)
+Route::get('phim/{id}', [PhimController::class, 'show'])->name('phim.chi-tiet');
+
 // Đăng ký (client)
 Route::get('dang-ky', [AuthController::class, 'showRegisterForm'])->name('register.form');
 Route::post('dang-ky', [AuthController::class, 'register'])->name('register');
