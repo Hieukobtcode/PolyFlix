@@ -1,4 +1,4 @@
-{{-- @extends('layouts.client')
+@extends('layouts.client')
 @section('content')
     @php
         use App\Helpers\IdFormatter;
@@ -342,4 +342,4 @@
             return url;
         }
     </script>
-@endsection --}}
+@endsection
