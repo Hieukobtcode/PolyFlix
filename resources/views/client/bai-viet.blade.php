@@ -112,12 +112,25 @@
     <div class="blog-section">
         <h2>BLOG ĐIỆN ẢNH</h2>
 
+        @php
+            use Hashids\Hashids;
+            $hashids = new Hashids(config('hashids.salt'), config('hashids.length'), config('hashids.alphabet'));
+        @endphp
+
+        @php
+            use App\Helpers\IdFormatter;
+        @endphp
+
         @forelse($baiViet as $bv)
-            <a href="{{ route('show-bai-viet', $bv->id) }}" class="btn-chi-tiet">
+            @php
+                $fakeUuid = IdFormatter::uuidify($bv->id);
+            @endphp
+
+            <a href="{{ route('show-bai-viet', $fakeUuid) }}" class="btn-chi-tiet">
                 <div class="blog-item">
                     {{-- Ảnh bên trái --}}
                     <div class="blog-thumb">
-                        <img src="{{ asset('storage/' .$bv->hinh_anh) }}" alt="{{ $bv->tieu_de }}">
+                        <img src="{{ asset('storage/' . $bv->hinh_anh) }}" alt="{{ $bv->tieu_de }}">
                     </div>
 
                     {{-- Nội dung bên phải --}}
@@ -127,16 +140,13 @@
                         <p class="blog-summary">
                             {!! \Illuminate\Support\Str::limit(strip_tags($bv->noi_dung), 50) !!}
                         </p>
-
                     </div>
                 </div>
             </a>
-
-
         @empty
             <p>Chưa có bài viết nào.</p>
         @endforelse
-    </div>
 
+    </div>
 
 @endsection

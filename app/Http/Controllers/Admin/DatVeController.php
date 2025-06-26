@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Mail;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\File;
+
 class DatVeController extends Controller
 {
     public function index(Request $request)
@@ -24,25 +25,27 @@ class DatVeController extends Controller
         $rapId = $request->input('rap');
         $chiNhanhId = $request->input('chi_nhanh');
 
-        $query = DatVe::with(['nguoiDung', 'phim.rapPhims.chiNhanh', 'suatChieu']);
+        $query = DatVe::with(['nguoiDung', 'suatChieu.phim', 'suatChieu.phongChieu.rapPhim.chiNhanh']);
 
         if (!empty($chiNhanhId)) {
-            $query->whereHas('phim.rapPhims.chiNhanh', function ($q) use ($chiNhanhId) {
+            $query->whereHas('suatChieu.phongChieu.rapPhim.chiNhanh', function ($q) use ($chiNhanhId) {
                 $q->where('chi_nhanhs.id', $chiNhanhId);
             });
         }
 
         if (!empty($rapId)) {
-            $query->whereHas('phim.rapPhims', function ($q) use ($rapId) {
+            $query->whereHas('suatChieu.phongChieu.rapPhim', function ($q) use ($rapId) {
                 $q->where('rap_phims.id', $rapId);
             });
         }
 
         if (!empty($phimId)) {
-            $query->where('phim_id', $phimId);
+            $query->whereHas('suatChieu.phim', function ($q) use ($phimId) {
+                $q->where('phims.id', $phimId);
+            });
         }
 
-        $datVes = $query->get();
+        $datVes = $query->orderBy('created_at', 'desc')->get();
 
         $chiNhanhs = ChiNhanh::with('rapPhims')->get();
         $dsPhim = Phim::all();
@@ -55,7 +58,6 @@ class DatVeController extends Controller
             'rapId',
             'chiNhanhId'
         ));
-
     }
 
     public function show(Request $request, $id = null, $ma_ve = null)
@@ -124,7 +126,4 @@ class DatVeController extends Controller
         $pdf = Pdf::loadView('admin.dat-ve.print', compact('datVe'))->setPaper('a4');
         return $pdf->stream('ve_xem_phim_' . $datVe->ma_dat_ve . '.pdf');
     }
-
-
-
 }

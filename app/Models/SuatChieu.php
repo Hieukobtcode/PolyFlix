@@ -48,7 +48,7 @@ class SuatChieu extends Model
     // }
 
     // Quan hệ với model PhongChieu
-    
+
     public function phongChieu()
     {
         return $this->belongsTo(PhongChieu::class, 'phong_chieu_id');
@@ -72,8 +72,17 @@ class SuatChieu extends Model
 
     public function getFormattedVersionAttribute()
     {
-        [$f, $s] = explode('-', $this->phien_ban_phim, 2) + ['', ''];
-        return Str::upper($f) . ' – ' . Str::title(str_replace('-', ' ', $s));
+        $phienBanSlug = $this->phien_ban_phim;
+
+        foreach ($this->phim->dinhDangs as $f) {
+            foreach ($this->phim->phuDes as $s) {
+                $slug = strtolower(Str::slug($f->ten_dinh_dang) . '-' . Str::slug($s->ten_phu_de));
+                if ($slug === $phienBanSlug) {
+                    return "{$f->ten_dinh_dang} – {$s->ten_phu_de}";
+                }
+            }
+        }
+
+        return 'Không rõ';
     }
 }
-

@@ -69,11 +69,9 @@ class RapSeeder extends Seeder
             $insertData[] = [
                 'id' => $id++,
                 'chi_nhanh_id' => $rap['chi_nhanh_id'],
-                'quan_ly_id' => null,
                 'ten_rap' => $rap['ten_rap'],
                 'dia_chi' => $rap['dia_chi'],
-                'trang_thai' => 1,
-                'phu_thu' => rand(5000, 20000),
+                'trang_thai' => 'đang hoạt động',
                 'deleted_at' => null,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
@@ -81,6 +79,5 @@ class RapSeeder extends Seeder
         }
 
         DB::table('rap_phims')->insert($insertData);
-        DB::statement('ALTER TABLE raps AUTO_INCREMENT = ' . ($id + 1) . ';');
     }
 }

@@ -189,7 +189,7 @@
                             </a>
                         </li>
                         <li><a href="{{ route('client.bai-viet') }}">Góc điện ảnh</a></li>
-                        <li>Liên hệ</li>
+                        <li><a href="{{ route('client.lien-he') }}">Liên hệ</a></li>
                         <li>Giới thiệu</li>
                     </ul>
                 </div>
@@ -226,7 +226,7 @@
         <div>
             <h3>POLYFLIX</h3>
             <p>Giới thiệu</p>
-            <p>Liên hệ</p>
+            <p><a href="{{ route('client.lien-he') }}" style="color: inherit; text-decoration: none;">Liên hệ</a></p>
             <p>Tuyển dụng</p>
         </div>
         <div>
