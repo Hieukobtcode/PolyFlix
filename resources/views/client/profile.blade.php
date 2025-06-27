@@ -311,16 +311,14 @@
             </div>
 
             <div class="spending-progress">
-                <p><strong style="color: #004d40;">Tổng số vé đã đặt:</strong> <span style="color: #f97316;">0 đ</span></p>
+                <p><strong style="color: #004d40;">Tổng số vé đã đặt:</strong> <span style="color: #f97316;">0 vé</span></p>
                 <div class="progress-bar">
                     <div class="progress-fill" style="width: 0%"></div>
                 </div>
                 <div class="milestone-labels">
-                    <span>0</span>
-                    <span>5</span>
-                    <span>10</span>
-                    <span>20</span>
-                    <span>25</span>
+                    @foreach ($milestones as $moc)
+                        <span>{{ $moc }} vé</span>
+                    @endforeach
                 </div>
             </div>
 

@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\ForgotPasswordMail;
 use App\Mail\VerifyEmailOTP;
 use Illuminate\Support\Str;
+use App\Models\RapPhim;
 
 
 class AuthController extends Controller
@@ -132,7 +133,7 @@ class AuthController extends Controller
                 'so_dien_thoai'      => $data['phone'] ?? null,
                 'trang_thai'         => 'Active',
                 'hoat_dong'          => 1,
-                'avatar'             => null, 
+                'avatar'             => null,
             ]);
 
             session()->forget(['register_data', 'register_otp']);

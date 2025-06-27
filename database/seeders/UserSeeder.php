@@ -13,7 +13,7 @@ class UserSeeder extends Seeder
         User::create([
             'name' => 'Polyflix',
             'email' => 'polyflixteam@gmail.com',
-            'password' => Hash::make('pass'),
+            'password' => Hash::make('nhấpass'),
             'vai_tro_id' => 1,
             'hoat_dong' => 1
         ]);

@@ -7,12 +7,13 @@
 6 silly config load:file:C:\Users\Trung Kiên\AppData\Roaming\npm\etc\npmrc
 7 verbose title npm run build
 8 verbose argv "run" "build"
-9 verbose logfile logs-max:10 dir:C:\laragon\www\PolyFlix\tmpnodejsnpm-cache\_logs\2025-06-19T07_03_57_986Z-
-10 verbose logfile C:\laragon\www\PolyFlix\tmpnodejsnpm-cache\_logs\2025-06-19T07_03_57_986Z-debug-0.log
-11 silly logfile done cleaning log files
-12 verbose cwd C:\laragon\www\PolyFlix
-13 verbose os Windows_NT 10.0.26100
-14 verbose node v20.11.1
-15 verbose npm  v10.9.0
-16 verbose exit 0
-17 info ok
+9 verbose logfile logs-max:10 dir:C:\laragon\www\PolyFlix\tmpnodejsnpm-cache\_logs\2025-06-22T18_38_58_888Z-
+10 verbose logfile C:\laragon\www\PolyFlix\tmpnodejsnpm-cache\_logs\2025-06-22T18_38_58_888Z-debug-0.log
+11 silly logfile start cleaning logs, removing 2 files
+12 silly logfile done cleaning log files
+13 verbose cwd C:\laragon\www\PolyFlix
+14 verbose os Windows_NT 10.0.26100
+15 verbose node v20.11.1
+16 verbose npm  v10.9.0
+17 verbose exit 0
+18 info ok

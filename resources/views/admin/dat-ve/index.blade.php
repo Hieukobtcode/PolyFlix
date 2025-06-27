@@ -37,9 +37,8 @@
 
 
                     <!-- Bộ lọc -->
-                    <form ... class="filter-form d-flex flex-wrap align-items-end gap-4 mb-4">
-                        <form method="GET" action="{{ route('admin.dat-ves.index') }}"
-                            class="filter-form d-flex flex-wrap align-items-end gap-4">
+                    <form method="GET" action="{{ route('admin.dat-ves.index') }}"
+                        class="filter-form d-flex flex-wrap align-items-end gap-4 mb-4">
                             {{-- Chi nhánh --}}
                             <div class="form-group">
                                 <label class="form-label fw-semibold mb-1">Chi nhánh</label>
@@ -101,11 +100,9 @@
                                     <i class="bi bi-arrow-clockwise"></i> Xóa bộ lọc
                                 </a>
                             </div>
-                        </form>
+                    </form>
 
-
-
-                        <!-- Bảng dữ liệu -->
+                    <!-- Bảng dữ liệu -->
                         @if ($datVes->count())
                             <div class="table-responsive">
                                 <table class="table table-hover align-middle text-center">

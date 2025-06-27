@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
+use App\Models\CapBacThe;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -14,7 +15,12 @@ class ProfileController extends Controller
         if (!Auth::check()) {
             return redirect()->route('home');
         }
-        return view("client.profile");
+
+        // Lấy mốc cấp bậc từ bảng cap_bac_thes
+        $milestones = CapBacThe::orderBy('tong_so_ve_da_mua', 'asc')
+            ->pluck('tong_so_ve_da_mua');
+
+        return view("client.profile", compact('milestones'));
     }
 
     public function updatePassword(Request $request)
