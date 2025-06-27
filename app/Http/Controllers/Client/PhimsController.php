@@ -100,7 +100,7 @@ class PhimsController extends Controller
                 return $sc->phien_ban_phim ?? 'Không xác định';
             });
         });
-        $phimDangChieu = Phim::where('id', '!=', $id)->latest()->limit(7)->get();
+        $phimDangChieu = Phim::where('id', '!=', $id)->latest()->limit(3)->get();
 
         $phim->diem_trung_binh = round($phim->ratings->avg('rating'), 1);
         $phim->so_danh_gia = $phim->ratings->count();
@@ -130,18 +130,16 @@ class PhimsController extends Controller
         }
 
         if ($chi_nhanh_id) {
-            $query->whereHas('rapPhims', function ($q) use ($chi_nhanh_id) {
+            $query->whereHas('phongChieu.rapPhim', function ($q) use ($chi_nhanh_id) {
                 $q->where('chi_nhanh_id', $chi_nhanh_id);
             });
         }
-
-        $suatChieus = $query->with(['rapPhims', 'dinhDangPhim'])->get();
 
         $dinhs = ['2D', '3D', 'IMAX', '4DX'];
         $phus = [
             'Tiếng Việt',
             'Tiếng Anh',
-            'Song ngữ Việt - Anh',
+            'Song ngữ Việt-Anh',
             'Tiếng Nhật',
             'Lồng Tiếng'
         ];
@@ -167,13 +165,10 @@ class PhimsController extends Controller
             }
         }
 
+        $suatChieus = $query->with(['rapPhims', 'dinhDangPhim'])->get();
 
         $groupedSuatChieus = $suatChieus->groupBy(function ($sc) {
-            $tenRap = 'Không xác định';
-            if ($sc->rapPhims && $sc->rapPhims->first()) {
-                $tenRap = $sc->rapPhims->first()->ten_rap;
-            }
-            return $tenRap;
+            return $sc->phongChieu?->rapPhim?->ten_rap ?? 'Không xác định';
         })->map(function ($items) use ($phienBanMapping) {
             return $items->groupBy(function ($sc) use ($phienBanMapping) {
                 $key = $sc->phien_ban_phim;
@@ -182,9 +177,9 @@ class PhimsController extends Controller
         });
 
 
+
         $html = view('client.phim.lich-chieu-list', compact('groupedSuatChieus'))->render();
 
         return response()->json(['html' => $html]);
     }
-
 }
