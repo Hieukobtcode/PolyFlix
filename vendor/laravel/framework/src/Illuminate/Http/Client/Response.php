@@ -48,6 +48,13 @@ class Response implements ArrayAccess, Stringable
     public $transferStats;
 
     /**
+     * The length at which request exceptions will be truncated.
+     *
+     * @var int<1, max>|false|null
+     */
+    protected $truncateExceptionsAt = null;
+
+    /**
      * Create a new response instance.
      *
      * @param  \Psr\Http\Message\MessageInterface  $response
@@ -235,7 +242,7 @@ class Response implements ArrayAccess, Stringable
     /**
      * Execute the given callback if there was a server or client error.
      *
-     * @param  callable  $callback
+     * @param  callable|(\Closure(\Illuminate\Http\Client\Response): mixed)  $callback
      * @return $this
      */
     public function onError(callable $callback)
@@ -297,7 +304,19 @@ class Response implements ArrayAccess, Stringable
     public function toException()
     {
         if ($this->failed()) {
-            return new RequestException($this);
+            $originalTruncateAt = RequestException::$truncateAt;
+
+            try {
+                if ($this->truncateExceptionsAt !== null) {
+                    $this->truncateExceptionsAt === false
+                        ? RequestException::dontTruncate()
+                        : RequestException::truncateAt($this->truncateExceptionsAt);
+                }
+
+                return new RequestException($this);
+            } finally {
+                RequestException::$truncateAt = $originalTruncateAt;
+            }
         }
     }
 
@@ -339,7 +358,7 @@ class Response implements ArrayAccess, Stringable
     /**
      * Throw an exception if the response status code matches the given code.
      *
-     * @param  callable|int  $statusCode
+     * @param  int|(\Closure(int, \Illuminate\Http\Client\Response): bool)|callable  $statusCode
      * @return $this
      *
      * @throws \Illuminate\Http\Client\RequestException
@@ -357,7 +376,7 @@ class Response implements ArrayAccess, Stringable
     /**
      * Throw an exception unless the response status code matches the given code.
      *
-     * @param  callable|int  $statusCode
+     * @param  int|(\Closure(int, \Illuminate\Http\Client\Response): bool)|callable  $statusCode
      * @return $this
      *
      * @throws \Illuminate\Http\Client\RequestException
@@ -393,6 +412,31 @@ class Response implements ArrayAccess, Stringable
     public function throwIfServerError()
     {
         return $this->serverError() ? $this->throw() : $this;
+    }
+
+    /**
+     * Indicate that request exceptions should be truncated to the given length.
+     *
+     * @param  int<1, max>  $length
+     * @return $this
+     */
+    public function truncateExceptionsAt(int $length)
+    {
+        $this->truncateExceptionsAt = $length;
+
+        return $this;
+    }
+
+    /**
+     * Indicate that request exceptions should not be truncated.
+     *
+     * @return $this
+     */
+    public function dontTruncateExceptions()
+    {
+        $this->truncateExceptionsAt = false;
+
+        return $this;
     }
 
     /**

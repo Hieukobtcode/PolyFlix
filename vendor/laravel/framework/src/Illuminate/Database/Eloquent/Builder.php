@@ -118,6 +118,7 @@ class Builder implements BuilderContract
         'explain',
         'getbindings',
         'getconnection',
+        'getcountforpagination',
         'getgrammar',
         'getrawbindings',
         'implode',
@@ -854,13 +855,9 @@ class Builder implements BuilderContract
             $models = $builder->eagerLoadRelations($models);
         }
 
-        $collection = $builder->getModel()->newCollection($models);
-
-        if (Model::isAutomaticallyEagerLoadingRelationships()) {
-            $collection->withRelationshipAutoloading();
-        }
-
-        return $this->applyAfterQueryCallbacks($collection);
+        return $this->applyAfterQueryCallbacks(
+            $builder->getModel()->newCollection($models)
+        );
     }
 
     /**

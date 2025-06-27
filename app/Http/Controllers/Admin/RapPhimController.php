@@ -8,7 +8,7 @@ use App\Models\RapPhim;
 use App\Models\ChiNhanh;
 use App\Models\LoaiGhe;
 
-class RapphimController extends Controller
+class RapPhimController extends Controller
 {
     public function index(Request $request)
     {
@@ -55,8 +55,8 @@ class RapphimController extends Controller
     {
         $loaiGhes = LoaiGhe::all();
         $rapPhim = RapPhim::with(['phongChieus'])->findOrFail($id);
-        
-        return view('admin.rap-phim.show', compact('rapPhim','loaiGhes'));
+
+        return view('admin.rap-phim.show', compact('rapPhim', 'loaiGhes'));
     }
 
 

@@ -48,7 +48,7 @@ class SuatChieu extends Model
     // }
 
     // Quan hệ với model PhongChieu
-    
+
     public function phongChieu()
     {
         return $this->belongsTo(PhongChieu::class, 'phong_chieu_id');
@@ -56,12 +56,12 @@ class SuatChieu extends Model
 
     public function chiNhanh()
     {
-        return $this->belongsTo(ChiNhanh::class, 'chi_nhanh_id');
+        return $this->belongsTo(\App\Models\ChiNhanh::class, 'chi_nhanh_id', 'id');
     }
 
     public function rapPhims()
     {
-        return $this->belongsTo(RapPhim::class, 'rap_id');
+        return $this->belongsTo(RapPhim::class, 'phong_chieu_id', 'id');
     }
 
 
@@ -75,5 +75,14 @@ class SuatChieu extends Model
         [$f, $s] = explode('-', $this->phien_ban_phim, 2) + ['', ''];
         return Str::upper($f) . ' – ' . Str::title(str_replace('-', ' ', $s));
     }
+    public function dinhDangPhim()
+    {
+        return $this->belongsTo(DinhDangPhim::class, 'phien_ban_phim', 'id'); // hoặc 'id' tùy DB
+    }
+    
+    public function chiNhanhs()
+{
+    return $this->phim ? $this->phim->chiNhanhs() : collect();
+}
 }
 

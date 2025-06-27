@@ -32,17 +32,17 @@ a {
 
 .header {
     display: flex;
-    flex-wrap: nowrap; 
+    flex-wrap: nowrap;
     align-items: center;
     justify-content: space-between;
     gap: 40px;
 }
 
 .header .logo img {
-    height: 50px;
+    height: 70px;
 }
 
-.header .logo .ticket{
+.header .logo .ticket {
     width: 130px;
     height: 60px;
     margin-left: 100px;
@@ -51,7 +51,7 @@ a {
 .list-header {
     display: flex;
     gap: 40px;
-    flex-shrink: 0; 
+    flex-shrink: 0;
 }
 
 .search {
@@ -156,7 +156,7 @@ a {
     color: #cbd5e1;
     display: flex;
     justify-content: center;
-    gap: 180px;
+    gap: 120px;
 }
 
 .footer1 {
@@ -192,6 +192,79 @@ a {
 .footer p:not(.none):hover {
     text-decoration: underline;
     color: #f87171;
+}
+
+.login {
+    position: relative;
+    cursor: pointer;
+    color: white;
+}
+
+.user-toggle {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: #0c0c1c;
+    border-radius: 6px;
+    padding: 10px 0;
+    display: none;
+    flex-direction: column;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    min-width: 180px;
+}
+
+.dropdown-menu a {
+    padding: 8px 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: white;
+    text-decoration: none;
+}
+
+.dropdown-menu a:hover {
+    color: yellow;
+}
+.user-name {
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: inline-block;
+    vertical-align: middle;
+    
+}
+
+.swal2-icon.swal2-error {
+    background-color: transparent !important;
+    color: red;
+}
+
+.custom-toast {
+    padding: 16px 24px;
+    font-size: 14px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.custom-toast {
+    padding: 16px 24px;
+    font-size: 14px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.swal2-icon.swal2-success {
+    color: #22c55e;
+    border-color: #22c55e;
 }
 
 @media (max-width: 992px) {

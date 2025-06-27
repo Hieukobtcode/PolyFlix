@@ -10,10 +10,13 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "anhskohbo/no-captcha": "^3.7",
         "barryvdh/laravel-dompdf": "^3.1",
+        "hashids/hashids": "^5.0",
         "laravel/framework": "^12.0",
         "laravel/socialite": "^5.21",
         "laravel/tinker": "^2.10.1",
+        "livewire/livewire": "^3.6",
         "milon/barcode": "^12.0"
     },
     "require-dev": {
