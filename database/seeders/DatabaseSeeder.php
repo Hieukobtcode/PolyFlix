@@ -37,7 +37,7 @@ class DatabaseSeeder extends Seeder
             DinhDangPhimSeeder::class,
             CapBacTheSeeder::class,
             TheLoaiPhimSeeder::class,
-            // PhimSeeder::class,
+            PhimSeeder::class,
             SuatChieuSeeder::class,
             CommentSeeder::class,
             RatingSeeder::class,

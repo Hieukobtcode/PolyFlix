@@ -41,7 +41,8 @@ use App\Http\Controllers\Client\ProfileController;
 use App\Http\Controllers\Client\KhuyenMaiController;
 use App\Http\Controllers\Client\PhimsController;
 use App\Http\Controllers\Client\LienHeController as ClientLienHeController;
-
+use App\Http\Controllers\Client\TheLoaiController;
+use App\Models\TheLoaiPhim;
 
 Route::get('/', [TrangChuController::class, 'index'])->name('home');
 
@@ -74,11 +75,20 @@ Route::post('update-avatar', [ProfileController::class, 'updateAvatar'])->name('
 Route::get('/client.khuyen-mai', [KhuyenMaiController::class, 'index'])->name('khuyen-mai.index');
 Route::get('/phim-dang-chieu', [PhimsController::class, 'phimDangChieu'])->name('phim.dang-chieu');
 
+//Phim
 Route::get('/phim-sap-chieu', [PhimsController::class, 'phimSapChieu'])->name('phim.sap-chieu');
 // Route load phim cho tab (AJAX)
 Route::get('/phim-tab', [TrangChuController::class, 'loadPhimTab'])->name('client.load-phim-tab');
+// routes/web.php (hoặc api.php nếu gọi bằng API)
+Route::get('/phim/{id}/lich-chieu', [PhimsController::class, 'loadLichChieu'])->name('phim.load-lich-chieu');
+
+// Chi tiết phim
+Route::get('phim/{id}', [PhimsController::class, 'show'])->name('phim.chi-tiet');
 
 
+//Thể loại
+Route::get('/the-loai/{id}', [App\Http\Controllers\Client\TheLoaiController::class, 'show'])
+    ->name('theloai.show');
 // Route::prefix('client')->name('client.')->group(function () {
 //     // Trang chủ client
 //     Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -91,6 +101,7 @@ Route::get('/phim-tab', [TrangChuController::class, 'loadPhimTab'])->name('clien
 //Quen mk
 Route::get('forgot-pass', [AuthController::class, 'forgotPassForm'])->name('forgot-form');
 Route::post('forgot-pass', [AuthController::class, 'forgotPass'])->name('forgot-pass');
+
 
 // Đăng nhập (chung)
 Route::get('dang-nhap', [AuthController::class, 'showLoginForm'])->name('login.form');
