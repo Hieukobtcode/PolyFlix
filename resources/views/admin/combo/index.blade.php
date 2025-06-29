@@ -1,143 +1,106 @@
 @extends('layouts.admin')
 
-@section('title', 'Quản lý Combo')
-@section('page-title', 'Quản lý Combo')
-@section('breadcrumb', 'Danh sách Combo')
-
-@section('styles')
-    <style>
-        .card {
-            border-radius: 10px;
-        }
-
-        .table th,
-        .table td {
-            vertical-align: middle;
-        }
-
-        .btn-group .btn {
-            border-radius: 5px;
-        }
-
-        .badge {
-            font-size: 0.9em;
-            padding: 0.5em 1em;
-        }
-
-        .pagination {
-            justify-content: end;
-        }
-
-        .table-dark {
-            background-color: #343a40;
-        }
-    </style>
-@endsection
-
 @section('content')
     <div class="container-fluid">
         <div class="card shadow-sm border-0">
-            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                <h5 class="mb-0 fw-bold">Danh sách Combo</h5>
-                <a href="{{ route('admin.combos.create') }}" class="btn btn-light btn-sm">
-                    <i class="fas fa-plus me-1"></i> Thêm combo
-                </a>
-            </div>
-
             <div class="card-body p-4">
-                <form method="GET" action="{{ route('admin.combos.index') }}" class="row mb-4">
-                    <div class="col-md-4 mb-2">
+                <a href="{{ route('admin.combos.create') }}"
+                    class="btn btn-sm btn-primary mb-4 d-inline-flex align-items-center gap-2 px-3 py-2">
+                    <i class="ti ti-plus fs-6"></i> Thêm combo
+                </a>
+                <form method="GET" action="{{ route('admin.combos.index') }}" class="row g-3 mb-4">
+                    <div class="col-md-4">
                         <div class="input-group">
-                            <span class="input-group-text bg-light"><i class="fas fa-search"></i></span>
-                            <input type="text" name="keyword" class="form-control" value="{{ request('keyword') }}"
-                                placeholder="Tìm theo tên combo...">
+                            <input type="text" name="keyword" class="form-control" placeholder="Tìm theo tên combo..."
+                                value="{{ request('keyword') }}">
                         </div>
                     </div>
-                    <div class="col-md-3 mb-2">
+                    <div class="col-md-3">
                         <select name="trang_thai" class="form-select">
                             <option value="">Tất cả trạng thái</option>
                             <option value="hien" {{ request('trang_thai') == 'hien' ? 'selected' : '' }}>Hiện</option>
                             <option value="an" {{ request('trang_thai') == 'an' ? 'selected' : '' }}>Ẩn</option>
                         </select>
                     </div>
-                    <div class="col-md-2 mb-2">
-                        <button type="submit" class="btn btn-primary w-100">
-                            <i class="fas fa-filter me-1"></i> Lọc
-                        </button>
-                    </div>
                 </form>
 
                 <div class="table-responsive">
-                    <table class="table table-hover table-bordered align-middle">
-                        <thead class="table-dark">
+                    <table class="table align-middle text-nowrap mb-0">
+                        <thead class="text-center">
                             <tr>
-                                <th class="text-center" style="width: 5%">#</th>
+                                <th style="width: 5%">#</th>
                                 <th>Tên combo</th>
                                 <th>Giá gốc</th>
-                                <th>Giá sau giảm</th>
+                                <th>Giá giảm</th>
                                 <th>Chi nhánh</th>
                                 <th>Món ăn</th>
-                                <th>Số lượng</th>
-                                <th class="text-center">Trạng thái</th>
-                                <th class="text-center">Ngày tạo</th>
-                                <th class="text-center" style="width: 15%">Thao tác</th>
+                                <th>Trạng thái</th>
+                                <th>Ngày tạo</th>
+                                <th style="width: 10%">Thao tác</th>
                             </tr>
                         </thead>
                         <tbody>
                             @forelse($combos as $index => $combo)
-                                <tr>
-                                    <td class="text-center">{{ $index + 1 }}</td>
-                                    <td>{{ $combo->tieu_de }}</td>
+                                <tr class="text-center">
+                                    <td>{{ $index + 1 }}</td>
+                                    <td class="text-start">{{ $combo->tieu_de }}</td>
                                     <td>{{ number_format($combo->gia) }} đ</td>
                                     <td>{{ number_format($combo->gia_combo) }} đ</td>
-                                    <td>
-                                        <ul class="mb-0">
+                                    <td class="text-start">
+                                        <ul class="mb-0 ps-3">
                                             @foreach ($combo->chiNhanhs as $chiNhanh)
                                                 <li>{{ $chiNhanh->ten_chi_nhanh }}</li>
                                             @endforeach
                                         </ul>
                                     </td>
-                                    <td colspan="2">
+                                    <td class="text-start">
                                         <ul class="mb-0 list-unstyled">
                                             @foreach ($combo->doAns as $doAn)
-                                                <li
-                                                    class="d-flex justify-content-between align-items-center border-bottom py-1">
+                                                <li class="d-flex justify-content-between border-bottom py-1">
                                                     <span>{{ $doAn->tieu_de }}</span>
                                                     <span class="badge bg-secondary">{{ $doAn->pivot->so_luong }} x</span>
                                                 </li>
                                             @endforeach
                                         </ul>
                                     </td>
-                                    <td class="text-center">
+                                    <td>
                                         <span
                                             class="badge bg-{{ $combo->trang_thai === 'hien' ? 'success' : 'secondary' }}">
                                             {{ ucfirst($combo->trang_thai) }}
                                         </span>
                                     </td>
-                                    <td class="text-center">
-                                        {{ $combo->created_at ? $combo->created_at->format('d/m/Y H:i') : '---' }}
-                                    </td>
-                                    <td class="text-center">
-                                        <div class="btn-group" role="group">
-                                            <a href="{{ route('admin.combos.edit', $combo->id) }}"
-                                                class="btn btn-sm btn-outline-primary">
-                                                <i class="fas fa-edit"></i>
+                                    <td>{{ $combo->created_at ? $combo->created_at->format('d/m/Y H:i') : '---' }}</td>
+                                    <td>
+                                        <div class="dropdown dropstart">
+                                            <a href="#" data-bs-toggle="dropdown" class="text-muted">
+                                                <i class="ti ti-dots-vertical fs-5"></i>
                                             </a>
-                                            <form action="{{ route('admin.combos.destroy', $combo->id) }}" method="POST"
-                                                class="d-inline" onsubmit="return confirm('Xóa combo này?')">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-sm btn-outline-danger">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
-                                            </form>
+                                            <ul class="dropdown-menu">
+                                                <li>
+                                                    <a href="{{ route('admin.combos.edit', $combo->id) }}"
+                                                        class="dropdown-item d-flex align-items-center gap-2">
+                                                        <i class="ti ti-edit fs-5"></i> Chỉnh sửa
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <form action="{{ route('admin.combos.destroy', $combo->id) }}"
+                                                        method="POST" onsubmit="return confirm('Xóa combo này?')">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit"
+                                                            class="dropdown-item text-danger d-flex align-items-center gap-2">
+                                                            <i class="ti ti-trash fs-5"></i> Xóa
+                                                        </button>
+                                                    </form>
+                                                </li>
+                                            </ul>
                                         </div>
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="8" class="text-center text-muted py-3">
-                                        <i class="fas fa-folder-open me-1"></i> Không có dữ liệu
+                                    <td colspan="9" class="text-center text-muted py-4">
+                                        <i class="ti ti-folder-open me-1"></i> Không có dữ liệu
                                     </td>
                                 </tr>
                             @endforelse
@@ -147,8 +110,9 @@
 
                 <div class="d-flex justify-content-between align-items-center mt-4">
                     <div>
-                        <small class="text-muted">Hiển thị {{ $combos->count() }} trong tổng số {{ $combos->total() }}
-                            combo</small>
+                        <small class="text-muted">
+                            Hiển thị {{ $combos->count() }} trong tổng số {{ $combos->total() }} combo
+                        </small>
                     </div>
                     <div>
                         {{ $combos->links('pagination::bootstrap-5') }}

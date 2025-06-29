@@ -1,82 +1,82 @@
 @extends('layouts.admin')
 
-@section('title', 'Quản lý Danh Mục Món Ăn')
-@section('page-title', 'Quản lý Danh Mục Món Ăn')
-@section('breadcrumb', 'Danh sách Danh Mục')
-
-@section('styles')
-<style>
-    .card { border-radius: 10px; }
-    .table th, .table td { vertical-align: middle; }
-    .btn-group .btn { border-radius: 5px; }
-    .pagination { justify-content: end; }
-    .table-dark { background-color: #343a40; }
-</style>
-@endsection
-
 @section('content')
-<div class="container-fluid">
-    <div class="card shadow-sm border-0">
-        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-            <h5 class="mb-0 fw-bold">Danh sách Danh Mục Món Ăn</h5>
-            <a href="{{ route('admin.danh-muc-do-an.create') }}" class="btn btn-light btn-sm">
-                <i class="fas fa-plus me-1"></i> Thêm danh mục
-            </a>
-        </div>
-
-        <div class="card-body p-4">
-            <div class="table-responsive">
-                <table class="table table-hover table-bordered align-middle">
-                    <thead class="table-dark">
-                        <tr>
-                            <th class="text-center" style="width: 5%">#</th>
-                            <th>Tên danh mục</th>
-                            <th class="text-center" style="width: 15%">Thao tác</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($danhMucs as $index => $dm)
+    <div class="container-fluid">
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-4">
+                <a href="{{ route('admin.danh-muc-do-an.create') }}"
+                    class="btn btn-sm btn-primary d-inline-flex align-items-center gap-2 px-3 py-2 mb-4">
+                    <i class="ti ti-plus fs-6"></i> Thêm danh mục
+                </a>
+                <div class="table-responsive">
+                    <table class="table text-nowrap align-middle mb-0">
+                        <thead class="bg-gradient-dark text-white">
                             <tr>
-                                <td class="text-center">{{ $index + 1 }}</td>
-                                <td>{{ $dm->ten }}</td>
-                                <td class="text-center">
-                                    <div class="btn-group" role="group">
-                                        <a href="{{ route('admin.danh-muc-do-an.edit', $dm->id) }}"
-                                           class="btn btn-sm btn-outline-primary">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <form action="{{ route('admin.danh-muc-do-an.destroy', $dm->id) }}"
-                                              method="POST" class="d-inline"
-                                              onsubmit="return confirm('Xóa danh mục này?')">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-outline-danger">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </form>
-                                    </div>
-                                </td>
+                                <th class="text-center" style="width: 5%">
+                                    <h6 class="fs-5 fw-semibold mb-0">#</h6>
+                                </th>
+                                <th>
+                                    <h6 class="fs-5 fw-semibold mb-0">Tên danh mục</h6>
+                                </th>
+                                <th class="text-center" style="width: 15%">
+                                    <h6 class="fs-5 fw-semibold mb-0">Thao tác</h6>
+                                </th>
                             </tr>
-                        @empty
-                            <tr>
-                                <td colspan="3" class="text-center text-muted py-3">
-                                    <i class="fas fa-folder-open me-1"></i> Không có dữ liệu
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="d-flex justify-content-between align-items-center mt-4">
-                <div>
-                    <small class="text-muted">Hiển thị {{ $danhMucs->count() }} trong tổng số {{ $danhMucs->total() }} danh mục</small>
+                        </thead>
+                        <tbody>
+                            @forelse($danhMucs as $index => $dm)
+                                <tr>
+                                    <td class="text-center">{{ $index + 1 }}</td>
+                                    <td>{{ $dm->ten }}</td>
+                                    <td class="text-center">
+                                        <div class="dropdown dropstart">
+                                            <a href="javascript:void(0)" class="text-muted" data-bs-toggle="dropdown">
+                                                <i class="ti ti-dots-vertical fs-6"></i>
+                                            </a>
+                                            <ul class="dropdown-menu">
+                                                <li>
+                                                    <a class="dropdown-item d-flex align-items-center gap-2"
+                                                        href="{{ route('admin.danh-muc-do-an.edit', $dm->id) }}">
+                                                        <i class="ti ti-edit fs-5"></i> Chỉnh sửa
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <form action="{{ route('admin.danh-muc-do-an.destroy', $dm->id) }}"
+                                                        method="POST" onsubmit="return confirm('Xóa danh mục này?')">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit"
+                                                            class="dropdown-item d-flex align-items-center gap-2">
+                                                            <i class="ti ti-trash fs-5 text-danger"></i> Xóa
+                                                        </button>
+                                                    </form>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="3" class="text-center text-muted py-3">
+                                        <i class="ti ti-folder-open me-1"></i> Không có dữ liệu
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
                 </div>
-                <div>
-                    {{ $danhMucs->links('pagination::bootstrap-5') }}
+
+                <div class="d-flex justify-content-between align-items-center mt-4">
+                    <div>
+                        <small class="text-muted">
+                            Hiển thị {{ $danhMucs->count() }} trong tổng số {{ $danhMucs->total() }} danh mục
+                        </small>
+                    </div>
+                    <div>
+                        {{ $danhMucs->links('pagination::bootstrap-5') }}
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 @endsection
