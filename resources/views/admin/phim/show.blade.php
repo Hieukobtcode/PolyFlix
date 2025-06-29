@@ -1,223 +1,176 @@
 @extends('layouts.admin')
 
-@section('title', 'Quản lý Phim')
-@section('page-title', 'Chi tiết phim')
-@section('breadcrumb', 'Chi tiết phim')
-@section('styles')
-    <style>
-        .card {
-            border-radius: 10px;
-        }
-
-        .img-thumbnail,
-        iframe {
-            border-radius: 8px;
-        }
-
-        .badge {
-            font-size: 0.9em;
-            padding: 0.5em 1em;
-        }
-
-        .list-group-item {
-            padding: 0.75rem 1rem;
-        }
-
-        .btn {
-            border-radius: 8px;
-        }
-    </style>
-@endsection
-
 @section('content')
     <div class="container-fluid">
-        <div class="card shadow-sm border-0">
-            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                <h5 class="mb-0 fw-bold">Thông tin chi tiết phim</h5>
-                <div class="btn-group gap-2">
-                    <a href="{{ route('admin.phim.edit', $phim->id) }}" class="btn btn-light btn-sm" title="Chỉnh sửa">
-                        <i class="fas fa-edit me-1"></i> Chỉnh sửa
-                    </a>
-                    <a href="{{ route('admin.phim.index') }}" class="btn btn-outline-light btn-sm" title="Quay lại">
-                        <i class="fas fa-arrow-left me-1"></i> Quay lại
-                    </a>
+
+        <!-- Poster + Trailer -->
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="row align-items-center px-4 py-4 g-4">
+                <!-- Poster bên trái -->
+                <div class="col-md-4 text-center">
+                    <div class="border border-3 border-white shadow-sm rounded overflow-hidden"
+                        style="width: 100%; max-width: 300px; height: 400px; margin: auto;">
+                        <img src="{{ asset('storage/' . $phim->poster) }}" alt="poster" class="img-fluid h-100 w-100"
+                            style="object-fit: cover;">
+                    </div>
+                    <h4 class="mt-3 fw-bold">{{ $phim->ten_phim }}</h4>
                 </div>
-            </div>
-            <div class="card-body p-4">
-                <div class="row g-4">
-                    <div class="col-md-4">
-                        <div class="text-center mb-4">
-                            @if ($phim->poster)
-                                <img src="{{ asset('storage/' . $phim->poster) }}" alt="{{ $phim->ten_phim }}"
-                                    class="img-fluid img-thumbnail rounded" style="max-height: 400px;">
-                            @else
-                                <div class="border p-5 text-center bg-light rounded">
-                                    <i class="fas fa-film fa-5x text-secondary"></i>
-                                    <p class="mt-3 text-muted">Không có poster</p>
-                                </div>
-                            @endif
+
+                <!-- Trailer bên phải -->
+                <div class="col-md-8">
+                    @if ($phim->trailer)
+                        @php
+                            $trailerUrl = $phim->trailer;
+                            if (strpos($trailerUrl, 'youtube.com/watch?v=') !== false) {
+                                $videoId = substr($trailerUrl, strpos($trailerUrl, 'v=') + 2);
+                                $videoId =
+                                    strpos($videoId, '&') !== false
+                                        ? substr($videoId, 0, strpos($videoId, '&'))
+                                        : $videoId;
+                                $embedUrl = "https://www.youtube.com/embed/$videoId";
+                            } elseif (strpos($trailerUrl, 'youtu.be/') !== false) {
+                                $videoId = substr($trailerUrl, strrpos($trailerUrl, '/') + 1);
+                                $embedUrl = "https://www.youtube.com/embed/$videoId";
+                            } else {
+                                $embedUrl = $trailerUrl;
+                            }
+                        @endphp
+                        <div class="ratio ratio-16x9 rounded shadow-sm" style="min-height: 300px;">
+                            <iframe src="{{ $embedUrl }}" title="Trailer {{ $phim->ten_phim }}" class="rounded"
+                                allowfullscreen></iframe>
                         </div>
-
-                        <div class="mb-4">
-                            <h5 class="fw-bold">Thể loại</h5>
-                            <div>
-                                @forelse($phim->theLoais as $theLoai)
-                                    <span class="badge bg-info rounded-pill me-1">{{ $theLoai->ten_the_loai }}</span>
-                                @empty
-                                    <span class="text-muted">Chưa có thể loại</span>
-                                @endforelse
-                            </div>
-                        </div>
-
-                        <div class="mb-4">
-                            <h5 class="fw-bold">Định dạng</h5>
-                            <div>
-                                @forelse($phim->dinhDangs as $dinhDang)
-                                    <span class="badge bg-info rounded-pill me-1">{{ $dinhDang->ten_dinh_dang }}</span>
-                                @empty
-                                    <span class="text-muted">Chưa có định dạng</span>
-                                @endforelse
-                            </div>
-                        </div>
-
-                        <div class="mb-4">
-                            <h5 class="fw-bold">Phụ đề</h5>
-                            <div>
-                                @forelse($phim->phuDes as $phuDe)
-                                    <span class="badge bg-info rounded-pill me-1">{{ $phuDe->ten_phu_de }}</span>
-                                @empty
-                                    <span class="text-muted">Chưa có phụ đề</span>
-                                @endforelse
-                            </div>
-                        </div>
-
-                        <div class="mb-4">
-                            <h5 class="fw-bold">Chi nhánh</h5>
-                            <div>
-                                @forelse($phim->chiNhanhs as $chiNhanh)
-                                    <span class="badge bg-info rounded-pill me-1">{{ $chiNhanh->ten_chi_nhanh }}</span>
-                                @empty
-                                    <span class="text-muted">Chưa có chi nhánh</span>
-                                @endforelse
-                            </div>
-                        </div>
-
-                        <div class="mb-4">
-                            <h5 class="fw-bold">Rạp</h5>
-                            <div>
-                                @forelse($phim->rapPhims as $rapPhim)
-                                    <span class="badge bg-info rounded-pill me-1">{{ $rapPhim->ten_rap }}</span>
-                                @empty
-                                    <span class="text-muted">Chưa có rạp</span>
-                                @endforelse
-                            </div>
-                        </div>
-
-                        <div class="mb-4">
-                            <h5 class="fw-bold">Thông tin cơ bản</h5>
-                            <ul class="list-group list-group-flush">
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    <span class="fw-semibold text-muted">Thời lượng:</span>
-                                    <span>{{ $phim->thoi_luong ? $phim->thoi_luong . ' phút' : 'N/A' }}</span>
-                                </li>
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    <span class="fw-semibold text-muted">Ngày phát hành:</span>
-                                    <span>{{ $phim->ngay_phat_hanh ? $phim->ngay_phat_hanh->format('d/m/Y') : 'N/A' }}</span>
-                                </li>
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    <span class="fw-semibold text-muted">Ngày kết thúc:</span>
-                                    <span>{{ $phim->ngay_ket_thuc ? $phim->ngay_ket_thuc->format('d/m/Y') : 'N/A' }}</span>
-                                </li>
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    <span class="fw-semibold text-muted">Ngôn ngữ:</span>
-                                    <span>{{ $phim->ngon_ngu ?? 'N/A' }}</span>
-                                </li>
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    <span class="fw-semibold text-muted">Quốc gia:</span>
-                                    <span>{{ $phim->quoc_gia ?? 'N/A' }}</span>
-                                </li>
-                                </li>
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    <span class="fw-semibold text-muted">Độ tuổi:</span>
-                                    <span>{{ $phim->do_tuoi ?? 'N/A' }}</span>
-                                </li>
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    <span class="fw-semibold text-muted">Trạng thái:</span>
-                                    <span
-                                        class="badge rounded-pill {{ $phim->trang_thai === 'đang chiếu'
-                                            ? 'bg-success'
-                                            : ($phim->trang_thai === 'sắp chiếu'
-                                                ? 'bg-warning'
-                                                : ($phim->trang_thai === 'đã kết thúc'
-                                                    ? 'bg-secondary'
-                                                    : 'bg-danger')) }}">
-                                        {{ ucfirst($phim->trang_thai) }}
-                                    </span>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <div class="col-md-8">
-                        <h3 class="mb-3 fw-bold">{{ $phim->ten_phim }}</h3>
-
-                        <div class="mb-4">
-                            <h5 class="fw-bold">Mô tả</h5>
-                            <p class="text-muted">{{ $phim->mo_ta ?? 'Không có mô tả' }}</p>
-                        </div>
-
-                        <div class="row mb-4">
-                            <div class="col-md-6">
-                                <h5 class="fw-bold">Đạo diễn</h5>
-                                <p class="text-muted">{{ $phim->dao_dien ?? 'Chưa cập nhật' }}</p>
-                            </div>
-                            <div class="col-md-6">
-                                <h5 class="fw-bold">Diễn viên</h5>
-                                <p class="text-muted">{{ $phim->dien_vien ?? 'Chưa cập nhật' }}</p>
-                            </div>
-                        </div>
-
-                        @if ($phim->trailer)
-                            <div class="mb-4">
-                                <h5 class="fw-bold">Trailer</h5>
-                                <div class="ratio ratio-16x9">
-                                    @php
-                                        // Chuyển đổi URL YouTube thành embed URL
-                                        $trailerUrl = $phim->trailer;
-                                        if (strpos($trailerUrl, 'youtube.com/watch?v=') !== false) {
-                                            $videoId = substr($trailerUrl, strpos($trailerUrl, 'v=') + 2);
-                                            if (strpos($videoId, '&') !== false) {
-                                                $videoId = substr($videoId, 0, strpos($videoId, '&'));
-                                            }
-                                            $embedUrl = "https://www.youtube.com/embed/$videoId";
-                                        } elseif (strpos($trailerUrl, 'youtu.be/') !== false) {
-                                            $videoId = substr($trailerUrl, strrpos($trailerUrl, '/') + 1);
-                                            $embedUrl = "https://www.youtube.com/embed/$videoId";
-                                        } else {
-                                            $embedUrl = $trailerUrl;
-                                        }
-                                    @endphp
-                                    <iframe src="{{ $embedUrl }}" title="Trailer {{ $phim->ten_phim }}"
-                                        class="rounded" allowfullscreen></iframe>
-                                </div>
-                            </div>
-                        @endif
-
-                        <div class="row mb-4">
-                            <div class="col-md-6">
-                                <h5 class="fw-bold">Ngày tạo</h5>
-                                <p class="text-muted">{{ $phim->create_at->format('d/m/Y H:i:s') }}</p>
-                            </div>
-                            <div class="col-md-6">
-                                <h5 class="fw-bold">Cập nhật lần cuối</h5>
-                                <p class="text-muted">
-                                    {{ $phim->updated_at ? $phim->updated_at->format('d/m/Y H:i:s') : 'Chưa cập nhật' }}
-                                </p>
-                            </div>
-                        </div>
-                    </div>
+                    @else
+                        <div class="text-muted fst-italic">Không có trailer</div>
+                    @endif
                 </div>
             </div>
         </div>
+
+        <!-- Thông tin chi tiết -->
+        <div class="row">
+            <!-- Thông tin phim -->
+            <div class="col-lg-4">
+                <div class="card shadow-sm border">
+                    <div class="card-body fs-4">
+                        <h5 class="mb-4 fw-semibold text-primary">Thông tin phim</h5>
+                        <ul class="list-unstyled vstack gap-3">
+                            <li><i class="ti ti-clock me-2"></i>Thời lượng:
+                                <strong>{{ $phim->thoi_luong ? $phim->thoi_luong . ' phút' : 'Đang cập nhật' }}</strong>
+                            </li>
+
+                            <li><i class="ti ti-world me-2"></i>Ngôn ngữ:
+                                <strong>{{ $phim->ngon_ngu ?: 'Đang cập nhật' }}</strong>
+                            </li>
+
+                            <li><i class="ti ti-flag me-2"></i>Quốc gia:
+                                <strong>{{ $phim->quoc_gia ?: 'Đang cập nhật' }}</strong>
+                            </li>
+
+                            <li><i class="ti ti-alert-circle me-2"></i>Độ tuổi:
+                                <strong>{{ $phim->do_tuoi ?: 'Đang cập nhật' }}</strong>
+                            </li>
+                            <li><i class="ti ti-circle-check me-2"></i>Trạng thái:
+                                @php
+                                    use Illuminate\Support\Str;
+
+                                    $trangThai = $phim->trang_thai ?? 'Đang cập nhật';
+                                    $trangThaiHienThi = Str::ucfirst(Str::lower($trangThai));
+                                @endphp
+                                <strong>{{ $trangThaiHienThi }}</strong>
+                            </li>
+
+                            <li><i class="ti ti-tags me-2"></i>Thể loại:
+                                @php
+                                    $theLoais = $phim->theLoais->pluck('ten_the_loai')->toArray();
+                                @endphp
+                                <strong>{{ count($theLoais) ? implode(', ', $theLoais) : 'Đang cập nhật' }}</strong>
+                            </li>
+
+                            <li><i class="ti ti-screen-share me-2"></i>Định dạng:
+                                @php
+                                    $dinhDangs = $phim->dinhDangs->pluck('ten_dinh_dang')->toArray();
+                                @endphp
+                                <strong>{{ count($dinhDangs) ? implode(', ', $dinhDangs) : 'Đang cập nhật' }}</strong>
+                            </li>
+
+                            <li><i class="ti ti-language me-2"></i>Phụ đề:
+                                @php
+                                    $phuDes = $phim->phuDes->pluck('ten_phu_de')->toArray();
+                                @endphp
+                                <strong>{{ count($phuDes) ? implode(', ', $phuDes) : 'Đang cập nhật' }}</strong>
+                            </li>
+
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mô tả phim -->
+            <div class="col-lg-8">
+                <div class="card shadow-sm border">
+                    <div class="card-body fs-4">
+                        <h5 class="mb-3 fw-semibold text-primary">Mô tả phim</h5>
+
+                        <p class="mt-4 text-justify">
+                            {!! $phim->mo_ta ? nl2br(e($phim->mo_ta)) : '<span class="text-muted">Đang cập nhật</span>' !!}
+                        </p>
+
+                        <p><i class="ti ti-user me-2"></i><strong>Đạo diễn:</strong>
+                            {{ $phim->dao_dien ?: 'Đang cập nhật' }}</p>
+                        <p><i class="ti ti-users me-2"></i><strong>Diễn viên:</strong>
+                            {{ $phim->dien_vien ?: 'Đang cập nhật' }}</p>
+
+                        <p><i class="ti ti-calendar-event me-2"></i><strong>Ngày phát hành:</strong>
+                            {{ $phim->ngay_phat_hanh ? $phim->ngay_phat_hanh->format('d/m/Y') : 'Đang cập nhật' }}
+                        </p>
+
+                        <p><i class="ti ti-calendar-minus me-2"></i><strong>Ngày kết thúc:</strong>
+                            {{ $phim->ngay_ket_thuc ? $phim->ngay_ket_thuc->format('d/m/Y') : 'Đang cập nhật' }}
+                        </p>
+
+                        <p><i class="ti ti-building me-2"></i><strong>Chi nhánh:</strong>
+                            @php
+                                $chiNhanhs = $phim->chiNhanhs;
+                                $tenCN = $chiNhanhs->pluck('ten_chi_nhanh')->toArray();
+                                $hienCN = array_slice($tenCN, 0, 3);
+                                $soConLai = count($tenCN) - 3;
+                            @endphp
+                            @if (count($tenCN))
+                                <span title="{{ implode(', ', $tenCN) }}">
+                                    {{ implode(', ', $hienCN) }}
+                                    @if ($soConLai > 0)
+                                        ... (+{{ $soConLai }})
+                                    @endif
+                                </span>
+                            @else
+                                <span class="text-muted">Đang cập nhật</span>
+                            @endif
+                        </p>
+
+                        <p><i class="ti ti-building-store me-2"></i><strong>Rạp:</strong>
+                            @php
+                                $raps = $phim->rapPhims;
+                                $tenRaps = $raps->pluck('ten_rap')->toArray();
+                                $hienRaps = array_slice($tenRaps, 0, 3);
+                                $soConLaiRap = count($tenRaps) - 3;
+                            @endphp
+                            @if (count($tenRaps))
+                                <span title="{{ implode(', ', $tenRaps) }}">
+                                    {{ implode(', ', $hienRaps) }}
+                                    @if ($soConLaiRap > 0)
+                                        ... (+{{ $soConLaiRap }})
+                                    @endif
+                                </span>
+                            @else
+                                <span class="text-muted">Đang cập nhật</span>
+                            @endif
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
     </div>
 @endsection

@@ -62,15 +62,11 @@
 
         <!-- Quản lý liên hệ -->
         <div class="card shadow-sm border-0 mb-4">
-            <div class="card-header d-flex justify-content-between align-items-center bg-primary text-white">
-                <strong>Quản lý liên hệ</strong>
-            </div>
             <div class="card-body">
                 <!-- Bộ lọc -->
                 <form action="{{ route('admin.lien-he.index') }}" method="GET" class="row g-3 mb-4">
                     <div class="col-md-4">
                         <div class="input-group">
-                            <span class="input-group-text"><i class="ti ti-search"></i></span>
                             <input type="text" class="form-control" placeholder="Tìm kiếm..." name="search"
                                 value="{{ $search ?? '' }}">
                         </div>
@@ -115,7 +111,7 @@
 
                 <!-- Bảng dữ liệu -->
                 <div class="table-responsive">
-                    <table class="table table-hover table-bordered align-middle">
+                    <table class="table align-middle">
                         <thead>
                             <tr>
                                 <th>ID</th>

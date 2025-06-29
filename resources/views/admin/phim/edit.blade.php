@@ -1,48 +1,57 @@
 @extends('layouts.admin')
 
-@section('title', 'Quản lý Phim')
-@section('page-title', 'Chỉnh sửa phim')
-@section('breadcrumb', 'Chỉnh sửa phim')
-@section('styles')
+@section('content')
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.1.1/dist/select2-bootstrap-5-theme.min.css"
+        rel="stylesheet" />
+
     <style>
-        .card {
-            border-radius: 10px;
+        .select2-container--bootstrap-5 .select2-selection {
+            min-height: auto;
+            padding: 0.375rem 0.5rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            border-radius: 0.375rem;
         }
 
-        .form-control,
-        .form-select,
-        .select2-container--default .select2-selection--multiple {
-            border-radius: 8px;
+        .select2-container--bootstrap-5 .select2-selection--multiple {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            min-height: 38px;
+            padding: 0.375rem 0.5rem;
+        }
+
+        .select2-selection__choice {
+            background-color: #f8f9fa !important;
+            color: #212529 !important;
+            padding: 0.25rem 0.5rem !important;
+            margin-top: 0.25rem !important;
+            margin-right: 0.25rem !important;
+            border-radius: 0.375rem;
             border: 1px solid #ced4da;
+            font-size: 0.875rem;
         }
 
-        .form-label {
-            margin-bottom: 0.5rem;
-            font-weight: 500;
+        .select2-container {
+            width: 100% !important;
         }
 
-        .btn {
-            border-radius: 8px;
+        .select2-container--bootstrap-5 .select2-dropdown {
+            z-index: 9999 !important;
         }
 
-        .invalid-feedback {
-            font-size: 0.9em;
-        }
-
-        .img-thumbnail {
-            border-radius: 8px;
-            max-height: 200px;
+        .modal .select2-container--bootstrap-5 .select2-dropdown {
+            z-index: 1056 !important;
         }
     </style>
-@endsection
 
-@section('content')
     <div class="container-fluid">
         <div class="card shadow-sm border-0">
             <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                 <h5 class="mb-0 fw-bold">Chỉnh sửa phim: {{ $phim->ten_phim }}</h5>
                 <a href="{{ route('admin.phim.index') }}" class="btn btn-light btn-sm" title="Quay lại">
-                    <i class="fas fa-arrow-left me-1"></i> Quay lại
+                    <i class="ti ti-arrow-left me-1"></i> Quay lại
                 </a>
             </div>
             <div class="card-body p-4">
@@ -309,7 +318,7 @@
                         <a href="{{ route('admin.phim.index') }}" class="btn btn-outline-secondary"
                             title="Hủy">Hủy</a>
                         <button type="submit" class="btn btn-primary" title="Cập nhật">
-                            <i class="fas fa-save me-1"></i> Cập nhật
+                            Cập nhật
                         </button>
                     </div>
                 </form>
@@ -319,33 +328,30 @@
 @endsection
 
 @section('scripts')
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/vn.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/vn.js"></script>
+
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Flatpickr cho ngày phát hành
+        document.addEventListener('DOMContentLoaded', async function() {
+
+            $('.select2').each(function() {
+                $(this).select2({
+                    theme: 'bootstrap-5',
+                    width: '100%',
+                    allowClear: true,
+                    dropdownParent: $(this).closest('.card-body'),
+                    placeholder: $(this).attr('placeholder') || 'Chọn'
+                });
+            });
+
+            // Flatpickr
             flatpickr(".datepicker", {
                 dateFormat: "Y-m-d",
                 locale: "vn",
                 allowInput: true,
             });
 
-            // Select2 cho thể loại
-            $('.select2').select2({
-                // placeholder: "Chọn thể loại phim",
-                // allowClear: true,
-                // placeholder: "Chọn định dạng phim",
-                // allowClear: true,
-                // placeholder: "Chọn phụ đề phim",
-                // allowClear: true,
-                // placeholder: "Chọn chi nhánh",
-                // allowClear: true,
-                // placeholder: "Chọn rạp",
-                allowClear: true,
-            });
-
-            // Dữ liệu ngôn ngữ tĩnh
+            // Ngôn ngữ tĩnh
             const ngonNgu = ['Vietnamese', 'English', 'Chinese', 'Korean', 'Japanese'];
             const ngonNguSelect = document.getElementById('ngon_ngu');
             const oldNgonNgu = "{{ old('ngon_ngu', $phim->ngon_ngu ?? '') }}";
@@ -357,23 +363,32 @@
                 ngonNguSelect.appendChild(option);
             });
 
-            // Gọi API để lấy danh sách quốc gia
-            fetch('https://restcountries.com/v3.1/all')
-                .then(res => res.json())
-                .then(data => {
-                    const quocGiaSelect = document.getElementById('quoc_gia');
-                    const oldQuocGia = "{{ old('quoc_gia', $phim->quoc_gia ?? '') }}";
-                    data.sort((a, b) => a.name.common.localeCompare(b.name.common));
-                    data.forEach(country => {
-                        const option = document.createElement('option');
-                        option.value = country.name.common;
-                        option.textContent = country.name.common;
-                        if (oldQuocGia === country.name.common) option.selected = true;
-                        quocGiaSelect.appendChild(option);
-                    });
+            // Load quốc gia từ API
+            try {
+                const res = await fetch('https://restcountries.com/v3.1/all');
+                if (!res.ok) throw new Error('Không thể tải quốc gia');
+                const data = await res.json();
+
+                const quocGiaSelect = document.getElementById('quoc_gia');
+                const oldQuocGia = "{{ old('quoc_gia', $phim->quoc_gia ?? '') }}";
+
+                data.sort((a, b) => a.name.common.localeCompare(b.name.common));
+                data.forEach(country => {
+                    const name = country.name.common;
+                    const option = document.createElement('option');
+                    option.value = name;
+                    option.textContent = name;
+                    if (oldQuocGia === name) option.selected = true;
+                    quocGiaSelect.appendChild(option);
                 });
 
-            // Preview ảnh poster
+                initSelect2(); // Gọi sau khi load quốc gia
+            } catch (error) {
+                console.error('Lỗi khi tải quốc gia:', error);
+                initSelect2(); // Gọi luôn để tránh vỡ giao diện nếu API fail
+            }
+
+            // Poster preview
             document.getElementById('poster').addEventListener('change', function() {
                 const file = this.files[0];
                 if (file) {
@@ -387,10 +402,10 @@
                 }
             });
 
-            // Tự động focus vào trường tên phim
+            // Focus
             document.getElementById('ten_phim').focus();
 
-            // Xác nhận trước khi hủy
+            // Xác nhận khi nhấn Hủy
             document.querySelector('.btn-outline-secondary').addEventListener('click', function(e) {
                 if (!confirm('Bạn có muốn hủy và quay lại danh sách?')) {
                     e.preventDefault();

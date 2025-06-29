@@ -1,141 +1,118 @@
 @extends('layouts.admin')
 
-@section('title', 'Thêm Combo')
-@section('page-title', 'Thêm Combo')
-@section('breadcrumb', 'Thêm mới')
-
-<style>
-    #selected-food-list .list-group-item {
-        border: 1px solid #dee2e6;
-        border-radius: 8px;
-        margin-bottom: 8px;
-        padding: 12px 16px;
-        background-color: #fffdfd;
-        transition: all 0.2s ease-in-out;
-    }
-
-    #selected-food-list .list-group-item:hover {
-        background-color: #f9f9f9;
-    }
-
-    .input-group-sm .btn {
-        padding: 0.25rem 0.6rem;
-    }
-
-    .so-luong-input {
-        max-width: 40px;
-    }
-</style>
-
 @section('content')
-    <!-- Select2 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <!-- Select2 JS -->
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <div class="container-fluid">
         <div class="card shadow-sm border-0">
             <div class="card-header bg-primary text-white">
                 <h5 class="mb-0 fw-bold">Thêm combo mới</h5>
             </div>
-
             <div class="card-body p-4">
                 <form action="{{ route('admin.combos.store') }}" method="POST" enctype="multipart/form-data">
-
                     @csrf
+                    <div class="row">
+                        <!-- Cột trái -->
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Tiêu đề</label>
+                                <input type="text" name="tieu_de"
+                                    class="form-control @error('tieu_de') is-invalid @enderror" value="{{ old('tieu_de') }}"
+                                    required>
+                                @error('tieu_de')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">Tiêu đề</label>
-                        <input type="text" name="tieu_de" class="form-control @error('tieu_de') is-invalid @enderror"
-                            value="{{ old('tieu_de') }}" required>
-                        @error('tieu_de')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
+                            <div class="mb-3">
+                                <label class="form-label">Mô tả</label>
+                                <textarea name="noi_dung" rows="3" class="form-control @error('noi_dung') is-invalid @enderror">{{ old('noi_dung') }}</textarea>
+                                @error('noi_dung')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Hình ảnh đồ ăn</label>
+                                <input type="file" name="hinh_anh"
+                                    class="form-control @error('hinh_anh') is-invalid @enderror">
+                                @error('hinh_anh')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Giá (VNĐ)</label>
+                                <input type="number" name="gia" id="gia" class="form-control" value="0"
+                                    readonly>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Giá sau giảm (Combo)</label>
+                                <input type="number" name="gia_combo" class="form-control"
+                                    value="{{ old('gia_combo', 0) }}" min="0" step="1000">
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Trạng thái</label>
+                                <select name="trang_thai" class="form-select">
+                                    <option value="hien" {{ old('trang_thai') == 'hien' ? 'selected' : '' }}>Hiện</option>
+                                    <option value="an" {{ old('trang_thai') == 'an' ? 'selected' : '' }}>Ẩn</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Cột phải -->
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Chọn chi nhánh</label>
+                                <select id="select-chi-nhanh" class="form-select">
+                                    <option value="">-- Chọn chi nhánh --</option>
+                                    @foreach ($chiNhanhs as $cn)
+                                        <option value="{{ $cn->id }}" data-ten="{{ $cn->ten_chi_nhanh }}">
+                                            {{ $cn->ten_chi_nhanh }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Chi nhánh đã chọn</label>
+                                <ul id="selected-branches" class="list-group"></ul>
+                                <div id="hidden-branch-inputs"></div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Chọn món ăn</label>
+                                <select id="chon-do-an" class="form-select">
+                                    <option value="">-- Chọn món --</option>
+                                    @foreach ($doAns as $doAn)
+                                        <option value="{{ $doAn->id }}" data-ten="{{ $doAn->tieu_de }}"
+                                            data-gia="{{ $doAn->gia }}">
+                                            {{ $doAn->tieu_de }} ({{ number_format($doAn->gia) }} đ)
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <ul id="danh-sach-do-an" class="list-group mb-3"></ul>
+                            <div id="inputs-hidden"></div>
+                        </div>
                     </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">Mô tả</label>
-                        <textarea name="noi_dung" rows="3" class="form-control @error('noi_dung') is-invalid @enderror">{{ old('noi_dung') }}</textarea>
-                        @error('noi_dung')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
+                    <div class="d-flex justify-content-end gap-2 mt-4">
+                        <a href="{{ route('admin.combos.index') }}" class="btn btn-outline-secondary">
+                            <i class="ti ti-arrow-left me-1"></i> Quay lại
+                        </a>
+                        <button type="submit" class="btn btn-success px-4">
+                            Lưu combo
+                        </button>
                     </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Hình ảnh đồ ăn</label>
-                        <input type="file" name="hinh_anh" class="form-control @error('hinh_anh') is-invalid @enderror">
-                        @error('hinh_anh')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Chọn chi nhánh</label>
-                        <select id="select-chi-nhanh" class="form-select">
-                            <option value="">-- Chọn chi nhánh --</option>
-                            @foreach ($chiNhanhs as $cn)
-                                <option value="{{ $cn->id }}" data-ten="{{ $cn->ten_chi_nhanh }}">
-                                    {{ $cn->ten_chi_nhanh }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <!-- Hiển thị danh sách chi nhánh đã chọn -->
-                    <div class="mb-3">
-                        <label class="form-label">Chi nhánh đã chọn</label>
-                        <ul id="selected-branches" class="list-group"></ul>
-                    </div>
-
-                    <!-- Input hidden để submit -->
-                    <div id="hidden-branch-inputs"></div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Giá (VNĐ)</label>
-                        <input type="number" name="gia" id="gia" class="form-control" value="0" readonly>
-                        @error('gia')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Giá sau giảm (Combo)</label>
-                        <input type="number" name="gia_combo" class="form-control"
-                            value="{{ old('gia_combo', $combo->gia_combo ?? 0) }}" min="0" step="1000">
-                    </div>
-
-                    <!-- Hidden input để submit các ID món ăn đã chọn -->
-                    <div class="mb-3">
-                        <label class="form-label">Chọn món ăn</label>
-                        <select id="chon-do-an" class="form-select">
-                            <option value="">-- Chọn món --</option>
-                            @foreach ($doAns as $doAn)
-                                <option value="{{ $doAn->id }}" data-ten="{{ $doAn->tieu_de }}"
-                                    data-gia="{{ $doAn->gia }}">
-                                    {{ $doAn->tieu_de }} ({{ number_format($doAn->gia) }} đ)
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <ul id="danh-sach-do-an" class="list-group mb-3"></ul>
-                    <div id="inputs-hidden"></div>
-                    <div class="mb-3">
-                        <label class="form-label">Trạng thái</label>
-                        <select name="trang_thai" class="form-select">
-                            <option value="hien" {{ old('trang_thai') == 'hien' ? 'selected' : '' }}>Hiện</option>
-                            <option value="an" {{ old('trang_thai') == 'an' ? 'selected' : '' }}>Ẩn</option>
-                        </select>
-                    </div>
-
-                    <button type="submit" class="btn btn-success">
-                        <i class="fas fa-save me-1"></i> Lưu combo
-                    </button>
-                    <a href="{{ route('admin.combos.index') }}" class="btn btn-secondary">
-                        <i class="fas fa-arrow-left me-1"></i> Quay lại
-                    </a>
                 </form>
             </div>
         </div>
     </div>
 @endsection
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const selectDoAn = document.getElementById('chon-do-an');
@@ -179,7 +156,7 @@
                     <button type="button" class="btn btn-outline-secondary btn-tang" data-id="${id}">+</button>
                 </div>
                 <button type="button" class="btn btn-sm btn-danger xoa-mon" data-id="${id}">
-                    <i class="fas fa-trash"></i>
+                    <i class="ti ti-trash"></i>
                 </button>
             </div>
         `;

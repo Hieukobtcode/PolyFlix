@@ -1,6 +1,32 @@
 @extends('layouts.admin')
 @section('content')
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/themify-icons/0.1.2/css/themify-icons.css">
+    <!-- Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.1.1/dist/select2-bootstrap-5-theme.min.css"
+        rel="stylesheet" />
+
+    <style>
+        .select2-container--bootstrap-5 .select2-selection {
+            min-height: 38px;
+            padding: 0.375rem 0.75rem;
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+
+        .select2-selection__choice {
+            padding: 0.25rem 0.5rem !important;
+            background-color: #ffffff !important;
+            color: #000000 !important;
+            /* Màu chữ trắng */
+            font-size: 0.875rem;
+            border: 10px dashed black;
+        }
+
+        .select2-container {
+            width: 100% !important;
+        }
+    </style>
+
 
     <div class="container-fluid">
         <div class="card shadow-sm border-0">
@@ -150,10 +176,11 @@
                             </div>
 
                             <div class="mb-4">
-                                <label for="the_loai_ids" class="form-label fw-semibold">Thể loại <span
+                                <label class="form-label fw-semibold" for="the_loai_ids">Thể loại <span
                                         class="text-danger">*</span></label>
-                                <select class="form-control select2 rounded @error('the_loai_ids') is-invalid @enderror"
-                                    id="the_loai_ids" name="the_loai_ids[]" multiple>
+                                <select id="the_loai_ids" name="the_loai_ids[]"
+                                    class="form-control select2 rounded @error('the_loai_ids') is-invalid @enderror"
+                                    multiple>
                                     @foreach ($theLoaiPhims as $theLoai)
                                         <option value="{{ $theLoai->id }}"
                                             {{ in_array($theLoai->id, old('the_loai_ids', [])) ? 'selected' : '' }}>
@@ -165,6 +192,7 @@
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
+
 
                             <div class="mb-4">
                                 <label for="dinh_dang_ids" class="form-label fw-semibold">Định dạng <span
@@ -241,7 +269,7 @@
                         <a href="{{ route('admin.phim.index') }}" class="btn btn-outline-secondary"
                             title="Hủy">Hủy</a>
                         <button type="submit" class="btn btn-primary" title="Lưu">
-                            <i class="fas fa-save me-1"></i> Lưu
+                            Lưu
                         </button>
                     </div>
                 </form>
@@ -251,33 +279,30 @@
 @endsection
 
 @section('scripts')
-    {{-- <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script> --}}
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/vn.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/vn.js"></script>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Flatpickr cho ngày phát hành
+            // Khởi tạo select2 cho tất cả
+            $('.select2').each(function() {
+                $(this).select2({
+                    theme: 'bootstrap-5',
+                    width: '100%',
+                    allowClear: true,
+                    dropdownParent: $(this).closest('.card-body'),
+                    placeholder: $(this).attr('placeholder') || 'Chọn'
+                });
+            });
+
+            // Flatpickr
             flatpickr(".datepicker", {
                 dateFormat: "Y-m-d",
                 locale: "vn",
                 allowInput: true,
             });
 
-            // Select2 cho thể loại
-            $('.select2').select2({
-                // placeholder: "Chọn thể loại phim",
-                // allowClear: true,
-                // placeholder: "Chọn định dạng phim",
-                // allowClear: true,
-                // placeholder: "Chọn phụ đề phim",
-                // allowClear: true,
-                // placeholder: "Chọn chi nhánh",
-                // allowClear: true,
-                // placeholder: "Chọn rạp",
-                allowClear: true,
-            });
-
-            // Dữ liệu ngôn ngữ tĩnh
+            // Dữ liệu ngôn ngữ
             const ngonNgu = ['Vietnamese', 'English', 'Chinese', 'Korean', 'Japanese'];
             const ngonNguSelect = document.getElementById('ngon_ngu');
             const oldNgonNgu = "{{ old('ngon_ngu') }}";
@@ -289,7 +314,7 @@
                 ngonNguSelect.appendChild(option);
             });
 
-            // Gọi API để lấy danh sách quốc gia
+            // API quốc gia
             fetch('https://restcountries.com/v3.1/all')
                 .then(res => res.json())
                 .then(data => {
@@ -305,7 +330,7 @@
                     });
                 });
 
-            // Preview ảnh poster
+            // Poster preview
             document.getElementById('poster').addEventListener('change', function() {
                 const file = this.files[0];
                 if (file) {
@@ -321,10 +346,10 @@
                 }
             });
 
-            // Tự động focus vào trường tên phim
+            // Focus vào tên phim
             document.getElementById('ten_phim').focus();
 
-            // Xác nhận trước khi hủy
+            // Xác nhận khi hủy
             document.querySelector('.btn-outline-secondary').addEventListener('click', function(e) {
                 if (!confirm('Bạn có muốn hủy và quay lại danh sách?')) {
                     e.preventDefault();
