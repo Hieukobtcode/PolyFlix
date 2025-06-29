@@ -7,13 +7,12 @@
         <form action="{{ route('admin.cau-hinh.update') }}" method="POST" enctype="multipart/form-data">
             @csrf
 
-            <div class="row">
+            <div class="row g-4">
                 <!-- Cột trái -->
                 <div class="col-md-8">
-                    <div class="card shadow-sm mb-4">
-                        <div class="card-header bg-light fw-bold">Thông tin cơ bản</div>
+                    <div class="card shadow-sm border-0">
+                        
                         <div class="card-body row g-3">
-
                             @php
                                 $fields = [
                                     ['ten_website', 'Tên Website'],
@@ -32,24 +31,21 @@
 
                             @foreach ($fields as $field)
                                 <div class="col-md-6">
-                                    <label class="form-label">{{ $field[1] }}</label>
+                                    <label class="form-label fw-semibold">{{ $field[1] }}</label>
                                     <input type="text" name="{{ $field[0] }}" class="form-control"
                                         value="{{ old($field[0], $cauHinh->{$field[0]}) }}">
                                     @error($field[0])
-                                        <div class="text-danger mt-1">{{ $message }}</div>
+                                        <div class="text-danger mt-1 small">{{ $message }}</div>
                                     @enderror
                                 </div>
                             @endforeach
-
                         </div>
                     </div>
 
-                    <div class="row mt-4">
-                        <div class="col-12 text-end">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save me-1"></i> Cập nhật cấu hình
-                            </button>
-                        </div>
+                    <div class="text-end mt-4">
+                        <button type="submit" class="btn btn-primary d-inline-flex align-items-center gap-2 px-4">
+                            <i class="ti ti-device-floppy"></i> Cập nhật cấu hình
+                        </button>
                     </div>
                 </div>
 
@@ -65,16 +61,19 @@
                     @endphp
 
                     @foreach ($images as $img)
-                        <div class="card shadow-sm mb-4">
-                            <div class="card-header bg-light fw-bold">{{ $img[1] }}</div>
+                        <div class="card shadow-sm border-0 mb-4">
+                            <div class="card-header bg-success text-white fw-bold">
+                                <i class="ti ti-photo me-2"></i>{{ $img[1] }}
+                            </div>
                             <div class="card-body text-center">
-                                <input type="file" name="{{ $img[0] }}" class="form-control mb-2">
+                                <input type="file" name="{{ $img[0] }}" class="form-control mb-3">
                                 @error($img[0])
-                                    <div class="text-danger mt-1">{{ $message }}</div>
+                                    <div class="text-danger mt-1 small">{{ $message }}</div>
                                 @enderror
+
                                 @if ($cauHinh->{$img[0]})
-                                    <img width="100px" src="{{ asset('storage/' . $cauHinh->{$img[0]}) }}"
-                                        class="img-fluid">
+                                    <img src="{{ asset('storage/' . $cauHinh->{$img[0]}) }}" class="img-thumbnail"
+                                        style="max-height: 120px;">
                                 @endif
                             </div>
                         </div>
@@ -82,7 +81,5 @@
                 </div>
             </div>
         </form>
-
-
     </div>
 @endsection

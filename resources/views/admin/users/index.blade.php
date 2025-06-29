@@ -1,62 +1,15 @@
 @extends('layouts.admin')
 
-@section('title', 'Quản lý Người dùng')
-@section('page-title', 'Danh sách Người dùng')
-@section('breadcrumb', 'Danh sách Người dùng')
-
-@section('styles')
-    <style>
-        .card {
-            border-radius: 10px;
-        }
-
-        .table th,
-        .table td {
-            vertical-align: middle;
-        }
-
-        .badge {
-            font-size: 0.9em;
-            padding: 0.5em 1em;
-        }
-
-        .btn-group .btn {
-            border-radius: 5px;
-        }
-
-        .pagination {
-            justify-content: end;
-        }
-
-        .table-dark {
-            background-color: #343a40;
-        }
-
-        .form-control,
-        .form-select {
-            border-radius: 8px;
-        }
-    </style>
-@endsection
-
 @section('content')
     <div class="container-fluid">
         <div class="card shadow-sm border-0">
-            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                <h5 class="mb-0 fw-bold">Danh sách người dùng</h5>
-                <div class="btn-group gap-2">
-                    <a href="{{ route('admin.users.create') }}" class="btn btn-light btn-sm" title="Thêm người dùng">
-                        <i class="fas fa-plus me-1"></i> Thêm người dùng
-                    </a>
-                </div>
-            </div>
             <div class="card-body p-4">
-                <div class="row mb-4">
+
+                <div class="row mb-3">
                     <div class="col-md-4 mb-2">
                         <div class="input-group">
-                            <span class="input-group-text bg-light"><i class="fas fa-search"></i></span>
                             <input type="text" id="searchInput" class="form-control rounded"
-                                placeholder="Tìm theo tên, email hoặc SĐT...">
+                                placeholder="Tìm theo tên, email...">
                         </div>
                     </div>
                     <div class="col-md-3 mb-2">
@@ -81,36 +34,32 @@
                             <option value="0">Offline</option>
                         </select>
                     </div>
-                    <div class="col-md-1 mb-2">
-                        <button id="resetFilter" class="btn btn-outline-secondary w-100 rounded" title="Đặt lại lọc">
-                            <i class="fas fa-sync-alt"></i>
-                        </button>
-                    </div>
                 </div>
 
-
-
                 <div class="table-responsive">
-                    <table class="table table-hover table-bordered align-middle">
-                        <thead class="table-dark">
+                    <table class="table text-nowrap align-middle mb-0">
+                        <thead class="bg-gradient-dark text-white">
                             <tr>
                                 <th class="text-center" style="width: 5%">#</th>
+                                <th>Ảnh</th>
                                 <th>Tên</th>
                                 <th>Email</th>
-                                <th>SĐT</th>
                                 <th>Vai trò</th>
                                 <th class="text-center">Trạng thái</th>
                                 <th class="text-center">Hoạt động</th>
-                                <th class="text-center">Thao tác</th>
+                                <th class="text-center" style="width: 15%">Thao tác</th>
                             </tr>
                         </thead>
                         <tbody id="userTable">
                             @forelse($users as $index => $user)
                                 <tr>
                                     <td class="text-center">{{ $index + 1 }}</td>
+                                    <td>
+                                        <img src="{{ $user->avatar ? asset('storage/' . $user->avatar) : 'https://bootstrapdemos.wrappixel.com/spike/dist/assets/images/profile/user-1.jpg' }}"
+                                            alt="{{ $user->name }}" class="rounded-circle" width="50" height="50">
+                                    </td>
                                     <td>{{ $user->name }}</td>
                                     <td>{{ $user->email }}</td>
-                                    <td>{{ $user->so_dien_thoai }}</td>
                                     <td>{{ optional($user->vaiTro)->ten }}</td>
                                     <td class="text-center" data-status="{{ strtolower($user->trang_thai) }}">
                                         <span
@@ -125,26 +74,29 @@
                                         </span>
                                     </td>
                                     <td class="text-center">
-                                        <div class="btn-group">
-                                            <a href="{{ route('admin.users.show', $user->id) }}"
-                                                class="btn btn-sm btn-outline-info"><i class="fas fa-eye"></i></a>
-                                            <a href="{{ route('admin.users.edit', $user->id) }}"
-                                                class="btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i></a>
-                                            {{-- <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST"
-                                                class="d-inline"
-                                                onsubmit="return confirm('Bạn có chắc chắn muốn xóa người dùng này?')">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-sm btn-outline-danger"><i
-                                                        class="fas fa-trash"></i></button>
-                                            </form> --}}
+                                        <div class="dropdown dropstart">
+                                            <a href="javascript:void(0)" class="text-muted" data-bs-toggle="dropdown"
+                                                aria-expanded="false">
+                                                <i class="ti ti-dots-vertical fs-6"></i>
+                                            </a>
+                                            <ul class="dropdown-menu">
+                                                <li>
+                                                    <a class="dropdown-item d-flex align-items-center gap-2"
+                                                        href="{{ route('admin.users.show', $user->id) }}">
+                                                        <i class="ti ti-eye fs-5"></i> Xem
+                                                    </a>
+                                                </li>
+                                            </ul>
                                         </div>
                                     </td>
                                 </tr>
                             @empty
                                 <tr id="emptyRow">
-                                    <td colspan="8" class="text-center text-muted py-3">
-                                        <i class="fas fa-folder-open me-1"></i> Không có dữ liệu
+                                    <td colspan="7" class="text-center text-muted py-4">
+                                        <div class="py-3">
+                                            <i class="ti ti-folder-open fs-3 mb-3"></i>
+                                            <p class="mb-0">Không có dữ liệu</p>
+                                        </div>
                                     </td>
                                 </tr>
                             @endforelse
@@ -178,25 +130,22 @@
                 const roleFilter = document.getElementById('roleFilter').value.toLowerCase();
                 const statusFilter = document.getElementById('statusFilter').value.toLowerCase();
                 const activeFilter = document.getElementById('activeFilter').value;
-
                 let visibleCount = 0;
 
                 rows.forEach(row => {
                     const name = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
                     const email = row.querySelector('td:nth-child(3)').textContent.toLowerCase();
-                    const phone = row.querySelector('td:nth-child(4)').textContent.toLowerCase();
-                    const role = row.querySelector('td:nth-child(5)').textContent.toLowerCase();
-                    const status = row.querySelector('td:nth-child(6)').getAttribute('data-status') || '';
-                    const active = row.querySelector('td:nth-child(7)').textContent.trim().toLowerCase();
+                    const role = row.querySelector('td:nth-child(4)').textContent.toLowerCase();
+                    const status = row.querySelector('td:nth-child(5)').getAttribute('data-status') || '';
+                    const active = row.querySelector('td:nth-child(6)').textContent.trim().toLowerCase();
 
                     const match =
-                        (name.includes(searchText) || email.includes(searchText) || phone.includes(
-                            searchText)) &&
+                        (name.includes(searchText) || email.includes(searchText)) &&
                         (roleFilter === '' || role === roleFilter) &&
                         (statusFilter === '' || status === statusFilter) &&
                         (activeFilter === '' ||
-                            (activeFilter === '1' && active === 'có') ||
-                            (activeFilter === '0' && active === 'không'));
+                            (activeFilter === '1' && active === 'online') ||
+                            (activeFilter === '0' && active === 'offline'));
 
                     if (match) {
                         row.style.display = '';
@@ -212,9 +161,12 @@
                     const newRow = document.createElement('tr');
                     newRow.id = 'emptyFilterRow';
                     newRow.innerHTML = `
-                <td colspan="8" class="text-center text-muted py-3">
-                    <i class="fas fa-search me-1"></i> Không tìm thấy kết quả phù hợp
-                </td>`;
+                        <td colspan="7" class="text-center text-muted py-4">
+                            <div class="py-3">
+                                <i class="ti ti-search fs-3 mb-3"></i>
+                                <p class="mb-0">Không tìm thấy kết quả phù hợp</p>
+                            </div>
+                        </td>`;
                     tableBody.appendChild(newRow);
                 } else if (visibleCount > 0 && emptyRow) {
                     emptyRow.remove();
@@ -235,7 +187,23 @@
             document.getElementById('roleFilter').addEventListener('change', filterTable);
             document.getElementById('statusFilter').addEventListener('change', filterTable);
             document.getElementById('activeFilter').addEventListener('change', filterTable);
-            document.getElementById('resetFilter').addEventListener('click', resetFilters);
+            document.getElementById('resetFilter').addEventListener('click', function() {
+                resetFilters();
+                this.classList.add('animate-spin');
+                setTimeout(() => this.classList.remove('animate-spin'), 300);
+            });
+
+            document.head.insertAdjacentHTML('beforeend', `
+                <style>
+                    @keyframes spin {
+                        0% { transform: rotate(0deg); }
+                        100% { transform: rotate(360deg); }
+                    }
+                    .animate-spin i {
+                        animation: spin 0.5s linear;
+                    }
+                </style>
+            `);
         });
     </script>
 @endsection
