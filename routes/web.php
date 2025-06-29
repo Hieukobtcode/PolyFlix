@@ -75,7 +75,7 @@ Route::post('profile', [ProfileController::class, 'updatePassword'])->name('upda
 Route::post('update-avatar', [ProfileController::class, 'updateAvatar'])->name('update.avatar');
 
 
-Route::get('khuyen-mai', [KhuyenMaiController::class, 'index'])->name('client.khuyen-mai.index');
+Route::get('/client.khuyen-mai', [KhuyenMaiController::class, 'index'])->name('khuyen-mai.index');
 Route::get('/phim-dang-chieu', [PhimsController::class, 'phimDangChieu'])->name('phim.dang-chieu');
 
 //Phim
