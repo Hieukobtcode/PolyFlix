@@ -1,48 +1,13 @@
 @extends('layouts.admin')
-
-@section('title', 'Quản lý Phim')
-@section('page-title', 'Thêm phim mới')
-@section('breadcrumb', 'Thêm phim mới')
-@section('styles')
-    <style>
-        .card {
-            border-radius: 10px;
-        }
-
-        .form-control,
-        .form-select,
-        .select2-container--default .select2-selection--multiple {
-            border-radius: 8px;
-            border: 1px solid #ced4da;
-        }
-
-        .form-label {
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-        }
-
-        .btn {
-            border-radius: 8px;
-        }
-
-        .invalid-feedback {
-            font-size: 0.9em;
-        }
-
-        .img-thumbnail {
-            border-radius: 8px;
-            max-height: 200px;
-        }
-    </style>
-@endsection
-
 @section('content')
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/themify-icons/0.1.2/css/themify-icons.css">
+
     <div class="container-fluid">
         <div class="card shadow-sm border-0">
-            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
                 <h5 class="mb-0 fw-bold">Thêm phim mới</h5>
-                <a href="{{ route('admin.phim.index') }}" class="btn btn-light btn-sm" title="Quay lại">
-                    <i class="fas fa-arrow-left me-1"></i> Quay lại
+                <a href="{{ route('admin.phim.index') }}" class="btn btn-primary btn-sm" title="Quay lại">
+                    <i class="ti ti-arrow-left me-1"></i> Quay lại
                 </a>
             </div>
             <div class="card-body p-4">
@@ -235,27 +200,6 @@
                                 @enderror
                             </div>
 
-                            {{-- <div class="mb-4">
-                                <label for="trang_thai" class="form-label fw-semibold">Trạng thái <span
-                                        class="text-danger">*</span></label>
-                                <select class="form-select rounded @error('trang_thai') is-invalid @enderror"
-                                    id="trang_thai" name="trang_thai">
-                                    <option value="">-- Chọn trạng thái --</option>
-                                    <option value="đang chiếu" {{ old('trang_thai') === 'đang chiếu' ? 'selected' : '' }}>
-                                        Đang chiếu</option>
-                                    <option value="sắp chiếu" {{ old('trang_thai') === 'sắp chiếu' ? 'selected' : '' }}>
-                                        Sắp chiếu</option>
-                                    <option value="đã kết thúc"
-                                        {{ old('trang_thai') === 'đã kết thúc' ? 'selected' : '' }}>
-                                        Đã kết thúc</option>
-                                    <option value="bị huỷ" {{ old('trang_thai') === 'bị huỷ' ? 'selected' : '' }}>
-                                        Bị huỷ</option>
-                                </select>
-                                @error('trang_thai')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div> --}}
-
                             <div class="mb-4">
                                 <label for="chi_nhanh_ids" class="form-label fw-semibold">Chi nhánh <span
                                         class="text-danger">*</span></label>
@@ -307,7 +251,7 @@
 @endsection
 
 @section('scripts')
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    {{-- <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script> --}}
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/vn.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script>

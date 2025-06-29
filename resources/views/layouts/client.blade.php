@@ -176,11 +176,6 @@
                             </ul>
                         </div>
                     </div>
-
-                    <div class="lich-chieu">
-                        <i class="fa-solid fa-calendar-days"></i>
-                        <p>Lịch chiếu</p>
-                    </div>
                 </div>
                 <div class="nav2">
                     <ul>
@@ -191,7 +186,6 @@
                         </li>
                         <li><a href="{{ route('client.bai-viet') }}">Góc điện ảnh</a></li>
                         <li><a href="{{ route('client.lien-he') }}">Liên hệ</a></li>
-                        <li>Giới thiệu</li>
                     </ul>
                 </div>
             </div>
@@ -241,3 +235,5 @@
 </html>
 {{-- JS --}}
 @yield('scripts')
+
+

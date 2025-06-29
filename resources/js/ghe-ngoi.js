@@ -12,6 +12,7 @@ $(document).ready(function () {
     const soGheKhiThemHang = $("#so-ghe-khi-them-hang");
     const btnThemHang = $("#btn-them-hang");
     const btnThemCotGhe = $("#btn-them-ghe");
+
     selectAddSeat.change(function () {
         let valSelect = $(this).val();
         if (valSelect == 1) {
@@ -58,12 +59,12 @@ $(document).ready(function () {
     btnAddSeat.click(function () {
         let currentHtml = btnAddSeat.html();
 
-        if (currentHtml.includes("fa-trash")) {
+        if (currentHtml.includes("ti-trash")) {
             selectAddSeat.hide();
             addHang.hide();
             addCot.hide();
             soHangGheTheoLoai.hide();
-            btnAddSeat.html('<i class="fa-solid fa-gear fa-spin-pulse"></i>');
+            btnAddSeat.html('<i class="ti ti-settings fs-5"></i>');
             btnAddSeat.css("background-color", "");
             chonHangGhe.hide();
             cotGhe.hide();
@@ -82,7 +83,7 @@ $(document).ready(function () {
             soGheKhiThemHang.val("");
         } else {
             selectAddSeat.show();
-            btnAddSeat.html('<i class="fa-solid fa-trash fa-shake"></i>');
+            btnAddSeat.html('<i class="ti ti-trash fs-5"></i>');
             btnAddSeat.css("background-color", "#e36060");
         }
     });
@@ -118,14 +119,6 @@ $(document).ready(function () {
             rightOrLeft.hide();
         }
     });
-    
-    chonHangGhe.change(function () {
-        if (chonHangGhe.val() == 1) {
-        } else if (chonHangGhe.val() == 2) {
-        } else {
-            chonHangGhe.val("");
-        }
-    });
 
     soGheKhiThemHang.on("input", function () {
         if ($(this).val() > 0) {
@@ -137,42 +130,37 @@ $(document).ready(function () {
 
     btnThemHang.on("click", function () {
         $(this).hide();
-
-
         const loaiChon = parseInt(addHang.val());
         const soHangThem = parseInt(soHangGheTheoLoai.val());
         if (soHangThem === 0) return;
 
         const danhSach = layDanhSachHang();
-
         const indexChen = danhSach.findIndex((h) => h.loai === loaiChon);
         const viTriChen = indexChen >= 0 ? indexChen : danhSach.length;
 
-        // Dịch các hàng bên dưới xuống
         for (let i = danhSach.length - 1; i >= viTriChen; i--) {
             const hangCu = danhSach[i].hang;
-            const hangMoi = String.fromCharCode(hangCu.charCodeAt(0) + soHangThem);
+            const hangMoi = String.fromCharCode(
+                hangCu.charCodeAt(0) + soHangThem
+            );
 
             $(`.seat-wrapper[data-row='${hangCu}']`).each(function () {
                 const col = $(this).data("col");
                 const maGheMoi = hangMoi + col;
-
-                // Cập nhật trực tiếp attribute, không dùng .data() để set
-                $(this).attr("data-row", hangMoi);
-                $(this).attr("data-seat", maGheMoi);
-
-                // Xóa cache để đảm bảo .data() không giữ giá trị cũ
-                $(this).removeData("row").removeData("seat");
-
-                $(this).find(".seat-code").text(maGheMoi);
+                $(this)
+                    .attr("data-row", hangMoi)
+                    .attr("data-seat", maGheMoi)
+                    .removeData("row")
+                    .removeData("seat")
+                    .find(".seat-code")
+                    .text(maGheMoi);
             });
         }
 
         let soCot = parseInt(soGheKhiThemHang.val());
-        if(loaiChon == 12){
+        if (loaiChon == 12) {
             soCot = soCot * 2;
         }
-        
         let baseCharCode = danhSach[viTriChen - 1]
             ? danhSach[viTriChen - 1].hang.charCodeAt(0)
             : 64;
@@ -181,22 +169,15 @@ $(document).ready(function () {
         for (let i = 0; i < soHangThem; i++) {
             const hangMoi = String.fromCharCode(baseCharCode + i + 1);
             let hangHTML = `<div class="seat-row" data-row="${hangMoi}" style="display: flex; align-items: center;">`;
-
             for (let j = 1; j <= soCot; j++) {
                 const maGhe = hangMoi + j;
                 hangHTML += `
-                <div style="background-color: #ccc;"
-                    data-loai="${loaiChon}" data-id=""
-                    class=" {{ $isDouble }} seat-wrapper {{ $oneSeat['trang_thai'] === 'bao_tri' ? 'selected' : '' }}"
-                    data-seat="${maGhe}" data-row="${hangMoi}"
-                    data-col="${j}">
-                    <i class="fa-solid fa-couch"></i>
+                <div style="background-color: #ccc;" data-loai="${loaiChon}" data-id="" class="seat-wrapper" data-seat="${maGhe}" data-row="${hangMoi}" data-col="${j}">
+                    <i class="ti ti-armchair fs-5"></i>
                     <span class="seat-code">${maGhe}</span>
                 </div>`;
             }
-
             hangHTML += `</div>`;
-
             allHangHTML += hangHTML;
         }
 
@@ -215,21 +196,12 @@ $(document).ready(function () {
             $(".seat-map").append(allHangHTML);
         }
 
-        const hangDaThem = $(".seat-wrapper").filter(function () {
-            const dataId = $(this).data("id");
-            return dataId !== ""; // hoặc return !!dataId;
-        }).map(function () {
-            return $(this).data("row");
-        }).get();
-
         Swal.fire({
             icon: "success",
             title: "Thêm hàng ghế thành công!",
-            html: `Đã thêm <strong>${soHangThem}</strong> hàng ghế<br> 
-           Hãy nhấn <strong>Cập nhật</strong> để lưu thay đổi.`,
-            confirmButtonText: "Đã hiểu"
-        })
-
+            html: `Đã thêm <strong>${soHangThem}</strong> hàng ghế<br> Hãy nhấn <strong>Cập nhật</strong> để lưu thay đổi.`,
+            confirmButtonText: "Đã hiểu",
+        });
     });
 
     rightOrLeft.change(function () {
