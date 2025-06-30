@@ -15,7 +15,7 @@ class CapBacTheController extends Controller
      */
     public function index()
     {
-        $capBacThes = CapBacThe::orderBy('tong_so_ve_da_mua', 'asc')->paginate(5);
+        $capBacThes = CapBacThe::orderBy('tong_chi_tieu', 'asc')->paginate(5);
         return view('admin.cap-bac-the.index', compact('capBacThes'));
     }
 
@@ -45,7 +45,7 @@ class CapBacTheController extends Controller
         $validator = Validator::make($request->all(), [
             'ten' => 'required|string|max:255|unique:cap_bac_thes',
             'mo_ta' => 'required|string|max:255',
-            'tong_so_ve_da_mua' => 'required|integer|min:0',
+            'tong_chi_tieu' => 'required|integer|min:0|max:10000000',
             'phan_tram_ve' => 'required|integer|min:0|max:30', // tối đa 30%
             'phan_tram_dich_vu' => 'required|integer|min:0|max:30', // tối đa 30%
             'is_default' => 'boolean',
@@ -57,9 +57,10 @@ class CapBacTheController extends Controller
             'mo_ta.required' => 'Mô tả là bắt buộc.',
             'mo_ta.string' => 'Mô tả phải là chuỗi văn bản.',
             'mo_ta.max' => 'Mô tả không được vượt quá 255 ký tự.',
-            'tong_so_ve_da_mua.required' => 'Tổng số vé đã mua là bắt buộc.',
-            'tong_so_ve_da_mua.integer' => 'Tổng số vé đã mua phải là số nguyên.',
-            'tong_so_ve_da_mua.min' => 'Tổng số vé đã mua phải lớn hơn hoặc bằng 0.',
+            'tong_chi_tieu.required' => 'Tổng chi tiêu là bắt buộc.',
+            'tong_chi_tieu.integer' => 'Tổng chi tiêu phải là số nguyên.',
+            'tong_chi_tieu.min' => 'Tổng chi tiêu phải lớn hơn hoặc bằng 0.',
+            'tong_chi_tieu.max' => 'Tổng chi tiêu không được vượt quá 10.000.000.',
             'phan_tram_ve.required' => 'Phần trăm hoàn tiền là bắt buộc.',
             'phan_tram_ve.integer' => 'Phần trăm hoàn tiền phải là số nguyên.',
             'phan_tram_ve.min' => 'Phần trăm hoàn tiền phải lớn hơn hoặc bằng 0.',
@@ -118,7 +119,7 @@ class CapBacTheController extends Controller
                 Rule::unique('cap_bac_thes')->ignore($capBacThe->id),
             ],
             'mo_ta' => 'required|string|max:255',
-            'tong_so_ve_da_mua' => 'required|integer|min:0',
+            'tong_chi_tieu' => 'required|integer|min:0|max:10000000',
             'phan_tram_ve' => 'required|integer|min:0|max:30', // tối đa 30%
             'phan_tram_dich_vu' => 'required|integer|min:0|max:30', // tối đa 30%
             'is_default' => 'boolean',
@@ -130,9 +131,10 @@ class CapBacTheController extends Controller
             'mo_ta.required' => 'Mô tả là bắt buộc.',
             'mo_ta.string' => 'Mô tả phải là chuỗi văn bản.',
             'mo_ta.max' => 'Mô tả không được vượt quá 255 ký tự.',
-            'tong_so_ve_da_mua.required' => 'Tổng số vé đã mua là bắt buộc.',
-            'tong_so_ve_da_mua.integer' => 'Tổng số vé đã mua phải là số nguyên.',
-            'tong_so_ve_da_mua.min' => 'Tổng số vé đã mua phải lớn hơn hoặc bằng 0.',
+            'tong_chi_tieu.required' => 'Tổng chi tiêu là bắt buộc.',
+            'tong_chi_tieu.integer' => 'Tổng chi tiêu phải là số nguyên.',
+            'tong_chi_tieu.min' => 'Tổng chi tiêu phải lớn hơn hoặc bằng 0.',
+            'tong_chi_tieu.max' => 'Tổng chi tiêu không được vượt quá 10.000.000.',
             'phan_tram_ve.required' => 'Phần trăm hoàn tiền là bắt buộc.',
             'phan_tram_ve.integer' => 'Phần trăm hoàn tiền phải là số nguyên.',
             'phan_tram_ve.min' => 'Phần trăm hoàn tiền phải lớn hơn hoặc bằng 0.',

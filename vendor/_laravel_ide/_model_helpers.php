@@ -1288,14 +1288,14 @@ namespace App\Models {
      * @property boolean $is_default
      * @property int $phan_tram_dich_vu
      * @property int $phan_tram_ve
-     * @property int $tong_so_ve_da_mua
+     * @property int $tong_chi_tieu
      * @property string $mo_ta
      * @property string $ten
      * @property int $id
      * @method static \Illuminate\Database\Eloquent\Builder<CapBacThe>|CapBacThe whereId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<CapBacThe>|CapBacThe whereTen($value)
      * @method static \Illuminate\Database\Eloquent\Builder<CapBacThe>|CapBacThe whereMoTa($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<CapBacThe>|CapBacThe whereTongSoVeDaMua($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<CapBacThe>|CapBacThe whereTongChiTieu($value)
      * @method static \Illuminate\Database\Eloquent\Builder<CapBacThe>|CapBacThe wherePhanTramVe($value)
      * @method static \Illuminate\Database\Eloquent\Builder<CapBacThe>|CapBacThe wherePhanTramDichVu($value)
      * @method static \Illuminate\Database\Eloquent\Builder<CapBacThe>|CapBacThe whereIsDefault($value)
