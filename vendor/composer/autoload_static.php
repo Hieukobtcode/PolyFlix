@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit8ccaa84c004fde119164421f30c4c011
+class ComposerStaticInit603cda8a0685f102b0fac5f6c0594535
 {
     public static $files = array (
         '6e3fae29631ef280660b3cdad06f25a8' => __DIR__ . '/..' . '/symfony/deprecation-contracts/function.php',
@@ -686,6 +686,7 @@ class ComposerStaticInit8ccaa84c004fde119164421f30c4c011
         'Anhskohbo\\NoCaptcha\\Facades\\NoCaptcha' => __DIR__ . '/..' . '/anhskohbo/no-captcha/src/Facades/NoCaptcha.php',
         'Anhskohbo\\NoCaptcha\\NoCaptcha' => __DIR__ . '/..' . '/anhskohbo/no-captcha/src/NoCaptcha.php',
         'Anhskohbo\\NoCaptcha\\NoCaptchaServiceProvider' => __DIR__ . '/..' . '/anhskohbo/no-captcha/src/NoCaptchaServiceProvider.php',
+        'App\\Events\\SeatUpdated' => __DIR__ . '/../..' . '/app/Events/SeatUpdated.php',
         'App\\Helpers\\IdFormatter' => __DIR__ . '/../..' . '/app/Helpers/IdFormatter.php',
         'App\\Http\\Controllers\\Admin\\BaiVietController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/BaiVietController.php',
         'App\\Http\\Controllers\\Admin\\BannerController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/BannerController.php',
@@ -727,6 +728,7 @@ class ComposerStaticInit8ccaa84c004fde119164421f30c4c011
         'App\\Http\\Controllers\\Client\\LoginController' => __DIR__ . '/../..' . '/app/Http/Controllers/Client/LoginController.php',
         'App\\Http\\Controllers\\Client\\PhimsController' => __DIR__ . '/../..' . '/app/Http/Controllers/Client/PhimsController.php',
         'App\\Http\\Controllers\\Client\\ProfileController' => __DIR__ . '/../..' . '/app/Http/Controllers/Client/ProfileController.php',
+        'App\\Http\\Controllers\\Client\\TheLoaiController' => __DIR__ . '/../..' . '/app/Http/Controllers/Client/TheLoaiController.php',
         'App\\Http\\Controllers\\Client\\TrangChuController' => __DIR__ . '/../..' . '/app/Http/Controllers/Client/TrangChuController.php',
         'App\\Http\\Controllers\\Controller' => __DIR__ . '/../..' . '/app/Http/Controllers/Controller.php',
         'App\\Http\\Controllers\\SocialAuthController' => __DIR__ . '/../..' . '/app/Http/Controllers/SocialAuthController.php',
@@ -8642,10 +8644,10 @@ class ComposerStaticInit8ccaa84c004fde119164421f30c4c011
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit8ccaa84c004fde119164421f30c4c011::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit8ccaa84c004fde119164421f30c4c011::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit8ccaa84c004fde119164421f30c4c011::$prefixesPsr0;
-            $loader->classMap = ComposerStaticInit8ccaa84c004fde119164421f30c4c011::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit603cda8a0685f102b0fac5f6c0594535::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit603cda8a0685f102b0fac5f6c0594535::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit603cda8a0685f102b0fac5f6c0594535::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInit603cda8a0685f102b0fac5f6c0594535::$classMap;
 
         }, null, ClassLoader::class);
     }

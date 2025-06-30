@@ -8037,6 +8037,7 @@ namespace App\Models {
      * @property-read int|null $comments_count
      * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Rating> $ratings
      * @property-read int|null $ratings_count
+     * @property-read \App\Models\PhongChieu $phongChieu
      * @method static \Illuminate\Database\Eloquent\Builder<Phim>|Phim whereId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Phim>|Phim whereTenPhim($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Phim>|Phim whereMoTa($value)
@@ -11794,6 +11795,7 @@ namespace App\Models {
      * @property-read \App\Models\RapPhim $rapPhims
      * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\DatVe> $datVes
      * @property-read int|null $datVes_count
+     * @property-read \App\Models\DinhDangPhim $dinhDangPhim
      * @method static \Illuminate\Database\Eloquent\Builder<SuatChieu>|SuatChieu whereId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<SuatChieu>|SuatChieu wherePhimId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<SuatChieu>|SuatChieu wherePhongChieuId($value)

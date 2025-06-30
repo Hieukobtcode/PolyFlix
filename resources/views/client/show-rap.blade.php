@@ -271,18 +271,17 @@
         }
 
         .hour {
-            display: flex;
-            flex-wrap: nowrap;
-            overflow-x: auto;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
             gap: 8px;
             margin-top: 6px;
             padding-bottom: 5px;
         }
 
         .time-btn {
-            display: inline-block;
+            display: block;
+            text-align: center;
             padding: 6px 12px;
-            margin: 5px 5px 0 0;
             background-color: #292f45;
             color: #fff;
             border-radius: 5px;
@@ -290,6 +289,7 @@
             border: 1px solid transparent;
             font-size: 14px;
         }
+
 
         .time-btn:hover {
             background-color: #f1c40f;
@@ -541,7 +541,7 @@
                                 Hiện chưa có suất chiếu nào cho phim này.
                             </div>
                         @else
-                            @foreach ($suatChieuPhim->groupBy('ngay_chieu') as $ngay => $suatChieusTrongNgay)
+                            @foreach ($suatChieuPhim->sortBy('ngay_chieu')->groupBy('ngay_chieu') as $ngay => $suatChieusTrongNgay)
                                 @php
                                     $ngayFormatted = \Carbon\Carbon::parse($ngay)->translatedFormat('l, d/m/Y');
                                     $ngayFormatted = mb_convert_case($ngayFormatted, MB_CASE_TITLE, 'UTF-8');
@@ -554,7 +554,9 @@
                                     </summary>
 
                                     @foreach ($suatChieusTrongNgay->groupBy('phongChieu.loaiPhong.ten_loai_phong') as $tenPhong => $suatChieusTheoPhong)
-                                        <div class="room-title">{{ $tenPhong }}</div>
+                                        <div class="room-title">
+                                            {{ $suatChieusTheoPhong->first()->formatted_version ?? '' }}
+                                        </div>
                                         <div class="hour">
                                             @foreach ($suatChieusTheoPhong as $suat)
                                                 <a href="" class="time-btn">
@@ -631,7 +633,7 @@
                                 Hiện chưa có suất chiếu nào cho phim này.
                             </div>
                         @else
-                            @foreach ($suatChieuPhim->groupBy('ngay_chieu') as $ngay => $suatChieusTrongNgay)
+                            @foreach ($suatChieuPhim->sortBy('ngay_chieu')->groupBy('ngay_chieu') as $ngay => $suatChieusTrongNgay)
                                 @php
                                     $ngayFormatted = \Carbon\Carbon::parse($ngay)->translatedFormat('l, d/m/Y');
                                     $ngayFormatted = mb_convert_case($ngayFormatted, MB_CASE_TITLE, 'UTF-8');
@@ -644,7 +646,9 @@
                                     </summary>
 
                                     @foreach ($suatChieusTrongNgay->groupBy('phongChieu.loaiPhong.ten_loai_phong') as $tenPhong => $suatChieusTheoPhong)
-                                        <div class="room-title">{{ $tenPhong }}</div>
+                                        <div class="room-title">
+                                            {{ $suatChieusTheoPhong->first()->formatted_version ?? '' }}
+                                        </div>
                                         <div class="hour">
                                             @foreach ($suatChieusTheoPhong as $suat)
                                                 <a href="" class="time-btn">
@@ -720,7 +724,7 @@
                                 Hiện chưa có suất chiếu nào cho phim này.
                             </div>
                         @else
-                            @foreach ($suatChieuPhim->groupBy('ngay_chieu') as $ngay => $suatChieusTrongNgay)
+                            @foreach ($suatChieuPhim->sortBy('ngay_chieu')->groupBy('ngay_chieu') as $ngay => $suatChieusTrongNgay)
                                 @php
                                     $ngayFormatted = \Carbon\Carbon::parse($ngay)->translatedFormat('l, d/m/Y');
                                     $ngayFormatted = mb_convert_case($ngayFormatted, MB_CASE_TITLE, 'UTF-8');
@@ -739,7 +743,9 @@
                                     </summary>
 
                                     @foreach ($suatChieusTrongNgay->groupBy('phongChieu.loaiPhong.ten_loai_phong') as $tenPhong => $suatChieusTheoPhong)
-                                        <div class="room-title">{{ $tenPhong }}</div>
+                                        <div class="room-title">
+                                            {{ $suatChieusTheoPhong->first()->formatted_version ?? '' }}
+                                        </div>
                                         <div class="hour">
                                             @foreach ($suatChieusTheoPhong as $suat)
                                                 <a href="" class="time-btn">
