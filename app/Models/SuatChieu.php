@@ -14,8 +14,6 @@ class SuatChieu extends Model
 
     protected $fillable = [
         'phim_id',
-        // 'chi_nhanh_id',
-        // 'rap_phim_id',
         'phong_chieu_id',
         'phien_ban_phim',
         'ngay_chieu',
@@ -24,30 +22,10 @@ class SuatChieu extends Model
         'trang_thai',
     ];
 
-    // protected $casts = [
-    //     'trang_thai' => 'boolean',
-
-    // ];
-
-    // Quan hệ với model Phim
     public function phim()
     {
         return $this->belongsTo(Phim::class);
     }
-
-    // // Quan hệ với model ChiNhanh
-    // public function chiNhanh()
-    // {
-    //     return $this->belongsTo(ChiNhanh::class);
-    // }
-
-    // // Quan hệ với model RapPhim (nullable)
-    // public function rapPhim()
-    // {
-    //     return $this->belongsTo(RapPhim::class);
-    // }
-
-    // Quan hệ với model PhongChieu
 
     public function phongChieu()
     {
@@ -56,7 +34,7 @@ class SuatChieu extends Model
 
     public function chiNhanh()
     {
-        return $this->belongsTo(\App\Models\ChiNhanh::class, 'chi_nhanh_id', 'id');
+        return $this->belongsTo(ChiNhanh::class, 'chi_nhanh_id', 'id');
     }
 
     public function rapPhims()
@@ -64,25 +42,38 @@ class SuatChieu extends Model
         return $this->belongsTo(RapPhim::class, 'phong_chieu_id', 'id');
     }
 
-
     public function datVes()
     {
         return $this->hasMany(DatVe::class, 'suat_chieu_id');
     }
 
-    public function getFormattedVersionAttribute()
-    {
-        [$f, $s] = explode('-', $this->phien_ban_phim, 2) + ['', ''];
-        return Str::upper($f) . ' – ' . Str::title(str_replace('-', ' ', $s));
-    }
     public function dinhDangPhim()
     {
-        return $this->belongsTo(DinhDangPhim::class, 'phien_ban_phim', 'id'); // hoặc 'id' tùy DB
+        return $this->belongsTo(DinhDangPhim::class, 'phien_ban_phim', 'id');
     }
-    
-    public function chiNhanhs()
-{
-    return $this->phim ? $this->phim->chiNhanhs() : collect();
-}
-}
 
+    public function chiNhanhs()
+    {
+        return $this->phim ? $this->phim->chiNhanhs() : collect();
+    }
+
+    public function getFormattedVersionAttribute()
+    {
+        $phienBanSlug = $this->phien_ban_phim;
+
+        if (!$this->phim || !$this->phim->relationLoaded('dinhDangs') || !$this->phim->relationLoaded('phuDes')) {
+            return 'Không rõ';
+        }
+
+        foreach ($this->phim->dinhDangs as $f) {
+            foreach ($this->phim->phuDes as $s) {
+                $slug = strtolower(Str::slug($f->ten_dinh_dang) . '-' . Str::slug($s->ten_phu_de));
+                if ($slug === $phienBanSlug) {
+                    return "{$f->ten_dinh_dang} – {$s->ten_phu_de}";
+                }
+            }
+        }
+
+        return 'Không rõ';
+    }
+}

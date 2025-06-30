@@ -1,23 +1,67 @@
-/.phpunit.cache
-/node_modules
-/public/build
-/public/hot
+# ====================================
+# Laravel & PHP
+# ====================================
+/vendor/
+/node_modules/
+composer.lock
+phpunit.xml
+.phpunit.result.cache
+.phpunit.cache
 /storage/*.key
 /storage/pail
-/vendor
+/storage/logs/*
+/storage/framework/cache/*
+/storage/framework/sessions/*
+/storage/framework/views/*
+/storage/telescope
 .env
+.env.*
 .env.backup
 .env.production
-.phpactor.json
-.phpunit.result.cache
+.env.testing
+.env.development
+
+# ====================================
+# Laravel file uploads (ảnh, media, ...)
+# ====================================
+/storage/app/public/*
+!/storage/app/public/.gitignore
+/public/storage/*
+!/public/storage/.gitignore
+
+# ====================================
+# Laravel Mix / Vite
+# ====================================
+/public/hot
+/public/build
+
+# ====================================
+# IDEs & Editor configs
+# ====================================
+/.idea/
+/.vscode/
+/.fleet/
+/.zed/
+/.nova/
+/.phpactor.json
+/.lon
+
+# ====================================
+# Logs & debug
+npm-debug.log*
+yarn-error.log*
+
+# ====================================
+# Homestead & Docker
 Homestead.json
 Homestead.yaml
-npm-debug.log
-yarn-error.log
-/auth.json
-/.fleet
-/.idea
-/.nova
-/.vscode
-/.zed
-/.lon
+docker-compose.override.yml
+docker-compose.yml
+.Dockerfile
+
+# ====================================
+# OS-specific files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini

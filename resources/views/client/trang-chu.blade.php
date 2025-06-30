@@ -10,6 +10,10 @@
     @vite('resources/js/trang-chu.js')
 
     <style>
+        html {
+            scroll-behavior: smooth;
+        }
+
         .ten-phim {
             display: -webkit-box;
             -webkit-line-clamp: 2;
@@ -80,29 +84,6 @@
         });
     </script>
 
-    <!-- Đặt vé nhanh -->
-    <div class="booking-fast">
-        <div class="btn"><span>ĐẶT VÉ NHANH</span></div>
-        <div class="select">
-            <select required id="select-chi-nhanh" class="movie-select">
-                <option disabled selected>1-Chọn rạp</option>
-            </select>
-            <select required id="select-phim" class="movie-select" disabled>
-                <option disabled selected>2-Chọn phim</option>
-            </select>
-            <select required id="select-date" class="movie-select" disabled>
-                <option disabled selected>3-Chọn ngày</option>
-            </select>
-            <select required id="select-suat" class="movie-select" disabled>
-                <option disabled selected>4-Chọn suất</option>
-            </select>
-            <button id="btn-dat-ngay" disabled>Đặt ngay</button>
-        </div>
-        <div id="booking-loading" class="booking-loading" style="display: none;">
-            <div class="spinner"></div><span>Đang tải...</span>
-        </div>
-    </div>
-
     <!-- Tabs phim -->
     <div class="menu">
         <button type="button"></button>
@@ -115,18 +96,21 @@
 
     <div class="list-movie">
         @foreach ($allPhims as $phim)
-            <div class="movie">
+            <div class="movie clickable-movie" data-href="{{ route('phim.chi-tiet', $phim->id) }}">
                 <div class="img-wrapper">
                     <a href="{{ route('phim.chi-tiet', $phim->id) }}">
                         <img src="{{ asset('storage/' . $phim->poster) }}" alt="{{ $phim->ten_phim }}">
                     </a>
                     <div class="age-label">{{ $phim->do_tuoi }}</div>
                     <div class="overlay">
-                        <a href="{{ route('phim.chi-tiet', $phim->id) }}">
-                            <button class="btn buy"><i class="fa-solid fa-ticket"></i> Mua vé</button>
+                        <a href="{{ route('phim.chi-tiet', $phim->id) }}#lich-chieu">
+                            <button class="btn buy">
+                                <i class="fa-solid fa-ticket"></i> Mua vé
+                            </button>
                         </a>
-                        <button class="btn trailer" data-video="{{ $phim->trailer }}"><i class="fa-solid fa-video"></i>
-                            Trailer</button>
+                        <button class="btn trailer" data-video="{{ $phim->trailer }}">
+                            <i class="fa-solid fa-video"></i> Trailer
+                        </button>
                     </div>
                 </div>
                 <a href="{{ route('phim.chi-tiet', $phim->id) }}">
@@ -353,5 +337,11 @@
             if (url.includes('youtu.be/')) return 'https://www.youtube.com/embed/' + url.split('youtu.be/')[1];
             return url;
         }
+        document.querySelectorAll('.clickable-movie').forEach(div => {
+            div.addEventListener('click', function(e) {
+                if (e.target.closest('.btn') || e.target.closest('a')) return;
+                window.location.href = this.dataset.href;
+            });
+        });
     </script>
 @endsection
