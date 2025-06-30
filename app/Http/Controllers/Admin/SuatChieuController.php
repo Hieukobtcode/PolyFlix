@@ -22,6 +22,22 @@ class SuatChieuController extends Controller
         return $gioBatDau->gte($gioChoPhepBatDau) && $gioKetThuc->lte($gioChoPhepKetThuc);
     }
 
+    // Thêm hàm helper để làm tròn thời gian
+    private function lamTronThoiGian(Carbon $time): Carbon
+    {
+        $minutes = $time->minute;
+        $roundedMinutes = ceil($minutes / 5) * 5;
+
+        $result = $time->copy();
+
+        if ($roundedMinutes == 60) {
+            $result->addHour()->startOfHour();
+        } else {
+            $result->minute($roundedMinutes);
+        }
+
+        return $result;
+    }
 
     public function index(Request $request)
     {
@@ -64,7 +80,12 @@ class SuatChieuController extends Controller
         $phim = Phim::findOrFail($id);
         $rapPhims = $phim->rapPhims; // rạp liên kết
         $rapPhimIds = $rapPhims->pluck('id');
-        $phongChieus = PhongChieu::whereIn('rap_phim_id', $rapPhimIds)->get();
+        // $phongChieus = PhongChieu::whereIn('rap_phim_id', $rapPhimIds)->get();
+        // Thêm điều kiện cho phòng chiếu
+        $phongChieus = PhongChieu::whereIn('rap_phim_id', $rapPhimIds)
+            ->where('status', 'hoat_dong')
+            ->whereNotNull('so_ghe')
+            ->get();
         $dinhDangs = $phim->dinhDangs;
         $phuDes = $phim->phuDes;
 
@@ -75,6 +96,7 @@ class SuatChieuController extends Controller
     {
         $cheDo = $request->input('che_do');
         $phim = Phim::findOrFail($request['phim_id']);
+        $thoiGianNghi = 20; // thời gian nghỉ giữa các suất chiếu
 
         $validated = $request->validate([
             'phim_id' => 'required|exists:phims,id',
@@ -119,44 +141,76 @@ class SuatChieuController extends Controller
         if ($cheDo === 'thu_cong') {
             $request->validate([
                 'thucong_bat_dau' => 'required|array|min:1',
-                'thucong_ket_thuc' => 'required|array|min:1',
+                // 'thucong_ket_thuc' không còn cần thiết nếu chỉ dựa vào thời lượng phim
                 'thucong_bat_dau.*' => 'required|date_format:H:i',
-                'thucong_ket_thuc.*' => 'required|date_format:H:i',
             ]);
 
-            foreach ($request->thucong_bat_dau as $i => $bdStr) {
-                $ktStr = $request->thucong_ket_thuc[$i];
-                $bd = Carbon::parse($validated['ngay_chieu'] . ' ' . $bdStr);
-                $kt = Carbon::parse($validated['ngay_chieu'] . ' ' . $ktStr);
-                if ($kt->lt($bd)) $kt->addDay();
+            $thoiLuong = $phim->thoi_luong;
+            $cacSuatChieuDeXuat = [];
 
-                if (!$this->isTrongKhoangChoPhep($ngayChieu, $bd, $kt)) {
-                    return redirect()->back()->withErrors([
-                        "Suất chiếu từ {$bd->format('H:i')} đến {$kt->format('H:i')} không nằm trong khung 07:00–02:00."
-                    ])->withInput();
+            // BƯỚC 1: Thu thập và tính toán tất cả các suất chiếu được đề xuất
+            foreach ($request->thucong_bat_dau as $i => $bdStr) {
+                $bd = Carbon::parse($validated['ngay_chieu'] . ' ' . $bdStr);
+                // Làm tròn thời gian bắt đầu
+                $bd = $this->lamTronThoiGian($bd);
+                $kt = $bd->copy()->addMinutes($thoiLuong);
+
+                $cacSuatChieuDeXuat[] = [
+                    'bd' => $bd,
+                    'kt' => $kt,
+                ];
+            }
+
+            // BƯỚC 2: Sắp xếp các suất chiếu đề xuất theo thời gian bắt đầu
+            usort($cacSuatChieuDeXuat, fn($a, $b) => $a['bd'] <=> $b['bd']);
+
+            // BƯỚC 3: Kiểm tra chéo các suất chiếu với nhau và với DB
+            for ($i = 0; $i < count($cacSuatChieuDeXuat); $i++) {
+                $suatHienTai = $cacSuatChieuDeXuat[$i];
+                $bdHienTai = $suatHienTai['bd'];
+                $ktHienTai = $suatHienTai['kt'];
+
+                // 3.1: Kiểm tra với suất chiếu ngay trước nó trong danh sách (để đảm bảo có thời gian nghỉ)
+                if ($i > 0) {
+                    $suatTruoc = $cacSuatChieuDeXuat[$i - 1];
+                    $ktTruoc = $suatTruoc['kt'];
+
+                    // Tính khoảng cách thực tế giữa 2 suất
+                    $thoiGianNghiThucTe = $bdHienTai->diffInMinutes($ktTruoc);
+
+                    if ($thoiGianNghiThucTe < $thoiGianNghi) {
+                        return redirect()->back()->withErrors([
+                            "Không đủ thời gian nghỉ giữa suất chiếu kết thúc lúc {$ktTruoc->format('H:i')} và suất chiếu bắt đầu lúc {$bdHienTai->format('H:i')} (yêu cầu tối thiểu {$thoiGianNghi} phút)."
+                        ])->withInput();
+                    }
                 }
 
+                // 3.2: Kiểm tra với các suất chiếu đã có trong Database
+                $bdStr = $bdHienTai->format('H:i');
+                $ktStr = $ktHienTai->format('H:i');
+                $ngayThucTe = $bdHienTai->format('Y-m-d');
+
                 $daTonTai = SuatChieu::where('phong_chieu_id', $validated['phong_chieu_id'])
-                    ->where('ngay_chieu', $bd->format('Y-m-d')) // so sánh theo ngày thực tế
-                    ->where(function ($q) use ($bdStr, $ktStr) {
-                        $q->whereBetween('bat_dau', [$bdStr, $ktStr])
-                            ->orWhereBetween('ket_thuc', [$bdStr, $ktStr])
-                            ->orWhere(fn($qq) => $qq->where('bat_dau', '<=', $bdStr)->where('ket_thuc', '>=', $ktStr));
-                    })->exists();
+                    ->where('ngay_chieu', $ngayThucTe)
+                    ->where(fn($q) => $q->where('bat_dau', '<', $ktStr)->where('ket_thuc', '>', $bdStr))
+                    ->exists();
 
                 if ($daTonTai) {
                     return redirect()->back()->withErrors([
-                        "Suất chiếu từ $bdStr đến $ktStr bị trùng."
+                        "Suất chiếu từ {$bdStr} đến {$ktStr} bị trùng với một suất chiếu đã có."
                     ])->withInput();
                 }
+            }
 
+            // BƯỚC 4: Nếu tất cả kiểm tra đều qua, tiến hành tạo tất cả suất chiếu
+            foreach ($cacSuatChieuDeXuat as $suat) {
                 SuatChieu::create([
                     'phim_id' => $validated['phim_id'],
                     'phong_chieu_id' => $validated['phong_chieu_id'],
                     'phien_ban_phim' => $validated['phien_ban_phim'],
-                    'ngay_chieu' => $bd->format('Y-m-d'), // ✅ ngày chiếu thực tế
-                    'bat_dau' => $bd->format('H:i'),
-                    'ket_thuc' => $kt->format('H:i'),
+                    'ngay_chieu' => $suat['bd']->format('Y-m-d'),
+                    'bat_dau' => $suat['bd']->format('H:i'),
+                    'ket_thuc' => $suat['kt']->format('H:i'),
                     'trang_thai' => $validated['trang_thai'] ?? 'hoat_dong',
                 ]);
             }
@@ -170,6 +224,9 @@ class SuatChieuController extends Controller
             ]);
 
             $bd = Carbon::parse($validated['ngay_chieu'] . ' ' . $request->tudong_bat_dau);
+            // Làm tròn thời gian bắt đầu ban đầu
+            $bd = $this->lamTronThoiGian($bd);
+
             $kt = Carbon::parse($validated['ngay_chieu'] . ' ' . $request->tudong_ket_thuc);
             if ($kt->lt($bd)) $kt->addDay();
 
@@ -209,7 +266,8 @@ class SuatChieuController extends Controller
                     ]);
                 }
 
-                $bd = $ktSuat->addMinutes(20);
+                $bd = $ktSuat->addMinutes($thoiGianNghi);
+                $bd = $this->lamTronThoiGian($bd);
             }
         }
 

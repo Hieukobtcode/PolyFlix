@@ -18,10 +18,14 @@
     <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
     <!-- Thêm vào <head> của bạn -->
     <!-- Font Awesome 6.5 -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    {{-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
         integrity="sha512-3gW1o5YQUxXxzBlZukPHs+ZyAvMmt0CrxJKpY6GEaE8A3KwhSKiAIFU8vTMWMHRV8ohJQk95r2nczZlLg30+2g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" /> --}}
+    <!-- Font Awesome 6.7.1 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css"
+        integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 </head>
 
 <body>

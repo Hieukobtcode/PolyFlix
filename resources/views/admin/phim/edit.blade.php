@@ -328,21 +328,26 @@
 @endsection
 
 @section('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/vn.js"></script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', async function() {
-
-            $('.select2').each(function() {
-                $(this).select2({
+        document.addEventListener('DOMContentLoaded', function() {
+            // Khởi tạo select2 cho tất cả
+            function initSelect2(selector) {
+                $(selector).select2({
                     theme: 'bootstrap-5',
                     width: '100%',
                     allowClear: true,
-                    dropdownParent: $(this).closest('.card-body'),
-                    placeholder: $(this).attr('placeholder') || 'Chọn'
+                    placeholder: $(selector).attr('placeholder') || 'Chọn'
                 });
+            }
+
+            $('.select2').each(function() {
+                initSelect2(this);
             });
+
 
             // Flatpickr
             flatpickr(".datepicker", {
@@ -351,56 +356,113 @@
                 allowInput: true,
             });
 
-            // Ngôn ngữ tĩnh
-            const ngonNgu = ['Vietnamese', 'English', 'Chinese', 'Korean', 'Japanese'];
+            // *** FIX: Dữ liệu ngôn ngữ được mở rộng và dịch sang tiếng Việt ***
+            const ngonNguData = [{
+                    value: 'Vietnamese',
+                    text: 'Tiếng Việt'
+                },
+                {
+                    value: 'English',
+                    text: 'Tiếng Anh'
+                },
+                {
+                    value: 'Chinese',
+                    text: 'Tiếng Trung'
+                },
+                {
+                    value: 'Korean',
+                    text: 'Tiếng Hàn'
+                },
+                {
+                    value: 'Japanese',
+                    text: 'Tiếng Nhật'
+                },
+                {
+                    value: 'French',
+                    text: 'Tiếng Pháp'
+                },
+                {
+                    value: 'German',
+                    text: 'Tiếng Đức'
+                },
+                {
+                    value: 'Spanish',
+                    text: 'Tiếng Tây Ban Nha'
+                },
+                {
+                    value: 'Russian',
+                    text: 'Tiếng Nga'
+                },
+                {
+                    value: 'Hindi',
+                    text: 'Tiếng Hindi'
+                },
+                {
+                    value: 'Thai',
+                    text: 'Tiếng Thái'
+                },
+                {
+                    value: 'Indonesian',
+                    text: 'Tiếng Indonesia'
+                }
+            ].sort((a, b) => a.text.localeCompare(b.text)); // Sắp xếp theo tên tiếng Việt
+
             const ngonNguSelect = document.getElementById('ngon_ngu');
-            const oldNgonNgu = "{{ old('ngon_ngu', $phim->ngon_ngu ?? '') }}";
-            ngonNgu.forEach(lang => {
+            const oldNgonNgu = "{{ old('ngon_ngu') }}";
+            ngonNguData.forEach(lang => {
                 const option = document.createElement('option');
-                option.value = lang;
-                option.textContent = lang;
-                if (oldNgonNgu === lang) option.selected = true;
+                option.value = lang.value;
+                option.textContent = lang.text;
+                if (oldNgonNgu === lang.value) option.selected = true;
                 ngonNguSelect.appendChild(option);
             });
 
-            // Load quốc gia từ API
-            try {
-                const res = await fetch('https://restcountries.com/v3.1/all');
-                if (!res.ok) throw new Error('Không thể tải quốc gia');
-                const data = await res.json();
+            // *** FIX: API quốc gia ưu tiên tiếng Việt ***
+            // Chỉ yêu cầu các trường cần thiết để tăng tốc độ tải
+            fetch('https://restcountries.com/v3.1/all?fields=name,translations')
+                .then(res => res.json())
+                .then(data => {
+                    const quocGiaSelect = document.getElementById('quoc_gia');
+                    const oldQuocGia = "{{ old('quoc_gia') }}";
 
-                const quocGiaSelect = document.getElementById('quoc_gia');
-                const oldQuocGia = "{{ old('quoc_gia', $phim->quoc_gia ?? '') }}";
+                    // Xử lý và sắp xếp dữ liệu
+                    const countries = data.map(country => {
+                        // Ưu tiên tên tiếng Việt, nếu không có thì dùng tên chung
+                        const displayName = country.translations.vie?.common || country.name.common;
+                        return {
+                            value: country.name.common,
+                            text: displayName
+                        };
+                    }).sort((a, b) => a.text.localeCompare(b.text, 'vi')); // Sắp xếp theo tiếng Việt
 
-                data.sort((a, b) => a.name.common.localeCompare(b.name.common));
-                data.forEach(country => {
-                    const name = country.name.common;
-                    const option = document.createElement('option');
-                    option.value = name;
-                    option.textContent = name;
-                    if (oldQuocGia === name) option.selected = true;
-                    quocGiaSelect.appendChild(option);
-                });
+                    countries.forEach(country => {
+                        const option = document.createElement('option');
+                        option.value = country.value;
+                        option.textContent = country.text;
+                        if (oldQuocGia === country.value) option.selected = true;
+                        quocGiaSelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Lỗi khi tải danh sách quốc gia:', error));
 
-                initSelect2(); // Gọi sau khi load quốc gia
-            } catch (error) {
-                console.error('Lỗi khi tải quốc gia:', error);
-                initSelect2(); // Gọi luôn để tránh vỡ giao diện nếu API fail
-            }
 
             // Poster preview
             document.getElementById('poster').addEventListener('change', function() {
                 const file = this.files[0];
+                const previewContainer = document.getElementById('poster-preview');
                 if (file) {
                     const reader = new FileReader();
                     reader.onload = function(e) {
-                        document.getElementById('poster-preview').innerHTML =
-                            '<img src="' + e.target.result +
-                            '" class="img-fluid img-thumbnail rounded" style="max-height: 200px;">';
+                        previewContainer.innerHTML =
+                            `<img src="${e.target.result}" class="img-fluid img-thumbnail rounded" style="max-height: 200px;">`;
                     };
                     reader.readAsDataURL(file);
+                } else {
+                    previewContainer.innerHTML = '';
                 }
             });
+
+
 
             // Focus
             document.getElementById('ten_phim').focus();

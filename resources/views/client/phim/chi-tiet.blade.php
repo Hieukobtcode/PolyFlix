@@ -130,6 +130,11 @@
             font-size: 1.08rem;
         }
 
+        .movie-desc-container {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
         .movie-desc {
             margin-top: 10px;
             font-size: 1.07rem;
@@ -139,6 +144,7 @@
             border-radius: 9px;
             padding: 13px 14px;
             position: relative;
+            cursor: pointer;
             max-height: 130px;
             overflow: hidden;
             transition: max-height 0.3s ease;
@@ -148,15 +154,25 @@
             max-height: none;
         }
 
-        .movie-desc-overlay {
-            content: "";
+        .movie-desc::after {
+            content: '';
             position: absolute;
             bottom: 0;
             left: 0;
-            right: 0;
-            height: 60px;
-            background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.7));
+            width: 100%;
+            height: 50px;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.9));
             pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .movie-desc.expanded::after {
+            opacity: 0;
+        }
+
+        .description-content {
+            margin-top: 10px;
+            line-height: 1.6;
         }
 
         .read-more-btn {
@@ -643,11 +659,12 @@
                     <div class="movie-desc-container">
                         <div class="movie-desc" id="movieDesc">
                             <span class="movie-label" style="color:#fff;">Nội dung:</span><br>
-                            {!! nl2br(e($phim->mo_ta)) !!}
-                            <div class="movie-desc-overlay" id="descOverlay"></div>
+                            <div class="description-content">
+                                {!! nl2br(e($phim->mo_ta)) !!}
+                            </div>
                         </div>
-                        <span class="read-more-btn" onclick="toggleDescription()" id="readMoreBtn">Xem thêm</span>
                     </div>
+
                 </div>
             </div>
 
@@ -779,14 +796,14 @@
                             } else {
                                 $('#lich-chieu-list').html(data.html);
                             }
-                        }, 3000); 
+                        }, 3000);
                     },
                     error: function() {
                         setTimeout(() => {
                             $('#lich-chieu-list').html(
                                 '<div class="alert alert-danger">Có lỗi xảy ra khi tải lịch chiếu.</div>'
                             );
-                        }, 3000); 
+                        }, 3000);
                     }
                 });
             }
@@ -795,21 +812,15 @@
             loadLichChieu();
         });
 
-        function toggleDescription() {
-            const desc = document.getElementById('movieDesc');
-            const overlay = document.getElementById('descOverlay');
-            const btn = document.getElementById('readMoreBtn');
+        document.addEventListener('DOMContentLoaded', function() {
+            const movieDesc = document.getElementById('movieDesc');
 
-            if (desc.classList.contains('expanded')) {
-                desc.classList.remove('expanded');
-                overlay.style.display = 'block';
-                btn.textContent = 'Xem thêm';
-            } else {
-                desc.classList.add('expanded');
-                overlay.style.display = 'none';
-                btn.textContent = 'Thu gọn';
+            if (movieDesc) {
+                movieDesc.addEventListener('click', function() {
+                    this.classList.toggle('expanded');
+                });
             }
-        }
+        });
     </script>
 
 
