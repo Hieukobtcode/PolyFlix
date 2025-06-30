@@ -1,33 +1,5 @@
 @extends('layouts.admin')
 
-@section('title', 'Quản lý Thể loại phim')
-@section('page-title', 'Thêm thể loại phim')
-@section('breadcrumb', 'Thêm thể loại phim')
-@section('styles')
-    <style>
-        .card {
-            border-radius: 10px;
-        }
-
-        .form-control,
-        .form-select {
-            border-radius: 8px;
-        }
-
-        .form-label {
-            margin-bottom: 0.5rem;
-        }
-
-        .btn {
-            border-radius: 8px;
-        }
-
-        .invalid-feedback {
-            font-size: 0.9em;
-        }
-    </style>
-@endsection
-
 @section('content')
     <div class="container-fluid">
         <div class="card shadow-sm border-0">

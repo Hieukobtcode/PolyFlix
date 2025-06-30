@@ -12,34 +12,49 @@ use App\Http\Controllers\Controller;
 use App\Helpers\IdFormatter;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
+use App\Models\Rating;
+use App\Models\BaiViet;
+
 
 class PhimsController extends Controller
 {
     public function phimDangChieu()
     {
-        $phims = Phim::where('ngay_phat_hanh', '<=', now())
-            ->where('ngay_ket_thuc', '>=', now())
-            ->orderBy('ngay_phat_hanh', 'desc')
-            ->get();
+        $phims = Phim::with(['comments.user']) 
+    ->where('ngay_phat_hanh', '<=', now())
+    ->where('ngay_ket_thuc', '>=', now())
+    ->orderBy('ngay_phat_hanh', 'desc')
+    ->get();
+            $ratings = Rating::all();
 
         $banners = Banner::where('trang_thai', 1)->orderBy('id', 'desc')->get();
 
         $tab = 'dang-chieu';
+         $baiViet = BaiViet::where('status', '!=', 'draft')
+            ->orderBy('ngay_tao', 'desc')
+            ->limit(4)
+            ->get();
 
-        return view('client.phim.phim-list', compact('phims', 'banners', 'tab'));
+        return view('client.phim.phim-list', compact('phims', 'ratings', 'banners', 'tab', 'baiViet'));
     }
 
     public function phimSapChieu()
     {
-        $phims = Phim::where('ngay_phat_hanh', '>', now())
-            ->orderBy('ngay_phat_hanh', 'asc')
-            ->get();
+        $phims = Phim::with(['comments.user']) 
+    ->where('ngay_phat_hanh', '>', now())
+    ->orderBy('ngay_phat_hanh', 'asc')
+    ->get();
+            $ratings = Rating::all();
 
         $banners = Banner::where('trang_thai', 1)->orderBy('id', 'desc')->get();
 
         $tab = 'sap-chieu';
+         $baiViet = BaiViet::where('status', '!=', 'draft')
+            ->orderBy('ngay_tao', 'desc')
+            ->limit(4)
+            ->get();
 
-        return view('client.phim.phim-list', compact('phims', 'banners', 'tab'));
+        return view('client.phim.phim-list', compact('phims', 'ratings', 'banners', 'tab', 'baiViet'));
     }
 
     public function show($id)
@@ -100,7 +115,7 @@ class PhimsController extends Controller
                 return $sc->phien_ban_phim ?? 'Không xác định';
             });
         });
-        $phimDangChieu = Phim::where('id', '!=', $id)->latest()->limit(7)->get();
+        $phimDangChieu = Phim::where('id', '!=', $id)->latest()->limit(3)->get();
 
         $phim->diem_trung_binh = round($phim->ratings->avg('rating'), 1);
         $phim->so_danh_gia = $phim->ratings->count();
@@ -130,18 +145,16 @@ class PhimsController extends Controller
         }
 
         if ($chi_nhanh_id) {
-            $query->whereHas('rapPhims', function ($q) use ($chi_nhanh_id) {
+            $query->whereHas('phongChieu.rapPhim', function ($q) use ($chi_nhanh_id) {
                 $q->where('chi_nhanh_id', $chi_nhanh_id);
             });
         }
-
-        $suatChieus = $query->with(['rapPhims', 'dinhDangPhim'])->get();
 
         $dinhs = ['2D', '3D', 'IMAX', '4DX'];
         $phus = [
             'Tiếng Việt',
             'Tiếng Anh',
-            'Song ngữ Việt - Anh',
+            'Song ngữ Việt-Anh',
             'Tiếng Nhật',
             'Lồng Tiếng'
         ];
@@ -167,13 +180,10 @@ class PhimsController extends Controller
             }
         }
 
+        $suatChieus = $query->with(['rapPhims', 'dinhDangPhim'])->get();
 
         $groupedSuatChieus = $suatChieus->groupBy(function ($sc) {
-            $tenRap = 'Không xác định';
-            if ($sc->rapPhims && $sc->rapPhims->first()) {
-                $tenRap = $sc->rapPhims->first()->ten_rap;
-            }
-            return $tenRap;
+            return $sc->phongChieu?->rapPhim?->ten_rap ?? 'Không xác định';
         })->map(function ($items) use ($phienBanMapping) {
             return $items->groupBy(function ($sc) use ($phienBanMapping) {
                 $key = $sc->phien_ban_phim;
@@ -182,9 +192,9 @@ class PhimsController extends Controller
         });
 
 
+
         $html = view('client.phim.lich-chieu-list', compact('groupedSuatChieus'))->render();
 
         return response()->json(['html' => $html]);
     }
-
 }

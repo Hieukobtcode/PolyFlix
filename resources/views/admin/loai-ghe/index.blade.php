@@ -4,232 +4,167 @@
 @section('page-title', 'Danh sách loại ghế')
 @section('breadcrumb', 'Danh sách loại ghế')
 
-@section('styles')
-    <style>
-        .card {
-            border-radius: 10px;
-        }
-
-        .table th,
-        .table td {
-            vertical-align: middle;
-        }
-
-        .badge {
-            font-size: 0.9em;
-            padding: 0.5em 1em;
-        }
-
-        .pagination {
-            justify-content: end;
-        }
-    </style>
-@endsection
-
 @section('content')
     <div class="container-fluid">
-        <div class="row g-4">
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-4">
 
-            <!-- Form thêm mới -->
-            <div class="col-md-4">
-                <div class="card shadow-sm border-0">
-                    <div class="card-header bg-success text-white">
-                        <h5 class="mb-0 fw-bold">Thêm loại ghế</h5>
-                    </div>
-                    <div class="card-body">
-                        <form action="{{ route('admin.loai-ghe.store') }}" method="POST">
-                            @csrf
+                {{-- Nút Thêm --}}
+                <button class="btn btn-sm btn-primary d-inline-flex align-items-center gap-2 py-2 px-3 mb-3"
+                    data-bs-toggle="modal" data-bs-target="#createLoaiGheModal">
+                    <i class="ti ti-plus fs-5"></i> Thêm loại ghế
+                </button>
 
-                            {{-- Tên loại ghế --}}
-                            <div class="mb-3">
-                                <label for="ten_loai_ghe" class="form-label">Tên loại ghế</label>
-                                <input type="text" name="ten_loai_ghe" class="form-control" required
-                                    value="{{ old('ten_loai_ghe') }}">
-                            </div>
-
-                            {{-- Chú thích màu ghế --}}
-                            <div class="mb-3">
-                                <label for="chu_thich_mau_ghe" class="form-label">Chú thích màu ghế</label>
-                                <input type="color" name="chu_thich_mau_ghe" class="form-control form-control-color"
-                                    value="{{ old('chu_thich_mau_ghe', '#000000') }}" required>
-                            </div>
-
-                            {{-- Mô tả --}}
-                            <div class="mb-3">
-                                <label for="mo_ta" class="form-label">Mô tả</label>
-                                <textarea name="mo_ta" rows="3" class="form-control">{{ old('mo_ta') }}</textarea>
-                            </div>
-
-                            {{-- Phụ thu --}}
-                            <div class="mb-3">
-                                <label for="phu_thu" class="form-label">Phụ thu</label>
-                                <input type="number" name="phu_thu" step="0.01" class="form-control"
-                                    value="{{ old('phu_thu') }}">
-                            </div>
-
-                            {{-- Nút submit --}}
-                            <div class="d-grid">
-                                <button type="submit" class="btn btn-success">
-                                    <i class="fas fa-plus me-1"></i> Thêm mới
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Danh sách loại ghế -->
-            <div class="col-md-8">
-                <div class="card shadow-sm border-0">
-                    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0 fw-bold">Danh sách loại ghế</h5>
-                        <div class="d-flex gap-2">
-                            <input type="text" id="searchInput" class="form-control form-control-sm"
-                                placeholder="Tìm kiếm...">
-                            <button id="resetFilter" class="btn btn-light btn-sm"><i class="fas fa-sync-alt"></i></button>
-                        </div>
-                    </div>
-                    <div class="card-body p-4">
-                        <div class="table-responsive">
-                            <table class="table table-hover table-bordered align-middle">
-                                <thead class="table-dark">
-                                    <tr>
-                                        <th class="text-center" style="width: 5%">#</th>
-                                        <th>Tên loại ghế</th>
-                                        <th>Chú thích màu ghế</th>
-                                        <th>Mô tả</th>
-                                        <th>Phụ thu</th>
-                                        <th class="text-center">Ngày tạo</th>
-                                        <th class="text-center" style="width: 15%">Thao tác</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="loaiGheTable">
-                                    @forelse($loaiGhes as $index => $ghe)
-                                        <tr>
-                                            <td class="text-center">{{ $index + 1 }}</td>
-                                            <td>{{ $ghe->ten_loai_ghe }}</td>
-                                            <td>
-                                                <div
-                                                    style="width: 30px; height: 30px; background-color: {{ $ghe->chu_thich_mau_ghe }}; border: 1px solid #ccc; border-radius: 4px;">
-                                                </div>
-                                            </td>
-
-                                            <td>{{ $ghe->mo_ta ?? '-' }}</td>
-                                            <td>
-                                                @if ($ghe->phu_thu > 0)
-                                                    <span
-                                                        class="badge bg-info">{{ number_format($ghe->phu_thu, 0, '', '.') }}đ</span>
-                                                @else
-                                                    <span class="badge bg-secondary">Miễn phí</span>
-                                                @endif
-                                            </td>
-                                            <td class="text-center">{{ $ghe->created_at->format('d/m/Y H:i') }}</td>
-                                            <td class="text-center">
-                                                <div class="btn-group">
-                                                    <button type="button" class="btn btn-sm btn-outline-primary btn-edit"
+                {{-- Bảng danh sách --}}
+                <div class="table-responsive">
+                    <table class="table text-nowrap align-middle mb-0">
+                        <thead class="bg-gradient-dark text-white">
+                            <tr>
+                                <th class="text-center" style="width: 5%">#</th>
+                                <th>Tên Loại Ghế</th>
+                                <th>Màu Ghế</th>
+                                <th>Mô Tả</th>
+                                <th class="text-center">Phụ Thu</th>
+                                <th class="text-center">Ngày Tạo</th>
+                                <th class="text-center" style="width: 15%">Thao Tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="loaiGheTable">
+                            @forelse($loaiGhes as $index => $ghe)
+                                <tr>
+                                    <td class="text-center">{{ $index + 1 }}</td>
+                                    <td class="fw-medium">{{ $ghe->ten_loai_ghe }}</td>
+                                    <td>
+                                        <div
+                                            style="width: 28px; height: 28px; background-color: {{ $ghe->chu_thich_mau_ghe }}; border: 1px solid #ccc; border-radius: 6px;">
+                                        </div>
+                                    </td>
+                                    <td>{{ Str::limit($ghe->mo_ta, 50) ?? '-' }}</td>
+                                    <td class="text-center">
+                                        @if ($ghe->phu_thu > 0)
+                                            <span class="badge bg-info-subtle text-info fw-semibold">
+                                                {{ number_format($ghe->phu_thu, 0, '', '.') }}đ
+                                            </span>
+                                        @else
+                                            <span class="badge bg-secondary-subtle text-muted">Miễn phí</span>
+                                        @endif
+                                    </td>
+                                    <td class="text-center">{{ $ghe->created_at->format('d/m/Y H:i') }}</td>
+                                    <td class="text-center">
+                                        <div class="dropdown dropstart">
+                                            <a href="javascript:void(0)" class="text-muted" data-bs-toggle="dropdown">
+                                                <i class="ti ti-dots-vertical fs-6"></i>
+                                            </a>
+                                            <ul class="dropdown-menu">
+                                                <li>
+                                                    <button type="button"
+                                                        class="dropdown-item d-flex align-items-center gap-2 btn-edit"
                                                         data-id="{{ $ghe->id }}">
-                                                        <i class="fas fa-edit"></i>
+                                                        <i class="ti ti-edit fs-5"></i> Chỉnh sửa
                                                     </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    @empty
-                                        <tr>
-                                            <td colspan="6" class="text-center text-muted">Không có dữ liệu</td>
-                                        </tr>
-                                    @endforelse
-                                </tbody>
-                            </table>
-                        </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="7" class="text-center text-muted py-3">
+                                        <i class="ti ti-folder-open me-1"></i> Không có dữ liệu
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
 
-                        <!-- Pagination -->
-                        <div class="d-flex justify-content-between align-items-center mt-4">
-                            <div>
-                                <small class="text-muted">Hiển thị {{ $loaiGhes->count() }} trong tổng số
-                                    {{ $loaiGhes->total() }} loại ghế</small>
-                            </div>
-                            <div>
-                                {{ $loaiGhes->links('pagination::bootstrap-5') }}
-                            </div>
-                        </div>
+                {{-- Phân trang --}}
+                <div class="d-flex justify-content-between align-items-center mt-4">
+                    <div>
+                        <small class="text-muted">Hiển thị {{ $loaiGhes->count() }} trong tổng số {{ $loaiGhes->total() }}
+                            loại ghế</small>
+                    </div>
+                    <div>
+                        {{ $loaiGhes->links('pagination::bootstrap-5') }}
                     </div>
                 </div>
+
             </div>
         </div>
     </div>
 
-    <!-- Modal sửa loại ghế -->
-    <div class="modal fade" id="editLoaiGheModal" tabindex="-1" aria-labelledby="editLoaiGheLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <form id="editLoaiGheForm" method="POST">
+    {{-- Modal Thêm --}}
+    <div class="modal fade" id="createLoaiGheModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <form action="{{ route('admin.loai-ghe.store') }}" method="POST" class="modal-content">
                 @csrf
-                @method('PUT')
-                <div class="modal-content">
-                    <div class="modal-header bg-warning">
-                        <h5 class="modal-title" id="editLoaiGheLabel">Sửa loại ghế</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Tên Loại Ghế</label>
+                        <input type="text" name="ten_loai_ghe" class="form-control" required>
                     </div>
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label class="form-label">Tên loại ghế</label>
-                            <input readonly type="text" name="ten_loai_ghe" class="form-control" id="edit_ten_loai_ghe" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Chú thích màu ghế</label>
-                            <input type="color" id="chu_thich_mau_ghe" name="chu_thich_mau_ghe"
-                                class="form-control form-control-color" id="edit_chu_thich_mau_ghe" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Mô tả</label>
-                            <textarea name="mo_ta" class="form-control" id="edit_mo_ta" rows="3"></textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Phụ thu</label>
-                            <input type="number" name="phu_thu" class="form-control" id="edit_phu_thu" step="0.01">
-                        </div>
+                    <div class="mb-3">
+                        <label class="form-label">Màu Ghế</label>
+                        <input type="color" name="chu_thich_mau_ghe" class="form-control form-control-color"
+                            value="#000000">
                     </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-warning">Cập nhật</button>
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <div class="mb-3">
+                        <label class="form-label">Phụ Thu</label>
+                        <input type="number" name="phu_thu" class="form-control" min="0" value="0">
                     </div>
+                    <div class="mb-3">
+                        <label class="form-label">Mô Tả</label>
+                        <textarea name="mo_ta" rows="3" class="form-control"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-primary">Thêm mới</button>
                 </div>
             </form>
         </div>
     </div>
 
+    {{-- Modal Chỉnh sửa --}}
+    <div class="modal fade" id="editLoaiGheModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <form method="POST" class="modal-content" id="editLoaiGheForm">
+                @csrf
+                @method('PUT')
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Tên Loại Ghế</label>
+                        <input type="text" name="ten_loai_ghe" id="edit_ten_loai_ghe" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Màu Ghế</label>
+                        <input type="color" name="chu_thich_mau_ghe" id="chu_thich_mau_ghe"
+                            class="form-control form-control-color">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Phụ Thu</label>
+                        <input type="number" name="phu_thu" id="edit_phu_thu" class="form-control" min="0">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Mô Tả</label>
+                        <textarea name="mo_ta" id="edit_mo_ta" rows="3" class="form-control"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-success">Cập nhật</button>
+                </div>
+            </form>
+        </div>
+    </div>
 @endsection
 
 @section('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const rows = document.querySelectorAll('#loaiGheTable tr');
             const editModal = new bootstrap.Modal(document.getElementById('editLoaiGheModal'));
             const form = document.getElementById('editLoaiGheForm');
 
-            // Tìm kiếm
-            document.getElementById('searchInput').addEventListener('input', function() {
-                const searchText = this.value.toLowerCase();
-                let visibleCount = 0;
-
-                rows.forEach(row => {
-                    const nameCell = row.querySelector('td:nth-child(2)');
-                    if (!nameCell) return;
-
-                    const match = nameCell.textContent.toLowerCase().includes(searchText);
-                    row.style.display = match ? '' : 'none';
-                    if (match) {
-                        visibleCount++;
-                        row.querySelector('td:first-child').textContent = visibleCount;
-                    }
-                });
-            });
-
-            document.getElementById('resetFilter').addEventListener('click', function() {
-                document.getElementById('searchInput').value = '';
-                document.getElementById('searchInput').dispatchEvent(new Event('input'));
-            });
-
-            // Mở modal sửa
             document.querySelectorAll('.btn-edit').forEach(button => {
                 button.addEventListener('click', function() {
                     const gheId = this.getAttribute('data-id');
@@ -240,9 +175,9 @@
                             document.getElementById('edit_ten_loai_ghe').value = data
                                 .ten_loai_ghe;
                             document.getElementById('chu_thich_mau_ghe').value = data
-                                .chu_thich_mau_ghe,
-                                document.getElementById('edit_mo_ta').value = data.mo_ta ?? '';
+                                .chu_thich_mau_ghe;
                             document.getElementById('edit_phu_thu').value = data.phu_thu ?? 0;
+                            document.getElementById('edit_mo_ta').value = data.mo_ta ?? '';
                             editModal.show();
                         });
                 });

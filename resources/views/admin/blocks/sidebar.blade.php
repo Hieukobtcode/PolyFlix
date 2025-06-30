@@ -1,318 +1,393 @@
-<div class="sidebar sidebar-dark sidebar-fixed border-end" id="sidebar">
-    <div class="sidebar-header border-bottom d-flex justify-content-center align-items-center">
-        <div class="sidebar-brand">
-            <img src="{{ asset('logo/LogoPolyFlixAdmin.png') }}" class="sidebar-brand-full"
-                style="width: 150px; height: auto;" alt="PolyFlix Logo">
-        </div>
-        <button class="btn-close d-lg-none" type="button" data-coreui-theme="dark" aria-label="Close"
-            onclick="coreui.Sidebar.getInstance(document.querySelector('#sidebar')).toggle()"></button>
+<aside class="left-sidebar with-vertical">
+    <div class="brand-logo d-flex align-items-center justify-content-between">
+        <a href="index.html" class="text-nowrap logo-img">
+            <img src="https://bootstrapdemos.wrappixel.com/spike/dist/assets/images/logos/logo-light.svg"
+                class="dark-logo" alt="Logo-Dark" />
+            <img src="https://bootstrapdemos.wrappixel.com/spike/dist/assets/images/logos/logo-dark.svg"
+                class="light-logo" alt="Logo-light" />
+        </a>
+        <a href="javascript:void(0)" class="sidebartoggler ms-auto text-decoration-none fs-5 d-block d-xl-none">
+            <i class="ti ti-x"></i>
+        </a>
     </div>
 
+    <div class="scroll-sidebar" data-simplebar>
+        <nav class="sidebar-nav">
+            <ul id="sidebarnav" class="mb-0">
 
-    <ul class="sidebar-nav" data-coreui="navigation" data-simplebar>
-
-
-        <li class="nav-title">Quản lý</li>
-
-        @if (Auth::user()->vai_tro_id === 1)
-            {{-- Thống kê --}}
-            <li class="nav-group">
-                <a class="nav-link nav-group-toggle" href="#">
-                    <i class="fas fa-chart-bar nav-icon"></i>
-                    Thống kê & Báo cáo
-                </a>
-                <ul class="nav-group-items compact">
-                    <li class="nav-item"><a class="nav-link" href="{{ route('admin.thong-ke.index') }}">Tổng quan</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('admin.thong-ke.doanh-thu') }}">Thống kê doanh thu</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('admin.thong-ke.ve') }}">Thống kê vé</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('admin.thong-ke.suat-chieu') }}">Thống kê suất chiếu</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('admin.thong-ke.do-an-combo') }}">Thống kê đồ ăn & combo</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('admin.thong-ke.phim') }}">Thống kê phim</a></li>
-                </ul>
-            </li>
-
-            {{-- Quản lý hệ thống rạp --}}
-            <li class="nav-group">
-                <a class="nav-link nav-group-toggle" href="#">
-                    <i class="fas fa-building nav-icon"></i>
-                    Hệ thống rạp
-                </a>
-                <ul class="nav-group-items compact">
-                    <li class="nav-item"><a class="nav-link" href="{{ route('admin.chi-nhanh.index') }}">Mạng lưới rạp
-                            chiếu</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('admin.loai-phong.index') }}">Loại phòng</a>
-                    </li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('admin.loai-ghe.index') }}">Loại ghế</a>
-                    </li>
-            </li>
-            <li class="nav-item"><a class="nav-link" href="{{ route('admin.gia-ve.index') }}">Giá vé</a></li>
-            </li>
-    </ul>
-    </li>
-
-        {{-- Quản lý phim --}}
-        <li class="nav-group">
-            <a class="nav-link nav-group-toggle" href="#">
-                <svg class="nav-icon">
-                    <use xlink:href="{{ asset('dist/vendors/@coreui/icons/svg/free.svg#cil-video') }}"></use>
-                </svg>
-                Quản lý phim
-            </a>
-            <ul class="nav-group-items compact">
-                <li class="nav-item"><a class="nav-link" href="{{ route('admin.the-loai-phim.index') }}">Thể Loại</a>
+                {{-- Thống kê --}}
+                <li class="sidebar-item">
+                    <a class="sidebar-link has-arrow indigo-hover-bg" href="javascript:void(0)" aria-expanded="false">
+                        <span class="aside-icon p-2 bg-indigo-subtle rounded-1">
+                            <i class="ti ti-chart-pie fs-6"></i>
+                        </span>
+                        <span class="hide-menu ps-1">Thống kê</span>
+                    </a>
+                    <ul aria-expanded="false" class="collapse first-level">
+                        <li class="sidebar-item">
+                            <a href="{{ route('admin.thong-ke.index') }}" class="sidebar-link">
+                                <span class="sidebar-icon"></span>
+                                <span class="hide-menu">Tổng quan</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a href="{{ route('admin.thong-ke.doanh-thu') }}" class="sidebar-link">
+                                <span class="sidebar-icon"></span>
+                                <span class="hide-menu">Doanh thu</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a href="{{ route('admin.thong-ke.ve') }}" class="sidebar-link">
+                                <span class="sidebar-icon"></span>
+                                <span class="hide-menu">Vé</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a href="{{ route('admin.thong-ke.suat-chieu') }}" class="sidebar-link">
+                                <span class="sidebar-icon"></span>
+                                <span class="hide-menu">Suất chiếu</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a href="{{ route('admin.thong-ke.suat-chieu') }}" class="sidebar-link">
+                                <span class="sidebar-icon"></span>
+                                <span class="hide-menu">Đồ ăn, combo</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a href="{{ route('admin.thong-ke.phim') }}" class="sidebar-link">
+                                <span class="sidebar-icon"></span>
+                                <span class="hide-menu">Phim</span>
+                            </a>
+                        </li>
+                    </ul>
                 </li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('admin.dinh-dang-phim.index') }}">Định dạng
-                        phim</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('admin.phu-de-phim.index') }}">Phụ đề phim</a>
+
+                {{-- Hệ thống rạp --}}
+                <li class="sidebar-item">
+                    <a class="sidebar-link has-arrow primary-hover-bg" href="javascript:void(0)" aria-expanded="false">
+                        <span class="aside-icon p-2 bg-primary-subtle rounded-1">
+                            <i class="ti ti-theater fs-7"></i>
+                        </span>
+                        <span class="hide-menu ps-1">Hệ thống rạp</span>
+                    </a>
+                    <ul aria-expanded="false" class="collapse first-level">
+                        <li class="sidebar-item">
+                            <a href="{{ route('admin.chi-nhanh.index') }}" class="sidebar-link">
+                                <span class="sidebar-icon"></span>
+                                <span class="hide-menu">Mạng lưới rạp chiếu</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a href="{{ route('admin.loai-phong.index') }}" class="sidebar-link">
+                                <span class="sidebar-icon"></span>
+                                <span class="hide-menu">Loại phòng</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a href="{{ route('admin.loai-ghe.index') }}" class="sidebar-link">
+                                <span class="sidebar-icon"></span>
+                                <span class="hide-menu">Loại ghế</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a href="{{ route('admin.gia-ve.index') }}" class="sidebar-link">
+                                <span class="sidebar-icon"></span>
+                                <span class="hide-menu">Giá vé</span>
+                            </a>
+                        </li>
+                    </ul>
                 </li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('admin.phim.index') }}">Danh sách phim</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('admin.suat-chieu.index') }}">Suất chiếu</a>
+
+                {{-- Quản lý phim --}}
+                <li class="sidebar-item">
+                    <a class="sidebar-link has-arrow success-hover-bg" href="javascript:void(0)" aria-expanded="false">
+                        <span class="aside-icon p-2 bg-success-subtle rounded-1">
+                            <i class="ti ti-movie fs-6"></i>
+                        </span>
+                        <span class="hide-menu ps-1">Quản lý phim</span>
+                    </a>
+                    <ul aria-expanded="false" class="collapse first-level">
+                        <li class="sidebar-item">
+                            <a href="{{ route('admin.the-loai-phim.index') }}" class="sidebar-link">
+                                <span class="sidebar-icon"></span>
+                                <span class="hide-menu">Thể Loại</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a href="{{ route('admin.dinh-dang-phim.index') }}" class="sidebar-link">
+                                <span class="sidebar-icon"></span>
+                                <span class="hide-menu">Định dạng phim</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a href="{{ route('admin.phu-de-phim.index') }}" class="sidebar-link">
+                                <span class="sidebar-icon"></span>
+                                <span class="hide-menu">Phụ đề phim</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a href="{{ route('admin.phim.index') }}" class="sidebar-link">
+                                <span class="sidebar-icon"></span>
+                                <span class="hide-menu">Danh sách phim</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a href="{{ route('admin.suat-chieu.index') }}" class="sidebar-link">
+                                <span class="sidebar-icon"></span>
+                                <span class="hide-menu">Suất chiếu</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                {{-- Quản lý người dùng --}}
+                <li class="sidebar-item">
+                    <a class="sidebar-link has-arrow warning-hover-bg" href="javascript:void(0)"
+                        aria-expanded="false">
+                        <span class="aside-icon p-2 bg-warning-subtle rounded-1">
+                            <i class="ti ti-user fs-6"></i>
+                        </span>
+                        <span class="hide-menu ps-1">Quản lý người dùng</span>
+                    </a>
+                    <ul aria-expanded="false" class="collapse first-level">
+                        <li class="sidebar-item">
+                            <a href="{{ route('admin.users.index') }}" class="sidebar-link">
+                                <span class="sidebar-icon"></span>
+                                <span class="hide-menu">Người dùng</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a href="{{ route('admin.vai-tro.index') }}" class="sidebar-link">
+                                <span class="sidebar-icon"></span>
+                                <span class="hide-menu">Vai trò</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a href="{{ route('admin.phan-quyen.index') }}" class="sidebar-link">
+                                <span class="sidebar-icon"></span>
+                                <span class="hide-menu">Phân quyền</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                {{-- Cấu hình hệ thống --}}
+                <li class="sidebar-item">
+                    <a class="sidebar-link has-arrow info-hover-bg" href="javascript:void(0)" aria-expanded="false">
+                        <span class="aside-icon p-2 bg-info-subtle rounded-1">
+                            <i class="ti ti-settings fs-6"></i>
+                        </span>
+                        <span class="hide-menu ps-1">Cấu hình hệ thống</span>
+                    </a>
+                    <ul aria-expanded="false" class="collapse first-level">
+                        <li class="sidebar-item">
+                            <a href="{{ route('admin.cau-hinh.index') }}" class="sidebar-link">
+                                <span class="sidebar-icon"></span>
+                                <span class="hide-menu">Cài đặt chung</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a href="{{ route('admin.cap-bac-the.index') }}" class="sidebar-link">
+                                <span class="sidebar-icon"></span>
+                                <span class="hide-menu">Cấp bậc thẻ</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                {{-- Nội dung hiển thị --}}
+                <li class="sidebar-item">
+                    <a class="sidebar-link has-arrow info-hover-bg" href="javascript:void(0)" aria-expanded="false">
+                        <span class="aside-icon p-2 bg-info-subtle rounded-1">
+                            <i class="ti ti-news fs-6"></i>
+                        </span>
+                        <span class="hide-menu ps-1">Nội dung hiển thị</span>
+                    </a>
+                    <ul aria-expanded="false" class="collapse first-level">
+                        <li class="sidebar-item">
+                            <a href="{{ route('admin.bai-viet.index') }}" class="sidebar-link">
+                                <span class="sidebar-icon"></span>
+                                <span class="hide-menu">Bài viết</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a href="{{ route('admin.banners.index') }}" class="sidebar-link">
+                                <span class="sidebar-icon"></span>
+                                <span class="hide-menu">Banners</span>
+                            </a>
+                        </li>
+                        {{-- <li class="sidebar-item">
+                            <a href="{{ route('admin.comments.index') }}" class="sidebar-link">
+                                <span class="sidebar-icon"></span>
+                                <span class="hide-menu">Bình luận và đánh giá</span>
+                            </a>
+                        </li> --}}
+                    </ul>
+                </li>
+
+                {{-- Quản lý đồ ăn --}}
+                <li class="sidebar-item">
+                    <a class="sidebar-link has-arrow danger-hover-bg" href="javascript:void(0)"
+                        aria-expanded="false">
+                        <span class="aside-icon p-2 bg-danger-subtle rounded-1">
+                            <i class="ti ti-cup fs-6"></i>
+                        </span>
+                        <span class="hide-menu ps-1">Quản lý đồ ăn</span>
+                    </a>
+                    <ul aria-expanded="false" class="collapse first-level">
+                        <li class="sidebar-item">
+                            <a href="{{ route('admin.do-an.index') }}" class="sidebar-link">
+                                <span class="sidebar-icon"></span>
+                                <span class="hide-menu">Đồ ăn</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a href="{{ route('admin.combos.index') }}" class="sidebar-link">
+                                <span class="sidebar-icon"></span>
+                                <span class="hide-menu">Combo</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a href="{{ route('admin.danh-muc-do-an.index') }}" class="sidebar-link">
+                                <span class="sidebar-icon"></span>
+                                <span class="hide-menu">Danh mục đồ ăn</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                {{-- Liên hệ khách hàng --}}
+                <li class="sidebar-item">
+                    <a href="{{ route('admin.lien-he.index') }}" class="sidebar-link info-hover-bg">
+                        <span class="aside-icon p-2 bg-info-subtle rounded-1">
+                            <i class="ti ti-mail fs-6"></i>
+                        </span>
+                        <span class="hide-menu ps-1">Liên hệ khách hàng</span>
+                    </a>
+                </li>
+
+                {{-- Khuyến mãi --}}
+                <li class="sidebar-item">
+                    <a href="{{ route('admin.khuyen-mai.index') }}" class="sidebar-link secondary-hover-bg">
+                        <span class="aside-icon p-2 bg-secondary-subtle rounded-1">
+                            <i class="ti ti-tags fs-6"></i>
+                        </span>
+                        <span class="hide-menu ps-1">Khuyến mãi</span>
+                    </a>
+                </li>
+                
+                {{-- Đơn vé --}}
+                <li class="sidebar-item">
+                    <a href="{{ route('admin.dat-ves.index') }}" class="sidebar-link secondary-hover-bg">
+                        <span class="aside-icon p-2 bg-secondary-subtle rounded-1">
+                            <i class="ti ti-ticket fs-6"></i>
+                        </span>
+                        <span class="hide-menu ps-1">Đơn vé</span>
+                    </a>
+                </li>
+
+                <li class="sidebar-item">
+                    <a class="sidebar-link sidebar-link success-hover-bg"
+                        href="https://bootstrapdemos.wrappixel.com/spike/dist/main/index2.html" aria-expanded="false">
+                        <span class="aside-icon p-2 bg-success-subtle rounded-1">
+                            <iconify-icon icon="solar:chart-line-duotone" class="fs-6"></iconify-icon>
+                        </span>
+                        <span class="hide-menu ps-1">Dashboard 2</span>
+                    </a>
+                </li>
+                
+                <li class="sidebar-item">
+                    <a class="sidebar-link has-arrow primary-hover-bg" href="javascript:void(0)"
+                        aria-expanded="false">
+                        <span class="aside-icon p-2 bg-primary-subtle rounded-1">
+                            <iconify-icon icon="solar:dropper-minimalistic-2-line-duotone"
+                                class="fs-6"></iconify-icon>
+                        </span>
+                        <span class="hide-menu ps-1">Apex Charts</span>
+                    </a>
+                    <ul aria-expanded="false" class="collapse first-level">
+                        <li class="sidebar-item">
+                            <a href="https://bootstrapdemos.wrappixel.com/spike/dist/main/chart-apex-line.html"
+                                class="sidebar-link">
+                                <span class="sidebar-icon"></span>
+                                <span class="hide-menu">Line Chart</span>
+                            </a>
+                        </li>
+
+                        <li class="sidebar-item">
+                            <a href="https://bootstrapdemos.wrappixel.com/spike/dist/main/chart-apex-area.html"
+                                class="sidebar-link">
+                                <span class="sidebar-icon"></span>
+                                <span class="hide-menu">Area Chart</span>
+                            </a>
+                        </li>
+
+                        <li class="sidebar-item">
+                            <a href="https://bootstrapdemos.wrappixel.com/spike/dist/main/chart-apex-bar.html"
+                                class="sidebar-link">
+                                <span class="sidebar-icon"></span>
+                                <span class="hide-menu">Bar Chart</span>
+                            </a>
+                        </li>
+
+                        <li class="sidebar-item">
+                            <a href="https://bootstrapdemos.wrappixel.com/spike/dist/main/chart-apex-pie.html"
+                                class="sidebar-link">
+                                <span class="sidebar-icon"></span>
+                                <span class="hide-menu">Pie Chart</span>
+                            </a>
+                        </li>
+
+                        <li class="sidebar-item">
+                            <a href="https://bootstrapdemos.wrappixel.com/spike/dist/main/chart-apex-radial.html"
+                                class="sidebar-link">
+                                <span class="sidebar-icon"></span>
+                                <span class="hide-menu">Radial Chart</span>
+                            </a>
+                        </li>
+
+                        <li class="sidebar-item">
+                            <a href="https://bootstrapdemos.wrappixel.com/spike/dist/main/chart-apex-radar.html"
+                                class="sidebar-link">
+                                <span class="sidebar-icon"></span>
+                                <span class="hide-menu">Radar Chart</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
             </ul>
-        </li>
+        </nav>
+    </div>
 
-    {{-- Quản lý người dùng --}}
-    <li class="nav-group">
-        <a class="nav-link nav-group-toggle" href="#">
-            <i class="fa-solid fa-user nav-icon"></i>
-            Quản lý người dùng
-        </a>
-        <ul class="nav-group-items compact">
-            <li class="nav-item"><a class="nav-link" href="{{ route('admin.users.index') }}">Người dùng</a></li>
-            <li class="nav-item"><a class="nav-link" href="{{ route('admin.vai-tro.index') }}">Vai trò</a></li>
-            <li class="nav-item"><a class="nav-link" href="{{ route('admin.phan-quyen.index') }}">Phân quyền</a>
-            </li>
-        </ul>
-    </li>
+    <div class=" fixed-profile mx-3 mt-3">
+        <div class="card bg-primary-subtle mb-0 shadow-none">
+            <div class="card-body p-4">
+                <div class="d-flex align-items-center justify-content-between gap-3">
+                    <div class="d-flex align-items-center gap-3">
+                        <img src="https://bootstrapdemos.wrappixel.com/spike/dist/assets/images/profile/user-1.jpg"
+                            width="45" height="45" class="img-fluid rounded-circle" alt="spike-img" />
+                        <div>
+                            <h5 class="mb-1">{{ Auth::user()->name }}</h5>
+                            <p class="mb-0">{{ Auth::user()->vaitro->ten }}</p>
+                        </div>
+                    </div>
+                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                        @csrf
+                    </form>
 
-    {{-- Khuyến mãi --}}
-    <li class="nav-group">
-        <a class="nav-link nav-group-toggle" href="#">
-            <i class="fas fa-tags nav-icon"></i>
-            Khuyến mãi
-        </a>
-        <ul class="nav-group-items compact">
-            <li class="nav-item"><a class="nav-link" href="{{ route('admin.khuyen-mai.index') }}">Danh sách</a>
-            </li>
-            <li class="nav-item"><a class="nav-link" href="{{ route('admin.khuyen-mai.thong-ke-su-dung') }}">Thống
-                    kê</a></li>
-        </ul>
-    </li>
-
-    {{-- Cấu hình hệ thống --}}
-    <li class="nav-group">
-        <a class="nav-link nav-group-toggle" href="#">
-            <i class="fas fa-cogs nav-icon"></i>
-            Cấu hình hệ thống
-        </a>
-        <ul class="nav-group-items compact">
-
-            <li class="nav-item"><a class="nav-link" href="{{ route('admin.cau-hinh.index') }}">Cài đặt chung</a>
-            </li>
-            <li class="nav-item"><a class="nav-link" href="{{ route('admin.cap-bac-the.index') }}">Cấp bậc
-                    thẻ</a>
-            </li>
-        </ul>
-    </li>
-
-    {{-- Bài viết & banner --}}
-    <li class="nav-group">
-        <a class="nav-link nav-group-toggle" href="#">
-            <i class="fas fa-newspaper nav-icon"></i>
-            Nội dung hiển thị
-        </a>
-        <ul class="nav-group-items compact">
-            <li class="nav-item"><a class="nav-link" href="{{ route('admin.bai-viet.index') }}">Bài viết</a>
-            </li>
-            <li class="nav-item"><a class="nav-link" href="{{ route('admin.banners.index') }}">Banners</a></li>
-            <li class="nav-item"><a class="nav-link" href="{{ route('admin.comments.index') }}">Bình luận và
-                    đánh giá</a></li>
-        </ul>
-    </li>
-    {{-- Quản lý đồ ăn --}}
-    <li class="nav-group">
-        <a class="nav-link nav-group-toggle" href="#">
-            <svg class="nav-icon">
-                <use xlink:href="{{ asset('dist/vendors/@coreui/icons/svg/free.svg#cil-restaurant') }}"></use>
-            </svg>
-            Quản lý đồ ăn
-        </a>
-        <ul class="nav-group-items compact">
-            <li class="nav-item"><a class="nav-link" href="{{ route('admin.do-an.index') }}">Đồ ăn</a>
-            </li>
-            <li class="nav-item"><a class="nav-link" href="{{ route('admin.combos.index') }}">Combo</a></li>
-            <li class="nav-item"><a class="nav-link" href="{{ route('admin.danh-muc-do-an.index') }}">Danh mục
-                    đồ ăn</a></li>
-        </ul>
-    </li>
-
-    {{-- Liên hệ --}}
-    <li class="nav-item">
-        <a class="nav-link" href="{{ route('admin.lien-he.index') }}">
-            <i class="fas fa-envelope nav-icon"></i>
-            Liên hệ khách hàng
-        </a>
-    </li>
-    {{-- Đơn vé --}}
-    <li class="nav-item">
-        <a class="nav-link" href="{{ route('admin.dat-ves.index') }}">
-            <i class="fas fa-envelope nav-icon"></i>
-            Đơn vé
-        </a>
-    </li>
-@elseif(Auth::user()->vai_tro_id === 2)
-    {{-- Thống kê  --}}
-    <li class="nav-group">
-        <a class="nav-link nav-group-toggle" href="#">
-            <i class="fas fa-chart-bar nav-icon"></i>
-            Thống kê & Báo cáo
-        </a>
-        <ul class="nav-group-items compact">
-            <li class="nav-item"><a class="nav-link" href="{{ route('admin.thong-ke.index') }}">Tổng quan</a></li>
-            <li class="nav-item"><a class="nav-link" href="{{ route('admin.thong-ke.doanh-thu') }}">Thống kê doanh thu</a></li>
-            <li class="nav-item"><a class="nav-link" href="{{ route('admin.thong-ke.ve') }}">Thống kê vé</a></li>
-            <li class="nav-item"><a class="nav-link" href="{{ route('admin.thong-ke.suat-chieu') }}">Thống kê suất chiếu</a></li>
-            <li class="nav-item"><a class="nav-link" href="{{ route('admin.thong-ke.do-an-combo') }}">Thống kê đồ ăn & combo</a></li>
-            <li class="nav-item"><a class="nav-link" href="{{ route('admin.thong-ke.phim') }}">Thống kê phim</a></li>
-        </ul>
-    </li>
-
-    {{-- Chi nhánh --}}
-    <li class="nav-group">
-        <a class="nav-link nav-group-toggle" href="#">
-            <i class="fas fa-building nav-icon"></i>
-            Quản lý chi nhánh
-        </a>
-        <ul class="nav-group-items compact">
-            @php
-                $chiNhanh = \App\Models\ChiNhanh::where('quan_ly_id', Auth::id())->first();
-            @endphp
-
-            @if ($chiNhanh)
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('admin.chi-nhanh.show', $chiNhanh->id) }}">
-                        Chi nhánh
+                    <a href="javascript:void(0)"
+                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
+                        class="position-relative" data-bs-toggle="tooltip" data-bs-placement="top"
+                        title="Đăng xuất">
+                        <iconify-icon icon="solar:logout-line-duotone" class="fs-8"></iconify-icon>
                     </a>
-                </li>
-            @endif
-        </ul>
 
-    </li>
-    {{-- Phim --}}
-    <li class="nav-group">
-        <a class="nav-link nav-group-toggle" href="#">
-            <svg class="nav-icon">
-                <use xlink:href="{{ asset('dist/vendors/@coreui/icons/svg/free.svg#cil-video') }}"></use>
-            </svg>
-            Quản lý phim
-        </a>
-        <ul class="nav-group-items compact">
-            <li class="nav-item"><a class="nav-link" href="{{ route('admin.phim.index') }}">Danh sách phim</a></li>
-            <li class="nav-item"><a class="nav-link" href="{{ route('admin.suat-chieu.index') }}">Suất chiếu</a>
-        </ul>
-    </li>
-    {{-- Đồ ăn  --}}
-    <li class="nav-group">
-        <a class="nav-link nav-group-toggle" href="#">
-            <svg class="nav-icon">
-                <use xlink:href="{{ asset('dist/vendors/@coreui/icons/svg/free.svg#cil-restaurant') }}"></use>
-            </svg>
-            Quản lý đồ ăn
-        </a>
-        <ul class="nav-group-items compact">
-            <li class="nav-item"><a class="nav-link" href="{{ route('admin.do-an.index') }}">Đồ ăn</a>
-            </li>
-            <li class="nav-item"><a class="nav-link" href="{{ route('admin.combos.index') }}">Combo</a></li>
-        </ul>
-    </li>
-    {{-- Đơn vé --}}
-    <li class="nav-item">
-        <a class="nav-link" href="{{ route('admin.dat-ves.index') }}">
-            <i class="fas fa-envelope nav-icon"></i>
-            Đơn vé
-        </a>
-    </li>
-@elseif(Auth::user()->vai_tro_id === 3)
-    {{-- Thống kê  --}}
-    <li class="nav-group">
-        <a class="nav-link nav-group-toggle" href="#">
-            <i class="fas fa-chart-bar nav-icon"></i>
-            Thống kê & Báo cáo
-        </a>
-        <ul class="nav-group-items compact">
-            <li class="nav-item"><a class="nav-link" href="{{ route('admin.thong-ke.index') }}">Tổng quan</a></li>
-            <li class="nav-item"><a class="nav-link" href="{{ route('admin.thong-ke.doanh-thu') }}">Thống kê doanh thu</a></li>
-            <li class="nav-item"><a class="nav-link" href="{{ route('admin.thong-ke.ve') }}">Thống kê vé</a></li>
-            <li class="nav-item"><a class="nav-link" href="{{ route('admin.thong-ke.suat-chieu') }}">Thống kê suất chiếu</a></li>
-            <li class="nav-item"><a class="nav-link" href="{{ route('admin.thong-ke.do-an-combo') }}">Thống kê đồ ăn & combo</a></li>
-            <li class="nav-item"><a class="nav-link" href="{{ route('admin.thong-ke.phim') }}">Thống kê phim</a></li>
-        </ul>
-    </li>
-    {{-- Rạp --}}
-    <li class="nav-group">
-        <a class="nav-link nav-group-toggle" href="#">
-            <i class="fas fa-building nav-icon"></i>
-            Quản lý rạp
-        </a>
-        <ul class="nav-group-items compact">
-            @php
-                $rapPhim = \App\Models\RapPhim::where('quan_ly_id', Auth::id())->first();
-            @endphp
+                </div>
+            </div>
+        </div>
+    </div>
 
-            @if ($rapPhim)
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('admin.rap-phim.show', $rapPhim->id) }}">
-                        Rạp phim
-                    </a>
-                </li>
-            @endif
-        </ul>
-    </li>
-    {{-- Quản lý phim --}}
-    <li class="nav-group">
-        <a class="nav-link nav-group-toggle" href="#">
-            <svg class="nav-icon">
-                <use xlink:href="{{ asset('dist/vendors/@coreui/icons/svg/free.svg#cil-video') }}"></use>
-            </svg>
-            Quản lý phim
-        </a>
-        <ul class="nav-group-items compact">
-            <li class="nav-item"><a class="nav-link" href="{{ route('admin.phim.index') }}">Danh sách phim</a></li>
-            <li class="nav-item"><a class="nav-link" href="{{ route('admin.suat-chieu.index') }}">Suất chiếu</a>
-        </ul>
-    </li>
-
-    {{-- Đồ ăn  --}}
-    <li class="nav-group">
-        <a class="nav-link nav-group-toggle" href="#">
-            <svg class="nav-icon">
-                <use xlink:href="{{ asset('dist/vendors/@coreui/icons/svg/free.svg#cil-restaurant') }}"></use>
-            </svg>
-            Quản lý đồ ăn
-        </a>
-        <ul class="nav-group-items compact">
-            <li class="nav-item"><a class="nav-link" href="{{ route('admin.do-an.index') }}">Đồ ăn</a>
-            </li>
-            <li class="nav-item"><a class="nav-link" href="{{ route('admin.combos.index') }}">Combo</a></li>
-        </ul>
-    </li>
-    {{-- Đơn vé --}}
-    <li class="nav-item">
-        <a class="nav-link" href="{{ route('admin.dat-ves.index') }}">
-            <i class="fas fa-envelope nav-icon"></i>
-            Đơn vé
-        </a>
-    </li>
-    @endif
-
-        {{-- Liên hệ --}}
-        <li class="nav-item">
-            <a class="nav-link" href="{{ route('admin.lien-he.index') }}">
-                <i class="fas fa-envelope nav-icon"></i>
-                Liên hệ khách hàng
-            </a>
-        </li>
-
-
-
-    </ul>
-</div>
+ 
+</aside>

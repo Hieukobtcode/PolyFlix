@@ -61,10 +61,6 @@ class SuatChieu extends Model
     {
         $phienBanSlug = $this->phien_ban_phim;
 
-        if (!$this->phim || !$this->phim->relationLoaded('dinhDangs') || !$this->phim->relationLoaded('phuDes')) {
-            return 'Không rõ';
-        }
-
         foreach ($this->phim->dinhDangs as $f) {
             foreach ($this->phim->phuDes as $s) {
                 $slug = strtolower(Str::slug($f->ten_dinh_dang) . '-' . Str::slug($s->ten_phu_de));

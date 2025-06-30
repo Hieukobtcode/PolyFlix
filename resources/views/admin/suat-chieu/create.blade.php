@@ -1,53 +1,12 @@
 @extends('layouts.admin')
 
-@section('title', 'Danh sách Suất chiếu')
-@section('page-title', 'Thêm Suất chiếu')
-@section('breadcrumb', 'Thêm Suất chiếu')
-
-@section('styles')
-    <style>
-        .card {
-            border-radius: 10px;
-        }
-
-        .form-control,
-        .form-select {
-            border-radius: 8px;
-            border: 1px solid #ced4da;
-        }
-
-        .form-label {
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-        }
-
-        .btn {
-            border-radius: 8px;
-        }
-
-        .invalid-feedback {
-            font-size: 0.9em;
-        }
-
-        .alert {
-            border-radius: 8px;
-        }
-
-        .gio-chieu-group {
-            background-color: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-        }
-    </style>
-@endsection
-
 @section('content')
     <div class="container-fluid">
         <div class="card shadow-sm border-0">
             <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                 <h5 class="mb-0 fw-bold">Thêm suất chiếu cho phim: {{ $phim->ten_phim }}</h5>
                 <a href="{{ route('admin.suat-chieu.index') }}" class="btn btn-light btn-sm" title="Quay lại">
-                    <i class="fas fa-arrow-left me-1"></i> Quay lại
+                    <i class="ti ti-arrow-left me-1"></i> Quay lại
                 </a>
             </div>
             <div class="card-body p-4">
@@ -69,6 +28,7 @@
                         <div class="mb-4">
                             <span class="fw-semibold text-muted">Ngày phát hành:</span>
                             <span>{{ $phim->ngay_phat_hanh ? $phim->ngay_phat_hanh->format('d/m/Y') : 'N/A' }}</span>
+                            <br>
                             <span class="fw-semibold text-muted">Ngày kết thúc:</span>
                             <span>{{ $phim->ngay_ket_thuc ? $phim->ngay_ket_thuc->format('d/m/Y') : 'N/A' }}</span>
                         </div>
@@ -186,7 +146,7 @@
                             <div class="mb-4" id="them-gio-chieu-wrapper">
                                 <button type="button" class="btn btn-outline-success" onclick="themGioChieu()"
                                     title="Thêm khung giờ">
-                                    <i class="fas fa-plus me-1"></i> Thêm giờ chiếu
+                                    <i class="ti ti-plus me-1"></i> Thêm giờ chiếu
                                 </button>
                             </div>
 
@@ -218,7 +178,7 @@
                                 <a href="{{ route('admin.suat-chieu.index') }}" class="btn btn-outline-secondary"
                                     title="Hủy">Hủy</a>
                                 <button type="submit" class="btn btn-primary" title="Lưu suất chiếu">
-                                    <i class="fas fa-save me-1"></i> Lưu suất chiếu
+                                    Lưu suất chiếu
                                 </button>
                             </div>
                         </form>

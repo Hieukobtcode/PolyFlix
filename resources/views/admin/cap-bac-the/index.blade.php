@@ -1,80 +1,55 @@
 @extends('layouts.admin')
 
-@section('title', 'Quản lý cấp bậc thẻ')
-@section('page-title', 'Danh sách cấp bậc thẻ')
-@section('breadcrumb', 'Danh sách cấp bậc thẻ')
-
-@section('styles')
-    <style>
-        .card {
-            border-radius: 10px;
-        }
-
-        .table th,
-        .table td {
-            vertical-align: middle;
-        }
-
-        .badge {
-            font-size: 0.9em;
-            padding: 0.5em 1em;
-        }
-
-        .btn-group .btn {
-            border-radius: 5px;
-        }
-
-        .table-dark {
-            background-color: #343a40;
-        }
-
-        .form-control {
-            border-radius: 8px;
-        }
-    </style>
-@endsection
-
 @section('content')
     <div class="container-fluid">
         <div class="card shadow-sm border-0">
-            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                <h5 class="mb-0 fw-bold">Danh sách cấp bậc thẻ</h5>
-                <a href="{{ route('admin.cap-bac-the.create') }}" class="btn btn-light btn-sm" title="Thêm cấp bậc thẻ">
-                    <i class="fas fa-plus me-1"></i> Thêm cấp bậc
-                </a>
-            </div>
             <div class="card-body p-4">
+
                 <!-- Thanh tìm kiếm -->
-                <div class="row mb-4">
+                <div class="row mb-3">
                     <div class="col-md-4">
-                        <div class="input-group">
-                            <span class="input-group-text bg-light"><i class="fas fa-search"></i></span>
-                            <input type="text" id="searchInput" class="form-control rounded"
-                                placeholder="Tìm kiếm theo tên cấp bậc...">
-                        </div>
+                        <input type="text" id="searchInput" class="form-control" placeholder="Tìm theo tên cấp bậc...">
                     </div>
                 </div>
 
-                <!-- Bảng dữ liệu -->
+                <!-- Nút thêm -->
+                <a href="{{ route('admin.cap-bac-the.create') }}"
+                    class="btn btn-sm btn-primary d-inline-flex align-items-center gap-2 py-2 px-3 mb-3">
+                    <i class="ti ti-plus fs-5"></i> Thêm cấp bậc
+                </a>
+
+                <!-- Bảng danh sách -->
                 <div class="table-responsive">
-                    <table class="table table-hover table-bordered align-middle">
-                        <thead class="table-dark">
+                    <table class="table text-nowrap align-middle mb-0">
+                        <thead class="bg-gradient-dark text-white">
                             <tr>
-                                <th scope="col" class="text-center" style="width: 5%">#</th>
-                                {{-- <th scope="col" class="text-center" style="width: 10%">ID</th> --}}
-                                <th scope="col">Tên cấp bậc</th>
-                                <th scope="col" class="text-center" style="width: 15%">Tổng số vé đã mua</th>
-                                <th scope="col" class="text-center" style="width: 10%">% Hoàn tiền</th>
-                                <th scope="col" class="text-center" style="width: 15%">% Ưu đãi DV</th>
-                                <th scope="col" class="text-center" style="width: 15%">Trạng thái</th>
-                                <th scope="col" class="text-center" style="width: 20%">Thao tác</th>
+                                <th class="text-center" style="width: 5%">
+                                    <h6 class="fs-4 fw-semibold mb-0">#</h6>
+                                </th>
+                                <th>
+                                    <h6 class="fs-4 fw-semibold mb-0">Tên cấp bậc</h6>
+                                </th>
+                                <th class="text-center" style="width: 15%">
+                                    <h6 class="fs-4 fw-semibold mb-0">Tổng vé đã mua</h6>
+                                </th>
+                                <th class="text-center" style="width: 10%">
+                                    <h6 class="fs-4 fw-semibold mb-0">% Hoàn tiền</h6>
+                                </th>
+                                <th class="text-center" style="width: 15%">
+                                    <h6 class="fs-4 fw-semibold mb-0">% Ưu đãi DV</h6>
+                                </th>
+                                <th class="text-center" style="width: 15%">
+                                    <h6 class="fs-4 fw-semibold mb-0">Trạng thái</h6>
+                                </th>
+                                <th class="text-center" style="width: 20%">
+                                    <h6 class="fs-4 fw-semibold mb-0">Thao tác</h6>
+                                </th>
                             </tr>
                         </thead>
                         <tbody id="membershipTable">
                             @forelse($capBacThes as $index => $capBacThe)
                                 <tr>
                                     <td class="text-center">{{ $index + 1 }}</td>
-                                    {{-- <td class="text-center">{{ $capBacThe->id }}</td> --}}
                                     <td>{{ $capBacThe->ten }}</td>
                                     <td class="text-center">{{ number_format($capBacThe->tong_so_ve_da_mua) }} vé</td>
                                     <td class="text-center">{{ $capBacThe->phan_tram_ve }}%</td>
@@ -86,34 +61,41 @@
                                         </span>
                                     </td>
                                     <td class="text-center">
-                                        <div class="btn-group" role="group">
-                                            <a href="{{ route('admin.cap-bac-the.show', $capBacThe->id) }}"
-                                                class="btn btn-sm btn-outline-info" title="Xem chi tiết">
-                                                <i class="fas fa-eye"></i>
+                                        <div class="dropdown dropstart">
+                                            <a href="javascript:void(0)" class="text-muted" data-bs-toggle="dropdown"
+                                                aria-expanded="false">
+                                                <i class="ti ti-dots-vertical fs-6"></i>
                                             </a>
-                                            <a href="{{ route('admin.cap-bac-the.edit', $capBacThe->id) }}"
-                                                class="btn btn-sm btn-outline-primary" title="Chỉnh sửa">
-                                                <i class="fas fa-edit"></i>
-                                            </a>
-                                            @if (!$capBacThe->is_default)
-                                                <form action="{{ route('admin.cap-bac-the.destroy', $capBacThe->id) }}"
-                                                    method="POST" class="d-inline"
-                                                    onsubmit="return confirm('Bạn có chắc chắn muốn xóa cấp bậc thẻ này?')">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-sm btn-outline-danger"
-                                                        title="Xóa">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
-                                                </form>
-                                            @endif
+                                            <ul class="dropdown-menu">
+                                                <li>
+                                                    <a class="dropdown-item d-flex align-items-center gap-2"
+                                                        href="{{ route('admin.cap-bac-the.edit', $capBacThe->id) }}">
+                                                        <i class="ti ti-edit fs-5"></i> Chỉnh sửa
+                                                    </a>
+                                                </li>
+                                                @if (!$capBacThe->is_default)
+                                                    <li>
+                                                        <form
+                                                            action="{{ route('admin.cap-bac-the.destroy', $capBacThe->id) }}"
+                                                            method="POST"
+                                                            onsubmit="return confirm('Bạn có chắc chắn muốn xóa cấp bậc thẻ này?')">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="submit"
+                                                                class="dropdown-item d-flex align-items-center gap-2">
+                                                                <i class="ti ti-trash fs-5 text-danger"></i> Xóa
+                                                            </button>
+                                                        </form>
+                                                    </li>
+                                                @endif
+                                            </ul>
                                         </div>
                                     </td>
                                 </tr>
                             @empty
                                 <tr id="emptyRow">
-                                    <td colspan="8" class="text-center text-muted py-3">
-                                        <i class="fas fa-folder-open me-1"></i> Không có dữ liệu
+                                    <td colspan="7" class="text-center text-muted py-3">
+                                        <i class="ti ti-folder-off me-1"></i> Không có dữ liệu
                                     </td>
                                 </tr>
                             @endforelse
@@ -131,51 +113,66 @@
                         {{ $capBacThes->links('pagination::bootstrap-5') }}
                     </div>
                 </div>
+
             </div>
         </div>
     </div>
-
 @endsection
 
 @section('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Tìm kiếm phía client
             const searchInput = document.getElementById('searchInput');
-            const rows = document.querySelectorAll('#membershipTable tr:not(#emptyRow)');
+            const rows = document.querySelectorAll('#membershipTable tr');
 
-            searchInput.addEventListener('input', function() {
-                const searchValue = this.value.toLowerCase();
+            function filterTable() {
+                const searchText = searchInput.value.toLowerCase();
                 let visibleCount = 0;
 
                 rows.forEach(row => {
-                    const name = row.cells[1].textContent.toLowerCase();
-                    if (name.includes(searchValue)) {
-                        row.style.display = '';
-                        visibleCount++;
-                        // Cập nhật số thứ tự
-                        row.cells[0].textContent = visibleCount;
-                    } else {
-                        row.style.display = 'none';
+                    if (row.querySelector('td')) {
+                        const nameCell = row.querySelector('td:nth-child(2)');
+                        if (!nameCell) return;
+                        const name = nameCell.textContent.toLowerCase();
+                        const nameMatch = name.includes(searchText);
+
+                        if (nameMatch) {
+                            row.style.display = '';
+                            visibleCount++;
+                            const indexCell = row.querySelector('td:first-child');
+                            if (indexCell) indexCell.textContent = visibleCount;
+                        } else {
+                            row.style.display = 'none';
+                        }
                     }
                 });
 
-                // Xử lý thông báo không có kết quả
-                const tableBody = document.getElementById('membershipTable');
-                const existingEmptyRow = document.getElementById('emptyFilterRow');
-                if (visibleCount === 0 && !existingEmptyRow) {
-                    const newEmptyRow = document.createElement('tr');
-                    newEmptyRow.id = 'emptyFilterRow';
-                    newEmptyRow.innerHTML = `
-                                                                <td colspan="8" class="text-center text-muted py-3">
-                                                                        <i class="fas fa-search me-1"></i> Không tìm thấy kết quả phù hợp
-                                                                    </td>
-                                                                `;
-                    tableBody.appendChild(newEmptyRow);
-                } else if (visibleCount > 0 && existingEmptyRow) {
-                    existingEmptyRow.remove();
+                const emptyRow = document.getElementById('emptyRow');
+                if (visibleCount === 0) {
+                    if (!emptyRow) {
+                        const newEmptyRow = document.createElement('tr');
+                        newEmptyRow.id = 'emptyRow';
+                        newEmptyRow.innerHTML = `
+                            <td colspan="7" class="text-center text-muted py-4">
+                                <div class="py-3">
+                                    <i class="ti ti-search fs-3 mb-3"></i>
+                                    <p class="mb-0">Không tìm thấy kết quả phù hợp</p>
+                                </div>
+                            </td>`;
+                        document.getElementById('membershipTable').appendChild(newEmptyRow);
+                    }
+                } else if (emptyRow) {
+                    emptyRow.remove();
                 }
-            });
+
+                const infoText = document.querySelector('.text-muted');
+                if (infoText) {
+                    const totalCount = rows.length - (document.getElementById('emptyRow') ? 1 : 0);
+                    infoText.textContent = `Hiển thị ${visibleCount} trong tổng số ${totalCount} cấp bậc thẻ`;
+                }
+            }
+
+            searchInput.addEventListener('input', filterTable);
         });
     </script>
 @endsection

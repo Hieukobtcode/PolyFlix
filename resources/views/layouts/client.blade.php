@@ -289,7 +289,6 @@
                         </li>
                         <li><a href="{{ route('client.bai-viet') }}">Góc điện ảnh</a></li>
                         <li><a href="{{ route('client.lien-he') }}">Liên hệ</a></li>
-                        <li>Giới thiệu</li>
                     </ul>
                 </div>
             </div>
@@ -318,8 +317,8 @@
         </div>
         <div>
             <h3>XEM PHIM</h3>
-            <p>Phim đang chiếu</p>
-            <p>Phim sắp chiếu</p>
+            <p><a href="{{ route('phim.dang-chieu') }}" style="color: inherit; text-decoration: none;">Phim đang chiếu</a></p>
+            <p><a href="{{ route('phim.sap-chieu') }}" style="color: inherit; text-decoration: none;">Phim sắp chiếu</a></p>
             <p>Suất chiếu đặc biệt</p>
         </div>
         <div>
@@ -339,3 +338,5 @@
 </html>
 {{-- JS --}}
 @yield('scripts')
+
+

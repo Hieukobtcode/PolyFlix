@@ -1,48 +1,39 @@
 @extends('layouts.admin')
+@section('content')
+    <!-- Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.1.1/dist/select2-bootstrap-5-theme.min.css"
+        rel="stylesheet" />
 
-@section('title', 'Quản lý Phim')
-@section('page-title', 'Thêm phim mới')
-@section('breadcrumb', 'Thêm phim mới')
-@section('styles')
     <style>
-        .card {
-            border-radius: 10px;
+        .select2-container--bootstrap-5 .select2-selection {
+            min-height: 38px;
+            padding: 0.375rem 0.75rem;
+            font-size: 1rem;
+            line-height: 1.5;
         }
 
-        .form-control,
-        .form-select,
-        .select2-container--default .select2-selection--multiple {
-            border-radius: 8px;
-            border: 1px solid #ced4da;
+        .select2-selection__choice {
+            padding: 0.25rem 0.5rem !important;
+            background-color: #ffffff !important;
+            color: #000000 !important;
+            /* Màu chữ trắng */
+            font-size: 0.875rem;
+            border: 10px dashed black;
         }
 
-        .form-label {
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-        }
-
-        .btn {
-            border-radius: 8px;
-        }
-
-        .invalid-feedback {
-            font-size: 0.9em;
-        }
-
-        .img-thumbnail {
-            border-radius: 8px;
-            max-height: 200px;
+        .select2-container {
+            width: 100% !important;
         }
     </style>
-@endsection
 
-@section('content')
+
     <div class="container-fluid">
         <div class="card shadow-sm border-0">
-            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
                 <h5 class="mb-0 fw-bold">Thêm phim mới</h5>
-                <a href="{{ route('admin.phim.index') }}" class="btn btn-light btn-sm" title="Quay lại">
-                    <i class="fas fa-arrow-left me-1"></i> Quay lại
+                <a href="{{ route('admin.phim.index') }}" class="btn btn-primary btn-sm" title="Quay lại">
+                    <i class="ti ti-arrow-left me-1"></i> Quay lại
                 </a>
             </div>
             <div class="card-body p-4">
@@ -185,10 +176,11 @@
                             </div>
 
                             <div class="mb-4">
-                                <label for="the_loai_ids" class="form-label fw-semibold">Thể loại <span
+                                <label class="form-label fw-semibold" for="the_loai_ids">Thể loại <span
                                         class="text-danger">*</span></label>
-                                <select class="form-control select2 rounded @error('the_loai_ids') is-invalid @enderror"
-                                    id="the_loai_ids" name="the_loai_ids[]" multiple>
+                                <select id="the_loai_ids" name="the_loai_ids[]"
+                                    class="form-control select2 rounded @error('the_loai_ids') is-invalid @enderror"
+                                    multiple>
                                     @foreach ($theLoaiPhims as $theLoai)
                                         <option value="{{ $theLoai->id }}"
                                             {{ in_array($theLoai->id, old('the_loai_ids', [])) ? 'selected' : '' }}>
@@ -200,6 +192,7 @@
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
+
 
                             <div class="mb-4">
                                 <label for="dinh_dang_ids" class="form-label fw-semibold">Định dạng <span
@@ -234,27 +227,6 @@
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
-
-                            {{-- <div class="mb-4">
-                                <label for="trang_thai" class="form-label fw-semibold">Trạng thái <span
-                                        class="text-danger">*</span></label>
-                                <select class="form-select rounded @error('trang_thai') is-invalid @enderror"
-                                    id="trang_thai" name="trang_thai">
-                                    <option value="">-- Chọn trạng thái --</option>
-                                    <option value="đang chiếu" {{ old('trang_thai') === 'đang chiếu' ? 'selected' : '' }}>
-                                        Đang chiếu</option>
-                                    <option value="sắp chiếu" {{ old('trang_thai') === 'sắp chiếu' ? 'selected' : '' }}>
-                                        Sắp chiếu</option>
-                                    <option value="đã kết thúc"
-                                        {{ old('trang_thai') === 'đã kết thúc' ? 'selected' : '' }}>
-                                        Đã kết thúc</option>
-                                    <option value="bị huỷ" {{ old('trang_thai') === 'bị huỷ' ? 'selected' : '' }}>
-                                        Bị huỷ</option>
-                                </select>
-                                @error('trang_thai')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div> --}}
 
                             <div class="mb-4">
                                 <label for="chi_nhanh_ids" class="form-label fw-semibold">Chi nhánh <span
@@ -297,7 +269,7 @@
                         <a href="{{ route('admin.phim.index') }}" class="btn btn-outline-secondary"
                             title="Hủy">Hủy</a>
                         <button type="submit" class="btn btn-primary" title="Lưu">
-                            <i class="fas fa-save me-1"></i> Lưu
+                            Lưu
                         </button>
                     </div>
                 </form>
@@ -308,60 +280,124 @@
 
 @section('scripts')
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/vn.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/vn.js"></script>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Flatpickr cho ngày phát hành
+            // Khởi tạo select2 cho tất cả
+            function initSelect2(selector) {
+                $(selector).select2({
+                    theme: 'bootstrap-5',
+                    width: '100%',
+                    allowClear: true,
+                    placeholder: $(selector).attr('placeholder') || 'Chọn'
+                });
+            }
+
+            $('.select2').each(function() {
+                initSelect2(this);
+            });
+
+
+            // Flatpickr
             flatpickr(".datepicker", {
                 dateFormat: "Y-m-d",
                 locale: "vn",
                 allowInput: true,
             });
 
-            // Select2 cho thể loại
-            $('.select2').select2({
-                // placeholder: "Chọn thể loại phim",
-                // allowClear: true,
-                // placeholder: "Chọn định dạng phim",
-                // allowClear: true,
-                // placeholder: "Chọn phụ đề phim",
-                // allowClear: true,
-                // placeholder: "Chọn chi nhánh",
-                // allowClear: true,
-                // placeholder: "Chọn rạp",
-                allowClear: true,
-            });
+            // *** FIX: Dữ liệu ngôn ngữ được mở rộng và dịch sang tiếng Việt ***
+            const ngonNguData = [{
+                    value: 'Vietnamese',
+                    text: 'Tiếng Việt'
+                },
+                {
+                    value: 'English',
+                    text: 'Tiếng Anh'
+                },
+                {
+                    value: 'Chinese',
+                    text: 'Tiếng Trung'
+                },
+                {
+                    value: 'Korean',
+                    text: 'Tiếng Hàn'
+                },
+                {
+                    value: 'Japanese',
+                    text: 'Tiếng Nhật'
+                },
+                {
+                    value: 'French',
+                    text: 'Tiếng Pháp'
+                },
+                {
+                    value: 'German',
+                    text: 'Tiếng Đức'
+                },
+                {
+                    value: 'Spanish',
+                    text: 'Tiếng Tây Ban Nha'
+                },
+                {
+                    value: 'Russian',
+                    text: 'Tiếng Nga'
+                },
+                {
+                    value: 'Hindi',
+                    text: 'Tiếng Hindi'
+                },
+                {
+                    value: 'Thai',
+                    text: 'Tiếng Thái'
+                },
+                {
+                    value: 'Indonesian',
+                    text: 'Tiếng Indonesia'
+                }
+            ].sort((a, b) => a.text.localeCompare(b.text)); // Sắp xếp theo tên tiếng Việt
 
-            // Dữ liệu ngôn ngữ tĩnh
-            const ngonNgu = ['Vietnamese', 'English', 'Chinese', 'Korean', 'Japanese'];
             const ngonNguSelect = document.getElementById('ngon_ngu');
             const oldNgonNgu = "{{ old('ngon_ngu') }}";
-            ngonNgu.forEach(lang => {
+            ngonNguData.forEach(lang => {
                 const option = document.createElement('option');
-                option.value = lang;
-                option.textContent = lang;
-                if (oldNgonNgu === lang) option.selected = true;
+                option.value = lang.value;
+                option.textContent = lang.text;
+                if (oldNgonNgu === lang.value) option.selected = true;
                 ngonNguSelect.appendChild(option);
             });
 
-            // Gọi API để lấy danh sách quốc gia
-            fetch('https://restcountries.com/v3.1/all')
+            // *** FIX: API quốc gia ưu tiên tiếng Việt ***
+            // Chỉ yêu cầu các trường cần thiết để tăng tốc độ tải
+            fetch('https://restcountries.com/v3.1/all?fields=name,translations')
                 .then(res => res.json())
                 .then(data => {
                     const quocGiaSelect = document.getElementById('quoc_gia');
                     const oldQuocGia = "{{ old('quoc_gia') }}";
-                    data.sort((a, b) => a.name.common.localeCompare(b.name.common));
-                    data.forEach(country => {
+
+                    // Xử lý và sắp xếp dữ liệu
+                    const countries = data.map(country => {
+                        // Ưu tiên tên tiếng Việt, nếu không có thì dùng tên chung
+                        const displayName = country.translations.vie?.common || country.name.common;
+                        return {
+                            value: country.name.common,
+                            text: displayName
+                        };
+                    }).sort((a, b) => a.text.localeCompare(b.text, 'vi')); // Sắp xếp theo tiếng Việt
+
+                    countries.forEach(country => {
                         const option = document.createElement('option');
-                        option.value = country.name.common;
-                        option.textContent = country.name.common;
-                        if (oldQuocGia === country.name.common) option.selected = true;
+                        option.value = country.value;
+                        option.textContent = country.text;
+                        if (oldQuocGia === country.value) option.selected = true;
                         quocGiaSelect.appendChild(option);
                     });
-                });
+                })
+                .catch(error => console.error('Lỗi khi tải danh sách quốc gia:', error));
 
-            // Preview ảnh poster
+
+            // Poster preview
             document.getElementById('poster').addEventListener('change', function() {
                 const file = this.files[0];
                 if (file) {
@@ -372,17 +408,15 @@
                             '" class="img-fluid img-thumbnail rounded" style="max-height: 200px;">';
                     };
                     reader.readAsDataURL(file);
-                } else {
-                    document.getElementById('poster-preview').innerHTML = '';
                 }
             });
 
-            // Tự động focus vào trường tên phim
+            // Focus vào tên phim khi tải trang
             document.getElementById('ten_phim').focus();
 
-            // Xác nhận trước khi hủy
-            document.querySelector('.btn-outline-secondary').addEventListener('click', function(e) {
-                if (!confirm('Bạn có muốn hủy và quay lại danh sách?')) {
+            // Xác nhận khi hủy
+            document.querySelector('a.btn-outline-secondary').addEventListener('click', function(e) {
+                if (!confirm('Bạn có chắc muốn hủy bỏ và quay lại trang danh sách không?')) {
                     e.preventDefault();
                 }
             });

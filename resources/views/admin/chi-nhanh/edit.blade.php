@@ -1,31 +1,8 @@
 @extends('layouts.admin')
 
-@section('title', 'Quản lý chi nhánh')
-@section('page-title', 'Chỉnh sửa chi nhánh')
-@section('breadcrumb', 'Chỉnh sửa chi nhánh')
-
-@section('styles')
-    <style>
-        .card {
-            border-radius: 10px;
-        }
-
-        .form-label {
-            font-weight: 600;
-        }
-
-        .btn {
-            border-radius: 5px;
-        }
-    </style>
-@endsection
-
 @section('content')
     <div class="container-fluid">
         <div class="card shadow-sm border-0">
-            <div class="card-header bg-primary text-white">
-                <h5 class="mb-0 fw-bold">Chỉnh sửa Chi Nhánh</h5>
-            </div>
             <div class="card-body p-4">
                 <form action="{{ route('admin.chi-nhanh.update', $chiNhanh->id) }}" method="POST">
                     @csrf
@@ -61,10 +38,10 @@
 
                     <div class="d-flex justify-content-between">
                         <a href="{{ route('admin.chi-nhanh.index') }}" class="btn btn-secondary">
-                            <i class="fas fa-arrow-left me-1"></i> Quay lại
+                            <i class="ti ti-arrow-left me-2"></i> Quay lại
                         </a>
                         <button type="submit" class="btn btn-success">
-                            <i class="fas fa-save me-1"></i> Cập nhật
+                            Cập nhật
                         </button>
                     </div>
                 </form>

@@ -1,613 +1,1126 @@
 @extends('layouts.admin')
-
-@section('title', 'Thống kê tổng quan')
-
 @section('content')
-<div class="container-fluid">
-    <!-- Header -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center">
-                <h2 class="fw-bold text-primary">
-                    <i class="fas fa-chart-bar me-2"></i>Thống kê tổng quan
-                </h2>
-                <div class="btn-group">
-                    <button type="button" class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown">
-                        <i class="fas fa-download me-1"></i>Xuất báo cáo
-                    </button>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#" onclick="xuatBaoCao('tong-quan')">Báo cáo tổng quan</a></li>
-                        <li><a class="dropdown-item" href="#" onclick="xuatBaoCao('phim')">Báo cáo phim</a></li>
-                        <li><a class="dropdown-item" href="#" onclick="xuatBaoCao('lien-he')">Báo cáo liên hệ</a></li>
-                        <li><a class="dropdown-item" href="#" onclick="xuatBaoCao('khuyen-mai')">Báo cáo khuyến mãi</a></li>
-                    </ul>
-                </div>
+    <div class="toast toast-onload align-items-center text-bg-primary border-0" role="alert" aria-live="assertive"
+        aria-atomic="true">
+        <div class="toast-body hstack align-items-start gap-6">
+            <i class="ti ti-alert-circle fs-6"></i>
+            <div>
+                <h5 class="text-white fs-3 mb-1">Chào mừng đến PolyFix</h5>
+                <h6 class="text-white fs-2 mb-0">No Seat, No Ch!!!</h6>
             </div>
+            <button type="button" class="btn-close btn-close-white fs-2 m-0 ms-auto shadow-none" data-bs-dismiss="toast"
+                aria-label="Close"></button>
         </div>
     </div>
-
-    <!-- Bộ lọc theo ngày -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body">
-                    <form method="GET" action="{{ route('admin.thong-ke.index') }}" class="row g-3 align-items-end">
-                        <div class="col-md-4">
-                            <label for="tu_ngay" class="form-label fw-semibold">Từ ngày</label>
-                            <input type="date" class="form-control" id="tu_ngay" name="tu_ngay" value="{{ $tuNgay }}">
-                        </div>
-                        <div class="col-md-4">
-                            <label for="den_ngay" class="form-label fw-semibold">Đến ngày</label>
-                            <input type="date" class="form-control" id="den_ngay" name="den_ngay" value="{{ $denNgay }}">
-                        </div>
-                        <div class="col-md-4">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-filter me-1"></i>Lọc dữ liệu
-                            </button>
-                            <a href="{{ route('admin.thong-ke.index') }}" class="btn btn-outline-secondary ms-2">
-                                <i class="fas fa-refresh me-1"></i>Đặt lại
-                            </a>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Thống kê tổng quan -->
-    <div class="row mb-4">
-        <div class="col-xl-3 col-md-6 mb-3">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="flex-shrink-0">
-                            <div class="bg-primary bg-gradient rounded-circle p-3">
-                                <i class="fas fa-film text-white fa-lg"></i>
-                            </div>
-                        </div>
-                        <div class="flex-grow-1 ms-3">
-                            <div class="small text-muted">Tổng số phim</div>
-                            <div class="h4 mb-0 fw-bold">{{ number_format($tongQuan['tong_phim']) }}</div>
-                            <div class="small text-success">
-                                <i class="fas fa-play me-1"></i>{{ $tongQuan['phim_dang_chieu'] }} đang chiếu
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-xl-3 col-md-6 mb-3">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="flex-shrink-0">
-                            <div class="bg-success bg-gradient rounded-circle p-3">
-                                <i class="fas fa-building text-white fa-lg"></i>
-                            </div>
-                        </div>
-                        <div class="flex-grow-1 ms-3">
-                            <div class="small text-muted">Chi nhánh & Rạp</div>
-                            <div class="h4 mb-0 fw-bold">{{ number_format($tongQuan['tong_chi_nhanh']) }} / {{ number_format($tongQuan['tong_rap']) }}</div>
-                            <div class="small text-success">
-                                <i class="fas fa-check me-1"></i>{{ $tongQuan['rap_hoat_dong'] }} rạp hoạt động
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-xl-3 col-md-6 mb-3">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="flex-shrink-0">
-                            <div class="bg-warning bg-gradient rounded-circle p-3">
-                                <i class="fas fa-envelope text-white fa-lg"></i>
-                            </div>
-                        </div>
-                        <div class="flex-grow-1 ms-3">
-                            <div class="small text-muted">Liên hệ</div>
-                            <div class="h4 mb-0 fw-bold">{{ number_format($tongQuan['tong_lien_he']) }}</div>
-                            <div class="small text-warning">
-                                <i class="fas fa-clock me-1"></i>{{ $tongQuan['lien_he_chua_xu_ly'] }} chưa xử lý
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-xl-3 col-md-6 mb-3">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="flex-shrink-0">
-                            <div class="bg-info bg-gradient rounded-circle p-3">
-                                <i class="fas fa-tags text-white fa-lg"></i>
-                            </div>
-                        </div>
-                        <div class="flex-grow-1 ms-3">
-                            <div class="small text-muted">Khuyến mãi</div>
-                            <div class="h4 mb-0 fw-bold">{{ number_format($tongQuan['tong_khuyen_mai']) }}</div>
-                            <div class="small text-info">
-                                <i class="fas fa-check me-1"></i>{{ $tongQuan['khuyen_mai_hoat_dong'] }} hoạt động
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Thống kê doanh thu -->
-    <div class="row mb-4">
-        <div class="col-xl-4 col-md-6 mb-3">
-            <div class="card border-0 shadow-sm h-100 bg-gradient" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                <div class="card-body text-white">
-                    <div class="d-flex align-items-center">
-                        <div class="flex-shrink-0">
-                            <div class="bg-white bg-opacity-20 rounded-circle p-3">
-                                <i class="fas fa-ticket-alt text-white fa-lg"></i>
-                            </div>
-                        </div>
-                        <div class="flex-grow-1 ms-3">
-                            <div class="small opacity-75">Doanh thu vé</div>
-                            <div class="h4 mb-0 fw-bold">{{ number_format($tongQuan['doanh_thu_ve']) }}đ</div>
-                            <div class="small opacity-75">
-                                <i class="fas fa-chart-line me-1"></i>Từ {{ $tuNgay }} đến {{ $denNgay }}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-xl-4 col-md-6 mb-3">
-            <div class="card border-0 shadow-sm h-100 bg-gradient" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
-                <div class="card-body text-white">
-                    <div class="d-flex align-items-center">
-                        <div class="flex-shrink-0">
-                            <div class="bg-white bg-opacity-20 rounded-circle p-3">
-                                <i class="fas fa-utensils text-white fa-lg"></i>
-                            </div>
-                        </div>
-                        <div class="flex-grow-1 ms-3">
-                            <div class="small opacity-75">Doanh thu combo</div>
-                            <div class="h4 mb-0 fw-bold">{{ number_format($tongQuan['doanh_thu_combo']) }}đ</div>
-                            <div class="small opacity-75">
-                                <i class="fas fa-chart-line me-1"></i>Từ {{ $tuNgay }} đến {{ $denNgay }}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-xl-4 col-md-12 mb-3">
-            <div class="card border-0 shadow-sm h-100 bg-gradient" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
-                <div class="card-body text-white">
-                    <div class="d-flex align-items-center">
-                        <div class="flex-shrink-0">
-                            <div class="bg-white bg-opacity-20 rounded-circle p-3">
-                                <i class="fas fa-coins text-white fa-lg"></i>
-                            </div>
-                        </div>
-                        <div class="flex-grow-1 ms-3">
-                            <div class="small opacity-75">Tổng doanh thu</div>
-                            <div class="h4 mb-0 fw-bold">{{ number_format($tongQuan['tong_doanh_thu']) }}đ</div>
-                            <div class="small opacity-75">
-                                <i class="fas fa-chart-line me-1"></i>Từ {{ $tuNgay }} đến {{ $denNgay }}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Thống kê doanh thu chi tiết -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white border-0">
-                    <h5 class="mb-0 fw-bold">
-                        <i class="fas fa-chart-line me-2"></i>Thống kê doanh thu chi tiết ({{ $tuNgay }} - {{ $denNgay }})
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <div class="row text-center">
-                        <div class="col-md-3">
-                            <div class="border-end">
-                                <div class="h4 mb-0 text-primary">{{ number_format($tongQuan['doanh_thu_ve']) }}đ</div>
-                                <div class="small text-muted">Doanh thu vé</div>
-                                <div class="small text-success">
-                                    <i class="fas fa-arrow-up me-1"></i>
-                                    {{ round(($tongQuan['doanh_thu_ve'] / ($tongQuan['doanh_thu_ve'] + $tongQuan['doanh_thu_combo'])) * 100, 1) }}%
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="border-end">
-                                <div class="h4 mb-0 text-success">{{ number_format($tongQuan['doanh_thu_combo']) }}đ</div>
-                                <div class="small text-muted">Doanh thu combo</div>
-                                <div class="small text-info">
-                                    <i class="fas fa-arrow-up me-1"></i>
-                                    {{ round(($tongQuan['doanh_thu_combo'] / ($tongQuan['doanh_thu_ve'] + $tongQuan['doanh_thu_combo'])) * 100, 1) }}%
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="border-end">
-                                <div class="h4 mb-0 text-warning">{{ number_format($tongQuan['tong_doanh_thu'] / count($thongKeTheoNgay)) }}đ</div>
-                                <div class="small text-muted">Doanh thu TB/ngày</div>
-                                <div class="small text-muted">
-                                    <i class="fas fa-calendar me-1"></i>{{ count($thongKeTheoNgay) }} ngày
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="h4 mb-0 text-danger">{{ number_format(max(array_column($thongKeTheoNgay, 'doanh_thu'))) }}đ</div>
-                            <div class="small text-muted">Doanh thu cao nhất</div>
-                            <div class="small text-success">
-                                <i class="fas fa-star me-1"></i>Ngày {{ $thongKeTheoNgay[array_search(max(array_column($thongKeTheoNgay, 'doanh_thu')), array_column($thongKeTheoNgay, 'doanh_thu'))]['ngay'] }}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Biểu đồ và thống kê chi tiết -->
     <div class="row">
-        <!-- Biểu đồ theo ngày -->
-        <div class="col-xl-8 mb-4">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white border-0">
-                    <h5 class="mb-0 fw-bold">Biểu đồ thống kê theo thời gian ({{ $tuNgay }} - {{ $denNgay }})</h5>
+        <div class="col-lg-3 d-flex align-items-stretch">
+            <div class="d-block w-100">
+                <div class="card w-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h4 class="card-title mb-1">Earning</h4>
+                                <p class="card-subtitle">Last 7 Days</p>
+                            </div>
+                            <div>
+                                <h4 class="card-title mb-1 text-end">12,389</h4>
+                                <span
+                                    class="badge rounded-pill bg-warning-subtle text-warning border-warning border text-end">-3.8%</span>
+                            </div>
+                        </div>
+                        <div id="total-orders" class="total-orders-chart my-1 mx-n6"></div>
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <div class="d-flex align-items-center">
+                                <i class="ti ti-circle text-primary fs-4 me-2"></i>
+                                <p class="mb-0">Wrappixel</p>
+                            </div>
+                            <p class="mb-0">52%</p>
+                        </div>
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div class="d-flex align-items-center">
+                                <i class="ti ti-circle text-light fs-4 me-2"></i>
+                                <p class="mb-0">Wrappixel</p>
+                            </div>
+                            <p class="mb-0">48%</p>
+                        </div>
+                    </div>
                 </div>
-                <div class="card-body">
-                    <canvas id="chartTheoNgay" height="100"></canvas>
+                <div class="card w-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h4 class="card-title mb-1">Latest Deal</h4>
+                                <p class="card-subtitle">Last 7 Days</p>
+                            </div>
+                            <div>
+                                <span
+                                    class="badge rounded-pill bg-success-subtle text-success border-success border text-end">86.5%</span>
+                            </div>
+                        </div>
+                        <div class="my-6 py-4">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <h5 class="mb-0">$98,500</h5>
+                                <h6 class="mb-0">$1,22,900</h6>
+                            </div>
+                            <div class="progress bg-light-subtle w-100 my-2">
+                                <div class="progress-bar text-bg-primary" role="progressbar" aria-label="Example 8px high"
+                                    style="width: 80%;" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100">
+                                </div>
+                            </div>
+                            <p class="mb-0">Coupons used: 18/22</p>
+                        </div>
+                        <h6 class="mb-7">Recent Purchasers</h6>
+                        <ul class="hstack mb-0">
+                            <li class="ms-n2">
+                                <a href="javascript:void(0)" class="">
+                                    <img src="https://bootstrapdemos.wrappixel.com/spike/dist/assets/images/profile/user-2.jpg"
+                                        class="rounded-circle border border-2 border-white" width="40" height="40"
+                                        alt="spike-img">
+                                </a>
+                            </li>
+                            <li class="ms-n2">
+                                <a href="javascript:void(0)" class="">
+                                    <img src="https://bootstrapdemos.wrappixel.com/spike/dist/assets/images/profile/user-3.jpg"
+                                        class="rounded-circle border border-2 border-white" width="40" height="40"
+                                        alt="spike-img">
+                                </a>
+                            </li>
+                            <li class="ms-n2">
+                                <a href="javascript:void(0)" class="">
+                                    <img src="https://bootstrapdemos.wrappixel.com/spike/dist/assets/images/profile/user-4.jpg"
+                                        class="rounded-circle border border-2 border-white" width="40" height="40"
+                                        alt="spike-img">
+                                </a>
+                            </li>
+                            <li class="ms-n2">
+                                <a href="javascript:void(0)" class="">
+                                    <img src="https://bootstrapdemos.wrappixel.com/spike/dist/assets/images/profile/user-5.jpg"
+                                        class="rounded-circle border border-2 border-white" width="40" height="40"
+                                        alt="spike-img">
+                                </a>
+                            </li>
+                            <li class="ms-n2">
+                                <a href="javascript:void(0)"
+                                    class="bg-primary-subtle rounded-circle border border-2 border-white d-flex align-items-center justify-content-center round-40">
+                                    +8
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
-
-        <!-- Bảng doanh thu theo ngày -->
-        <div class="col-xl-4 mb-4">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white border-0">
-                    <h5 class="mb-0 fw-bold">Doanh thu theo ngày</h5>
+        <div class="col-lg-6 d-flex align-items-stretch">
+            <div class="card w-100">
+                <div class="card-body border-bottom position-relative">
+                    <h4 class="card-title mb-1">Congratulations Mike</h4>
+                    <p class="card-subtitle mb-0">You have done 38% more sales</p>
+                    <div class="mt-6">
+                        <ul class="list-unstyled mb-0">
+                            <li class="d-flex align-items-center mb-9">
+                                <div
+                                    class="bg-success-subtle p-6 me-3 rounded-circle d-flex align-items-center justify-content-center">
+                                    <iconify-icon icon="solar:cart-5-line-duotone"
+                                        class="fs-7 text-success"></iconify-icon>
+                                </div>
+                                <div>
+                                    <h6 class="mb-1 fs-4">64 new orders</h6>
+                                    <p class="mb-0">Processing</p>
+                                </div>
+                            </li>
+                            <li class="d-flex align-items-center mb-9">
+                                <div
+                                    class="bg-warning-subtle p-6 me-3 rounded-circle d-flex align-items-center justify-content-center">
+                                    <iconify-icon icon="solar:pause-line-duotone"
+                                        class="fs-6 text-warning"></iconify-icon>
+                                </div>
+                                <div>
+                                    <h6 class="mb-1 fs-4">4 orders</h6>
+                                    <p class="mb-0">On hold</p>
+                                </div>
+                            </li>
+                            <li class="d-flex align-items-center">
+                                <div
+                                    class="bg-indigo-subtle p-6 me-3 rounded-circle d-flex align-items-center justify-content-center">
+                                    <iconify-icon icon="solar:bicycling-round-bold-duotone"
+                                        class="fs-7 text-indigo"></iconify-icon>
+                                </div>
+                                <div>
+                                    <h6 class="mb-1 fs-4">12 orders</h6>
+                                    <p class="mb-0">Delivered</p>
+                                </div>
+                            </li>
+                        </ul>
+                        <div class="man-working-on-laptop">
+                            <img src="https://bootstrapdemos.wrappixel.com/spike/dist/assets/images/backgrounds/man-working-on-laptop.png"
+                                alt="spike-img" class="img-fluid">
+                        </div>
+                    </div>
                 </div>
-                <div class="card-body" style="max-height: 400px; overflow-y: auto;">
-                    <div class="table-responsive">
-                        <table class="table table-sm">
-                            <thead>
+                <div class="card-body pb-2">
+                    <div class="d-flex align-items-baseline justify-content-between">
+                        <div>
+                            <h4 class="card-title mb-1">Total Orders</h4>
+                            <p class="card-subtitle mb-0">Weekly Order Updates</p>
+                        </div>
+                        <select class="form-select fw-bold w-auto shadow-none">
+                            <option value="1">This Week</option>
+                            <option value="2">April 2024</option>
+                            <option value="3">May 2024</option>
+                            <option value="4">June 2024</option>
+                        </select>
+                    </div>
+                    <div id="netsells" class="mx-n6"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 d-flex align-items-stretch">
+            <div class="d-block w-100">
+                <div class="card w-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h4 class="card-title mb-1">Profit</h4>
+                                <p class="card-subtitle">Years</p>
+                            </div>
+                            <div>
+                                <h4 class="card-title mb-1 text-end">432</h4>
+                                <span
+                                    class="badge rounded-pill bg-success-subtle text-success border-success border text-end">+26.5%</span>
+                            </div>
+                        </div>
+                        <div id="products" class="my-8"></div>
+                        <p class="mb-0 text-center">$18k Profit more than last years</p>
+                    </div>
+                </div>
+                <div class="card w-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h4 class="card-title mb-1">Customers</h4>
+                                <p class="card-subtitle">Last 7 Days</p>
+                            </div>
+                            <div>
+                                <h4 class="card-title mb-1 text-end">6,380</h4>
+                                <span
+                                    class="badge rounded-pill bg-success-subtle text-success border-success border text-end">+26.5%</span>
+                            </div>
+                        </div>
+                        <div id="customers" class="my-5"></div>
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <p class="mb-0">April 07 - April 14</p>
+                            <p class="mb-0">6,380</p>
+                        </div>
+                        <div class="d-flex align-items-center justify-content-between">
+                            <p class="mb-0">Last Week</p>
+                            <p class="mb-0">4,298</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 d-flex align-items-stretch">
+            <div class="card w-100">
+                <div class="card-body">
+                    <h4 class="card-title">Visit From USA</h4>
+                    <div id="usa" class="h-270"></div>
+                    <div class="mt-4">
+                        <div class="hstack gap-4 mb-4">
+                            <h6 class="mb-0 flex-shrink-0 w25">LA</h6>
+                            <div class="progress bg-light-subtle mt-1 w-100 h-5">
+                                <div class="progress-bar text-bg-info" role="progressbar" style="width: 28%"
+                                    aria-valuenow="28" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <h6 class="mb-0 flex-shrink-0 w35">28%</h6>
+                        </div>
+                        <div class="hstack gap-4 mb-4">
+                            <h6 class="mb-0 flex-shrink-0 w25">NY</h6>
+                            <div class="progress bg-light-subtle mt-1 w-100 h-5">
+                                <div class="progress-bar text-bg-primary" role="progressbar" style="width: 21%"
+                                    aria-valuenow="21" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <h6 class="mb-0 flex-shrink-0 w35">21%</h6>
+                        </div>
+                        <div class="hstack gap-4 mb-4">
+                            <h6 class="mb-0 flex-shrink-0 w25">KA</h6>
+                            <div class="progress bg-light-subtle mt-1 w-100 h-5">
+                                <div class="progress-bar text-bg-danger" role="progressbar" style="width: 18%"
+                                    aria-valuenow="18" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <h6 class="mb-0 flex-shrink-0 w35">18%</h6>
+                        </div>
+                        <div class="hstack gap-4">
+                            <h6 class="mb-0 flex-shrink-0 w25">AZ</h6>
+                            <div class="progress bg-light-subtle mt-1 w-100 h-5">
+                                <div class="progress-bar text-bg-indigo" role="progressbar" style="width: 12%"
+                                    aria-valuenow="12" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <h6 class="mb-0 flex-shrink-0 w35">12%</h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-8 d-flex align-items-stretch">
+            <div class="card w-100">
+                <div class="card-body">
+                    <div class="table-responsive overflow-x-auto products-tabel">
+                        <table class="table text-nowrap customize-table mb-0 align-middle">
+                            <thead class="text-dark fs-4">
                                 <tr>
-                                    <th>Ngày</th>
-                                    <th class="text-end">Doanh thu</th>
+                                    <th>Products</th>
+                                    <th>Payment</th>
+                                    <th>Status</th>
+                                    <th></th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach(array_reverse($thongKeTheoNgay) as $item)
                                 <tr>
-                                    <td>{{ $item['ngay'] }}</td>
-                                    <td class="text-end">
-                                        <span class="badge bg-{{ $item['doanh_thu'] > 5000000 ? 'success' : ($item['doanh_thu'] > 2000000 ? 'warning' : 'secondary') }}">
-                                            {{ number_format($item['doanh_thu']) }}đ
-                                        </span>
+                                    <td class="ps-0">
+                                        <div class="d-flex align-items-center product text-truncate">
+                                            <img src="https://bootstrapdemos.wrappixel.com/spike/dist/assets/images/products/product-7.png"
+                                                class="img-fluid flex-shrink-0" width="60" height="60">
+                                            <div class="ms-3 product-title">
+                                                <h6 class="fs-4 mb-0 text-truncate-2">PlayStation 5
+                                                    DualSense Wireless Controller</h6>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <h5 class="mb-0 fs-4">$120 <span class="text-muted">/499</span>
+                                        </h5>
+                                        <p class="text-muted mb-2">Cancelled</p>
+                                        <div class="progress bg-light-subtle w-100 h-4">
+                                            <div class="progress-bar text-bg-danger" role="progressbar"
+                                                aria-label="Example 4px high" style="width: 100%;" aria-valuenow="100"
+                                                aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span
+                                            class="badge rounded-pill bg-danger-subtle text-danger border-danger border">Cancelled</span>
+                                    </td>
+                                    <td>
+                                        <div class="dropdown dropstart">
+                                            <a href="javascript:void(0)" class="text-muted " id="dropdownMenuButton"
+                                                data-bs-toggle="dropdown" aria-expanded="false">
+                                                <i class="ti ti-dots-vertical fs-5"></i>
+                                            </a>
+                                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                <li>
+                                                    <a class="dropdown-item d-flex align-items-center gap-3"
+                                                        href="javascript:void(0)">
+                                                        <i class="fs-4 ti ti-plus"></i>Add
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a class="dropdown-item d-flex align-items-center gap-3"
+                                                        href="javascript:void(0)">
+                                                        <i class="fs-4 ti ti-edit"></i>Edit
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a class="dropdown-item d-flex align-items-center gap-3"
+                                                        href="javascript:void(0)">
+                                                        <i class="fs-4 ti ti-trash"></i>Delete
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
                                     </td>
                                 </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+                                <tr>
+                                    <td class="ps-0">
+                                        <div class="d-flex align-items-center product text-truncate">
+                                            <img src="https://bootstrapdemos.wrappixel.com/spike/dist/assets/images/products/product-9.png"
+                                                class="img-fluid flex-shrink-0" width="60" height="60">
+                                            <div class="ms-3 product-title">
+                                                <h6 class="fs-4 mb-0 text-truncate-2">Sony X85J 75
+                                                    Inch Sony 4K Ultra HD LED Smart G...
+                                                </h6>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <h5 class="mb-0 fs-4">$120 <span class="text-muted">/499</span>
+                                        </h5>
+                                        <p class="text-muted mb-2">Full paid</p>
+                                        <div class="progress bg-light-subtle w-100 h-4">
+                                            <div class="progress-bar text-bg-success" role="progressbar"
+                                                aria-label="Example 4px high" style="width: 100%;" aria-valuenow="100"
+                                                aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span
+                                            class="badge rounded-pill bg-success-subtle text-success border-success border">Confirmed</span>
+                                    </td>
+                                    <td <div class="dropdown dropstart">
+                                        <a href="javascript:void(0)" class="text-muted " id="dropdownMenuButton"
+                                            data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="ti ti-dots-vertical fs-5"></i>
+                                        </a>
+                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                            <li>
+                                                <a class="dropdown-item d-flex align-items-center gap-3"
+                                                    href="javascript:void(0)">
+                                                    <i class="fs-4 ti ti-plus"></i>Add
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item d-flex align-items-center gap-3"
+                                                    href="javascript:void(0)">
+                                                    <i class="fs-4 ti ti-edit"></i>Edit
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item d-flex align-items-center gap-3"
+                                                    href="javascript:void(0)">
+                                                    <i class="fs-4 ti ti-trash"></i>Delete
+                                                </a>
+                                            </li>
+                                        </ul>
                     </div>
+                    </td>
+                    </tr>
+                    <tr>
+                        <td class="ps-0">
+                            <div class="d-flex align-items-center product text-truncate">
+                                <img src="https://bootstrapdemos.wrappixel.com/spike/dist/assets/images/products/product-6.png"
+                                    class="img-fluid flex-shrink-0" width="60" height="60">
+                                <div class="ms-3 product-title">
+                                    <h6 class="fs-4 mb-0 text-truncate-2">Apple MacBook Pro 13
+                                        inch-M1-8/256GB-space</h6>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <h5 class="mb-0 fs-4">$120 <span class="text-muted">/499</span>
+                            </h5>
+                            <p class="text-muted mb-2">Full paid</p>
+                            <div class="progress bg-light-subtle w-100 h-4">
+                                <div class="progress-bar text-bg-success" role="progressbar"
+                                    aria-label="Example 4px high" style="width: 100%;" aria-valuenow="100"
+                                    aria-valuemin="0" aria-valuemax="100">
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <span
+                                class="badge rounded-pill bg-success-subtle text-success border-success border">Confirmed</span>
+                        </td>
+                        <td>
+                            <div class="dropdown dropstart">
+                                <a href="javascript:void(0)" class="text-muted " id="dropdownMenuButton"
+                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="ti ti-dots-vertical fs-5"></i>
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                    <li>
+                                        <a class="dropdown-item d-flex align-items-center gap-3"
+                                            href="javascript:void(0)">
+                                            <i class="fs-4 ti ti-plus"></i>Add
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item d-flex align-items-center gap-3"
+                                            href="javascript:void(0)">
+                                            <i class="fs-4 ti ti-edit"></i>Edit
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item d-flex align-items-center gap-3"
+                                            href="javascript:void(0)">
+                                            <i class="fs-4 ti ti-trash"></i>Delete
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="ps-0">
+                            <div class="d-flex align-items-center product text-truncate">
+                                <img src="https://bootstrapdemos.wrappixel.com/spike/dist/assets/images/products/product-8.png"
+                                    class="img-fluid flex-shrink-0" width="60" height="60">
+                                <div class="ms-3 product-title">
+                                    <h6 class="fs-4 mb-0 text-truncate-2">Amazon Basics Mesh,
+                                        Mid-Back, Swivel Office De...
+                                    </h6>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <h5 class="mb-0 fs-4">$120 <span class="text-muted">/499</span>
+                            </h5>
+                            <p class="text-muted mb-2">Partially paid</p>
+                            <div class="progress bg-light-subtle w-100 h-4">
+                                <div class="progress-bar text-bg-warning" role="progressbar"
+                                    aria-label="Example 4px high" style="width: 40%;" aria-valuenow="40"
+                                    aria-valuemin="0" aria-valuemax="100">
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <span
+                                class="badge rounded-pill bg-indigo-subtle text-indigo border-indigo border">Confirmed</span>
+                        </td>
+                        <td>
+                            <div class="dropdown dropstart">
+                                <a href="javascript:void(0)" class="text-muted " id="dropdownMenuButton"
+                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="ti ti-dots-vertical fs-5"></i>
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                    <li>
+                                        <a class="dropdown-item d-flex align-items-center gap-3"
+                                            href="javascript:void(0)">
+                                            <i class="fs-4 ti ti-plus"></i>Add
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item d-flex align-items-center gap-3"
+                                            href="javascript:void(0)">
+                                            <i class="fs-4 ti ti-edit"></i>Edit
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item d-flex align-items-center gap-3"
+                                            href="javascript:void(0)">
+                                            <i class="fs-4 ti ti-trash"></i>Delete
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="ps-0 border-bottom-0">
+                            <div class="d-flex align-items-center product text-truncate">
+                                <img src="https://bootstrapdemos.wrappixel.com/spike/dist/assets/images/products/product-5.png"
+                                    class="img-fluid flex-shrink-0" width="60" height="60">
+                                <div class="ms-3 product-title">
+                                    <h6 class="fs-4 mb-0 text-truncate-2">iPhone 13 pro max-Pacific
+                                        Blue-128GB storage</h6>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="border-bottom-0">
+                            <h5 class="mb-0 fs-4">$180 <span class="text-muted">/499</span>
+                            </h5>
+                            <p class="text-muted mb-2">Partially paid</p>
+                            <div class="progress bg-light-subtle w-100 h-4">
+                                <div class="progress-bar text-bg-warning" role="progressbar"
+                                    aria-label="Example 4px high" style="width: 40%;" aria-valuenow="40"
+                                    aria-valuemin="0" aria-valuemax="100">
+                                </div>
+                            </div>
+                        </td>
+                        <td class="border-bottom-0">
+                            <span
+                                class="badge rounded-pill bg-indigo-subtle text-indigo border-indigo border">Confirmed</span>
+                        </td>
+                        <td class="border-bottom-0">
+                            <div class="dropdown dropstart">
+                                <a href="javascript:void(0)" class="text-muted " id="dropdownMenuButton"
+                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="ti ti-dots-vertical fs-5"></i>
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                    <li>
+                                        <a class="dropdown-item d-flex align-items-center gap-3"
+                                            href="javascript:void(0)">
+                                            <i class="fs-4 ti ti-plus"></i>Add
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item d-flex align-items-center gap-3"
+                                            href="javascript:void(0)">
+                                            <i class="fs-4 ti ti-edit"></i>Edit
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item d-flex align-items-center gap-3"
+                                            href="javascript:void(0)">
+                                            <i class="fs-4 ti ti-trash"></i>Delete
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                    </table>
                 </div>
             </div>
         </div>
     </div>
-
-    <!-- Thống kê liên hệ và phân tích -->
-    <div class="row mb-4">
-        <div class="col-xl-4 mb-4">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white border-0">
-                    <h5 class="mb-0 fw-bold">Trạng thái liên hệ</h5>
-                </div>
-                <div class="card-body">
-                    <canvas id="chartLienHe" height="150"></canvas>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-xl-8 mb-4">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white border-0">
-                    <h5 class="mb-0 fw-bold">Phân tích doanh thu</h5>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <h6 class="text-muted">Xu hướng doanh thu</h6>
-                            @php
-                                $doanhThuTrungBinh = array_sum(array_column($thongKeTheoNgay, 'doanh_thu')) / count($thongKeTheoNgay);
-                                $ngayTotNhat = 0;
-                                $ngayXauNhat = 0;
-                                foreach($thongKeTheoNgay as $index => $item) {
-                                    if($item['doanh_thu'] > $thongKeTheoNgay[$ngayTotNhat]['doanh_thu']) $ngayTotNhat = $index;
-                                    if($item['doanh_thu'] < $thongKeTheoNgay[$ngayXauNhat]['doanh_thu']) $ngayXauNhat = $index;
-                                }
-                            @endphp
-                            <ul class="list-unstyled">
-                                <li class="mb-2">
-                                    <i class="fas fa-chart-line text-success me-2"></i>
-                                    <strong>Trung bình:</strong> {{ number_format($doanhThuTrungBinh) }}đ/ngày
+    <div class="col-12">
+        <div class="card mb-0">
+            <div class="card-body">
+                <div class="d-md-flex justify-content-between mb-9">
+                    <div class="mb-9 mb-md-0">
+                        <h4 class="card-title">Latest Reviews</h4>
+                        <p class="card-subtitle mb-0">Review received across all channels</p>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <form class="position-relative me-3 w-100">
+                            <input type="text" class="form-control search-chat py-2 ps-5" id="text-srh"
+                                placeholder="Search">
+                            <i
+                                class="ti ti-search position-absolute top-50 start-0 translate-middle-y fs-6 text-dark ms-3"></i>
+                        </form>
+                        <div class="dropdown">
+                            <a href="javascript:void(0)" class="btn border-dark-subtle shadow-none px-3"
+                                id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="ti ti-dots-vertical fs-5"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+                                <li>
+                                    <a class="dropdown-item d-flex align-items-center gap-3" href="javascript:void(0)">
+                                        <i class="fs-4 ti ti-plus"></i>Add
+                                    </a>
                                 </li>
-                                <li class="mb-2">
-                                    <i class="fas fa-arrow-up text-success me-2"></i>
-                                    <strong>Cao nhất:</strong> {{ $thongKeTheoNgay[$ngayTotNhat]['ngay'] }} - {{ number_format($thongKeTheoNgay[$ngayTotNhat]['doanh_thu']) }}đ
+                                <li>
+                                    <a class="dropdown-item d-flex align-items-center gap-3" href="javascript:void(0)">
+                                        <i class="fs-4 ti ti-edit"></i>Edit
+                                    </a>
                                 </li>
-                                <li class="mb-2">
-                                    <i class="fas fa-arrow-down text-danger me-2"></i>
-                                    <strong>Thấp nhất:</strong> {{ $thongKeTheoNgay[$ngayXauNhat]['ngay'] }} - {{ number_format($thongKeTheoNgay[$ngayXauNhat]['doanh_thu']) }}đ
+                                <li>
+                                    <a class="dropdown-item d-flex align-items-center gap-3" href="javascript:void(0)">
+                                        <i class="fs-4 ti ti-trash"></i>Delete
+                                    </a>
                                 </li>
                             </ul>
                         </div>
-                        <div class="col-md-6">
-                            <h6 class="text-muted">Thống kê tổng hợp</h6>
-                            <ul class="list-unstyled">
-                                <li class="mb-2">
-                                    <i class="fas fa-calendar text-primary me-2"></i>
-                                    <strong>Tổng ngày:</strong> {{ count($thongKeTheoNgay) }} ngày
-                                </li>
-                                <li class="mb-2">
-                                    <i class="fas fa-coins text-warning me-2"></i>
-                                    <strong>Tổng doanh thu:</strong> {{ number_format($tongQuan['tong_doanh_thu']) }}đ
-                                </li>
-                                <li class="mb-2">
-                                    <i class="fas fa-percentage text-info me-2"></i>
-                                    <strong>Tỷ lệ vé/combo:</strong>
-                                    {{ round(($tongQuan['doanh_thu_ve'] / $tongQuan['tong_doanh_thu']) * 100, 1) }}% /
-                                    {{ round(($tongQuan['doanh_thu_combo'] / $tongQuan['tong_doanh_thu']) * 100, 1) }}%
-                                </li>
-                            </ul>
-                        </div>
                     </div>
+                </div>
+                <div class="table-responsive overflow-x-auto latest-reviews-table">
+                    <table class="table align-middle text-nowrap">
+                        <thead class="text-dark fs-4">
+                            <tr>
+                                <th class="ps-0">
+                                    #
+                                </th>
+                                <th>Products</th>
+                                <th>Customer</th>
+                                <th>Reviews</th>
+                                <th>Status</th>
+                                <th>Time</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="ps-0">
+                                    <div class="form-check mb-0 flex-shrink-0">
+                                        <input class="form-check-input" type="checkbox" value=""
+                                            id="flexCheckDefault1">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center product text-truncate">
+                                        <img src="https://bootstrapdemos.wrappixel.com/spike/dist/assets/images/products/product-5.png"
+                                            class="img-fluid flex-shrink-0" width="60" height="60">
+                                        <div class="ms-3 product-title">
+                                            <h6 class="fs-4 mb-0 text-truncate-2">iPhone 13 pro
+                                                max-Pacific Blue-128GB storage</h6>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center text-truncate">
+                                        <img src="https://bootstrapdemos.wrappixel.com/spike/dist/assets/images/profile/user-2.jpg"
+                                            alt="spike-img" class="img-fluid rounded-circle flex-shrink-0" width="40"
+                                            height="40">
+                                        <div class="ms-3">
+                                            <h4 class="card-title mb-1 fs-4">Arlene McCoy</h4>
+                                            <p class="card-subtitle">macoy@arlene.com</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="product-reviews">
+                                        <ul class="list-unstyled d-flex align-items-center mb-0">
+                                            <li>
+                                                <a class="me-1 " href="javascript:void(0)"><iconify-icon
+                                                        icon="solar:star-bold" class="text-warning"></iconify-icon></a>
+                                            </li>
+                                            <li>
+                                                <a class="me-1 " href="javascript:void(0)"><iconify-icon
+                                                        icon="solar:star-bold" class="text-warning"></iconify-icon></a>
+                                            </li>
+                                            <li>
+                                                <a class="me-1 " href="javascript:void(0)"><iconify-icon
+                                                        icon="solar:star-bold" class="text-warning"></iconify-icon></a>
+                                            </li>
+                                            <li>
+                                                <a class="me-1 " href="javascript:void(0)"><iconify-icon
+                                                        icon="solar:star-bold-duotone"
+                                                        class="text-warning"></iconify-icon></a>
+                                            </li>
+                                            <li>
+                                                <a class="" href="javascript:void(0)"><iconify-icon
+                                                        icon="solar:star-line-duotone"
+                                                        class="text-warning"></iconify-icon></a>
+                                            </li>
+                                        </ul>
+                                        <p class="text-dark mb-0 fw-normal text-truncate-2">
+                                            This theme is great. Clean and easy to
+                                            understand. Perfect for those who don't have
+                                            <br>
+                                            time to... <a href="javascript:void(0)">See more</a>
+                                        </p>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span
+                                        class="badge rounded-pill bg-success-subtle text-success border-success border">Confirmed</span>
+                                </td>
+                                <td>
+                                    <p class="mb-0">Nov 8</p>
+                                </td>
+                                <td>
+                                    <div class="dropdown dropstart">
+                                        <a href="javascript:void(0)" class="text-muted " id="dropdownMenuButton"
+                                            data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="ti ti-dots-vertical fs-5"></i>
+                                        </a>
+                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                            <li>
+                                                <a class="dropdown-item d-flex align-items-center gap-3"
+                                                    href="javascript:void(0)">
+                                                    <i class="fs-4 ti ti-plus"></i>Add
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item d-flex align-items-center gap-3"
+                                                    href="javascript:void(0)">
+                                                    <i class="fs-4 ti ti-edit"></i>Edit
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item d-flex align-items-center gap-3"
+                                                    href="javascript:void(0)">
+                                                    <i class="fs-4 ti ti-trash"></i>Delete
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="ps-0">
+                                    <div class="form-check mb-0 flex-shrink-0">
+                                        <input class="form-check-input" type="checkbox" value=""
+                                            id="flexCheckDefault2">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center product text-truncate">
+                                        <img src="https://bootstrapdemos.wrappixel.com/spike/dist/assets/images/products/product-6.png"
+                                            class="img-fluid flex-shrink-0" width="60" height="60">
+                                        <div class="ms-3 product-title">
+                                            <h6 class="fs-4 mb-0 text-truncate-2">Apple MacBook Pro 13
+                                                inch-M1-8/256GB-space</h6>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center text-truncate">
+                                        <img src="https://bootstrapdemos.wrappixel.com/spike/dist/assets/images/profile/user-3.jpg"
+                                            alt="spike-img" class="img-fluid rounded-circle flex-shrink-0" width="40"
+                                            height="40">
+                                        <div class="ms-3">
+                                            <h4 class="card-title mb-1 fs-4">Jerome Bell</h4>
+                                            <p class="card-subtitle">belljerome@yahoo.com</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="product-reviews">
+                                        <ul class="list-unstyled d-flex align-items-center mb-0">
+                                            <li>
+                                                <a class="me-1 " href="javascript:void(0)"><iconify-icon
+                                                        icon="solar:star-bold" class="text-warning"></iconify-icon></a>
+                                            </li>
+                                            <li>
+                                                <a class="me-1 " href="javascript:void(0)"><iconify-icon
+                                                        icon="solar:star-bold" class="text-warning"></iconify-icon></a>
+                                            </li>
+                                            <li>
+                                                <a class="me-1 " href="javascript:void(0)"><iconify-icon
+                                                        icon="solar:star-bold" class="text-warning"></iconify-icon></a>
+                                            </li>
+                                            <li>
+                                                <a class="me-1 " href="javascript:void(0)"><iconify-icon
+                                                        icon="solar:star-bold" class="text-warning"></iconify-icon></a>
+                                            </li>
+                                            <li>
+                                                <a class="" href="javascript:void(0)"><iconify-icon
+                                                        icon="solar:star-line-duotone"
+                                                        class="text-warning"></iconify-icon></a>
+                                            </li>
+                                        </ul>
+                                        <p class="text-dark mb-0 fw-normal text-truncate-2">
+                                            It's a Mac, after all. Once you've gone Mac,there's no going
+                                            back. My first Mac
+                                            lastedover nine years.
+                                        </p>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span
+                                        class="badge rounded-pill bg-warning-subtle text-warning border-warning border">Pending</span>
+                                </td>
+                                <td>
+                                    <p class="mb-0">Nov 8</p>
+                                </td>
+                                <td>
+                                    <div class="dropdown dropstart">
+                                        <a href="javascript:void(0)" class="text-muted " id="dropdownMenuButton"
+                                            data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="ti ti-dots-vertical fs-5"></i>
+                                        </a>
+                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                            <li>
+                                                <a class="dropdown-item d-flex align-items-center gap-3"
+                                                    href="javascript:void(0)">
+                                                    <i class="fs-4 ti ti-plus"></i>Add
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item d-flex align-items-center gap-3"
+                                                    href="javascript:void(0)">
+                                                    <i class="fs-4 ti ti-edit"></i>Edit
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item d-flex align-items-center gap-3"
+                                                    href="javascript:void(0)">
+                                                    <i class="fs-4 ti ti-trash"></i>Delete
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="ps-0">
+                                    <div class="form-check mb-0 flex-shrink-0">
+                                        <input class="form-check-input" type="checkbox" value=""
+                                            id="flexCheckDefault3">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center product text-truncate">
+                                        <img src="https://bootstrapdemos.wrappixel.com/spike/dist/assets/images/products/product-7.png"
+                                            class="img-fluid flex-shrink-0" width="60" height="60">
+                                        <div class="ms-3 product-title">
+                                            <h6 class="fs-4 mb-0 text-truncate-2">PlayStation 5
+                                                DualSense Wireless Controller</h6>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center text-truncate">
+                                        <img src="https://bootstrapdemos.wrappixel.com/spike/dist/assets/images/profile/user-4.jpg"
+                                            alt="spike-img" class="img-fluid rounded-circle flex-shrink-0" width="40"
+                                            height="40">
+                                        <div class="ms-3">
+                                            <h4 class="card-title mb-1 fs-4">Jacob Jones</h4>
+                                            <p class="card-subtitle">jones009@hotmail.com</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="product-reviews">
+                                        <ul class="list-unstyled d-flex align-items-center mb-0">
+                                            <li>
+                                                <a class="me-1 " href="javascript:void(0)"><iconify-icon
+                                                        icon="solar:star-bold" class="text-warning"></iconify-icon></a>
+                                            </li>
+                                            <li>
+                                                <a class="me-1 " href="javascript:void(0)"><iconify-icon
+                                                        icon="solar:star-bold" class="text-warning"></iconify-icon></a>
+                                            </li>
+                                            <li>
+                                                <a class="me-1 " href="javascript:void(0)"><iconify-icon
+                                                        icon="solar:star-bold" class="text-warning"></iconify-icon></a>
+                                            </li>
+                                            <li>
+                                                <a class="me-1 " href="javascript:void(0)"><iconify-icon
+                                                        icon="solar:star-bold-duotone"
+                                                        class="text-warning"></iconify-icon></a>
+                                            </li>
+                                            <li>
+                                                <a class="" href="javascript:void(0)"><iconify-icon
+                                                        icon="solar:star-line-duotone"
+                                                        class="text-warning"></iconify-icon></a>
+                                            </li>
+                                        </ul>
+                                        <p class="text-dark mb-0 fw-normal text-truncate-2">
+                                            The best experience we could hope for.Customer service team
+                                            is amazing and thequality
+                                            of their products... <a href="javascript:void(0)">See
+                                                more</a>
+                                        </p>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span
+                                        class="badge rounded-pill bg-warning-subtle text-warning border-warning border">Pending</span>
+                                </td>
+                                <td>
+                                    <p class="mb-0">Nov 8</p>
+                                </td>
+                                <td>
+                                    <div class="dropdown dropstart">
+                                        <a href="javascript:void(0)" class="text-muted " id="dropdownMenuButton"
+                                            data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="ti ti-dots-vertical fs-5"></i>
+                                        </a>
+                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                            <li>
+                                                <a class="dropdown-item d-flex align-items-center gap-3"
+                                                    href="javascript:void(0)">
+                                                    <i class="fs-4 ti ti-plus"></i>Add
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item d-flex align-items-center gap-3"
+                                                    href="javascript:void(0)">
+                                                    <i class="fs-4 ti ti-edit"></i>Edit
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item d-flex align-items-center gap-3"
+                                                    href="javascript:void(0)">
+                                                    <i class="fs-4 ti ti-trash"></i>Delete
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="ps-0">
+                                    <div class="form-check mb-0 flex-shrink-0">
+                                        <input class="form-check-input" type="checkbox" value=""
+                                            id="flexCheckDefault4">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center product text-truncate">
+                                        <img src="https://bootstrapdemos.wrappixel.com/spike/dist/assets/images/products/product-8.png"
+                                            class="img-fluid flex-shrink-0" width="60" height="60">
+                                        <div class="ms-3 product-title">
+                                            <h6 class="fs-4 mb-0 text-truncate-2">Amazon Basics Mesh,
+                                                Mid-Back, Swivel Office De...
+                                            </h6>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center text-truncate">
+                                        <img src="https://bootstrapdemos.wrappixel.com/spike/dist/assets/images/profile/user-5.jpg"
+                                            alt="spike-img" class="img-fluid rounded-circle flex-shrink-0" width="40"
+                                            height="40">
+                                        <div class="ms-3">
+                                            <h4 class="card-title mb-1 fs-4">Annette Black</h4>
+                                            <p class="card-subtitle">blackanne@yahoo.com</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="product-reviews">
+                                        <ul class="list-unstyled d-flex align-items-center mb-0">
+                                            <li>
+                                                <a class="me-1 " href="javascript:void(0)"><iconify-icon
+                                                        icon="solar:star-bold" class="text-warning"></iconify-icon></a>
+                                            </li>
+                                            <li>
+                                                <a class="me-1 " href="javascript:void(0)"><iconify-icon
+                                                        icon="solar:star-bold" class="text-warning"></iconify-icon></a>
+                                            </li>
+                                            <li>
+                                                <a class="me-1 " href="javascript:void(0)"><iconify-icon
+                                                        icon="solar:star-bold" class="text-warning"></iconify-icon></a>
+                                            </li>
+                                            <li>
+                                                <a class="me-1 " href="javascript:void(0)"><iconify-icon
+                                                        icon="solar:star-bold-duotone"
+                                                        class="text-warning"></iconify-icon></a>
+                                            </li>
+                                            <li>
+                                                <a class="" href="javascript:void(0)"><iconify-icon
+                                                        icon="solar:star-line-duotone"
+                                                        class="text-warning"></iconify-icon></a>
+                                            </li>
+                                        </ul>
+                                        <p class="text-dark mb-0 fw-normal text-truncate-2">
+                                            The controller is quite comfy for me. Despiteits increased
+                                            size, the controller still
+                                            fits well
+                                            <br>in my hands.
+                                        </p>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span
+                                        class="badge rounded-pill bg-success-subtle text-success border-success border">Confirmed</span>
+                                </td>
+                                <td>
+                                    <p class="mb-0">Nov 8</p>
+                                </td>
+                                <td>
+                                    <div class="dropdown dropstart">
+                                        <a href="javascript:void(0)" class="text-muted " id="dropdownMenuButton"
+                                            data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="ti ti-dots-vertical fs-5"></i>
+                                        </a>
+                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                            <li>
+                                                <a class="dropdown-item d-flex align-items-center gap-3"
+                                                    href="javascript:void(0)">
+                                                    <i class="fs-4 ti ti-plus"></i>Add
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item d-flex align-items-center gap-3"
+                                                    href="javascript:void(0)">
+                                                    <i class="fs-4 ti ti-edit"></i>Edit
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item d-flex align-items-center gap-3"
+                                                    href="javascript:void(0)">
+                                                    <i class="fs-4 ti ti-trash"></i>Delete
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="ps-0">
+                                    <div class="form-check mb-0 flex-shrink-0">
+                                        <input class="form-check-input" type="checkbox" value=""
+                                            id="flexCheckDefault5">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center product text-truncate">
+                                        <img src="https://bootstrapdemos.wrappixel.com/spike/dist/assets/images/products/product-9.png"
+                                            class="img-fluid flex-shrink-0" width="60" height="60">
+                                        <div class="ms-3 product-title">
+                                            <h6 class="fs-4 mb-0 text-truncate-2">Sony X85J 75 Inch
+                                                Sony 4K Ultra HD LED Smart G...
+                                            </h6>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center text-truncate">
+                                        <img src="https://bootstrapdemos.wrappixel.com/spike/dist/assets/images/profile/user-6.jpg"
+                                            alt="spike-img" class="img-fluid rounded-circle flex-shrink-0" width="40"
+                                            height="40">
+                                        <div class="ms-3">
+                                            <h4 class="card-title mb-1 fs-4">Albert Flores</h4>
+                                            <p class="card-subtitle">albertflo9@gmail.com</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="product-reviews">
+                                        <ul class="list-unstyled d-flex align-items-center mb-0">
+                                            <li>
+                                                <a class="me-1 " href="javascript:void(0)"><iconify-icon
+                                                        icon="solar:star-bold" class="text-warning"></iconify-icon></a>
+                                            </li>
+                                            <li>
+                                                <a class="me-1 " href="javascript:void(0)"><iconify-icon
+                                                        icon="solar:star-bold" class="text-warning"></iconify-icon></a>
+                                            </li>
+                                            <li>
+                                                <a class="me-1 " href="javascript:void(0)"><iconify-icon
+                                                        icon="solar:star-bold" class="text-warning"></iconify-icon></a>
+                                            </li>
+                                            <li>
+                                                <a class="me-1 " href="javascript:void(0)"><iconify-icon
+                                                        icon="solar:star-bold-duotone"
+                                                        class="text-warning"></iconify-icon></a>
+                                            </li>
+                                            <li>
+                                                <a class="" href="javascript:void(0)"><iconify-icon
+                                                        icon="solar:star-line-duotone"
+                                                        class="text-warning"></iconify-icon></a>
+                                            </li>
+                                        </ul>
+                                        <p class="text-dark mb-0 fw-normal text-truncate-2">
+                                            This theme is great. Perfect for those whodon't have time to
+                                            start everything from
+                                            <br>scratch.
+                                        </p>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span
+                                        class="badge rounded-pill bg-warning-subtle text-warning border-warning border">Pending</span>
+                                </td>
+                                <td>
+                                    <p class="mb-0">Nov 8</p>
+                                </td>
+                                <td>
+                                    <div class="dropdown dropstart">
+                                        <a href="javascript:void(0)" class="text-muted " id="dropdownMenuButton"
+                                            data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="ti ti-dots-vertical fs-5"></i>
+                                        </a>
+                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                            <li>
+                                                <a class="dropdown-item d-flex align-items-center gap-3"
+                                                    href="javascript:void(0)">
+                                                    <i class="fs-4 ti ti-plus"></i>Add
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item d-flex align-items-center gap-3"
+                                                    href="javascript:void(0)">
+                                                    <i class="fs-4 ti ti-edit"></i>Edit
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item d-flex align-items-center gap-3"
+                                                    href="javascript:void(0)">
+                                                    <i class="fs-4 ti ti-trash"></i>Delete
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="d-flex align-items-center justify-content-between mt-10">
+                    <p class="mb-0 fw-normal">1-6 of 32</p>
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination mb-0 align-items-center">
+                            <li class="page-item">
+                                <a class="page-link border-0 d-flex align-items-center text-muted fw-normal"
+                                    href="javascript:void(0)"><iconify-icon icon="solar:alt-arrow-left-line-duotone"
+                                        class="fs-5"></iconify-icon>Previous</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link border-0 d-flex align-items-center fw-normal"
+                                    href="javascript:void(0)">Next<iconify-icon icon="solar:alt-arrow-right-line-duotone"
+                                        class="fs-5"></iconify-icon></a>
+                            </li>
+                        </ul>
+                    </nav>
                 </div>
             </div>
         </div>
     </div>
-
-    <div class="row">
-        <!-- Top phim -->
-        <div class="col-xl-6 mb-4">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0 fw-bold">Top phim có nhiều suất chiếu</h5>
-                    <a href="{{ route('admin.thong-ke.phim') }}" class="btn btn-sm btn-outline-primary">Xem chi tiết</a>
-                </div>
-                <div class="card-body">
-                    @forelse($topPhim as $index => $phim)
-                    <div class="d-flex align-items-center mb-3">
-                        <div class="flex-shrink-0">
-                            <span class="badge bg-primary rounded-circle" style="width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;">
-                                {{ $index + 1 }}
-                            </span>
-                        </div>
-                        <div class="flex-grow-1 ms-3">
-                            <div class="fw-semibold">{{ $phim->tieu_de }}</div>
-                            <div class="small text-muted">{{ $phim->suat_chieus_count }} suất chiếu</div>
-                        </div>
-                        <div class="flex-shrink-0">
-                            <span class="badge bg-{{ $phim->trang_thai == 'dang_chieu' ? 'success' : 'secondary' }}">
-                                {{ ucfirst(str_replace('_', ' ', $phim->trang_thai)) }}
-                            </span>
-                        </div>
-                    </div>
-                    @empty
-                    <div class="text-center text-muted py-3">Chưa có dữ liệu</div>
-                    @endforelse
-                </div>
-            </div>
-        </div>
-
-        <!-- Top khuyến mãi -->
-        <div class="col-xl-6 mb-4">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0 fw-bold">Top khuyến mãi được sử dụng</h5>
-                    <a href="{{ route('admin.khuyen-mai.thong-ke-su-dung') }}" class="btn btn-sm btn-outline-primary">Xem chi tiết</a>
-                </div>
-                <div class="card-body">
-                    @forelse($topKhuyenMai as $index => $km)
-                    <div class="d-flex align-items-center mb-3">
-                        <div class="flex-shrink-0">
-                            <span class="badge bg-success rounded-circle" style="width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;">
-                                {{ $index + 1 }}
-                            </span>
-                        </div>
-                        <div class="flex-grow-1 ms-3">
-                            <div class="fw-semibold">{{ $km->ten }}</div>
-                            <div class="small text-muted">{{ $km->so_lan_da_su_dung }} lượt sử dụng</div>
-                        </div>
-                        <div class="flex-shrink-0">
-                            <span class="badge bg-{{ $km->trang_thai == 'hoat_dong' ? 'success' : 'secondary' }}">
-                                {{ ucfirst(str_replace('_', ' ', $km->trang_thai)) }}
-                            </span>
-                        </div>
-                    </div>
-                    @empty
-                    <div class="text-center text-muted py-3">Chưa có dữ liệu</div>
-                    @endforelse
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Thống kê phim theo thể loại -->
-    <div class="row">
-        <div class="col-xl-6 mb-4">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white border-0">
-                    <h5 class="mb-0 fw-bold">Phim theo thể loại</h5>
-                </div>
-                <div class="card-body">
-                    <canvas id="chartTheLoai" height="150"></canvas>
-                </div>
-            </div>
-        </div>
-
-        <!-- Top combo -->
-        <div class="col-xl-6 mb-4">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0 fw-bold">Top combo giá cao</h5>
-                    <a href="{{ route('admin.combos.index') }}" class="btn btn-sm btn-outline-primary">Xem tất cả</a>
-                </div>
-                <div class="card-body">
-                    @forelse($thongKeCombo as $index => $combo)
-                    <div class="d-flex align-items-center justify-content-between mb-3">
-                        <div class="flex-grow-1">
-                            <div class="fw-semibold">{{ $combo->tieu_de }}</div>
-                            <div class="small text-muted">Giá gốc: {{ number_format($combo->gia) }}đ</div>
-                        </div>
-                        <div class="flex-shrink-0">
-                            <span class="badge bg-warning text-dark">{{ number_format($combo->gia_combo) }}đ</span>
-                        </div>
-                    </div>
-                    @empty
-                    <div class="text-center text-muted py-3">Chưa có dữ liệu</div>
-                    @endforelse
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-@push('scripts')
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-// Biểu đồ theo ngày
-const ctxNgay = document.getElementById('chartTheoNgay').getContext('2d');
-new Chart(ctxNgay, {
-    type: 'line',
-    data: {
-        labels: {!! json_encode(array_column($thongKeTheoNgay, 'ngay')) !!},
-        datasets: [{
-            label: 'Liên hệ mới',
-            data: {!! json_encode(array_column($thongKeTheoNgay, 'lien_he_moi')) !!},
-            borderColor: 'rgb(75, 192, 192)',
-            backgroundColor: 'rgba(75, 192, 192, 0.1)',
-            tension: 0.1,
-            yAxisID: 'y'
-        }, {
-            label: 'Khuyến mãi sử dụng',
-            data: {!! json_encode(array_column($thongKeTheoNgay, 'khuyen_mai_su_dung')) !!},
-            borderColor: 'rgb(255, 99, 132)',
-            backgroundColor: 'rgba(255, 99, 132, 0.1)',
-            tension: 0.1,
-            yAxisID: 'y'
-        }, {
-            label: 'Doanh thu (triệu đồng)',
-            data: {!! json_encode(array_column($thongKeTheoNgay, 'doanh_thu_trieu')) !!},
-            borderColor: 'rgb(255, 206, 86)',
-            backgroundColor: 'rgba(255, 206, 86, 0.1)',
-            tension: 0.1,
-            yAxisID: 'y1'
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        interaction: {
-            mode: 'index',
-            intersect: false,
-        },
-        scales: {
-            y: {
-                type: 'linear',
-                display: true,
-                position: 'left',
-                beginAtZero: true,
-                title: {
-                    display: true,
-                    text: 'Số lượng'
-                }
-            },
-            y1: {
-                type: 'linear',
-                display: true,
-                position: 'right',
-                beginAtZero: true,
-                title: {
-                    display: true,
-                    text: 'Doanh thu (triệu đồng)'
-                },
-                grid: {
-                    drawOnChartArea: false,
-                },
-            }
-        }
-    }
-});
-
-// Biểu đồ liên hệ
-const ctxLienHe = document.getElementById('chartLienHe').getContext('2d');
-new Chart(ctxLienHe, {
-    type: 'doughnut',
-    data: {
-        labels: ['Chưa xử lý', 'Đã xử lý'],
-        datasets: [{
-            data: [{{ $thongKeLienHe['chua_xu_ly'] }}, {{ $thongKeLienHe['da_xu_ly'] }}],
-            backgroundColor: ['#ffc107', '#28a745']
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false
-    }
-});
-
-// Biểu đồ thể loại
-const ctxTheLoai = document.getElementById('chartTheLoai').getContext('2d');
-new Chart(ctxTheLoai, {
-    type: 'bar',
-    data: {
-        labels: {!! json_encode($thongKePhimTheoTheLoai->pluck('ten')) !!},
-        datasets: [{
-            label: 'Số lượng phim',
-            data: {!! json_encode($thongKePhimTheoTheLoai->pluck('so_luong')) !!},
-            backgroundColor: 'rgba(54, 162, 235, 0.8)'
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {
-            y: {
-                beginAtZero: true
-            }
-        }
-    }
-});
-
-// Hàm xuất báo cáo
-function xuatBaoCao(loai) {
-    fetch(`{{ route('admin.thong-ke.xuat-bao-cao') }}?loai=${loai}`)
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                // Tạo file download hoặc hiển thị thông báo
-                alert(data.message);
-                console.log(data.data);
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Có lỗi xảy ra khi xuất báo cáo');
-        });
-}
-</script>
-@endpush
 @endsection

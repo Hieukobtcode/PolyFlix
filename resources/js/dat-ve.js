@@ -3,7 +3,7 @@ window.$ = $;
 window.jQuery = $;
 
 import "./bootstrap";
-import "../css/dat-ve.css";
+// import "../css/dat-ve.css";
 
 import Quagga from "@ericblade/quagga2";
 
