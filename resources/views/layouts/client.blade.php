@@ -17,6 +17,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <!-- Font Awesome 6 (miễn phí) -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     @vite('resources/js/client.js')
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
@@ -86,6 +87,100 @@
 
         .rap-wrapper:hover .rap-dropdown {
             display: block;
+        }
+
+        /* Định dạng chung cho danh sách chi nhánh */
+        .chi-nhanh-list {
+            list-style: none;
+            /* Bỏ dấu đầu dòng */
+            padding: 0;
+            margin: 0;
+        }
+
+        /* Định dạng cho mục chi nhánh */
+        .chi-nhanh-list .has-submenu {
+            position: relative;
+            /* Đặt vị trí tương đối để submenu căn chỉnh đúng */
+            cursor: pointer;
+            /* Con trỏ chuột khi hover */
+            padding: 10px 15px;
+            /* Khoảng cách bên trong */
+            color: #FFD700;
+            /* Màu chữ vàng */
+            background-color: #1C2526;
+            /* Nền đen đậm */
+            transition: background-color 0.3s ease, color 0.3s ease;
+            /* Hiệu ứng chuyển đổi mượt */
+        }
+
+        /* Hiệu ứng hover cho chi nhánh */
+        .chi-nhanh-list .has-submenu:hover {
+            background-color: #2E3B3E;
+            /* Nền sáng hơn một chút khi hover */
+            color: #FFEC8B;
+            /* Chữ vàng nhạt hơn khi hover */
+        }
+
+        /* Định dạng submenu (danh sách rạp) */
+        .chi-nhanh-list .has-submenu .rap-submenu {
+            display: none;
+            /* Ẩn submenu ban đầu */
+            position: absolute;
+            /* Đặt vị trí tuyệt đối */
+            background-color: #1C2526;
+            /* Nền đen đậm cho submenu */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+            /* Bóng nhẹ */
+            z-index: 1000;
+            /* Đảm bảo submenu nằm trên */
+            min-width: 200px;
+            /* Chiều rộng tối thiểu */
+            border-radius: 4px;
+            /* Bo góc nhẹ */
+            opacity: 0;
+            /* Ẩn bằng độ trong suốt */
+            transform: translateY(-10px);
+            /* Hơi dịch lên trên khi ẩn */
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            /* Hiệu ứng chuyển đổi */
+        }
+
+        /* Hiển thị submenu khi hover */
+        .chi-nhanh-list .has-submenu:hover .rap-submenu {
+            display: block;
+            /* Hiển thị submenu */
+            opacity: 1;
+            /* Hiển thị hoàn toàn */
+            transform: translateY(0);
+            /* Đưa về vị trí ban đầu */
+        }
+
+        /* Định dạng các mục trong submenu */
+        .chi-nhanh-list .rap-submenu li {
+            list-style: none;
+            /* Bỏ dấu đầu dòng */
+        }
+
+        /* Định dạng liên kết trong submenu */
+        .chi-nhanh-list .rap-submenu li a {
+            display: block;
+            /* Chiếm toàn bộ chiều rộng */
+            padding: 10px 15px;
+            /* Khoảng cách bên trong */
+            color: #FFD700;
+            /* Chữ vàng */
+            text-decoration: none;
+            /* Bỏ gạch chân */
+            transition: background-color 0.2s ease, color 0.2s ease;
+            /* Hiệu ứng chuyển đổi */
+        }
+
+        /* Hiệu ứng hover cho liên kết trong submenu */
+        .chi-nhanh-list .rap-submenu li a:hover {
+            background-color: #2E3B3E;
+            /* Nền sáng hơn khi hover */
+            color: #FFEC8B;
+            /* Chữ vàng nhạt hơn */
         }
     </style>
 </head>
@@ -164,16 +259,24 @@
                         </div>
 
                         <div class="rap-dropdown">
-                            <ul>
+                            <ul class="chi-nhanh-list">
                                 @foreach ($rapPhims as $chiNhanhId => $dsRap)
-                                    {{-- Danh sách rạp thuộc chi nhánh này --}}
-                                    @foreach ($dsRap as $rap)
-                                        <a href="{{ route('showrap', \App\Helpers\IdFormatter::uuidify($rap->id)) }}">
-                                            <li>{{ $rap->ten_rap }}</li>
-                                        </a>
-                                    @endforeach
+                                    <li class="has-submenu">
+                                        {{ $dsRap->first()->chiNhanh->ten_chi_nhanh }}
+                                        <ul class="rap-submenu">
+                                            @foreach ($dsRap as $rap)
+                                                <li>
+                                                    <a
+                                                        href="{{ route('showrap', \App\Helpers\IdFormatter::uuidify($rap->id)) }}">
+                                                        {{ $rap->ten_rap }}
+                                                    </a>
+                                                </li>
+                                            @endforeach
+                                        </ul>
+                                    </li>
                                 @endforeach
                             </ul>
+
                         </div>
                     </div>
                 </div>

@@ -4810,7 +4810,6 @@ namespace App\Models {
      * @property decimal:2 $gia_tri_giam
      * @property mixed $loai_giam_gia
      * @property string $mo_ta
-     * @property string|null $hinh_anh
      * @property string $ten
      * @property string $ma_khuyen_mai
      * @property int $id
@@ -4825,7 +4824,6 @@ namespace App\Models {
      * @method static \Illuminate\Database\Eloquent\Builder<KhuyenMai>|KhuyenMai whereId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<KhuyenMai>|KhuyenMai whereMaKhuyenMai($value)
      * @method static \Illuminate\Database\Eloquent\Builder<KhuyenMai>|KhuyenMai whereTen($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<KhuyenMai>|KhuyenMai whereHinhAnh($value)
      * @method static \Illuminate\Database\Eloquent\Builder<KhuyenMai>|KhuyenMai whereMoTa($value)
      * @method static \Illuminate\Database\Eloquent\Builder<KhuyenMai>|KhuyenMai whereLoaiGiamGia($value)
      * @method static \Illuminate\Database\Eloquent\Builder<KhuyenMai>|KhuyenMai whereGiaTriGiam($value)

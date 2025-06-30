@@ -231,9 +231,9 @@ class ComposerStaticInit603cda8a0685f102b0fac5f6c0594535
         ),
         'phpDocumentor\\Reflection\\' => 
         array (
-            0 => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src',
-            1 => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src',
-            2 => __DIR__ . '/..' . '/phpdocumentor/reflection-common/src',
+            0 => __DIR__ . '/..' . '/phpdocumentor/reflection-common/src',
+            1 => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src',
+            2 => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src',
         ),
         'Whoops\\' => 
         array (
@@ -686,6 +686,7 @@ class ComposerStaticInit603cda8a0685f102b0fac5f6c0594535
         'Anhskohbo\\NoCaptcha\\Facades\\NoCaptcha' => __DIR__ . '/..' . '/anhskohbo/no-captcha/src/Facades/NoCaptcha.php',
         'Anhskohbo\\NoCaptcha\\NoCaptcha' => __DIR__ . '/..' . '/anhskohbo/no-captcha/src/NoCaptcha.php',
         'Anhskohbo\\NoCaptcha\\NoCaptchaServiceProvider' => __DIR__ . '/..' . '/anhskohbo/no-captcha/src/NoCaptchaServiceProvider.php',
+        'App\\Events\\SeatUpdated' => __DIR__ . '/../..' . '/app/Events/SeatUpdated.php',
         'App\\Helpers\\IdFormatter' => __DIR__ . '/../..' . '/app/Helpers/IdFormatter.php',
         'App\\Http\\Controllers\\Admin\\BaiVietController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/BaiVietController.php',
         'App\\Http\\Controllers\\Admin\\BannerController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/BannerController.php',
@@ -722,6 +723,7 @@ class ComposerStaticInit603cda8a0685f102b0fac5f6c0594535
         'App\\Http\\Controllers\\Client\\DanhSachBaiVietController' => __DIR__ . '/../..' . '/app/Http/Controllers/Client/DanhSachBaiVietController.php',
         'App\\Http\\Controllers\\Client\\DatVeController' => __DIR__ . '/../..' . '/app/Http/Controllers/Client/DatVeController.php',
         'App\\Http\\Controllers\\Client\\KhuyenMaiController' => __DIR__ . '/../..' . '/app/Http/Controllers/Client/KhuyenMaiController.php',
+        'App\\Http\\Controllers\\Client\\LichChieuController' => __DIR__ . '/../..' . '/app/Http/Controllers/Client/LichChieuController.php',
         'App\\Http\\Controllers\\Client\\LienHeController' => __DIR__ . '/../..' . '/app/Http/Controllers/Client/LienHeController.php',
         'App\\Http\\Controllers\\Client\\LoginController' => __DIR__ . '/../..' . '/app/Http/Controllers/Client/LoginController.php',
         'App\\Http\\Controllers\\Client\\PhimsController' => __DIR__ . '/../..' . '/app/Http/Controllers/Client/PhimsController.php',
