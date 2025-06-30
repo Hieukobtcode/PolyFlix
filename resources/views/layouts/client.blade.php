@@ -190,7 +190,7 @@
                         </li>
                         <li><a href="{{ route('client.bai-viet') }}">Góc điện ảnh</a></li>
                         <li><a href="{{ route('client.lien-he') }}">Liên hệ</a></li>
-                        <li>Giới thiệu</li>
+                       
                     </ul>
                 </div>
             </div>

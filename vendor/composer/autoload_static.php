@@ -231,9 +231,9 @@ class ComposerStaticInit8ccaa84c004fde119164421f30c4c011
         ),
         'phpDocumentor\\Reflection\\' => 
         array (
-            0 => __DIR__ . '/..' . '/phpdocumentor/reflection-common/src',
-            1 => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src',
-            2 => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src',
+            0 => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src',
+            1 => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src',
+            2 => __DIR__ . '/..' . '/phpdocumentor/reflection-common/src',
         ),
         'Whoops\\' => 
         array (
@@ -710,6 +710,7 @@ class ComposerStaticInit8ccaa84c004fde119164421f30c4c011
         'App\\Http\\Controllers\\Admin\\PhimController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/PhimController.php',
         'App\\Http\\Controllers\\Admin\\PhongChieuController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/PhongChieuController.php',
         'App\\Http\\Controllers\\Admin\\PhuDePhimController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/PhuDePhimController.php',
+        'App\\Http\\Controllers\\Admin\\RapPhimController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/RapPhimController.php',
         'App\\Http\\Controllers\\Admin\\RequestController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/RequestController.php',
         'App\\Http\\Controllers\\Admin\\SoDoGheController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/SoDoGheController.php',
         'App\\Http\\Controllers\\Admin\\SuatChieuController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/SuatChieuController.php',
@@ -722,7 +723,6 @@ class ComposerStaticInit8ccaa84c004fde119164421f30c4c011
         'App\\Http\\Controllers\\Client\\DatVeController' => __DIR__ . '/../..' . '/app/Http/Controllers/Client/DatVeController.php',
         'App\\Http\\Controllers\\Client\\KhuyenMaiController' => __DIR__ . '/../..' . '/app/Http/Controllers/Client/KhuyenMaiController.php',
         'App\\Http\\Controllers\\Client\\LienHeController' => __DIR__ . '/../..' . '/app/Http/Controllers/Client/LienHeController.php',
-        'App\\Http\\Controllers\\Client\\KhuyenMaiController' => __DIR__ . '/../..' . '/app/Http/Controllers/Client/KhuyenMaiController.php',
         'App\\Http\\Controllers\\Client\\LoginController' => __DIR__ . '/../..' . '/app/Http/Controllers/Client/LoginController.php',
         'App\\Http\\Controllers\\Client\\PhimsController' => __DIR__ . '/../..' . '/app/Http/Controllers/Client/PhimsController.php',
         'App\\Http\\Controllers\\Client\\ProfileController' => __DIR__ . '/../..' . '/app/Http/Controllers/Client/ProfileController.php',

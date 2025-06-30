@@ -80,29 +80,7 @@
         });
     </script>
 
-    <!-- Đặt vé nhanh -->
-    <div class="booking-fast">
-        <div class="btn"><span>ĐẶT VÉ NHANH</span></div>
-        <div class="select">
-            <select required id="select-chi-nhanh" class="movie-select">
-                <option disabled selected>1-Chọn rạp</option>
-            </select>
-            <select required id="select-phim" class="movie-select" disabled>
-                <option disabled selected>2-Chọn phim</option>
-            </select>
-            <select required id="select-date" class="movie-select" disabled>
-                <option disabled selected>3-Chọn ngày</option>
-            </select>
-            <select required id="select-suat" class="movie-select" disabled>
-                <option disabled selected>4-Chọn suất</option>
-            </select>
-            <button id="btn-dat-ngay" disabled>Đặt ngay</button>
-        </div>
-        <div id="booking-loading" class="booking-loading" style="display: none;">
-            <div class="spinner"></div><span>Đang tải...</span>
-        </div>
-    </div>
-
+    
     <!-- Tabs phim -->
     <div class="menu">
         <button type="button"></button>
@@ -205,6 +183,7 @@
             </div>
         </div>
     </div>
+    
 
     <div id="tab-blog" class="tab-content">
         @if ($baiViet && count($baiViet))
@@ -237,7 +216,10 @@
         @else
             <p>Chưa có bài viết nào.</p>
         @endif
+        
     </div>
+    
+    
 
     <!-- Popup trailer -->
     <div id="trailerPopup"
