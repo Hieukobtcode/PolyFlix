@@ -30,7 +30,7 @@
                                     <h6 class="fs-4 fw-semibold mb-0">Tên cấp bậc</h6>
                                 </th>
                                 <th class="text-center" style="width: 15%">
-                                    <h6 class="fs-4 fw-semibold mb-0">Tổng vé đã mua</h6>
+                                    <h6 class="fs-4 fw-semibold mb-0">Tổng chi tiêu</h6>
                                 </th>
                                 <th class="text-center" style="width: 10%">
                                     <h6 class="fs-4 fw-semibold mb-0">% Hoàn tiền</h6>
@@ -51,7 +51,7 @@
                                 <tr>
                                     <td class="text-center">{{ $index + 1 }}</td>
                                     <td>{{ $capBacThe->ten }}</td>
-                                    <td class="text-center">{{ number_format($capBacThe->tong_so_ve_da_mua) }} vé</td>
+                                    <td class="text-center">{{ number_format($capBacThe->tong_chi_tieu) }} đ</td>
                                     <td class="text-center">{{ $capBacThe->phan_tram_ve }}%</td>
                                     <td class="text-center">{{ $capBacThe->phan_tram_dich_vu }}%</td>
                                     <td class="text-center">

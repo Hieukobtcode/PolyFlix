@@ -557,7 +557,8 @@
                                         </div>
                                         <div class="hour">
                                             @foreach ($suatChieusTheoVersion as $suat)
-                                                <a href="" class="time-btn">
+                                                <a href="{{ route('client.dat-ve', ['phim_id' => $suat->phim_id, 'suat_chieu_id' => $suat->id]) }}"
+                                                    class="time-btn">
                                                     {{ \Carbon\Carbon::parse($suat->bat_dau)->format('H:i') }}
                                                 </a>
                                             @endforeach
@@ -647,7 +648,8 @@
                                         </div>
                                         <div class="hour">
                                             @foreach ($suatChieusTheoPhong as $suat)
-                                                <a href="" class="time-btn">
+                                                <a href="{{ route('client.dat-ve', ['phim_id' => $suat->phim_id, 'suat_chieu_id' => $suat->id]) }}"
+                                                    class="time-btn">
                                                     {{ \Carbon\Carbon::parse($suat->bat_dau)->format('H:i') }}
                                                 </a>
                                             @endforeach
@@ -743,7 +745,8 @@
                                         </div>
                                         <div class="hour">
                                             @foreach ($suatChieusTheoVersion as $suat)
-                                                <a href="" class="time-btn">
+                                                <a href="{{ route('client.dat-ve', ['phim_id' => $suat->phim_id, 'suat_chieu_id' => $suat->id]) }}"
+                                                    class="time-btn">
                                                     {{ \Carbon\Carbon::parse($suat->bat_dau)->format('H:i') }}
                                                 </a>
                                             @endforeach
