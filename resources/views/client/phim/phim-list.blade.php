@@ -1,9 +1,13 @@
 @extends('layouts.client')
 @section('content')
+  @php
+        use App\Helpers\IdFormatter;
+    @endphp
   <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
-        integrity="sha512-dYkA5Kj8SGrWJQ2r7S4JblmQo2+3ZJfzv+y5eA6TeK4kD4i2yHMyhzTKoH9yKxKdRYg3C1f58TbzOdKJejO3dg=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
+ <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+      integrity="sha512-Avb2QiuDEEvB4bZJYdft2mNjVShBftLdPG8FJ0V7irTLQ8Uo0qcPxh4Plq7G5tGm0rU+1SPhVotteLpBERwTkw=="
+      crossorigin="anonymous" referrerpolicy="no-referrer" />
+
 
     @vite('resources/js/trang-chu.js')
 
@@ -34,7 +38,18 @@
     border-radius: 4px;
     z-index: 10;
 }
+.tab-phim-item {
+    padding: 10px;
+    cursor: pointer;
+    text-decoration: none;
+}
 
+.tab-phim-item.active {
+    color: #FFD700;
+    font-weight: bold;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+}
 </style>
 
 
@@ -44,10 +59,10 @@
     <p class="movie">PHIM</p>
     <div class="list">
         <p>
-        <a href="{{ route('phim.dang-chieu') }}" class="tab-item {{ $tab == 'dang-chieu' ? 'active' : '' }}">Đang chiếu</a>
+        <a href="{{ route('phim.dang-chieu') }}" class="tab-phim-item {{ $tab == 'dang-chieu' ? 'active' : '' }}">Đang chiếu</a>
         </p>
         <p>
-        <a href="{{ route('phim.sap-chieu') }}" class="tab-item {{ $tab == 'sap-chieu' ? 'active' : '' }}">Sắp chiếu</a>
+        <a href="{{ route('phim.sap-chieu') }}" class="tab-phim-item {{ $tab == 'sap-chieu' ? 'active' : '' }}">Sắp chiếu</a>
         </p>
     </div>
 </div>
@@ -66,9 +81,10 @@
                 </div>
             </div>
             <p class="ten-phim">{{ $phim->ten_phim }}</p>
-        </div>
+        </div>    
     @endforeach
 </div>
+@include('client.partials.goc-dien-anh', ['phims' => $phims, 'ratings' => $ratings, 'baiViet' => $baiViet])
 <!-- Popup trailer -->
 <div id="trailerPopup" style="display:none; position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
 background:#000;padding:10px;border-radius:8px;z-index:999;">
