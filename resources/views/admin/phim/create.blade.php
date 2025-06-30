@@ -279,21 +279,26 @@
 @endsection
 
 @section('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/vn.js"></script>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Khởi tạo select2 cho tất cả
-            $('.select2').each(function() {
-                $(this).select2({
+            function initSelect2(selector) {
+                $(selector).select2({
                     theme: 'bootstrap-5',
                     width: '100%',
                     allowClear: true,
-                    dropdownParent: $(this).closest('.card-body'),
-                    placeholder: $(this).attr('placeholder') || 'Chọn'
+                    placeholder: $(selector).attr('placeholder') || 'Chọn'
                 });
+            }
+
+            $('.select2').each(function() {
+                initSelect2(this);
             });
+
 
             // Flatpickr
             flatpickr(".datepicker", {
@@ -302,33 +307,95 @@
                 allowInput: true,
             });
 
-            // Dữ liệu ngôn ngữ
-            const ngonNgu = ['Vietnamese', 'English', 'Chinese', 'Korean', 'Japanese'];
+            // *** FIX: Dữ liệu ngôn ngữ được mở rộng và dịch sang tiếng Việt ***
+            const ngonNguData = [{
+                    value: 'Vietnamese',
+                    text: 'Tiếng Việt'
+                },
+                {
+                    value: 'English',
+                    text: 'Tiếng Anh'
+                },
+                {
+                    value: 'Chinese',
+                    text: 'Tiếng Trung'
+                },
+                {
+                    value: 'Korean',
+                    text: 'Tiếng Hàn'
+                },
+                {
+                    value: 'Japanese',
+                    text: 'Tiếng Nhật'
+                },
+                {
+                    value: 'French',
+                    text: 'Tiếng Pháp'
+                },
+                {
+                    value: 'German',
+                    text: 'Tiếng Đức'
+                },
+                {
+                    value: 'Spanish',
+                    text: 'Tiếng Tây Ban Nha'
+                },
+                {
+                    value: 'Russian',
+                    text: 'Tiếng Nga'
+                },
+                {
+                    value: 'Hindi',
+                    text: 'Tiếng Hindi'
+                },
+                {
+                    value: 'Thai',
+                    text: 'Tiếng Thái'
+                },
+                {
+                    value: 'Indonesian',
+                    text: 'Tiếng Indonesia'
+                }
+            ].sort((a, b) => a.text.localeCompare(b.text)); // Sắp xếp theo tên tiếng Việt
+
             const ngonNguSelect = document.getElementById('ngon_ngu');
             const oldNgonNgu = "{{ old('ngon_ngu') }}";
-            ngonNgu.forEach(lang => {
+            ngonNguData.forEach(lang => {
                 const option = document.createElement('option');
-                option.value = lang;
-                option.textContent = lang;
-                if (oldNgonNgu === lang) option.selected = true;
+                option.value = lang.value;
+                option.textContent = lang.text;
+                if (oldNgonNgu === lang.value) option.selected = true;
                 ngonNguSelect.appendChild(option);
             });
 
-            // API quốc gia
-            fetch('https://restcountries.com/v3.1/all')
+            // *** FIX: API quốc gia ưu tiên tiếng Việt ***
+            // Chỉ yêu cầu các trường cần thiết để tăng tốc độ tải
+            fetch('https://restcountries.com/v3.1/all?fields=name,translations')
                 .then(res => res.json())
                 .then(data => {
                     const quocGiaSelect = document.getElementById('quoc_gia');
                     const oldQuocGia = "{{ old('quoc_gia') }}";
-                    data.sort((a, b) => a.name.common.localeCompare(b.name.common));
-                    data.forEach(country => {
+
+                    // Xử lý và sắp xếp dữ liệu
+                    const countries = data.map(country => {
+                        // Ưu tiên tên tiếng Việt, nếu không có thì dùng tên chung
+                        const displayName = country.translations.vie?.common || country.name.common;
+                        return {
+                            value: country.name.common,
+                            text: displayName
+                        };
+                    }).sort((a, b) => a.text.localeCompare(b.text, 'vi')); // Sắp xếp theo tiếng Việt
+
+                    countries.forEach(country => {
                         const option = document.createElement('option');
-                        option.value = country.name.common;
-                        option.textContent = country.name.common;
-                        if (oldQuocGia === country.name.common) option.selected = true;
+                        option.value = country.value;
+                        option.textContent = country.text;
+                        if (oldQuocGia === country.value) option.selected = true;
                         quocGiaSelect.appendChild(option);
                     });
-                });
+                })
+                .catch(error => console.error('Lỗi khi tải danh sách quốc gia:', error));
+
 
             // Poster preview
             document.getElementById('poster').addEventListener('change', function() {
@@ -341,17 +408,15 @@
                             '" class="img-fluid img-thumbnail rounded" style="max-height: 200px;">';
                     };
                     reader.readAsDataURL(file);
-                } else {
-                    document.getElementById('poster-preview').innerHTML = '';
                 }
             });
 
-            // Focus vào tên phim
+            // Focus vào tên phim khi tải trang
             document.getElementById('ten_phim').focus();
 
             // Xác nhận khi hủy
-            document.querySelector('.btn-outline-secondary').addEventListener('click', function(e) {
-                if (!confirm('Bạn có muốn hủy và quay lại danh sách?')) {
+            document.querySelector('a.btn-outline-secondary').addEventListener('click', function(e) {
+                if (!confirm('Bạn có chắc muốn hủy bỏ và quay lại trang danh sách không?')) {
                     e.preventDefault();
                 }
             });

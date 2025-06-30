@@ -525,9 +525,7 @@
                                     <span class="badge"><i class="fas fa-language"></i> {{ $phuDe->ten_phu_de }}</span>
                                 @endforeach
                             </p>
-
                         </div>
-
                     </div>
 
                     <div class="suat-chieu-container">
@@ -553,12 +551,12 @@
                                         <span class="arrow-icon"></span>
                                     </summary>
 
-                                    @foreach ($suatChieusTrongNgay->groupBy('phongChieu.loaiPhong.ten_loai_phong') as $tenPhong => $suatChieusTheoPhong)
+                                    @foreach ($suatChieusTrongNgay->groupBy('formatted_version') as $version => $suatChieusTheoVersion)
                                         <div class="room-title">
-                                            {{ $suatChieusTheoPhong->first()->formatted_version ?? '' }}
+                                            {{ $version }}
                                         </div>
                                         <div class="hour">
-                                            @foreach ($suatChieusTheoPhong as $suat)
+                                            @foreach ($suatChieusTheoVersion as $suat)
                                                 <a href="" class="time-btn">
                                                     {{ \Carbon\Carbon::parse($suat->bat_dau)->format('H:i') }}
                                                 </a>
@@ -568,7 +566,7 @@
 
                                 </details>
                             @endforeach
-                            <a href="" class="view-more">Xem thêm lịch chiếu</a>
+                            <a href="{{ route('phim.chi-tiet', $item->id) }}" class="view-more">Xem thêm lịch chiếu</a>
                         @endif
                     </div>
 
@@ -617,9 +615,7 @@
                                         {{ $phuDe->ten_phu_de }}</span>
                                 @endforeach
                             </p>
-
                         </div>
-
                     </div>
 
                     <div class="suat-chieu-container">
@@ -660,14 +656,13 @@
 
                                 </details>
                             @endforeach
-                            <a href="" class="view-more">Xem thêm lịch chiếu</a>
+                            <a href="{{ route('phim.chi-tiet', $item->id) }}" class="view-more">Xem thêm lịch chiếu</a>
                         @endif
                     </div>
 
                 </div>
             @endforeach
         @endif
-
     </div>
 
     <div id="dac-biet" class="movie-list tab-content" style="display: none;">
@@ -742,12 +737,12 @@
                                         <span class="arrow-icon"></span>
                                     </summary>
 
-                                    @foreach ($suatChieusTrongNgay->groupBy('phongChieu.loaiPhong.ten_loai_phong') as $tenPhong => $suatChieusTheoPhong)
+                                    @foreach ($suatChieusTrongNgay->groupBy('formatted_version') as $version => $suatChieusTheoVersion)
                                         <div class="room-title">
-                                            {{ $suatChieusTheoPhong->first()->formatted_version ?? '' }}
+                                            {{ $version }}
                                         </div>
                                         <div class="hour">
-                                            @foreach ($suatChieusTheoPhong as $suat)
+                                            @foreach ($suatChieusTheoVersion as $suat)
                                                 <a href="" class="time-btn">
                                                     {{ \Carbon\Carbon::parse($suat->bat_dau)->format('H:i') }}
                                                 </a>
@@ -756,7 +751,7 @@
                                     @endforeach
                                 </details>
                             @endforeach
-                            <a href="" class="view-more">Xem thêm lịch chiếu</a>
+                            <a href="{{ route('phim.chi-tiet', $item->id) }}" class="view-more">Xem thêm lịch chiếu</a>
                         @endif
                     </div>
                 </div>
