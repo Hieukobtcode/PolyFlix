@@ -44,4 +44,5 @@ class PhongChieu extends Model
     {
         return $this->hasMany(SuatChieu::class);
     }
+
 }

@@ -2,6 +2,10 @@
 
 namespace App\Models;
 
+use App\Models\LoaiGhe;
+use App\Models\RapPhim;
+use App\Models\LoaiPhong;
+use App\Models\PhongChieu;
 use Illuminate\Database\Eloquent\Model;
 
 class GheNgoi extends Model
@@ -17,14 +21,15 @@ class GheNgoi extends Model
         'trang_thai',
     ];
 
+
     public function phongChieu()
     {
-        return $this->belongsTo(PhongChieu::class);
+        return $this->belongsTo(PhongChieu::class, 'phong_chieu_id');
     }
 
     public function loaiGhe()
     {
-        return $this->belongsTo(LoaiGhe::class, 'loai_ghe'); // ✅ đúng
+        return $this->belongsTo(LoaiGhe::class, 'loai_ghe'); 
     }
 
 

@@ -20,7 +20,6 @@ class AdminRequest extends Model
     ];
 
     protected $casts = [
-        'approved' => 'boolean',
         'approved_at' => 'datetime',
         'ngay_sinh' => 'date',
     ];

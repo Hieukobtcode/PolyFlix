@@ -19,6 +19,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     @vite('resources/js/client.js')
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     {{-- CSS --}}
     @yield('styles')
 
@@ -175,11 +176,6 @@
                             </ul>
                         </div>
                     </div>
-
-                    <div class="lich-chieu">
-                        <i class="fa-solid fa-calendar-days"></i>
-                        <p>Lịch chiếu</p>
-                    </div>
                 </div>
                 <div class="nav2">
                     <ul>
@@ -190,7 +186,6 @@
                         </li>
                         <li><a href="{{ route('client.bai-viet') }}">Góc điện ảnh</a></li>
                         <li><a href="{{ route('client.lien-he') }}">Liên hệ</a></li>
-                       
                     </ul>
                 </div>
             </div>

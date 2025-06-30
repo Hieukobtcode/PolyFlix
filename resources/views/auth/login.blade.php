@@ -150,11 +150,9 @@
                         </span>
                     @endif
 
-
                     <button type="submit">Đăng ký</button>
                 </div>
             </form>
-
 
             @if (session('active_tab'))
                 <script>

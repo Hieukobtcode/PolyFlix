@@ -271,18 +271,17 @@
         }
 
         .hour {
-            display: flex;
-            flex-wrap: nowrap;
-            overflow-x: auto;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
             gap: 8px;
             margin-top: 6px;
             padding-bottom: 5px;
         }
 
         .time-btn {
-            display: inline-block;
+            display: block;
+            text-align: center;
             padding: 6px 12px;
-            margin: 5px 5px 0 0;
             background-color: #292f45;
             color: #fff;
             border-radius: 5px;
@@ -290,6 +289,7 @@
             border: 1px solid transparent;
             font-size: 14px;
         }
+
 
         .time-btn:hover {
             background-color: #f1c40f;
@@ -525,9 +525,7 @@
                                     <span class="badge"><i class="fas fa-language"></i> {{ $phuDe->ten_phu_de }}</span>
                                 @endforeach
                             </p>
-
                         </div>
-
                     </div>
 
                     <div class="suat-chieu-container">
@@ -541,7 +539,7 @@
                                 Hiện chưa có suất chiếu nào cho phim này.
                             </div>
                         @else
-                            @foreach ($suatChieuPhim->groupBy('ngay_chieu') as $ngay => $suatChieusTrongNgay)
+                            @foreach ($suatChieuPhim->sortBy('ngay_chieu')->groupBy('ngay_chieu') as $ngay => $suatChieusTrongNgay)
                                 @php
                                     $ngayFormatted = \Carbon\Carbon::parse($ngay)->translatedFormat('l, d/m/Y');
                                     $ngayFormatted = mb_convert_case($ngayFormatted, MB_CASE_TITLE, 'UTF-8');
@@ -553,10 +551,12 @@
                                         <span class="arrow-icon"></span>
                                     </summary>
 
-                                    @foreach ($suatChieusTrongNgay->groupBy('phongChieu.loaiPhong.ten_loai_phong') as $tenPhong => $suatChieusTheoPhong)
-                                        <div class="room-title">{{ $tenPhong }}</div>
+                                    @foreach ($suatChieusTrongNgay->groupBy('formatted_version') as $version => $suatChieusTheoVersion)
+                                        <div class="room-title">
+                                            {{ $version }}
+                                        </div>
                                         <div class="hour">
-                                            @foreach ($suatChieusTheoPhong as $suat)
+                                            @foreach ($suatChieusTheoVersion as $suat)
                                                 <a href="" class="time-btn">
                                                     {{ \Carbon\Carbon::parse($suat->bat_dau)->format('H:i') }}
                                                 </a>
@@ -566,7 +566,7 @@
 
                                 </details>
                             @endforeach
-                            <a href="" class="view-more">Xem thêm lịch chiếu</a>
+                            <a href="{{ route('phim.chi-tiet', $item->id) }}" class="view-more">Xem thêm lịch chiếu</a>
                         @endif
                     </div>
 
@@ -615,9 +615,7 @@
                                         {{ $phuDe->ten_phu_de }}</span>
                                 @endforeach
                             </p>
-
                         </div>
-
                     </div>
 
                     <div class="suat-chieu-container">
@@ -631,7 +629,7 @@
                                 Hiện chưa có suất chiếu nào cho phim này.
                             </div>
                         @else
-                            @foreach ($suatChieuPhim->groupBy('ngay_chieu') as $ngay => $suatChieusTrongNgay)
+                            @foreach ($suatChieuPhim->sortBy('ngay_chieu')->groupBy('ngay_chieu') as $ngay => $suatChieusTrongNgay)
                                 @php
                                     $ngayFormatted = \Carbon\Carbon::parse($ngay)->translatedFormat('l, d/m/Y');
                                     $ngayFormatted = mb_convert_case($ngayFormatted, MB_CASE_TITLE, 'UTF-8');
@@ -644,7 +642,9 @@
                                     </summary>
 
                                     @foreach ($suatChieusTrongNgay->groupBy('phongChieu.loaiPhong.ten_loai_phong') as $tenPhong => $suatChieusTheoPhong)
-                                        <div class="room-title">{{ $tenPhong }}</div>
+                                        <div class="room-title">
+                                            {{ $suatChieusTheoPhong->first()->formatted_version ?? '' }}
+                                        </div>
                                         <div class="hour">
                                             @foreach ($suatChieusTheoPhong as $suat)
                                                 <a href="" class="time-btn">
@@ -656,14 +656,13 @@
 
                                 </details>
                             @endforeach
-                            <a href="" class="view-more">Xem thêm lịch chiếu</a>
+                            <a href="{{ route('phim.chi-tiet', $item->id) }}" class="view-more">Xem thêm lịch chiếu</a>
                         @endif
                     </div>
 
                 </div>
             @endforeach
         @endif
-
     </div>
 
     <div id="dac-biet" class="movie-list tab-content" style="display: none;">
@@ -720,7 +719,7 @@
                                 Hiện chưa có suất chiếu nào cho phim này.
                             </div>
                         @else
-                            @foreach ($suatChieuPhim->groupBy('ngay_chieu') as $ngay => $suatChieusTrongNgay)
+                            @foreach ($suatChieuPhim->sortBy('ngay_chieu')->groupBy('ngay_chieu') as $ngay => $suatChieusTrongNgay)
                                 @php
                                     $ngayFormatted = \Carbon\Carbon::parse($ngay)->translatedFormat('l, d/m/Y');
                                     $ngayFormatted = mb_convert_case($ngayFormatted, MB_CASE_TITLE, 'UTF-8');
@@ -738,10 +737,12 @@
                                         <span class="arrow-icon"></span>
                                     </summary>
 
-                                    @foreach ($suatChieusTrongNgay->groupBy('phongChieu.loaiPhong.ten_loai_phong') as $tenPhong => $suatChieusTheoPhong)
-                                        <div class="room-title">{{ $tenPhong }}</div>
+                                    @foreach ($suatChieusTrongNgay->groupBy('formatted_version') as $version => $suatChieusTheoVersion)
+                                        <div class="room-title">
+                                            {{ $version }}
+                                        </div>
                                         <div class="hour">
-                                            @foreach ($suatChieusTheoPhong as $suat)
+                                            @foreach ($suatChieusTheoVersion as $suat)
                                                 <a href="" class="time-btn">
                                                     {{ \Carbon\Carbon::parse($suat->bat_dau)->format('H:i') }}
                                                 </a>
@@ -750,7 +751,7 @@
                                     @endforeach
                                 </details>
                             @endforeach
-                            <a href="" class="view-more">Xem thêm lịch chiếu</a>
+                            <a href="{{ route('phim.chi-tiet', $item->id) }}" class="view-more">Xem thêm lịch chiếu</a>
                         @endif
                     </div>
                 </div>

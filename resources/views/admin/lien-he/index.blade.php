@@ -1,31 +1,5 @@
 @extends('layouts.admin')
 
-@section('title', 'Quản lý liên hệ')
-@section('page-title', 'Danh sách liên hệ')
-@section('breadcrumb', 'Danh sách liên hệ')
-
-@section('styles')
-    <style>
-        .card {
-            border-radius: 10px;
-        }
-
-        .table th,
-        .table td {
-            vertical-align: middle;
-        }
-
-        .badge {
-            font-size: 0.9em;
-            padding: 0.5em 1em;
-        }
-
-        .pagination {
-            justify-content: end;
-        }
-    </style>
-@endsection
-
 @section('content')
     <div class="container-fluid">
         <!-- Thống kê tổng quan -->
@@ -49,7 +23,7 @@
                         <div>Chưa xử lý</div>
                         <div class="progress progress-white progress-thin my-2">
                             <div class="progress-bar" role="progressbar"
-                                style="width: {{ $stats['total'] > 0 ? ($stats['pending'] / $stats['total'] * 100) : 0 }}%">
+                                style="width: {{ $stats['total'] > 0 ? ($stats['pending'] / $stats['total']) * 100 : 0 }}%">
                             </div>
                         </div>
                         <small class="text-white">Liên hệ đang chờ xử lý</small>
@@ -63,7 +37,7 @@
                         <div>Đã xử lý</div>
                         <div class="progress progress-white progress-thin my-2">
                             <div class="progress-bar" role="progressbar"
-                                style="width: {{ $stats['total'] > 0 ? ($stats['completed'] / $stats['total'] * 100) : 0 }}%">
+                                style="width: {{ $stats['total'] > 0 ? ($stats['completed'] / $stats['total']) * 100 : 0 }}%">
                             </div>
                         </div>
                         <small class="text-white">Liên hệ đã được xử lý</small>
@@ -77,7 +51,7 @@
                         <div>Ưu tiên cao</div>
                         <div class="progress progress-white progress-thin my-2">
                             <div class="progress-bar" role="progressbar"
-                                style="width: {{ $stats['total'] > 0 ? ($stats['high_priority'] / $stats['total'] * 100) : 0 }}%">
+                                style="width: {{ $stats['total'] > 0 ? ($stats['high_priority'] / $stats['total']) * 100 : 0 }}%">
                             </div>
                         </div>
                         <small class="text-white">Liên hệ cần ưu tiên xử lý</small>
@@ -86,16 +60,13 @@
             </div>
         </div>
 
+        <!-- Quản lý liên hệ -->
         <div class="card shadow-sm border-0 mb-4">
-            <div class="card-header d-flex justify-content-between align-items-center bg-primary text-white">
-                <strong>Quản lý liên hệ</strong>
-            </div>
             <div class="card-body">
                 <!-- Bộ lọc -->
                 <form action="{{ route('admin.lien-he.index') }}" method="GET" class="row g-3 mb-4">
                     <div class="col-md-4">
                         <div class="input-group">
-                            <span class="input-group-text"><i class="fas fa-search"></i></span>
                             <input type="text" class="form-control" placeholder="Tìm kiếm..." name="search"
                                 value="{{ $search ?? '' }}">
                         </div>
@@ -103,37 +74,45 @@
                     <div class="col-md-2">
                         <select class="form-select" name="status">
                             <option value="">-- Trạng thái --</option>
-                            <option value="1" {{ isset($status) && $status == '1' ? 'selected' : '' }}>Đã xử lý</option>
-                            <option value="0" {{ isset($status) && $status == '0' ? 'selected' : '' }}>Chưa xử lý</option>
+                            <option value="1" {{ isset($status) && $status == '1' ? 'selected' : '' }}>Đã xử lý
+                            </option>
+                            <option value="0" {{ isset($status) && $status == '0' ? 'selected' : '' }}>Chưa xử lý
+                            </option>
                         </select>
                     </div>
                     <div class="col-md-2">
                         <select class="form-select" name="priority">
                             <option value="">-- Ưu tiên --</option>
-                            <option value="cao" {{ isset($priority) && $priority == 'cao' ? 'selected' : '' }}>Cao</option>
-                            <option value="binh_thuong" {{ isset($priority) && $priority == 'binh_thuong' ? 'selected' : '' }}>Bình thường</option>
-                            <option value="thap" {{ isset($priority) && $priority == 'thap' ? 'selected' : '' }}>Thấp</option>
+                            <option value="cao" {{ isset($priority) && $priority == 'cao' ? 'selected' : '' }}>Cao
+                            </option>
+                            <option value="binh_thuong"
+                                {{ isset($priority) && $priority == 'binh_thuong' ? 'selected' : '' }}>Bình thường</option>
+                            <option value="thap" {{ isset($priority) && $priority == 'thap' ? 'selected' : '' }}>Thấp
+                            </option>
                         </select>
                     </div>
                     <div class="col-md-2">
                         <select class="form-select" name="category">
                             <option value="">-- Phân loại --</option>
-                            @foreach($categories as $cat)
-                                <option value="{{ $cat }}" {{ isset($category) && $category == $cat ? 'selected' : '' }}>
+                            @foreach ($categories as $cat)
+                                <option value="{{ $cat }}"
+                                    {{ isset($category) && $category == $cat ? 'selected' : '' }}>
                                     {{ $cat }}
                                 </option>
                             @endforeach
                         </select>
                     </div>
                     <div class="col-md-2">
-                        <button type="submit" class="btn btn-primary w-100"><i class="fas fa-filter me-1"></i> Lọc</button>
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="ti ti-filter me-1"></i> Lọc
+                        </button>
                     </div>
                 </form>
 
                 <!-- Bảng dữ liệu -->
                 <div class="table-responsive">
-                    <table class="table table-hover table-bordered align-middle">
-                        <thead class="table-dark">
+                    <table class="table align-middle">
+                        <thead>
                             <tr>
                                 <th>ID</th>
                                 <th>Tên</th>
@@ -169,8 +148,8 @@
                                     <td>
                                         <div class="btn-group">
                                             <a href="{{ route('admin.lien-he.show', $lienHe->id) }}"
-                                                class="btn btn-sm btn-outline-info">
-                                                <i class="fas fa-eye"></i>
+                                                class="btn btn-sm btn-outline-info" title="Xem">
+                                                <i class="ti ti-eye"></i>
                                             </a>
                                             <form action="{{ route('admin.lien-he.update', $lienHe->id) }}" method="POST"
                                                 class="d-inline">
@@ -180,17 +159,19 @@
                                                     value="{{ $lienHe->trang_thai ? '0' : '1' }}">
                                                 <input type="hidden" name="ghi_chu_noi_bo"
                                                     value="{{ $lienHe->ghi_chu_noi_bo }}">
-                                                <button type="submit" class="btn btn-sm btn-outline-warning">
-                                                    <i class="fas fa-check-circle"></i>
+                                                <button type="submit" class="btn btn-sm btn-outline-warning"
+                                                    title="Chuyển trạng thái">
+                                                    <i class="ti ti-check"></i>
                                                 </button>
                                             </form>
-                                            <form action="{{ route('admin.lien-he.destroy', $lienHe->id) }}" method="POST"
-                                                class="d-inline"
+                                            <form action="{{ route('admin.lien-he.destroy', $lienHe->id) }}"
+                                                method="POST" class="d-inline"
                                                 onsubmit="return confirm('Bạn có chắc chắn muốn xóa liên hệ này?');">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="btn btn-sm btn-outline-danger">
-                                                    <i class="fas fa-trash"></i>
+                                                <button type="submit" class="btn btn-sm btn-outline-danger"
+                                                    title="Xóa">
+                                                    <i class="ti ti-trash"></i>
                                                 </button>
                                             </form>
                                         </div>

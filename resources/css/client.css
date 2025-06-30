@@ -240,7 +240,6 @@ a {
     white-space: nowrap;
     display: inline-block;
     vertical-align: middle;
-    
 }
 
 .swal2-icon.swal2-error {
@@ -342,4 +341,16 @@ a {
     .social i {
         font-size: 18px;
     }
+}
+.custom-link {
+    text-decoration: none;
+    color: inherit;
+    /* giữ màu mặc định */
+    transition: background-color 0.3s, color 0.3s;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+}
+
+.custom-link:hover {
+    color: #fbff00;
 }

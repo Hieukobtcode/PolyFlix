@@ -1,9 +1,6 @@
 @extends('layouts.admin')
-@section('title', 'Phòng chiếu')
-@section('page-title', 'Chỉnh sửa sơ đồ ghế')
-@section('breadcrumb', 'Chỉnh sửa sơ đồ ghế')
-
 @section('content')
+
     @php
         $cauTrucGhes = $soDoGhe->cau_truc_ghe;
         $rows = [];
@@ -23,6 +20,7 @@
 
     <style>
         .layout {
+            width: 100%;
             display: flex;
             justify-content: center;
             gap: 30px;
@@ -260,23 +258,24 @@
                                 data-loai="{{ $typeClass }}"
                                 onclick="toggleSeat('{{ $rowKey }}','{{ $colKey }}')">
                                 @if ($statusClass === 'empty')
-                                    <i class="fa-solid fa-plus fa-spin-pulse"></i>
+                                    <i class="ti ti-plus fs-5"></i>
                                 @else
-                                    <i class="fa-solid fa-couch"></i>
+                                    <i class="ti ti-armchair fs-5"></i>
                                 @endif
                             </button>
+
                         @endforeach
 
                         <div class="seat-action-btns" data-row="{{ $rowKey }}">
                             <button type="button" title="Thêm hàng {{ $rowKey }}" class="seat-action-btn add"
                                 data-type="add-button" data-row="{{ $rowKey }}"
                                 onclick="toggleRow('{{ $rowKey }}')">
-                                <i class="fa-solid fa-plus fa-bounce"></i>
+                                <i class="ti ti-plus fs-5"></i>
                             </button>
                             <button type="button" title="Xóa hàng {{ $rowKey }}" class="seat-action-btn delete"
                                 data-type="delete-button" data-row="{{ $rowKey }}"
                                 onclick="deleteRow('{{ $rowKey }}')" style="display: none;">
-                                <i class="fa-solid fa-trash"></i>
+                                <i class="ti ti-trash fs-5"></i>
                             </button>
                         </div>
                     @endforeach
@@ -322,10 +321,10 @@
 
                 const toggleOne = s => {
                     if (s.hasClass('empty')) {
-                        s.removeClass('empty').addClass('filled').html('<i class="fa-solid fa-couch"></i>');
+                        s.removeClass('empty').addClass('filled').html('<i class="ti ti-armchair fs-5"></i>');
                     } else {
                         s.removeClass('filled').addClass('empty').html(
-                        '<i class="fa-solid fa-plus fa-spin-pulse"></i>');
+                            '<i class="ti ti-plus fs-5"></i>');
                     }
                 };
 
@@ -333,9 +332,9 @@
                 if (partnerSeat.length) toggleOne(partnerSeat);
             } else {
                 if (seat.hasClass('empty')) {
-                    seat.removeClass('empty').addClass('filled').html('<i class="fa-solid fa-couch"></i>');
+                    seat.removeClass('empty').addClass('filled').html('<i class="ti ti-armchair fs-5"></i>');
                 } else {
-                    seat.removeClass('filled').addClass('empty').html('<i class="fa-solid fa-plus fa-spin-pulse"></i>');
+                    seat.removeClass('filled').addClass('empty').html('<i class="ti ti-plus fs-5"></i>');
                 }
             }
 
@@ -347,7 +346,7 @@
             rowSeats.each(function() {
                 const seat = $(this);
                 if (seat.hasClass('empty')) {
-                    seat.removeClass('empty').addClass('filled').html('<i class="fa-solid fa-couch"></i>');
+                    seat.removeClass('empty').addClass('filled').html('<i class="ti ti-armchair fs-5"></i>');
                 }
             });
             updateRowButtons(row);
@@ -359,7 +358,7 @@
                 const seat = $(this);
                 if (seat.hasClass('filled')) {
                     seat.removeClass('filled').addClass('empty').html(
-                        '<i class="fa-solid fa-plus fa-spin-pulse"></i>');
+                        '<i class="ti ti-plus"></i>');
                 }
             });
             updateRowButtons(row);
@@ -400,5 +399,4 @@
             $('#seat_data').val(JSON.stringify(seats));
         });
     </script>
-
 @endsection

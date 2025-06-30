@@ -81,6 +81,10 @@ class Phim extends Model
     {
         return $this->hasMany(Rating::class);
     }
+    public function phongChieu()
+{
+    return $this->belongsTo(PhongChieu::class, 'phong_chieu_id');
+}
 
 
 }

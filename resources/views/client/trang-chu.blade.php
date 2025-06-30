@@ -10,6 +10,10 @@
     @vite('resources/js/trang-chu.js')
 
     <style>
+        html {
+            scroll-behavior: smooth;
+        }
+
         .ten-phim {
             display: -webkit-box;
             -webkit-line-clamp: 2;
@@ -80,7 +84,6 @@
         });
     </script>
 
-    
     <!-- Tabs phim -->
     <div class="menu">
         <button type="button"></button>
@@ -93,17 +96,26 @@
 
     <div class="list-movie">
         @foreach ($allPhims as $phim)
-            <div class="movie">
+            <div class="movie clickable-movie" data-href="{{ route('phim.chi-tiet', $phim->id) }}">
                 <div class="img-wrapper">
-                    <img src="{{ asset('storage/' . $phim->poster) }}" alt="{{ $phim->ten_phim }}">
+                    <a href="{{ route('phim.chi-tiet', $phim->id) }}">
+                        <img src="{{ asset('storage/' . $phim->poster) }}" alt="{{ $phim->ten_phim }}">
+                    </a>
                     <div class="age-label">{{ $phim->do_tuoi }}</div>
                     <div class="overlay">
-                        <button class="btn buy"><i class="fa-solid fa-ticket"></i> Mua vé</button>
-                        <button class="btn trailer" data-video="{{ $phim->trailer }}"><i class="fa-solid fa-video"></i>
-                            Trailer</button>
+                        <a href="{{ route('phim.chi-tiet', $phim->id) }}#lich-chieu">
+                            <button class="btn buy">
+                                <i class="fa-solid fa-ticket"></i> Mua vé
+                            </button>
+                        </a>
+                        <button class="btn trailer" data-video="{{ $phim->trailer }}">
+                            <i class="fa-solid fa-video"></i> Trailer
+                        </button>
                     </div>
                 </div>
-                <p class="ten-phim">{{ $phim->ten_phim }}</p>
+                <a href="{{ route('phim.chi-tiet', $phim->id) }}">
+                    <p>{{ $phim->ten_phim }}</p>
+                </a>
             </div>
         @endforeach
     </div>
@@ -183,7 +195,6 @@
             </div>
         </div>
     </div>
-    
 
     <div id="tab-blog" class="tab-content">
         @if ($baiViet && count($baiViet))
@@ -216,10 +227,7 @@
         @else
             <p>Chưa có bài viết nào.</p>
         @endif
-        
     </div>
-    
-    
 
     <!-- Popup trailer -->
     <div id="trailerPopup"
@@ -271,14 +279,20 @@
                             const item = `
                     <div class="movie">
                         <div class="img-wrapper">
+                             <a href="{{ route('phim.chi-tiet', $phim->id) }}">
                             <img src="${poster}" alt="${phim.ten_phim}">
+                            </a>
                             <div class="age-label">${phim.do_tuoi ?? ''}</div>
                             <div class="overlay">
+                                <a href="{{ route('phim.chi-tiet', $phim->id) }}">
                                 <button class="btn buy"><i class="fa-solid fa-ticket"></i> Mua vé</button>
+                                </a>
                                 <button class="btn trailer" data-video="${phim.trailer}"><i class="fa-solid fa-video"></i> Trailer</button>
                             </div>
                         </div>
+                         <a href="{{ route('phim.chi-tiet', $phim->id) }}">
                         <p class="ten-phim">${phim.ten_phim}</p>
+                        </a>
                     </div>`;
                             movieList.insertAdjacentHTML('beforeend', item);
                         });
@@ -323,5 +337,11 @@
             if (url.includes('youtu.be/')) return 'https://www.youtube.com/embed/' + url.split('youtu.be/')[1];
             return url;
         }
+        document.querySelectorAll('.clickable-movie').forEach(div => {
+            div.addEventListener('click', function(e) {
+                if (e.target.closest('.btn') || e.target.closest('a')) return;
+                window.location.href = this.dataset.href;
+            });
+        });
     </script>
 @endsection
