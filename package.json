@@ -18,6 +18,8 @@
         "@popperjs/core": "^2.11.8",
         "bootstrap": "^5.3.7",
         "jquery": "^3.7.1",
+        "laravel-echo": "^2.1.6",
+        "pusher-js": "^8.4.0",
         "select2": "^4.1.0-rc.0"
     }
 }

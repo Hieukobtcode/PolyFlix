@@ -1,42 +1,11 @@
 @extends('layouts.admin')
-
-@section('title', 'Quản lý Phòng chiếu')
-@section('page-title', 'Thêm phòng chiếu')
-@section('breadcrumb', 'Thêm phòng chiếu')
-
-@section('styles')
-    <style>
-        .card {
-            border-radius: 10px;
-        }
-
-        .form-control,
-        .form-select {
-            border-radius: 8px;
-        }
-
-        .form-label {
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
-
-        .btn {
-            border-radius: 8px;
-        }
-
-        .invalid-feedback {
-            font-size: 0.875em;
-        }
-    </style>
-@endsection
-
 @section('content')
     <div class="container-fluid d-flex justify-content-center">
         <div class="card shadow-sm border-0" style="width: 100%; max-width: 1100px;">
-            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
                 <h5 class="mb-0 fw-bold">Thêm phòng chiếu cho rạp: {{ $rapPhim->ten_rap }}</h5>
-                <a href="{{ route('admin.rap-phim.show', $rapPhim->id) }}" class="btn btn-light btn-sm">
-                    <i class="fas fa-arrow-left me-1"></i> Quay lại rạp
+                <a href="{{ route('admin.chi-nhanh.show', $rapPhim->chi_nhanh_id) }}" class="btn btn-secondary">
+                    <i class="ti ti-arrow-left me-2"></i>Quay lại rạp
                 </a>
             </div>
             <div class="card-body px-4 py-3">
@@ -91,7 +60,7 @@
 
                         <div class="col-md-2 d-grid">
                             <button type="submit" class="btn btn-success mt-2">
-                                <i class="fas fa-save me-1"></i> Lưu
+                                Lưu
                             </button>
                         </div>
                     </div>

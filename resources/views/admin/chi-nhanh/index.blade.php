@@ -4,7 +4,7 @@
     @section('page-title', 'Quản lý Chi Nhánh')
     @section('breadcrumb', 'Danh sách Chi Nhánh')
 
-    @section('styles')
+    {{-- @section('styles')
         <style>
             .card {
                 border-radius: 16px;
@@ -222,37 +222,15 @@
                 box-shadow: 0 4px 12px rgba(248, 191, 49, 0.637);
             }
         </style>
-    @endsection
+    @endsection --}}
 
     @section('content')
 
 
 
         <div class="container-fluid">
-            {{-- Thông báo lỗi validate --}}
-            @if ($errors->any())
-                <div class="alert alert-danger d-flex align-items-start gap-3 alert-dismissible fade show" role="alert">
-                    <i class="fas fa-exclamation-circle fa-lg mt-1"></i>
-                    <div>
-                        <ul class="mb-0 mt-1">
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                    <button type="button" class="btn-close mt-1" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            @endif
-
 
             <div class="card shadow-lg border-0 mb-4">
-                <div
-                    class="card-header bg-gradient-primary text-white d-flex justify-content-between align-items-center py-3">
-                    <h4 class="mb-0">Danh sách Chi Nhánh</h4>
-                    <a href="{{ route('admin.chi-nhanh.create') }}" class="btn btn-poly rounded-pill px-4 py-2">
-                        <i class="fas fa-plus me-2"></i> Thêm chi nhánh
-                    </a>
-                </div>
 
                 <div class="card-body">
                     <!-- Form search realtime + select filter -->
@@ -265,61 +243,83 @@
                         </div>
 
                         <!-- Tên quản lý -->
-                        <div class="col-md-3">
+                        <div style="display: none" class="col-md-3">
                             <input type="text" id="searchTenQuanLy" class="form-control"
                                 placeholder="Tìm theo tên quản lý...">
                         </div>
 
                         <!-- Trạng thái quản lý -->
-                        <div class="col-md-3">
-                            <select id="filterTrangThaiQL" class="form-select select2">
-                                <option value="">Quản lý</option>
-                                <option value="chua_phan_cong">Chưa phân công</option>
-                                <option value="dang_phan_cong">Đang phân công</option>
-                                <option value="da_phan_cong">Đã phân công</option>
+                        <div style="display: none" class="col-md-3">
+                            <select name="quan_ly" class="form-select">
+                                <option value="" disabled {{ request('quan_ly') === null ? 'selected' : '' }} hidden>
+                                    Quản lý</option>
+                                <option value="all" {{ request('quan_ly') === 'all' ? 'selected' : '' }}>Tất cả</option>
+                                <option value="phan_cong" {{ request('quan_ly') === 'phan_cong' ? 'selected' : '' }}>Đã phân
+                                    công</option>
+                                <option value="chua_phan_cong"
+                                    {{ request('quan_ly') === 'chua_phan_cong' ? 'selected' : '' }}>Chưa phân công</option>
                             </select>
                         </div>
 
                         <!-- Trạng thái chi nhánh (cái cũ) -->
-                        <div class="col-md-3">
-                            <select id="statusFilter" class="form-select select2">
-                                <option value="">Tất cả trạng thái</option>
-                                <option value="hoat_dong">Hoạt động</option>
-                                <option value="tam_dung">Tạm dừng</option>
-                                <option value="dong_cua">Đóng cửa</option>
+                        <div style="display: none" class="col-md-3">
+                            <select id="statusFilter" class="form-select">
+                                <option value="" {{ request('statusFilter') === null ? 'selected' : '' }} disabled
+                                    hidden>Trạng thái</option>
+                                <option value="hoat_dong" {{ request('statusFilter') == 'hoat_dong' ? 'selected' : '' }}>
+                                    Hoạt động</option>
+                                <option value="tam_dung" {{ request('statusFilter') == 'tam_dung' ? 'selected' : '' }}>Tạm
+                                    dừng</option>
+                                <option value="dong_cua" {{ request('statusFilter') == 'dong_cua' ? 'selected' : '' }}>Đóng
+                                    cửa</option>
                             </select>
                         </div>
 
-                    </div>
 
+                    </div>
+                    
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <a href="{{ route('admin.chi-nhanh.create') }}"
+                            class="btn btn-sm btn-primary d-inline-flex align-items-center gap-2 py-2 px-3">
+                            <i class="ti ti-plus"></i> Thêm chi nhánh
+                        </a>
+                    </div>
                     <!-- Table mới đẹp -->
                     <div class="table-responsive">
-                        <table class="table table-hover align-middle">
+                        <table class="table text-nowrap align-middle mb-0">
                             <thead class="bg-gradient-dark text-white">
                                 <tr>
-                                    <th scope="col" class="text-center" style="width: 5%">#</th>
-                                    <th scope="col">Tên Chi Nhánh</th>
-                                    <th scope="col">Địa Chỉ</th>
-                                    <th scope="col" class="text-center" style="width: 15%">Quản Lý</th>
-                                    <th scope="col" class="text-center" style="width: 15%">Ngày Tạo</th>
-                                    <th scope="col" class="text-center" style="width: 15%">Trạng Thái</th>
-                                    <th scope="col" class="text-center" style="width: 20%">Thao Tác</th>
+                                    <th class="text-center" style="width: 5%">
+                                        <h6 class="fs-4 fw-semibold mb-0">#</h6>
+                                    </th>
+                                    <th>
+                                        <h6 class="fs-4 fw-semibold mb-0">Tên Chi Nhánh</h6>
+                                    </th>
+                                    <th>
+                                        <h6 class="fs-4 fw-semibold mb-0">Địa Chỉ</h6>
+                                    </th>
+                                    <th class="text-center" style="width: 15%">
+                                        <h6 class="fs-4 fw-semibold mb-0">Quản Lý</h6>
+                                    </th>
+                                    <th class="text-center" style="width: 15%">
+                                        <h6 class="fs-4 fw-semibold mb-0">Ngày Tạo</h6>
+                                    </th>
+                                    <th class="text-center" style="width: 15%">
+                                        <h6 class="fs-4 fw-semibold mb-0">Trạng Thái</h6>
+                                    </th>
+                                    <th class="text-center" style="width: 20%">
+                                        <h6 class="fs-4 fw-semibold mb-0">Thao Tác</h6>
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody id="chiNhanhTable">
                                 @forelse($chiNhanhs as $index => $chiNhanh)
                                     <tr class="data-row"
                                         data-state-ql="@if ($chiNhanh->quan_ly_id) da_phan_cong
-                                        @elseif (in_array($chiNhanh->id, $pendingInvites)) dang_phan_cong
-                                        @else chua_phan_cong @endif"
+                @elseif (in_array($chiNhanh->id, $pendingInvites)) dang_phan_cong
+                @else chua_phan_cong @endif"
                                         data-state-cn="{{ $chiNhanh->trang_thai }}"
-                                        data-ten-ql="
-                                    @if ($chiNhanh->quan_ly_id) {{ $chiNhanh->quanLy->name ?? '' }}
-                                    @elseif (in_array($chiNhanh->id, $pendingInvites))
-                                        Đang phân công
-                                    @else
-                                        Chưa phân công @endif
-                                ">
+                                        data-ten-ql="@if ($chiNhanh->quan_ly_id) {{ $chiNhanh->quanLy->name ?? '' }} @elseif (in_array($chiNhanh->id, $pendingInvites)) Đang phân công @else Chưa phân công @endif">
 
                                         <td class="text-center">{{ $index + 1 }}</td>
                                         <td>{{ $chiNhanh->ten_chi_nhanh }}</td>
@@ -328,17 +328,17 @@
                                         <td class="text-center">
                                             @if ($chiNhanh->quan_ly_id)
                                                 <a href="{{ route('admin.users.show', $chiNhanh->quan_ly_id) }}"
-                                                    class="text-decoration-none">
+                                                    class="text-decoration-none fw-medium">
                                                     {{ $chiNhanh->quanLy->name ?? 'ID: ' . $chiNhanh->quan_ly_id }}
                                                 </a>
                                             @elseif (in_array($chiNhanh->id, $pendingInvites))
-                                                <button type="button" class="badge bg-warning text-dark border-0"
+                                                <button type="button" class="badge bg-warning-subtle text-warning border-0"
                                                     data-bs-toggle="modal"
                                                     data-bs-target="#cancelInviteModal{{ $chiNhanh->id }}">
                                                     Đang phân công
                                                 </button>
                                             @else
-                                                <span class="badge bg-secondary text-dark border-0">Chưa phân công</span>
+                                                <span class="badge bg-secondary-subtle text-muted">Chưa phân công</span>
                                             @endif
                                         </td>
 
@@ -347,55 +347,63 @@
                                         </td>
                                         <td class="text-center">
                                             @if ($chiNhanh->trang_thai === 'hoat_dong')
-                                                <span class="badge bg-success">Hoạt động</span>
+                                                <span class="badge bg-success-subtle text-success">Hoạt động</span>
                                             @elseif ($chiNhanh->trang_thai === 'tam_dung')
-                                                <span class="badge bg-warning">Tạm dừng</span>
+                                                <span class="badge bg-warning-subtle text-warning">Tạm dừng</span>
                                             @else
-                                                <span class="badge bg-secondary">Đóng cửa</span>
+                                                <span class="badge bg-secondary-subtle text-muted">Đóng cửa</span>
                                             @endif
                                         </td>
+
                                         <td class="text-center">
-
-                                            <!-- View -->
-                                            <a href="{{ route('admin.chi-nhanh.show', $chiNhanh->id) }}"
-                                                class="btn btn-sm btn-outline-info" data-bs-toggle="tooltip"
-                                                data-bs-placement="top" title="Xem chi nhánh">
-                                                <i class="fas fa-eye"></i>
-                                            </a>
-
-                                            {{-- Edit --}}
-                                            <a href="{{ route('admin.chi-nhanh.edit', $chiNhanh->id) }}"
-                                                class="btn btn-sm btn-outline-primary" title="Chỉnh sửa chi nhánh">
-                                                <i class="fas fa-edit"></i>
-                                            </a>
-
-                                            <!-- Add Cinema -->
-                                            <a href="{{ route('admin.rap-phim.create', ['chiNhanhId' => $chiNhanh->id]) }}"
-                                                class="btn btn-sm btn-outline-success" title="Thêm rạp chiếu"
-                                                data-bs-toggle="tooltip">
-                                                <i class="fas fa-plus-circle"></i>
-                                            </a>
-
-                                            {{-- Quản lý --}}
-                                            @if (!$chiNhanh->quan_ly_id && !in_array($chiNhanh->id, $pendingInvites))
-                                                <button class="btn btn-sm btn-outline-warning" data-bs-toggle="modal"
-                                                    data-bs-target="#inviteModal{{ $chiNhanh->id }}"
-                                                    title="Phân công quản lý">
-                                                    <i class="fa-solid fa-user-plus" style="color: #FFD43B;"></i>
-                                                </button>
-                                            @endif
-
+                                            <div class="dropdown dropstart">
+                                                <a href="javascript:void(0)" class="text-muted" data-bs-toggle="dropdown"
+                                                    aria-expanded="false">
+                                                    <i class="ti ti-dots-vertical fs-6"></i>
+                                                </a>
+                                                <ul class="dropdown-menu">
+                                                    <li>
+                                                        <a class="dropdown-item d-flex align-items-center gap-2"
+                                                            href="{{ route('admin.chi-nhanh.show', $chiNhanh->id) }}">
+                                                            <i class="ti ti-eye fs-5"></i> Xem chi nhánh
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a class="dropdown-item d-flex align-items-center gap-2"
+                                                            href="{{ route('admin.chi-nhanh.edit', $chiNhanh->id) }}">
+                                                            <i class="ti ti-edit fs-5"></i> Chỉnh sửa
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a class="dropdown-item d-flex align-items-center gap-2"
+                                                            href="{{ route('admin.rap-phim.create', ['chiNhanhId' => $chiNhanh->id]) }}">
+                                                            <i class="ti ti-plus fs-5"></i> Thêm rạp chiếu
+                                                        </a>
+                                                    </li>
+                                                    @if (!$chiNhanh->quan_ly_id && !in_array($chiNhanh->id, $pendingInvites))
+                                                        <li>
+                                                            <button class="dropdown-item d-flex align-items-center gap-2"
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="#inviteModal{{ $chiNhanh->id }}">
+                                                                <i class="ti ti-user-plus fs-5 text-warning"></i> Phân công
+                                                                quản lý
+                                                            </button>
+                                                        </li>
+                                                    @endif
+                                                </ul>
+                                            </div>
                                         </td>
                                     </tr>
                                 @empty
                                     <tr>
                                         <td colspan="7" class="text-center text-muted py-3">
-                                            <i class="fas fa-folder-open me-1"></i> Không có dữ liệu
+                                            <i class="ti ti-folder-open me-1"></i> Không có dữ liệu
                                         </td>
                                     </tr>
                                 @endforelse
                             </tbody>
                         </table>
+
                     </div>
 
                     <div class="d-flex justify-content-between align-items-center mt-4">
@@ -416,31 +424,30 @@
         @foreach ($chiNhanhs as $chiNhanh)
             @if (in_array($chiNhanh->id, $pendingInvites))
                 <div class="modal fade" id="cancelInviteModal{{ $chiNhanh->id }}" tabindex="-1" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered modal-sm">
-                        <div class="modal-content"
-                            style="border-radius: 16px; overflow: hidden; border: 1px solid #e0e6ed; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);">
-                            <div class="modal-header"
-                                style="background: linear-gradient(90deg, #f6c343, #f08a24); color: #fff; padding: 1rem 1.5rem;">
-                                <h5 class="modal-title fw-semibold mb-0">Thông tin lời mời</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                    <div class="modal-dialog modal-dialog-centered modal-md">
+                        <div class="modal-content">
+                            <div class="modal-header modal-colored-header bg-warning text-white py-2 px-3">
+                                <h5 class="modal-title text-white mb-0">Thông tin lời mời</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
                                     aria-label="Đóng"></button>
                             </div>
-                            <div class="modal-body text-center py-4 px-4">
+                            <div class="modal-body text-center py-3 px-3">
                                 <p class="mb-3"><strong>Email:</strong><br>
                                     <span class="text-muted">{{ $pendingEmails[$chiNhanh->id] ?? 'Không rõ' }}</span>
                                 </p>
                                 <p class="text-muted mb-0">Bạn có chắc chắn muốn hủy lời mời này?</p>
                             </div>
                             <div class="modal-footer justify-content-between px-3 pb-3">
-                                <button class="btn btn-secondary btn-sm rounded-pill px-4"
+                                <button class="btn btn-light btn-sm rounded-pill px-4"
                                     data-bs-dismiss="modal">Đóng</button>
                                 <form action="{{ route('admin.invite.cancel') }}" method="POST"
                                     onsubmit="return confirm('Bạn có chắc chắn muốn hủy lời mời đã gửi đến {{ $pendingEmails[$chiNhanh->id] ?? '' }}?')">
                                     @csrf
                                     <input type="hidden" name="chi_nhanh_id" value="{{ $chiNhanh->id }}">
                                     <input type="hidden" name="loai_quan_ly" value="1">
-                                    <button type="submit" class="btn btn-poly btn-sm rounded-pill px-4">
-                                        <i class="fas fa-times-circle me-1"></i> Hủy lời mời
+                                    <button type="submit"
+                                        class="btn bg-warning-subtle text-warning btn-sm rounded-pill px-4">
+                                        <i class="ti ti-trash"></i> Hủy lời mời
                                     </button>
                                 </form>
                             </div>
@@ -449,21 +456,20 @@
                 </div>
             @endif
         @endforeach
+
         {{-- Modal gửi lời mời cho Chi Nhánh --}}
         @foreach ($chiNhanhs as $chiNhanh)
             @if (!$chiNhanh->quan_ly_id && !in_array($chiNhanh->id, $pendingInvites))
                 <div class="modal fade" id="inviteModal{{ $chiNhanh->id }}" tabindex="-1" aria-hidden="true">
-                    <div class="modal-dialog">
+                    <div class="modal-dialog modal-dialog-scrollable modal-md">
                         <form method="POST" action="{{ route('invite.send') }}">
                             @csrf
                             <input type="hidden" name="loai_quan_ly" value="1">
                             <input type="hidden" name="chi_nhanh_id" value="{{ $chiNhanh->id }}">
-                            <div class="modal-content"
-                                style="border-radius: 16px; overflow: hidden; border: 1px solid #e0e6ed; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);">
-                                <div class="modal-header"
-                                    style="background: linear-gradient(90deg, #f6c343, #f08a24); color: #fff; padding: 1rem 1.5rem;">
-                                    <h5 class="modal-title fw-semibold mb-0">Phân công quản lý chi nhánh</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                            <div class="modal-content">
+                                <div class="modal-header modal-colored-header bg-success text-white">
+                                    <h4 class="modal-title text-white">Phân công quản lý chi nhánh</h4>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
                                         aria-label="Đóng"></button>
                                 </div>
                                 <div class="modal-body py-4 px-4">
@@ -471,10 +477,13 @@
                                     <input type="email" name="email" class="form-control" required>
                                 </div>
                                 <div class="modal-footer justify-content-between px-3 pb-3">
-                                    <button type="button" class="btn btn-secondary btn-sm rounded-pill px-4"
-                                        data-bs-dismiss="modal">Hủy</button>
-                                    <button type="submit" class="btn btn-poly btn-sm rounded-pill px-4">
-                                        <i class="fas fa-paper-plane me-1"></i> Gửi lời mời
+                                    <button type="button" class="btn btn-light btn-sm rounded-pill px-4"
+                                        data-bs-dismiss="modal">
+                                        Hủy
+                                    </button>
+                                    <button type="submit"
+                                        class="btn bg-success-subtle text-success btn-sm rounded-pill px-4">
+                                        <i class="ti ti-send"></i> Gửi lời mời
                                     </button>
                                 </div>
                             </div>

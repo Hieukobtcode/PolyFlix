@@ -1,96 +1,19 @@
 @extends('layouts.admin')
-@section('title', 'Quản lý chi nhánh')
-@section('page-title', 'Chi tiết rạp chiếu')
-@section('breadcrumb')
-    <a href="{{ route('admin.chi-nhanh.index') }}">Danh sách chi nhánh</a> /
-    <a href="{{ route('admin.chi-nhanh.show', $rapPhim->chi_nhanh_id) }}">Danh sách rạp chiếu</a>/
-    Danh sách phòng chiếu
-@endsection
-
-@section('styles')
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.1.1/dist/select2-bootstrap-5-theme.min.css"
-        rel="stylesheet" />
-    <style>
-        .card {
-            border-radius: 12px;
-        }
-
-        .table th,
-        .table td {
-            vertical-align: middle;
-        }
-    </style>
-@endsection
-
 @section('content')
     <div class="container-fluid">
         <div class="row g-3">
-            {{-- Cột trái --}}
-            <div class="col-md-3">
-                <div class="card shadow-sm border-0 h-100">
-                    <div class="card-header bg-primary text-white py-2">
-                        <strong><i class="fas fa-film me-1"></i> Rạp Chiếu</strong>
-                    </div>
-                    <div class="card-body px-3 py-2 small">
-                        <ul class="list-unstyled mb-0">
-                            <li class="mb-2">
-                                <i class="fas fa-store-alt text-primary me-1"></i>
-                                <strong>Tên rạp</strong><br>
-                                <span class="text-muted">{{ $rapPhim->ten_rap }}</span>
-                            </li>
-                            <li class="mb-2">
-                                <i class="fas fa-map-marker-alt text-danger me-1"></i>
-                                <strong>Địa chỉ</strong><br>
-                                <span class="text-muted">{{ $rapPhim->dia_chi }}</span>
-                            </li>
-                            <li class="mb-2">
-                                <i class="fas fa-building text-success me-1"></i>
-                                <strong>Chi nhánh</strong><br>
-                                <span class="text-muted">
-                                    <a href="{{ route('admin.chi-nhanh.show', $rapPhim->chiNhanh->id) }}"
-                                        class="text-decoration-none">
-                                        {{ $rapPhim->chiNhanh->ten_chi_nhanh }}
-                                    </a>
-                                </span>
-                            </li>
-                            <li class="mb-0">
-                                <i class="fas fa-info-circle text-warning me-1"></i>
-                                <strong>Trạng thái</strong><br>
-                                @php
-                                    $statusColors = [
-                                        'đang hoạt động' => '#198754',
-                                        'bảo trì' => '#ffc107',
-                                        'đã đóng' => '#dc3545',
-                                    ];
-                                    $statusLabels = [
-                                        'đang hoạt động' => 'Hoạt động',
-                                        'bảo trì' => 'Tạm dừng',
-                                        'đã đóng' => 'Đóng cửa',
-                                    ];
-                                    $bg = $statusColors[$rapPhim->trang_thai] ?? '#6c757d';
-                                    $label = $statusLabels[$rapPhim->trang_thai] ?? 'Không rõ';
-                                @endphp
-                                <span class="d-inline-block mt-1 px-3 py-1 fw-bold text-white rounded"
-                                    style="background-color: {{ $bg }}; font-size: 0.85rem;">
-                                    {{ $label }}
-                                </span>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
             {{-- Cột phải --}}
-            <div class="col-md-9">
+            <div class="col-md-12">
                 <div class="card shadow-sm border-0">
-                    <div class="card-header bg-primary text-white py-2 d-flex justify-content-between align-items-center">
-                        <strong><i class="fas fa-door-open me-1"></i> Phòng Chiếu</strong>
+                    <div class="card-header bg-primary text-white py-3 d-flex justify-content-between align-items-center">
+                        <strong><i class="fas fa-door-open me-1"></i> Phòng Chiếu: Rạp {{ $rapPhim->ten_rap }}</strong>
                         <a href="{{ route('admin.phong-chieu.create', ['rap_phim_id' => $rapPhim->id]) }}"
-                            class="btn btn-light btn-sm d-flex align-items-center" title="Thêm phòng chiếu">
-                            <i class="fas fa-plus me-1"></i> Thêm phòng chiếu
+                            class="btn btn-sm btn-success d-inline-flex align-items-center gap-2 py-2 px-3"
+                            title="Thêm phòng chiếu">
+                            <i class="ti ti-plus"></i> Thêm phòng chiếu
                         </a>
                     </div>
+
                     <div class="card-body p-3">
                         @if ($rapPhim->phongChieus->isEmpty())
                             <p class="text-muted mb-0">
@@ -98,18 +21,29 @@
                             </p>
                         @else
                             <div class="table-responsive">
-                                <table class="table table-bordered table-sm align-middle">
-                                    <thead class="table-dark text-center small">
+                                <table class="table table-hover align-middle mb-0">
+                                    <thead class="bg-gradient-dark text-white text-center small">
                                         <tr>
                                             <th style="width: 5%">#</th>
-                                            <th>Tên phòng</th>
-                                            <th>Loại phòng</th>
-                                            <th style="width: 20%">Số ghế</th>
-                                            <th style="width: 15%">Hành động</th>
+                                            <th class="text-start">Tên phòng</th>
+                                            <th class="text-start">Loại phòng</th>
+                                            <th style="width: 15%">Số ghế</th>
+                                            <th style="width: 15%">Trạng thái</th>
+                                            <th style="width: 10%">Thao tác</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @foreach ($rapPhim->phongChieus as $index => $phong)
+                                            @php
+                                                $statusMap = [
+                                                    'đang hoạt động' => ['bg-success-subtle text-success', 'Hoạt động'],
+                                                    'bảo trì' => ['bg-warning-subtle text-warning', 'Bảo trì'],
+                                                    'đã đóng' => ['bg-secondary-subtle text-muted', 'Đã đóng'],
+                                                ];
+                                                [$statusClass, $statusLabel] = $statusMap[
+                                                    $phong->trang_thai ?? 'đang hoạt động'
+                                                ] ?? ['bg-secondary-subtle text-muted', 'Không rõ'];
+                                            @endphp
                                             <tr>
                                                 <td class="text-center">{{ $index + 1 }}</td>
                                                 <td>{{ $phong->ten_phong }}</td>
@@ -122,30 +56,47 @@
                                                     @endif
                                                 </td>
                                                 <td class="text-center">
-                                                    <a href="{{ route('admin.phong-chieu.edit', $phong->id) }}"
-                                                        class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip"
-                                                        data-bs-placement="top" title="Sửa phòng chiếu">
-                                                        <i class="fas fa-edit"></i>
-                                                    </a>
-                                                    @if (is_null($phong->so_do_ghe_id))
-                                                        <a href="#" class="btn btn-sm btn-outline-success"
-                                                            data-bs-toggle="modal" data-bs-target="#modalSoDoGhe"
-                                                            data-id="{{ $phong->id }}"
-                                                            data-tenphong="{{ $phong->ten_phong }}" title="Thêm sơ đồ ghế">
-                                                            <i class="fas fa-plus-circle"></i>
+                                                    <span class="badge {{ $statusClass }}">{{ $statusLabel }}</span>
+                                                </td>
+                                                <td class="text-center">
+                                                    <div class="dropdown dropstart">
+                                                        <a href="javascript:void(0)" class="text-muted"
+                                                            data-bs-toggle="dropdown">
+                                                            <i class="ti ti-dots-vertical fs-6"></i>
                                                         </a>
-                                                    @else
-                                                        <a href="{{ route('admin.ghe-ngoi.show', $phong->id) }}"
-                                                            class="btn btn-sm btn-outline-secondary"
-                                                            data-bs-toggle="tooltip" title="Xem sơ đồ ghế"
-                                                            data-bs-placement="top">
-                                                            <i class="fa-solid fa-couch fa-spin-pulse"></i>
-                                                        </a>
-                                                    @endif
+                                                        <ul class="dropdown-menu">
+                                                            <li>
+                                                                <a href="{{ route('admin.phong-chieu.edit', $phong->id) }}"
+                                                                    class="dropdown-item d-flex align-items-center gap-2">
+                                                                    <i class="ti ti-edit fs-5"></i> Chỉnh sửa
+                                                                </a>
+                                                            </li>
+                                                            @if (is_null($phong->so_do_ghe_id))
+                                                                <li>
+                                                                    <button
+                                                                        class="dropdown-item d-flex align-items-center gap-2"
+                                                                        data-bs-toggle="modal"
+                                                                        data-bs-target="#modalSoDoGhe"
+                                                                        data-id="{{ $phong->id }}"
+                                                                        data-tenphong="{{ $phong->ten_phong }}">
+                                                                        <i class="ti ti-plus-circle fs-5 text-success"></i>
+                                                                        Thêm sơ đồ ghế
+                                                                    </button>
+                                                                </li>
+                                                            @else
+                                                                <li>
+                                                                    <a href="{{ route('admin.ghe-ngoi.show', $phong->id) }}"
+                                                                        class="dropdown-item d-flex align-items-center gap-2">
+                                                                        <i class="ti ti-armchair fs-5"></i> Xem
+                                                                        sơ đồ ghế
+                                                                    </a>
+                                                                </li>
+                                                            @endif
+                                                        </ul>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         @endforeach
-
                                     </tbody>
                                 </table>
                             </div>
@@ -318,6 +269,4 @@
             });
         });
     </script>
-
-
 @endsection

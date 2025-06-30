@@ -1,17 +1,4 @@
 @extends('layouts.admin')
-@section('title', 'Quản lý chi nhánh')
-@section('page-title', 'Chỉnh sửa sơ đồ ghế')
-@php
-    $breadcrumb = 'Chi tiết sơ đồ ghế - Phòng chiếu ' . $tenPhong;
-@endphp
-
-@section('breadcrumb')
-    <a href="{{ route('admin.chi-nhanh.index') }}">Danh sách chi nhánh</a> /
-    <a href="{{ route('admin.chi-nhanh.show', $phongChieu->rapPhim->chi_nhanh_id) }}">Danh sách rạp chiếu</a> /
-    <a href="{{ route('admin.rap-phim.show', $phongChieu->rap_phim_id) }}">Danh sách phòng chiếu</a> /
-    {{ $breadcrumb }}
-@endsection
-
 @php
     $tenPhong = $phongChieu->ten_phong;
     $loaiGheIdsDangSuDung = [];
@@ -27,7 +14,6 @@
     $loaiGheIdsDangSuDung = array_unique(array_filter($loaiGheIdsDangSuDung));
 @endphp
 
-@section('breadcrumb', $breadcrumb)
 @section('content')
     <div class="container mx-auto p-6">
         @vite('resources/js/app.js')
@@ -41,7 +27,7 @@
 
                     <div class="seat-toolbar">
                         <button class="btn btn-addSeat" id="btn-addSeat" type="button">
-                            <i class="fa-solid fa-gear fa-spin-pulse"></i>
+                            <i class="ti ti-settings fs-5"></i>
                         </button>
 
                         {{-- ============================================================================== --}}
@@ -131,7 +117,7 @@
                                             class="{{ $isDouble }} seat-wrapper {{ $oneSeat['trang_thai'] === 'bao_tri' ? 'selected' : '' }}"
                                             data-seat="{{ $maGhe }}" data-row='{{ $oneSeat['hang'] }}'
                                             data-col='{{ $oneSeat['cot'] }}'>
-                                            <i class="fa-solid fa-couch"></i>
+                                            <i class="ti ti-armchair fs-5"></i>
                                             <span data-hang="{{ $oneSeat['hang'] }}"
                                                 class="seat-code">{{ $maGhe }}</span>
                                         </div>
@@ -171,7 +157,7 @@
                             <div class="legend-item">
                                 <span>Ghế hỏng</span>
                                 <div class="legend-color selected" style="position: relative; background-color: #f87171;">
-                                    <i class="fa-solid fa-couch"
+                                    <i class="ti ti-armchair fs-5"
                                         style="color: #34495e; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></i>
                                 </div>
                             </div>

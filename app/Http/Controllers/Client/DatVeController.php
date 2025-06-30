@@ -21,67 +21,81 @@ class DatVeController extends Controller
      * Hiển thị trang đặt vé chi tiết
      */
     public function index(Request $request)
-    {
-        $suatChieuId = $request->input('suat_chieu_id');
+{
+    $suatChieuId = $request->input('suat_chieu_id');
 
-        if (!$suatChieuId) {
-            return redirect()->route('home')->with('error', 'Vui lòng chọn suất chiếu!');
-        }
-
-        // Lấy thông tin suất chiếu
-        $suatChieu = SuatChieu::with([
-            'phim',
-            'phongChieu.rapPhim.chiNhanh',
-            'phongChieu.loaiPhong',
-            'phongChieu.gheNgois.loaiGhe'
-        ])->findOrFail($suatChieuId);
-
-        // Kiểm tra suất chiếu còn hiệu lực
-        $now = Carbon::now();
-        $ngayGioChieu = Carbon::parse($suatChieu->ngay_chieu . ' ' . $suatChieu->bat_dau);
-
-        if ($ngayGioChieu->isPast()) {
-            return redirect()->route('home')->with('error', 'Suất chiếu đã qua. Vui lòng chọn suất chiếu khác!');
-        }
-
-        // Lấy danh sách ghế đã đặt
-        $gheDaDat = DB::table('chi_tiet_dat_ves')
-            ->join('dat_ves', 'chi_tiet_dat_ves.dat_ve_id', '=', 'dat_ves.id')
-            ->where('dat_ves.suat_chieu_id', $suatChieuId)
-            ->whereIn('dat_ves.trang_thai', ['Đã thanh toán', 'Chờ thanh toán'])
-            ->pluck('chi_tiet_dat_ves.ghe_id')
-            ->toArray();
-
-        // Lấy danh sách ghế theo phòng chiếu
-        $gheNgois = $suatChieu->phongChieu->gheNgois()
-            ->with('loaiGhe')
-            ->orderBy('hang')
-            ->orderBy('cot')
-            ->get()
-            ->map(function ($ghe) use ($gheDaDat) {
-                $ghe->da_dat = in_array($ghe->id, $gheDaDat);
-                return $ghe;
-            });
-
-        // Lấy danh sách đồ ăn và combo
-        $doAns = DoAn::whereHas('chiNhanhs', function ($query) use ($suatChieu) {
-            $query->where('chi_nhanh_id', $suatChieu->phongChieu->rapPhim->chi_nhanh_id);
-        })
-            ->where('trang_thai', 1)
-            ->with('danhMuc')
-            ->get();
-
-        $combos = Combo::where('trang_thai', 1)
-            ->with('doAns')
-            ->get();
-
-        return view('client.dat-ve.index', compact(
-            'suatChieu',
-            'gheNgois',
-            'doAns',
-            'combos'
-        ));
+    if (!$suatChieuId) {
+        return redirect()->route('home')->with('error', 'Vui lòng chọn suất chiếu!');
     }
+
+    // Lấy thông tin suất chiếu với các mối quan hệ cần thiết
+    $suatChieu = SuatChieu::with([
+        'phim',
+        'phongChieu.rapPhim.chiNhanh',
+        'phongChieu.loaiPhong',
+        'phongChieu.gheNgois.loaiGhe'
+    ])->findOrFail($suatChieuId);
+
+    // Kiểm tra suất chiếu còn hiệu lực
+    $now = Carbon::now();
+    $ngayGioChieu = Carbon::parse($suatChieu->ngay_chieu . ' ' . $suatChieu->bat_dau);
+
+    if ($ngayGioChieu->isPast()) {
+        return redirect()->route('home')->with('error', 'Suất chiếu đã qua. Vui lòng chọn suất chiếu khác!');
+    }
+
+    // Lấy danh sách ghế đã đặt
+    $gheDaDat = DB::table('chi_tiet_dat_ves')
+        ->join('dat_ves', 'chi_tiet_dat_ves.dat_ve_id', '=', 'dat_ves.id')
+        ->where('dat_ves.suat_chieu_id', $suatChieuId)
+        ->whereIn('dat_ves.trang_thai', ['Đã thanh toán', 'Chờ thanh toán'])
+        ->pluck('chi_tiet_dat_ves.ghe_id')
+        ->toArray();
+
+    // Lấy danh sách ghế theo phòng chiếu
+    $gheNgois = $suatChieu->phongChieu->gheNgois()
+        ->with(['loaiGhe']) // Đảm bảo tải mối quan hệ loaiGhe
+        ->orderBy('hang')
+        ->orderBy('cot')
+        ->get()
+        ->map(function ($ghe) use ($gheDaDat, $suatChieu) {
+            $ghe->da_dat = in_array($ghe->id, $gheDaDat);
+            $ghe->phu_thu_loai_phong = optional($suatChieu->phongChieu->loaiPhong)->phu_thu ?? 0;
+            $ghe->phu_thu_loai_ghe = optional($ghe->loaiGhe)->phu_thu ?? 0;
+            $ghe->phu_thu_rap_phim = optional($suatChieu->phongChieu->rapPhim)->phu_thu ?? 0;
+
+            // Debug dữ liệu
+            \Log::info('Ghe ID: ' . $ghe->id . ', LoaiGhe: ' . ($ghe->loaiGhe ? $ghe->loaiGhe->ten_loai_ghe : 'null') . 
+                       ', PhuThuLoaiPhong: ' . $ghe->phu_thu_loai_phong . 
+                       ', PhuThuLoaiGhe: ' . $ghe->phu_thu_loai_ghe . 
+                       ', PhuThuRapPhim: ' . $ghe->phu_thu_rap_phim);
+
+            return $ghe;
+        });
+
+    // Lấy danh sách loại ghế để lấy màu
+    $loaiGhes = \App\Models\LoaiGhe::all();
+
+    // Lấy danh sách đồ ăn và combo
+    $doAns = DoAn::whereHas('chiNhanhs', function ($query) use ($suatChieu) {
+        $query->where('chi_nhanh_id', $suatChieu->phongChieu->rapPhim->chi_nhanh_id);
+    })
+        ->where('trang_thai', 1)
+        ->with('danhMuc')
+        ->get();
+
+    $combos = Combo::where('trang_thai', 1)
+        ->with('doAns')
+        ->get();
+
+    return view('client.dat-ve.index', compact(
+        'suatChieu',
+        'gheNgois',
+        'loaiGhes',
+        'doAns',
+        'combos'
+    ));
+}
 
     /**
      * Xử lý đặt vé

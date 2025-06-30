@@ -41,11 +41,24 @@
             border-radius: 4px;
             z-index: 10;
         }
+
+        .tab-phim-item {
+            padding: 10px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .tab-phim-item.active {
+            color: #FFD700;
+            font-weight: bold;
+            text-decoration: underline;
+            text-underline-offset: 4px;
+        }
     </style>
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 
-    <!-- Banner Slider -->
+    <!-- Banner -->
     <div class="swiper banner-slider" style="max-width: 1200px; width: 100%; height: 500px; margin: 0 auto 20px auto;">
         <div class="swiper-wrapper">
             @foreach ($banners as $banner)
@@ -55,17 +68,12 @@
                 </div>
             @endforeach
         </div>
-
         <div class="swiper-pagination"></div>
         <div class="swiper-button-next"></div>
         <div class="swiper-button-prev"></div>
     </div>
 
-
-    <!-- Swiper JS -->
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-
-    <!-- Swiper Init -->
     <script>
         const swiper = new Swiper('.banner-slider', {
             loop: true,
@@ -89,11 +97,12 @@
         <button type="button"></button>
         <p class="movie">PHIM</p>
         <div class="list">
-            <p><a href="#" class="tab-item active" data-tab="dang-chieu">Đang chiếu</a></p>
-            <p><a href="#" class="tab-item" data-tab="sap-chieu">Sắp chiếu</a></p>
+            <p><a href="#" class="tab-phim-item active" data-tab="dang-chieu">Đang chiếu</a></p>
+            <p><a href="#" class="tab-phim-item" data-tab="sap-chieu">Sắp chiếu</a></p>
         </div>
     </div>
 
+    <!-- Danh sách phim -->
     <div class="list-movie">
         @foreach ($allPhims as $phim)
             <div class="movie clickable-movie" data-href="{{ route('phim.chi-tiet', $phim->id) }}">
@@ -114,7 +123,7 @@
                     </div>
                 </div>
                 <a href="{{ route('phim.chi-tiet', $phim->id) }}">
-                    <p>{{ $phim->ten_phim }}</p>
+                    <p class="ten-phim">{{ $phim->ten_phim }}</p>
                 </a>
             </div>
         @endforeach
@@ -133,103 +142,20 @@
             <img width="350px" src="{{ asset('khuyen-mai/monday_1_.jpg') }}" alt="">
         </div>
     </div>
-
     <a href="{{ route('khuyen-mai.index') }}">
         <button class="btn-km">TẤT CẢ ƯU ĐÃI</button>
     </a>
-    <div class="new">
-        <button type="button"></button>
-        <p>GÓC ĐIỆN ẢNH</p>
-        <div class="list">
-            <p class="tab-item active" data-tab="binhluan">Bình luận phim</p>
-            <p class="tab-item" data-tab="blog">Blog điện ảnh</p>
-        </div>
+
+    <!-- Góc điện ảnh -->
+    <div class="goc-dien-anh-wrapper">
+        @include('client.partials.goc-dien-anh', [
+            'phims' => $phims,
+            'ratings' => $ratings,
+            'baiViet' => $baiViet ?? [],
+        ])
     </div>
 
-    <div id="tab-binhluan" class="tab-content active">
-        <div id="slide-container">
-            @foreach ($phims as $index => $phim)
-                <div class="slide" style="{{ $index === 0 ? '' : 'display:none;' }}">
-                    <div class="khung-binh-luan">
-                        <div class="poster"><img src="{{ asset('storage/' . $phim->poster) }}"
-                                alt="{{ $phim->ten_phim }}"></div>
-                        <div class="binh-luan">
-                            <h4 class="ten-phim">{{ $phim->ten_phim }}</h4>
-                            @forelse ($phim->comments as $binhLuan)
-                                @php
-                                    $userRating = $ratings->first(
-                                        fn($r) => $r->user_id === $binhLuan->user_id &&
-                                            $r->phim_id === $binhLuan->phim_id,
-                                    );
-                                @endphp
-                                <div class="binh-luan-item">
-                                    <div class="avatar">
-                                        <img src="{{ $binhLuan->user && $binhLuan->user->avatar ? asset('storage/' . $binhLuan->user->avatar) : asset('logo/user.jpg') }}"
-                                            alt="{{ $binhLuan->user->name ?? 'Người dùng' }}">
-                                    </div>
-                                    <div class="noi-dung">
-                                        <strong>{{ $binhLuan->user->name ?? 'Ẩn danh' }}</strong>
-                                        @if ($userRating)
-                                            <span style="color: orange;">
-                                                @for ($i = 1; $i <= 5; $i++)
-                                                    {{ $i <= $userRating->rating ? '★' : '☆' }}
-                                                @endfor
-                                            </span>
-                                        @endif
-                                        <p>{{ $binhLuan->content }}</p>
-                                        <small>{{ $binhLuan->created_at->format('d/m/Y H:i') }}</small>
-                                    </div>
-                                </div>
-                            @empty
-                                <p style="color: #ccc;">Chưa có bình luận cho phim này.</p>
-                            @endforelse
-                        </div>
-                    </div>
-                </div>
-            @endforeach
-        </div>
-        <div class="slide-controls">
-            <div class="slide-button-group">
-                <button class="btn-see1 left" onclick="changeSlide(-1)">‹</button>
-                <button class="btn-see1 right" onclick="changeSlide(1)">›</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="tab-blog" class="tab-content">
-        @if ($baiViet && count($baiViet))
-            <div class="tin-tuc-wrapper">
-                <div class="tin-tuc-noi-bat">
-                    <img src="{{ asset('storage/' . $baiViet[0]->hinh_anh) }}" alt="{{ $baiViet[0]->tieu_de }}">
-                    <a href="{{ route('show-bai-viet', IdFormatter::uuidify($baiViet[0]->id)) }}">
-                        <h3>{{ $baiViet[0]->tieu_de }}</h3>
-                    </a>
-                </div>
-                <div class="tin-tuc-danh-sach">
-                    @foreach ($baiViet->skip(1) as $bv)
-                        <div class="tin-tuc-item">
-                            <div class="thumb">
-                                <a href="{{ route('show-bai-viet', IdFormatter::uuidify($bv->id)) }}">
-                                    <img src="{{ asset('storage/' . $bv->hinh_anh) }}" alt="{{ $bv->tieu_de }}">
-                                </a>
-                            </div>
-                            <div class="info">
-                                <a href="{{ route('show-bai-viet', IdFormatter::uuidify($bv->id)) }}">
-                                    <h4>{{ $bv->tieu_de }}</h4>
-                                    <p class="noi-dung">{{ $bv->noi_dung }}</p>
-                                </a>
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
-                <a href="{{ route('client.bai-viet') }}"><button class="btn-see">Xem thêm</button></a>
-            </div>
-        @else
-            <p>Chưa có bài viết nào.</p>
-        @endif
-    </div>
-
-    <!-- Popup trailer -->
+    <!-- Trailer Popup -->
     <div id="trailerPopup"
         style="display:none; position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#000;padding:10px;border-radius:8px;z-index:999;">
         <iframe id="trailerIframe" width="800" height="450" frameborder="0" allowfullscreen></iframe>
@@ -239,109 +165,93 @@
     </div>
 
     <script>
-        let currentSlide = 0;
-        const slides = document.querySelectorAll('.slide');
-
-        function showSlide(index) {
-            slides.forEach((slide, i) => slide.style.display = (i === index) ? 'block' : 'none');
-        }
-
-        function changeSlide(direction) {
-            currentSlide = (currentSlide + direction + slides.length) % slides.length;
-            showSlide(currentSlide);
-        }
-        setInterval(() => changeSlide(1), 5000);
-
-        // Tab click
-        document.querySelectorAll('.tab-item').forEach(tab => {
-            tab.addEventListener('click', function() {
-                document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
-                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-                this.classList.add('active');
-                const content = document.getElementById('tab-' + this.dataset.tab);
-                if (content) content.classList.add('active');
+        function bindTrailerEvents() {
+            document.querySelectorAll('.btn.trailer').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    let videoUrl = convertYoutubeUrl(this.getAttribute('data-video'));
+                    document.getElementById('trailerIframe').src = videoUrl + '?autoplay=1';
+                    document.getElementById('trailerPopup').style.display = 'block';
+                    document.getElementById('overlayBg').style.display = 'block';
+                });
             });
-        });
-
-        // Load phim theo tab
-        document.querySelectorAll('.menu .list a.tab-item').forEach(tab => {
-            tab.addEventListener('click', function(e) {
-                e.preventDefault();
-                const selectedTab = this.dataset.tab;
-                fetch(`/phim-tab?tab=${selectedTab}`)
-                    .then(res => res.json())
-                    .then(data => {
-                        const movieList = document.querySelector('.list-movie');
-                        movieList.innerHTML = '';
-                        data.phims.forEach(phim => {
-                            const poster = phim.poster ? `/storage/${phim.poster}` :
-                                '/logo/no-image.png';
-                            const item = `
-                    <div class="movie">
-                        <div class="img-wrapper">
-                             <a href="{{ route('phim.chi-tiet', $phim->id) }}">
-                            <img src="${poster}" alt="${phim.ten_phim}">
-                            </a>
-                            <div class="age-label">${phim.do_tuoi ?? ''}</div>
-                            <div class="overlay">
-                                <a href="{{ route('phim.chi-tiet', $phim->id) }}">
-                                <button class="btn buy"><i class="fa-solid fa-ticket"></i> Mua vé</button>
-                                </a>
-                                <button class="btn trailer" data-video="${phim.trailer}"><i class="fa-solid fa-video"></i> Trailer</button>
-                            </div>
-                        </div>
-                         <a href="{{ route('phim.chi-tiet', $phim->id) }}">
-                        <p class="ten-phim">${phim.ten_phim}</p>
-                        </a>
-                    </div>`;
-                            movieList.insertAdjacentHTML('beforeend', item);
-                        });
-
-                        // Update trailer click
-                        document.querySelectorAll('.btn.trailer').forEach(btn => {
-                            btn.addEventListener('click', function() {
-                                let videoUrl = convertYoutubeUrl(this.getAttribute(
-                                    'data-video'));
-                                document.getElementById('trailerIframe').src =
-                                    videoUrl + '?autoplay=1';
-                                document.getElementById('trailerPopup').style.display =
-                                    'block';
-                                document.getElementById('overlayBg').style.display =
-                                    'block';
-                            });
-                        });
-
-                        // Update Xem thêm link
-                        const btnSeeMore = document.querySelector('.btn-see-more');
-                        if (btnSeeMore) {
-                            btnSeeMore.href = selectedTab === 'sap-chieu' ? '/phim-sap-chieu' :
-                                '/phim-dang-chieu';
-                        }
-
-                        document.querySelectorAll('.menu .list a.tab-item').forEach(t => t.classList
-                            .remove('active'));
-                        tab.classList.add('active');
-                    });
-            });
-        });
-
-        // Tắt popup
-        document.getElementById('overlayBg').addEventListener('click', function() {
-            document.getElementById('trailerIframe').src = '';
-            document.getElementById('trailerPopup').style.display = 'none';
-            this.style.display = 'none';
-        });
+        }
 
         function convertYoutubeUrl(url) {
             if (url.includes('watch?v=')) return 'https://www.youtube.com/embed/' + url.split('watch?v=')[1];
             if (url.includes('youtu.be/')) return 'https://www.youtube.com/embed/' + url.split('youtu.be/')[1];
             return url;
         }
-        document.querySelectorAll('.clickable-movie').forEach(div => {
-            div.addEventListener('click', function(e) {
-                if (e.target.closest('.btn') || e.target.closest('a')) return;
-                window.location.href = this.dataset.href;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            bindTrailerEvents();
+
+            document.querySelectorAll('.clickable-movie').forEach(div => {
+                div.addEventListener('click', function(e) {
+                    if (e.target.closest('.btn') || e.target.closest('a')) return;
+                    window.location.href = this.dataset.href;
+                });
             });
+
+            document.querySelectorAll('.menu .list a.tab-phim-item').forEach(tab => {
+                tab.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const selectedTab = this.dataset.tab;
+
+                    fetch(`/phim-tab?tab=${selectedTab}`)
+                        .then(res => res.json())
+                        .then(data => {
+                            const movieList = document.querySelector('.list-movie');
+                            movieList.innerHTML = '';
+                            data.phims.forEach(phim => {
+                                const poster = phim.poster ? `/storage/${phim.poster}` :
+                                    '/logo/no-image.png';
+                                const item = `
+                            <div class="movie clickable-movie" data-href="/phim/${phim.id}">
+                                <div class="img-wrapper">
+                                    <img src="${poster}" alt="${phim.ten_phim}">
+                                    <div class="age-label">${phim.do_tuoi ?? ''}</div>
+                                    <div class="overlay">
+                                        <a href="/phim/${phim.id}#lich-chieu">
+                                            <button class="btn buy"><i class="fa-solid fa-ticket"></i> Mua vé</button>
+                                        </a>
+                                        <button class="btn trailer" data-video="${phim.trailer}">
+                                            <i class="fa-solid fa-video"></i> Trailer
+                                        </button>
+                                    </div>
+                                </div>
+                                <p class="ten-phim">${phim.ten_phim}</p>
+                            </div>`;
+                                movieList.insertAdjacentHTML('beforeend', item);
+                            });
+
+                            bindTrailerEvents(); // ✅ gán lại sự kiện Trailer
+
+                            document.querySelectorAll('.clickable-movie').forEach(div => {
+                                div.addEventListener('click', function(e) {
+                                    if (e.target.closest('.btn') || e.target
+                                        .closest('a')) return;
+                                    window.location.href = this.dataset.href;
+                                });
+                            });
+
+                            const btnSeeMore = document.querySelector('.btn-see-more');
+                            if (btnSeeMore) {
+                                btnSeeMore.href = selectedTab === 'sap-chieu' ?
+                                    '/phim-sap-chieu' : '/phim-dang-chieu';
+                            }
+
+                            document.querySelectorAll('.menu .list a.tab-phim-item').forEach(
+                                t => t.classList.remove('active'));
+                            tab.classList.add('active');
+                        });
+                });
+            });
+        });
+
+        document.getElementById('overlayBg').addEventListener('click', function() {
+            document.getElementById('trailerIframe').src = '';
+            document.getElementById('trailerPopup').style.display = 'none';
+            this.style.display = 'none';
         });
     </script>
 @endsection
