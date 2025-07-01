@@ -105,14 +105,14 @@
     <!-- Danh sách phim -->
     <div class="list-movie">
         @foreach ($allPhims as $phim)
-            <div class="movie clickable-movie" data-href="{{ route('phim.chi-tiet', $phim->id) }}">
+            <div class="movie clickable-movie" data-href="{{ route('phim.chi-tiet', urlencode($phim->ten_phim)) }}">
                 <div class="img-wrapper">
-                    <a href="{{ route('phim.chi-tiet', $phim->id) }}">
+                    <a href="{{ route('phim.chi-tiet', urlencode($phim->ten_phim)) }}">
                         <img src="{{ asset('storage/' . $phim->poster) }}" alt="{{ $phim->ten_phim }}">
                     </a>
                     <div class="age-label">{{ $phim->do_tuoi }}</div>
                     <div class="overlay">
-                        <a href="{{ route('phim.chi-tiet', $phim->id) }}#lich-chieu">
+                        <a href="{{ route('phim.chi-tiet', urlencode($phim->ten_phim)) }}#lich-chieu">
                             <button class="btn buy">
                                 <i class="fa-solid fa-ticket"></i> Mua vé
                             </button>
@@ -122,7 +122,7 @@
                         </button>
                     </div>
                 </div>
-                <a href="{{ route('phim.chi-tiet', $phim->id) }}">
+                <a href="{{ route('phim.chi-tiet', urlencode($phim->ten_phim)) }}">
                     <p class="ten-phim">{{ $phim->ten_phim }}</p>
                 </a>
             </div>
@@ -205,13 +205,14 @@
                             data.phims.forEach(phim => {
                                 const poster = phim.poster ? `/storage/${phim.poster}` :
                                     '/logo/no-image.png';
+                                const encodedTenPhim = encodeURIComponent(phim.ten_phim);
                                 const item = `
-                            <div class="movie clickable-movie" data-href="/phim/${phim.id}">
+                            <div class="movie clickable-movie" data-href="/phim/${encodedTenPhim}">
                                 <div class="img-wrapper">
                                     <img src="${poster}" alt="${phim.ten_phim}">
                                     <div class="age-label">${phim.do_tuoi ?? ''}</div>
                                     <div class="overlay">
-                                        <a href="/phim/${phim.id}#lich-chieu">
+                                        <a href="/phim/${encodedTenPhim}#lich-chieu">
                                             <button class="btn buy"><i class="fa-solid fa-ticket"></i> Mua vé</button>
                                         </a>
                                         <button class="btn trailer" data-video="${phim.trailer}">

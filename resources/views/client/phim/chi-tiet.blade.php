@@ -794,7 +794,21 @@
                                     '<div class="alert alert-warning">Không có suất chiếu cho ngày này.</div>'
                                 );
                             } else {
-                                $('#lich-chieu-list').html(data.html);
+                                // Thay thế tất cả các link đặt vé với tham số đã mã hóa
+                                let processedHtml = data.html.replace(
+                                    /href="[^"]*"/g,
+                                    function(match) {
+                                        // Lấy suất chiếu ID từ URL gốc
+                                        let suatChieuId = match.match(/suat_chieu_id=(\d+)/);
+                                        if (suatChieuId) {
+                                            // Tạo chuỗi tham số mới với phim ID và suất chiếu ID
+                                            let params = btoa(`${phimId}-${suatChieuId[1]}`);
+                                            return `href="/dat-ve?params=${params}"`;
+                                        }
+                                        return match;
+                                    }
+                                );
+                                $('#lich-chieu-list').html(processedHtml);
                             }
                         }, 3000);
                     },

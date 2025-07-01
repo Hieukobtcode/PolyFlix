@@ -57,13 +57,15 @@ class PhimsController extends Controller
         return view('client.phim.phim-list', compact('phims', 'ratings', 'banners', 'tab', 'baiViet'));
     }
 
-    public function show($id)
+    public function show($ten_phim)
     {
-        $phim = Phim::with(['theLoais', 'dinhDangs', 'phuDes', 'chiNhanhs', 'rapPhims', 'ratings'])->findOrFail($id);
+        $phim = Phim::with(['theLoais', 'dinhDangs', 'phuDes', 'chiNhanhs', 'rapPhims', 'ratings'])
+            ->where('ten_phim', urldecode($ten_phim))
+            ->firstOrFail();
 
         $raps = RapPhim::all();
 
-        $dinhDangPhims = SuatChieu::where('phim_id', $id)
+        $dinhDangPhims = SuatChieu::where('phim_id', $phim->id)
             ->select('phien_ban_phim')
             ->distinct()
             ->pluck('phien_ban_phim')
@@ -74,7 +76,7 @@ class PhimsController extends Controller
 
         $ngay_chieu = request('ngay_chieu');
 
-        $ngayChieus = SuatChieu::where('phim_id', $id)
+        $ngayChieus = SuatChieu::where('phim_id', $phim->id)
             ->select('ngay_chieu')->distinct()->pluck('ngay_chieu');
 
         $days = [];
@@ -98,7 +100,7 @@ class PhimsController extends Controller
 
         $now = Carbon::now();
 
-        $suatChieus = SuatChieu::where('phim_id', $id)
+        $suatChieus = SuatChieu::where('phim_id', $phim->id)
             ->when($ngay_chieu, function ($q) use ($ngay_chieu, $now) {
                 $q->where('ngay_chieu', $ngay_chieu);
                 if ($ngay_chieu == $now->toDateString()) {
@@ -115,7 +117,7 @@ class PhimsController extends Controller
                 return $sc->phien_ban_phim ?? 'Không xác định';
             });
         });
-        $phimDangChieu = Phim::where('id', '!=', $id)->latest()->limit(3)->get();
+        $phimDangChieu = Phim::where('id', '!=', $phim->id)->latest()->limit(3)->get();
 
         $phim->diem_trung_binh = round($phim->ratings->avg('rating'), 1);
         $phim->so_danh_gia = $phim->ratings->count();
