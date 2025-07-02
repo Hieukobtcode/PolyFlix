@@ -288,6 +288,9 @@
         src="https://bootstrapdemos.wrappixel.com/spike/dist/assets/js/extra-libs/jvectormap/jquery-jvectormap-us-aea-en.js">
     </script>
     <script src="https://bootstrapdemos.wrappixel.com/spike/dist/assets/js/dashboards/dashboard.js"></script>
+    <script src="https://bootstrapdemos.wrappixel.com/spike/dist/assets/js/widget/widgets-charts.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script>
         $(document).ready(function() {
