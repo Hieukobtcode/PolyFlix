@@ -11,6 +11,7 @@ use App\Http\Middleware\CheckPermission;
 use App\Http\Middleware\CheckAdminAccess;
 use App\Models\RapPhim;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Schema;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -33,8 +34,14 @@ class AppServiceProvider extends ServiceProvider
         Route::aliasMiddleware('permission.check', CheckPermission::class);
         Carbon::setLocale('vi');
 
-        $rapPhims = RapPhim::all()->groupBy('chi_nhanh_id'); // Hoặc xử lý theo đúng logic bạn cần
-
-        View::share('rapPhims', $rapPhims);
+        try {
+            // Only load data if table exists (not during migrations)
+            if (Schema::hasTable('rap_phims')) {
+                $rapPhims = RapPhim::all()->groupBy('chi_nhanh_id');
+                View::share('rapPhims', $rapPhims);
+            }
+        } catch (\Exception $e) {
+            // Ignore database errors during migration/setup
+        }
     }
 }

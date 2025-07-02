@@ -233,9 +233,9 @@ class ComposerStaticInit603cda8a0685f102b0fac5f6c0594535
         ),
         'phpDocumentor\\Reflection\\' => 
         array (
-            0 => __DIR__ . '/..' . '/phpdocumentor/reflection-common/src',
-            1 => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src',
-            2 => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src',
+            0 => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src',
+            1 => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src',
+            2 => __DIR__ . '/..' . '/phpdocumentor/reflection-common/src',
         ),
         'Whoops\\' => 
         array (
@@ -692,6 +692,7 @@ class ComposerStaticInit603cda8a0685f102b0fac5f6c0594535
         'Anhskohbo\\NoCaptcha\\Facades\\NoCaptcha' => __DIR__ . '/..' . '/anhskohbo/no-captcha/src/Facades/NoCaptcha.php',
         'Anhskohbo\\NoCaptcha\\NoCaptcha' => __DIR__ . '/..' . '/anhskohbo/no-captcha/src/NoCaptcha.php',
         'Anhskohbo\\NoCaptcha\\NoCaptchaServiceProvider' => __DIR__ . '/..' . '/anhskohbo/no-captcha/src/NoCaptchaServiceProvider.php',
+        'App\\Events\\GheBiHuyChon' => __DIR__ . '/../..' . '/app/Events/GheBiHuyChon.php',
         'App\\Events\\GheDangDuocChon' => __DIR__ . '/../..' . '/app/Events/GheDangDuocChon.php',
         'App\\Helpers\\IdFormatter' => __DIR__ . '/../..' . '/app/Helpers/IdFormatter.php',
         'App\\Http\\Controllers\\Admin\\BaiVietController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/BaiVietController.php',
