@@ -44,8 +44,6 @@ use App\Http\Controllers\Client\LienHeController as ClientLienHeController;
 use App\Http\Controllers\Client\TheLoaiController;
 use App\Models\TheLoaiPhim;
 
-
-// ============================================================================================================================================================================
                                                                                                                                                                                         
 Route::get('/', [TrangChuController::class, 'index'])->name('home');
 
@@ -59,6 +57,11 @@ Route::get('/api/suat-chieu-by-ngay', [TrangChuController::class, 'getSuatChieuB
 Route::get('/dat-ve', [\App\Http\Controllers\Client\DatVeController::class, 'index'])->name('client.dat-ve');
 Route::post('/dat-ve', [\App\Http\Controllers\Client\DatVeController::class, 'store'])->name('client.dat-ve.store');
 Route::get('/dat-ve/ket-qua/{id}', [\App\Http\Controllers\Client\DatVeController::class, 'ketQua'])->name('client.dat-ve.ket-qua');
+
+// Ghế đang được chọn
+Route::post('/chon-ghe', [\App\Http\Controllers\Client\DatVeController::class, 'chonGhe'])->name('client.ghe.chon');
+Route::post('/huy-chon-ghe', [\App\Http\Controllers\Client\DatVeController::class, 'huyChonGhe'])->name('client.ghe.huy');
+
 
 // Chọn ghế
 Route::get('/ghe-ngoi', [ChonGheController::class, 'index'])->name('client.ghe-ngoi');
@@ -101,7 +104,7 @@ Route::get('/the-loai/{id}', [App\Http\Controllers\Client\TheLoaiController::cla
 
 //     // Trang khuyến mãi
 //     Route::get('/khuyen-mai', [KhuyenMaiController::class, 'index'])->name('khuyen-mai');
-// // ====================================================================================================
+// // 
 // });
 
 //Quen mk

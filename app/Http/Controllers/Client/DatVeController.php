@@ -2,25 +2,28 @@
 
 namespace App\Http\Controllers\Client;
 
-use App\Http\Controllers\Controller;
-use App\Models\SuatChieu;
-use App\Models\GheNgoi;
+use Carbon\Carbon;
 use App\Models\DoAn;
 use App\Models\Combo;
 use App\Models\DatVe;
+use App\Models\GheNgoi;
+use App\Models\SuatChieu;
+use App\Events\GheBiHuyChon;
 use App\Models\ChiTietDatVe;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use App\Events\GheDangDuocChon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Carbon\Carbon;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
-class DatVeController extends Controller
-{
-    /**
-     * Hiển thị trang đặt vé chi tiết
-     */
-    public function index(Request $request)
+    class DatVeController extends Controller
+    {
+        /**
+         * Hiển thị trang đặt vé chi tiết
+         */
+        public function index(Request $request)
 {
     $suatChieuId = $request->input('suat_chieu_id');
 
@@ -54,7 +57,7 @@ class DatVeController extends Controller
 
     // Lấy danh sách ghế theo phòng chiếu
     $gheNgois = $suatChieu->phongChieu->gheNgois()
-        ->with(['loaiGhe']) // Đảm bảo tải mối quan hệ loaiGhe
+        ->with(['loaiGhe'])
         ->orderBy('hang')
         ->orderBy('cot')
         ->get()
@@ -64,14 +67,20 @@ class DatVeController extends Controller
             $ghe->phu_thu_loai_ghe = optional($ghe->loaiGhe)->phu_thu ?? 0;
             $ghe->phu_thu_rap_phim = optional($suatChieu->phongChieu->rapPhim)->phu_thu ?? 0;
 
-            // Debug dữ liệu
-            \Log::info('Ghe ID: ' . $ghe->id . ', LoaiGhe: ' . ($ghe->loaiGhe ? $ghe->loaiGhe->ten_loai_ghe : 'null') . 
-                       ', PhuThuLoaiPhong: ' . $ghe->phu_thu_loai_phong . 
-                       ', PhuThuLoaiGhe: ' . $ghe->phu_thu_loai_ghe . 
-                       ', PhuThuRapPhim: ' . $ghe->phu_thu_rap_phim);
+            $userIdDangChon = Cache::get("ghe_dang_chon_{$ghe->id}");
+            $ghe->dang_duoc_chon = $userIdDangChon && $userIdDangChon != Auth::id();
 
             return $ghe;
         });
+
+    // Hủy ghế tạm thời do user hiện tại giữ nhưng F5 lại
+    foreach ($gheNgois as $ghe) {
+        $userIdDangChon = Cache::get("ghe_dang_chon_{$ghe->id}");
+        if ($userIdDangChon == Auth::id()) {
+            Cache::forget("ghe_dang_chon_{$ghe->id}");
+            event(new GheBiHuyChon($ghe->id, $userIdDangChon));
+        }
+    }
 
     // Lấy danh sách loại ghế để lấy màu
     $loaiGhes = \App\Models\LoaiGhe::all();
@@ -87,7 +96,9 @@ class DatVeController extends Controller
     $combos = Combo::where('trang_thai', 1)
         ->with('doAns')
         ->get();
-
+        
+        
+        
     return view('client.dat-ve.index', compact(
         'suatChieu',
         'gheNgois',
@@ -96,6 +107,45 @@ class DatVeController extends Controller
         'combos'
     ));
 }
+
+    // xử lý chọn ghế
+    public function chonGhe(Request $request)
+    {
+        $request->validate([
+            'ghe_id' => 'required|exists:ghe_ngois,id',
+        ]);
+
+        if (!Auth::check()) {
+            return response()->json(['success' => false, 'message' => 'Bạn cần đăng nhập để chọn ghế'], 401);
+        }
+
+        $gheId = $request->ghe_id;
+
+        // Emit event
+        event(new GheDangDuocChon($gheId, Auth::id()));
+
+        // giữ ghế
+        Cache::put("ghe_dang_chon_{$gheId}", Auth::id(), now()->addMinutes(2));
+
+        return response()->json(['success' => true]);
+    }
+    // xử lý hủy chọn ghế
+    public function huyChonGhe(Request $request)
+    {
+        $request->validate([
+            'ghe_id' => 'required|exists:ghe_ngois,id',
+        ]);
+
+        $gheId = $request->ghe_id;
+        $userId = Auth::id();
+
+        if (Cache::get("ghe_dang_chon_{$gheId}") == $userId) {
+            Cache::forget("ghe_dang_chon_{$gheId}");
+            event(new GheBiHuyChon($gheId, $userId));
+        }
+
+        return response()->json(['success' => true]);
+    }
 
     /**
      * Xử lý đặt vé

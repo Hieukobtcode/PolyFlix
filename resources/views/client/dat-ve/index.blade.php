@@ -3,9 +3,9 @@
 @section('styles')
     <style>
         {!! collect($loaiGhes)->map(function ($loai) {
-            $class = \Illuminate\Support\Str::slug($loai->ten_loai_ghe);
-            return ".ghe-chieu.{$class} { background-color: {$loai->chu_thich_mau_ghe}; }";
-        })->implode("\n") !!}
+                $class = \Illuminate\Support\Str::slug($loai->ten_loai_ghe);
+                return ".ghe-chieu.{$class} { background-color: {$loai->chu_thich_mau_ghe}; }";
+            })->implode("\n") !!}
     </style>
 
     @vite('resources/css/trang-chu.css')
@@ -26,12 +26,15 @@
                     <h2>{{ $suatChieu->phim->ten_phim }}</h2>
                     <div class="movie-meta">
                         <p><i class="fas fa-clock"></i> {{ $suatChieu->phim->thoi_luong }} phút</p>
-                        <p><i class="fas fa-calendar"></i> {{ \Carbon\Carbon::parse($suatChieu->ngay_chieu)->format('d/m/Y') }}</p>
-                        <p><i class="fas fa-clock"></i> {{ \Carbon\Carbon::parse($suatChieu->bat_dau)->format('H:i') }} - {{ \Carbon\Carbon::parse($suatChieu->ket_thuc)->format('H:i') }}</p>
+                        <p><i class="fas fa-calendar"></i>
+                            {{ \Carbon\Carbon::parse($suatChieu->ngay_chieu)->format('d/m/Y') }}</p>
+                        <p><i class="fas fa-clock"></i> {{ \Carbon\Carbon::parse($suatChieu->bat_dau)->format('H:i') }} -
+                            {{ \Carbon\Carbon::parse($suatChieu->ket_thuc)->format('H:i') }}</p>
                         <p><i class="fas fa-film"></i> {{ $suatChieu->phien_ban_phim ?? $suatChieu->formatted_version }}</p>
                     </div>
                     <div class="cinema-info">
-                        <p><i class="fas fa-map-marker-alt"></i> {{ $suatChieu->phongChieu->rapPhim->chiNhanh->ten_chi_nhanh }}</p>
+                        <p><i class="fas fa-map-marker-alt"></i>
+                            {{ $suatChieu->phongChieu->rapPhim->chiNhanh->ten_chi_nhanh }}</p>
                         <p><i class="fas fa-door-open"></i> {{ $suatChieu->phongChieu->ten_phong }}</p>
                     </div>
                 </div>
@@ -40,7 +43,9 @@
             <!-- Chọn ghế -->
             <div class="seat-selection">
                 <h3>Chọn ghế ngồi</h3>
-                <div class="screen"><div class="screen-text">MÀN HÌNH</div></div>
+                <div class="screen">
+                    <div class="screen-text">MÀN HÌNH</div>
+                </div>
                 <div class="seat-map" id="seat-map">
                     @php
                         $currentRow = '';
@@ -52,17 +57,31 @@
                             <div class="seats">
                                 @foreach ($ghes as $ghe)
                                     <div class="ghe-chieu
-                                        {{ $ghe->trang_thai == 'bao_tri' ? 'maintenance' : ($ghe->trang_thai == 'dang_chon' ? 'selected' : 'available') }}
-                                        {{ \Illuminate\Support\Str::slug($ghe->loaiGhe->ten_loai_ghe ?? 'thuong') }}
-                                        {{ $ghe->loaiGhe->id == 12 ? 'ghe-doi' : '' }}"
-                                        data-seat-id="{{ $ghe->id }}"
-                                        data-seat-name="{{ $ghe->ma_ghe }}"
+                                    {{-- Nếu ghế đang bảo trì --}}
+                                    {{ $ghe->trang_thai == 'bao_tri' ? 'maintenance' : '' }}
+
+                                    {{-- Nếu ghế đang được chính người dùng này chọn --}}
+                                    {{ $ghe->trang_thai == 'dang_chon' ? 'selected' : '' }}
+
+                                    {{-- Nếu ghế đang được người khác chọn (giữ tạm thời trong Redis) --}}
+                                    {{ $ghe->dang_duoc_chon && $ghe->trang_thai != 'dang_chon' ? 'selected-by-other' : '' }}
+
+                                    {{-- Nếu không rơi vào các trạng thái đặc biệt → available --}}
+                                    {{ !$ghe->da_dat && !$ghe->dang_duoc_chon && $ghe->trang_thai !== 'bao_tri' && $ghe->trang_thai !== 'dang_chon' ? 'available' : '' }}
+
+                                    {{-- Loại ghế (VIP, thường...) --}}
+                                    {{ \Illuminate\Support\Str::slug($ghe->loaiGhe->ten_loai_ghe ?? 'thuong') }}
+
+                                    {{-- Ghế đôi --}}
+                                    {{ $ghe->loaiGhe->id == 12 ? 'ghe-doi' : '' }}"
+                                        data-seat-id="{{ $ghe->id }}" data-seat-name="{{ $ghe->ma_ghe }}"
                                         data-ten-loai-ghe="{{ $ghe->loaiGhe->ten_loai_ghe ?? 'Thường' }}"
                                         data-phu-thu-loai-phong="{{ $ghe->phu_thu_loai_phong }}"
                                         data-phu-thu-loai-ghe="{{ $ghe->phu_thu_loai_ghe }}"
                                         data-phu-thu-rap-phim="{{ $ghe->phu_thu_rap_phim }}"
                                         data-seat-type-id="{{ $ghe->loaiGhe->id }}"
                                         @if ($ghe->trang_thai == 'bao_tri' || $ghe->da_dat) disabled @endif>
+                                        {{-- Hiển thị x nếu ghế đang bảo trì --}}
                                         {{ $ghe->trang_thai == 'bao_tri' ? 'x' : $ghe->ma_ghe }}
                                     </div>
                                 @endforeach
@@ -75,9 +94,16 @@
                 <!-- Chú thích ghế -->
                 <div class="seat-legend-wrapper">
                     <div class="legend-column">
-                        <div class="legend-item"><div class="seat-demo bg-available"></div><span>Ghế trống</span></div>
-                        <div class="legend-item"><div class="seat-demo bg-selected"></div><span>Đã chọn</span></div>
-                        <div class="legend-item"><div class="seat-demo seat-disabled"><i class="fas fa-times text-danger"></i></div><span>Không thể chọn</span></div>
+                        <div class="legend-item">
+                            <div class="seat-demo bg-available"></div><span>Ghế trống</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="seat-demo bg-selected"></div><span>Đã chọn</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="seat-demo seat-disabled"><i class="fas fa-times text-danger"></i></div><span>Không
+                                thể chọn</span>
+                        </div>
                     </div>
                     <div class="legend-column">
                         @foreach ($loaiGhes as $loai)
@@ -107,9 +133,13 @@
                                     <h4>{{ $doAn->tieu_de }}</h4>
                                     <p class="price">{{ number_format($doAn->gia) }}đ</p>
                                     <div class="quantity-control">
-                                        <button type="button" class="qty-btn minus" data-target="do-an-{{ $doAn->id }}">-</button>
-                                        <input type="number" name="do_an[{{ $doAn->id }}]" id="do-an-{{ $doAn->id }}" value="0" min="0" max="10" readonly>
-                                        <button type="button" class="qty-btn plus" data-target="do-an-{{ $doAn->id }}">+</button>
+                                        <button type="button" class="qty-btn minus"
+                                            data-target="do-an-{{ $doAn->id }}">-</button>
+                                        <input type="number" name="do_an[{{ $doAn->id }}]"
+                                            id="do-an-{{ $doAn->id }}" value="0" min="0" max="10"
+                                            readonly>
+                                        <button type="button" class="qty-btn plus"
+                                            data-target="do-an-{{ $doAn->id }}">+</button>
                                     </div>
                                 </div>
                             </div>
@@ -127,9 +157,13 @@
                                     <p class="description">{{ $combo->mo_ta }}</p>
                                     <p class="price">{{ number_format($combo->gia) }}đ</p>
                                     <div class="quantity-control">
-                                        <button type="button" class="qty-btn minus" data-target="combo-{{ $combo->id }}">-</button>
-                                        <input type="number" name="combo[{{ $combo->id }}]" id="combo-{{ $combo->id }}" value="0" min="0" max="10" readonly>
-                                        <button type="button" class="qty-btn plus" data-target="combo-{{ $combo->id }}">+</button>
+                                        <button type="button" class="qty-btn minus"
+                                            data-target="combo-{{ $combo->id }}">-</button>
+                                        <input type="number" name="combo[{{ $combo->id }}]"
+                                            id="combo-{{ $combo->id }}" value="0" min="0" max="10"
+                                            readonly>
+                                        <button type="button" class="qty-btn plus"
+                                            data-target="combo-{{ $combo->id }}">+</button>
                                     </div>
                                 </div>
                             </div>
@@ -171,4 +205,43 @@
 @section('scripts')
     @vite('resources/js/dat-ve-client.js')
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Laravel Echo dùng socket.io -->
+    <script src="http://localhost:6001/socket.io/socket.io.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/laravel-echo/1.11.3/echo.iife.js"></script>
+
+    <script>
+        window.Echo = new Echo({
+            broadcaster: 'socket.io',
+            host: window.location.hostname + ':6001',
+        });
+
+        window.Echo.channel('ghe-duoc-chon')
+            .listen('.ghe-duoc-chon', function(e) {
+                // console.log("Nhận được event realtime:", e);
+
+                const ghe = document.querySelector(`.ghe-chieu[data-seat-id="${e.gheId}"]`);
+                const currentUserId = parseInt(document.querySelector('meta[name="user-id"]').content);
+                if (ghe && e.userId !== currentUserId) {
+                    ghe.classList.add("selected-by-other");
+                    ghe.disabled = true;
+                }
+            });
+        window.Echo.channel('ghe-bi-huy')
+            .listen('.ghe-bi-huy', function(e) {
+                // console.log("Ghế bị huỷ realtime:", e);
+
+                const ghe = document.querySelector(`.ghe-chieu[data-seat-id="${e.gheId}"]`);
+                const currentUserId = parseInt(document.querySelector('meta[name="user-id"]').content);
+
+                if (ghe && e.userId !== currentUserId) {
+                    ghe.classList.remove("selected-by-other");
+                    ghe.disabled = false;
+                }
+            });
+        document.querySelectorAll('.ghe-chieu.selected-by-other').forEach((ghe) => {
+            ghe.disabled = true;
+        });
+        
+    </script>
+
 @endsection
