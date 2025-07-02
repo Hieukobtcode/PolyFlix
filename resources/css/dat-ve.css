@@ -472,3 +472,8 @@
     --container-width: 78%;
     --max-width: 1200px;
 }
+
+.selected-by-other {
+    background-color: orange !important;
+    cursor: not-allowed;
+}
