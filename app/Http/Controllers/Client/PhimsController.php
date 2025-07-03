@@ -20,17 +20,17 @@ class PhimsController extends Controller
 {
     public function phimDangChieu()
     {
-        $phims = Phim::with(['comments.user']) 
-    ->where('ngay_phat_hanh', '<=', now())
-    ->where('ngay_ket_thuc', '>=', now())
-    ->orderBy('ngay_phat_hanh', 'desc')
-    ->get();
-            $ratings = Rating::all();
+        $phims = Phim::with(['comments.user'])
+            ->where('ngay_phat_hanh', '<=', now())
+            ->where('ngay_ket_thuc', '>=', now())
+            ->orderBy('ngay_phat_hanh', 'desc')
+            ->get();
+        $ratings = Rating::all();
 
         $banners = Banner::where('trang_thai', 1)->orderBy('id', 'desc')->get();
 
         $tab = 'dang-chieu';
-         $baiViet = BaiViet::where('status', '!=', 'draft')
+        $baiViet = BaiViet::where('status', '!=', 'draft')
             ->orderBy('ngay_tao', 'desc')
             ->limit(4)
             ->get();
@@ -40,16 +40,16 @@ class PhimsController extends Controller
 
     public function phimSapChieu()
     {
-        $phims = Phim::with(['comments.user']) 
-    ->where('ngay_phat_hanh', '>', now())
-    ->orderBy('ngay_phat_hanh', 'asc')
-    ->get();
-            $ratings = Rating::all();
+        $phims = Phim::with(['comments.user'])
+            ->where('ngay_phat_hanh', '>', now())
+            ->orderBy('ngay_phat_hanh', 'asc')
+            ->get();
+        $ratings = Rating::all();
 
         $banners = Banner::where('trang_thai', 1)->orderBy('id', 'desc')->get();
 
         $tab = 'sap-chieu';
-         $baiViet = BaiViet::where('status', '!=', 'draft')
+        $baiViet = BaiViet::where('status', '!=', 'draft')
             ->orderBy('ngay_tao', 'desc')
             ->limit(4)
             ->get();
@@ -105,11 +105,11 @@ class PhimsController extends Controller
                     $q->where('bat_dau', '>', $now->format('H:i:s'));
                 }
             })
-            ->with(['rapPhims', 'dinhDangPhim'])
+            ->with(['phongChieu.rapPhim', 'dinhDangPhim'])
             ->get();
 
         $groupedSuatChieus = $suatChieus->groupBy(function ($sc) {
-            return $sc->rapPhims && $sc->rapPhims->ten_rap ? $sc->rapPhims->ten_rap : 'Không xác định';
+            return $sc->phongChieu?->rapPhim?->ten_rap ?? 'Không xác định';
         })->map(function ($items) {
             return $items->groupBy(function ($sc) {
                 return $sc->phien_ban_phim ?? 'Không xác định';
@@ -137,11 +137,21 @@ class PhimsController extends Controller
     {
         $ngay_chieu = request('ngay_chieu');
         $chi_nhanh_id = request('chi_nhanh_id');
+        $now = Carbon::now();
 
-        $query = SuatChieu::where('phim_id', $id);
+        $query = SuatChieu::where('phim_id', $id)
+            ->where('trang_thai', 'hoat_dong');  // Chỉ lấy suất chiếu hoạt động
 
         if ($ngay_chieu) {
             $query->where('ngay_chieu', $ngay_chieu);
+
+            // Nếu là ngày hôm nay, chỉ lấy suất chiếu chưa qua
+            if ($ngay_chieu == $now->toDateString()) {
+                $query->where('bat_dau', '>', $now->format('H:i:s'));
+            }
+        } else {
+            // Nếu không chọn ngày, mặc định lấy từ hôm nay trở đi
+            $query->where('ngay_chieu', '>=', $now->toDateString());
         }
 
         if ($chi_nhanh_id) {
@@ -180,7 +190,7 @@ class PhimsController extends Controller
             }
         }
 
-        $suatChieus = $query->with(['rapPhims', 'dinhDangPhim'])->get();
+        $suatChieus = $query->with(['phongChieu.rapPhim', 'dinhDangPhim'])->get();
 
         $groupedSuatChieus = $suatChieus->groupBy(function ($sc) {
             return $sc->phongChieu?->rapPhim?->ten_rap ?? 'Không xác định';

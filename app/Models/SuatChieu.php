@@ -37,9 +37,9 @@ class SuatChieu extends Model
         return $this->belongsTo(ChiNhanh::class, 'chi_nhanh_id', 'id');
     }
 
-    public function rapPhims()
+    public function rapPhim()
     {
-        return $this->belongsTo(RapPhim::class, 'phong_chieu_id', 'id');
+        return $this->hasOneThrough(RapPhim::class, PhongChieu::class, 'id', 'id', 'phong_chieu_id', 'rap_phim_id');
     }
 
     public function datVes()

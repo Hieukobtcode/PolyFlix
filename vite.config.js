@@ -18,6 +18,7 @@ export default defineConfig({
                 "resources/js/dat-ve-client.js",
                 "resources/js/ghe-ngoi.js",
                 "resources/js/page.js",
+                "resources/js/login.js",
             ],
             refresh: true,
         }),

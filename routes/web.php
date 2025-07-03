@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\ChiTietDatVeController;
 use App\Http\Controllers\Admin\DatVeController;
 use App\Http\Controllers\Client\DanhSachBaiVietController;
+use App\Http\Controllers\Client\ThanhToanController;
 use App\Http\Controllers\Client\TrangChuController;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
@@ -44,7 +45,7 @@ use App\Http\Controllers\Client\LienHeController as ClientLienHeController;
 use App\Http\Controllers\Client\TheLoaiController;
 use App\Models\TheLoaiPhim;
 
-                                                                                                                                                                                        
+
 Route::get('/', [TrangChuController::class, 'index'])->name('home');
 
 // API cho đặt vé nhanh
@@ -53,18 +54,22 @@ Route::get('/api/phims-by-chi-nhanh', [TrangChuController::class, 'getPhimsByChi
 Route::get('/api/ngay-chieu-by-phim', [TrangChuController::class, 'getNgayChieuByPhim'])->name('api.ngay-chieu-by-phim');
 Route::get('/api/suat-chieu-by-ngay', [TrangChuController::class, 'getSuatChieuByNgay'])->name('api.suat-chieu-by-ngay');
 
-// Đặt vé client
-Route::get('/dat-ve', [\App\Http\Controllers\Client\DatVeController::class, 'index'])->name('client.dat-ve');
-Route::post('/dat-ve', [\App\Http\Controllers\Client\DatVeController::class, 'store'])->name('client.dat-ve.store');
-Route::get('/dat-ve/ket-qua/{id}', [\App\Http\Controllers\Client\DatVeController::class, 'ketQua'])->name('client.dat-ve.ket-qua');
+Route::middleware('auth')->group(function () {
+    // Đặt vé client
+    Route::get('/dat-ve', [\App\Http\Controllers\Client\DatVeController::class, 'index'])->name('client.dat-ve');
+    Route::post('/dat-ve', [\App\Http\Controllers\Client\DatVeController::class, 'store'])->name('client.dat-ve.store');
+    Route::get('/dat-ve/ket-qua/{id}', [\App\Http\Controllers\Client\DatVeController::class, 'ketQua'])->name('client.dat-ve.ket-qua');
+
+    // Thanh toán
+    Route::get('/thanh-toan/{datVeId}', [ThanhToanController::class, 'index'])->name('client.thanh-toan.index');
+    Route::post('/thanh-toan/xu-ly', [ThanhToanController::class, 'xuLyThanhToan'])->name('client.thanh-toan.xu-ly');
+    Route::get('/thanh-toan/callback', [ThanhToanController::class, 'callback'])->name('client.thanh-toan.callback');
+    Route::post('/thanh-toan/huy/{datVeId}', [ThanhToanController::class, 'huyThanhToan'])->name('client.thanh-toan.huy');
+});
 
 // Ghế đang được chọn
 Route::post('/chon-ghe', [\App\Http\Controllers\Client\DatVeController::class, 'chonGhe'])->name('client.ghe.chon');
 Route::post('/huy-chon-ghe', [\App\Http\Controllers\Client\DatVeController::class, 'huyChonGhe'])->name('client.ghe.huy');
-
-
-// Chọn ghế
-Route::get('/ghe-ngoi', [ChonGheController::class, 'index'])->name('client.ghe-ngoi');
 
 Route::get('/', [TrangChuController::class, 'index'])->name('home');
 Route::get('/rap/{uuid}', [TrangChuController::class, 'showrap'])->name('showrap');
@@ -248,9 +253,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access', 'per
     Route::resource('loai-phong', LoaiPhongController::class);
     Route::resource('rap-phim', RapphimController::class);
 
-    Route::get('cau-hinh', [CauHinhController::class, 'index'])->name('cau-hinh.index');
-    Route::get('cau-hinh/edit', [CauHinhController::class, 'edit'])->name('cau-hinh.edit');
-    Route::post('cau-hinh/update', [CauHinhController::class, 'update'])->name('cau-hinh.update');
+    Route::get('cau-hinh-settings', [CauHinhController::class, 'index'])->name('cau-hinh-settings.index');
+    Route::get('cau-hinh-settings/edit', [CauHinhController::class, 'edit'])->name('cau-hinh-settings.edit');
+    Route::post('cau-hinh-settings/update', [CauHinhController::class, 'update'])->name('cau-hinh-settings.update');
 
     Route::resource('phong-chieu', PhongChieuController::class);
     Route::resource('loai-ghe', LoaiGheController::class);
