@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 @section('content')
-    <div class="toast toast-onload align-items-center text-bg-primary border-0" role="alert" aria-live="assertive"
+    {{-- <div class="toast toast-onload align-items-center text-bg-primary border-0" role="alert" aria-live="assertive"
         aria-atomic="true">
         <div class="toast-body hstack align-items-start gap-6">
             <i class="ti ti-alert-circle fs-6"></i>
@@ -11,143 +11,190 @@
             <button type="button" class="btn-close btn-close-white fs-2 m-0 ms-auto shadow-none" data-bs-dismiss="toast"
                 aria-label="Close"></button>
         </div>
-    </div>
+    </div> --}}
+
     <div class="row">
-        <div class="col-lg-3 d-flex align-items-stretch">
-            <div class="d-block w-100">
-                <div class="card w-100">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between">
-                            <div>
-                                <h4 class="card-title mb-1">Earning</h4>
-                                <p class="card-subtitle">Last 7 Days</p>
+
+        <div class="col-lg-12 d-flex align-items-stretch">
+            <div class="row g-1 w-100">
+
+                <div class="col-md-3">
+                    <div class="card warning-card overflow-hidden text-bg-primary">
+                        <div class="card-body p-4">
+                            <div class="mb-7">
+                                <i class="ti ti-building-community fs-8"></i>
                             </div>
-                            <div>
-                                <h4 class="card-title mb-1 text-end">12,389</h4>
-                                <span
-                                    class="badge rounded-pill bg-warning-subtle text-warning border-warning border text-end">-3.8%</span>
-                            </div>
-                        </div>
-                        <div id="total-orders" class="total-orders-chart my-1 mx-n6"></div>
-                        <div class="d-flex align-items-center justify-content-between mb-2">
-                            <div class="d-flex align-items-center">
-                                <i class="ti ti-circle text-primary fs-4 me-2"></i>
-                                <p class="mb-0">Wrappixel</p>
-                            </div>
-                            <p class="mb-0">52%</p>
-                        </div>
-                        <div class="d-flex align-items-center justify-content-between">
-                            <div class="d-flex align-items-center">
-                                <i class="ti ti-circle text-light fs-4 me-2"></i>
-                                <p class="mb-0">Wrappixel</p>
-                            </div>
-                            <p class="mb-0">48%</p>
+                            <h5 class="text-white fw-bold fs-14 text-nowrap">
+                                {{ $soChiNhanhs }}<span class="fs-2 fw-light"></span>
+                            </h5>
+                            <p class="opacity-50 mb-0 ">Chi nhánh</p>
                         </div>
                     </div>
                 </div>
+
+                <div class="col-md-3">
+                    <div class="card info-card overflow-hidden text-bg-primary">
+                        <div class="card-body p-4">
+                            <div class="mb-7">
+                                <i class="ti ti-building fs-8"></i>
+                            </div>
+                            <h5 class="text-white fw-bold fs-14 text-nowrap">
+                                {{ $soRaps }} <span class="fs-2 fw-light"></span>
+                            </h5>
+                            <p class="opacity-50 mb-0">Rạp chiếu</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="card danger-card overflow-hidden text-bg-primary">
+                        <div class="card-body p-4">
+                            <div class="mb-7">
+                                <i class="ti ti-screen-share fs-8"></i>
+                            </div>
+                            <h5 class="text-white fw-bold fs-14">
+                                {{ $soPhongChieus }} <span class="fs-2 fw-light"></span>
+                            </h5>
+                            <p class="opacity-50 mb-0">Phòng chiếu</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="card info-card overflow-hidden text-bg-primary">
+                        <div class="card-body p-4">
+                            <div class="mb-7">
+                                <i class="ti ti-users fs-8"></i>
+                            </div>
+                            <h5 class="text-white fw-bold fs-14 text-nowrap">
+                                {{ $soNguoiDungs }} <span class="fs-2 fw-light"></span>
+                            </h5>
+                            <p class="opacity-50 mb-0">Người dùng</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        @php
+            $rapsTheoChiNhanh = collect();
+            if (request('branch_id')) {
+                $rapsTheoChiNhanh = $danhSachRap->where('chi_nhanh_id', request('branch_id'));
+            }
+        @endphp
+
+        <div class="d-flex col-12 mb-4 gap-3">
+            <div class="d-flex gap-2 w-100">
+                <select name="branch_id" id="branch-select" class="form-select w-100">
+                    <option value="">Tất cả chi nhánh</option>
+                    @foreach ($danhSachChiNhanh as $chiNhanh)
+                        <option value="{{ $chiNhanh->id }}" {{ request('branch_id') == $chiNhanh->id ? 'selected' : '' }}>
+                            {{ $chiNhanh->ten_chi_nhanh }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+
+            <select name="rap_id" id="rap-select" class="form-select w-100">
+                <option value="">Tất cả rạp chiếu</option>
+                @foreach ($rapsTheoChiNhanh as $rap)
+                    <option value="{{ $rap->id }}" {{ request('rap_id') == $rap->id ? 'selected' : '' }}>
+                        {{ $rap->ten_rap }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+
+
+        <div class="col-lg-3 d-flex align-items-stretch">
+            <div class="d-block w-100">
+
                 <div class="card w-100">
                     <div class="card-body">
                         <div class="d-flex justify-content-between">
                             <div>
-                                <h4 class="card-title mb-1">Latest Deal</h4>
-                                <p class="card-subtitle">Last 7 Days</p>
-                            </div>
-                            <div>
-                                <span
-                                    class="badge rounded-pill bg-success-subtle text-success border-success border text-end">86.5%</span>
+                                <h4 class="card-title mb-1">Top doanh thu</h4>
                             </div>
                         </div>
-                        <div class="my-6 py-4">
-                            <div class="d-flex align-items-center justify-content-between">
-                                <h5 class="mb-0">$98,500</h5>
-                                <h6 class="mb-0">$1,22,900</h6>
-                            </div>
-                            <div class="progress bg-light-subtle w-100 my-2">
-                                <div class="progress-bar text-bg-primary" role="progressbar" aria-label="Example 8px high"
-                                    style="width: 80%;" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100">
+
+                        @if ($top5ChiNhanh->isEmpty())
+                            <p class="text-muted">Không có doanh thu.</p>
+                        @else
+                            @foreach ($top5ChiNhanh as $item)
+                                <div class="d-flex align-items-center justify-content-between mb-2">
+                                    <div class="d-flex align-items-center">
+                                        <i class="ti ti-circle text-primary fs-4 me-2"></i>
+                                        <p class="mb-0">{{ $item->ten_chi_nhanh }}</p>
+                                    </div>
+                                    <p class="mb-0">
+                                        {{ $item->phan_tram }}%
+                                    </p>
                                 </div>
+                            @endforeach
+                        @endif
+
+                    </div>
+                </div>
+
+                <div class="card w-100">
+                    <div class="card-body">
+
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h4 class="card-title mb-1">Top doanh thu phim</h4>
                             </div>
-                            <p class="mb-0">Coupons used: 18/22</p>
                         </div>
-                        <h6 class="mb-7">Recent Purchasers</h6>
-                        <ul class="hstack mb-0">
-                            <li class="ms-n2">
-                                <a href="javascript:void(0)" class="">
-                                    <img src="https://bootstrapdemos.wrappixel.com/spike/dist/assets/images/profile/user-2.jpg"
-                                        class="rounded-circle border border-2 border-white" width="40" height="40"
-                                        alt="spike-img">
-                                </a>
-                            </li>
-                            <li class="ms-n2">
-                                <a href="javascript:void(0)" class="">
-                                    <img src="https://bootstrapdemos.wrappixel.com/spike/dist/assets/images/profile/user-3.jpg"
-                                        class="rounded-circle border border-2 border-white" width="40" height="40"
-                                        alt="spike-img">
-                                </a>
-                            </li>
-                            <li class="ms-n2">
-                                <a href="javascript:void(0)" class="">
-                                    <img src="https://bootstrapdemos.wrappixel.com/spike/dist/assets/images/profile/user-4.jpg"
-                                        class="rounded-circle border border-2 border-white" width="40" height="40"
-                                        alt="spike-img">
-                                </a>
-                            </li>
-                            <li class="ms-n2">
-                                <a href="javascript:void(0)" class="">
-                                    <img src="https://bootstrapdemos.wrappixel.com/spike/dist/assets/images/profile/user-5.jpg"
-                                        class="rounded-circle border border-2 border-white" width="40" height="40"
-                                        alt="spike-img">
-                                </a>
-                            </li>
-                            <li class="ms-n2">
-                                <a href="javascript:void(0)"
-                                    class="bg-primary-subtle rounded-circle border border-2 border-white d-flex align-items-center justify-content-center round-40">
-                                    +8
-                                </a>
-                            </li>
-                        </ul>
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <div class="d-flex align-items-center">
+                                <i class="ti ti-circle text-primary fs-4 me-2"></i>
+                                <p class="mb-0">Phim</p>
+                            </div>
+                            <p class="mb-0">
+                                
+                            </p>
+                        </div>
+
                     </div>
                 </div>
             </div>
         </div>
+
         <div class="col-lg-6 d-flex align-items-stretch">
             <div class="card w-100">
-                <div class="card-body border-bottom position-relative">
-                    <h4 class="card-title mb-1">Congratulations Mike</h4>
-                    <p class="card-subtitle mb-0">You have done 38% more sales</p>
+                {{-- <div class="card-body border-bottom position-relative">
+                    <h4 class="card-title mb-1">Thống kê PolyFLix</h4>
+                    <p id="thong-ke-theo" class="card-subtitle mb-0">Tổng theo toàn hệ thống</p>
                     <div class="mt-6">
                         <ul class="list-unstyled mb-0">
                             <li class="d-flex align-items-center mb-9">
                                 <div
                                     class="bg-success-subtle p-6 me-3 rounded-circle d-flex align-items-center justify-content-center">
-                                    <iconify-icon icon="solar:cart-5-line-duotone"
-                                        class="fs-7 text-success"></iconify-icon>
+                                    <iconify-icon icon="mdi:ticket-outline" class="fs-7 text-success"></iconify-icon>
                                 </div>
                                 <div>
-                                    <h6 class="mb-1 fs-4">64 new orders</h6>
-                                    <p class="mb-0">Processing</p>
+                                    <h6 class="mb-1 fs-4">{{ $veDaBans }}</h6>
+                                    <p class="mb-0">Vé đã bán</p>
                                 </div>
                             </li>
                             <li class="d-flex align-items-center mb-9">
                                 <div
                                     class="bg-warning-subtle p-6 me-3 rounded-circle d-flex align-items-center justify-content-center">
-                                    <iconify-icon icon="solar:pause-line-duotone"
-                                        class="fs-6 text-warning"></iconify-icon>
+                                    <iconify-icon icon="mdi:movie-open-outline" class="fs-6 text-warning"></iconify-icon>
                                 </div>
                                 <div>
-                                    <h6 class="mb-1 fs-4">4 orders</h6>
-                                    <p class="mb-0">On hold</p>
+                                    <h6 class="mb-1 fs-4">{{ $phimDangChieus }}</h6>
+                                    <p class="mb-0">Phim đang chiếu</p>
                                 </div>
                             </li>
                             <li class="d-flex align-items-center">
                                 <div
                                     class="bg-indigo-subtle p-6 me-3 rounded-circle d-flex align-items-center justify-content-center">
-                                    <iconify-icon icon="solar:bicycling-round-bold-duotone"
-                                        class="fs-7 text-indigo"></iconify-icon>
+                                    <iconify-icon icon="mdi:movie-open-outline" class="fs-6 text-warning"></iconify-icon>
                                 </div>
                                 <div>
-                                    <h6 class="mb-1 fs-4">12 orders</h6>
-                                    <p class="mb-0">Delivered</p>
+                                    <h6 class="mb-1 fs-4">{{ $phimSapChieus }}</h6>
+                                    <p class="mb-0">Phim sắp chiếu</p>
                                 </div>
                             </li>
                         </ul>
@@ -156,43 +203,39 @@
                                 alt="spike-img" class="img-fluid">
                         </div>
                     </div>
-                </div>
+                </div> --}}
                 <div class="card-body pb-2">
                     <div class="d-flex align-items-baseline justify-content-between">
                         <div>
-                            <h4 class="card-title mb-1">Total Orders</h4>
-                            <p class="card-subtitle mb-0">Weekly Order Updates</p>
+                            <h4 class="card-title mb-1">Tổng doanh thu</h4>
                         </div>
                         <select class="form-select fw-bold w-auto shadow-none">
-                            <option value="1">This Week</option>
-                            <option value="2">April 2024</option>
-                            <option value="3">May 2024</option>
-                            <option value="4">June 2024</option>
+                            <option value="1">Tuần</option>
+                            <option value="2">Tháng</option>
                         </select>
                     </div>
                     <div id="netsells" class="mx-n6"></div>
                 </div>
             </div>
         </div>
+
         <div class="col-lg-3 d-flex align-items-stretch">
             <div class="d-block w-100">
                 <div class="card w-100">
                     <div class="card-body">
                         <div class="d-flex justify-content-between">
                             <div>
-                                <h4 class="card-title mb-1">Profit</h4>
-                                <p class="card-subtitle">Years</p>
+                                <h4 class="card-title mb-1">Tỷ lệ lấp đầy ghế</h4>
                             </div>
                             <div>
-                                <h4 class="card-title mb-1 text-end">432</h4>
                                 <span
-                                    class="badge rounded-pill bg-success-subtle text-success border-success border text-end">+26.5%</span>
+                                    class="badge rounded-pill bg-success-subtle text-success border-success border text-end">{{ $tyLeLapDayGhe }}%</span>
                             </div>
                         </div>
-                        <div id="products" class="my-8"></div>
-                        <p class="mb-0 text-center">$18k Profit more than last years</p>
+                        <canvas id="tyleGheChart" class="my-8" style="height: 300px;"></canvas>
                     </div>
                 </div>
+
                 <div class="card w-100">
                     <div class="card-body">
                         <div class="d-flex justify-content-between">
@@ -219,908 +262,394 @@
                 </div>
             </div>
         </div>
-        <div class="col-lg-4 d-flex align-items-stretch">
-            <div class="card w-100">
-                <div class="card-body">
-                    <h4 class="card-title">Visit From USA</h4>
-                    <div id="usa" class="h-270"></div>
-                    <div class="mt-4">
-                        <div class="hstack gap-4 mb-4">
-                            <h6 class="mb-0 flex-shrink-0 w25">LA</h6>
-                            <div class="progress bg-light-subtle mt-1 w-100 h-5">
-                                <div class="progress-bar text-bg-info" role="progressbar" style="width: 28%"
-                                    aria-valuenow="28" aria-valuemin="0" aria-valuemax="100"></div>
+
+        <div class="row">
+            <div class="col-sm-6 col-lg-3 d-flex align-items-stretch">
+                <div class="card w-100 position-relative overflow-hidden">
+                    <div class="card-body">
+                        <div class="d-flex align-items-end justify-content-between">
+                            <div>
+                                <h4 class="mb-0 card-title fs-6">2,545</h4>
+                                <p class="card-subtitle">Followers</p>
                             </div>
-                            <h6 class="mb-0 flex-shrink-0 w35">28%</h6>
+                            <span class="text-success fw-normal">+1.20%</span>
                         </div>
-                        <div class="hstack gap-4 mb-4">
-                            <h6 class="mb-0 flex-shrink-0 w25">NY</h6>
-                            <div class="progress bg-light-subtle mt-1 w-100 h-5">
-                                <div class="progress-bar text-bg-primary" role="progressbar" style="width: 21%"
-                                    aria-valuenow="21" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                    <div id="widgest-chart-1"></div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-lg-3 d-flex align-items-stretch">
+                <div class="card w-100 position-relative overflow-hidden">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-end justify-content-between mb-3">
+                            <div>
+                                <h4 class="mb-0 card-title fs-6">15,480</h4>
+                                <p class="card-subtitle">Views</p>
                             </div>
-                            <h6 class="mb-0 flex-shrink-0 w35">21%</h6>
+                            <span class="text-danger fw-normal">-4.150%</span>
                         </div>
-                        <div class="hstack gap-4 mb-4">
-                            <h6 class="mb-0 flex-shrink-0 w25">KA</h6>
-                            <div class="progress bg-light-subtle mt-1 w-100 h-5">
-                                <div class="progress-bar text-bg-danger" role="progressbar" style="width: 18%"
-                                    aria-valuenow="18" aria-valuemin="0" aria-valuemax="100"></div>
+                        <div id="widgest-chart-2" class="mx-n2"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-lg-3 d-flex align-items-stretch">
+                <div class="card w-100 position-relative overflow-hidden">
+                    <div class="card-body">
+                        <div class="d-flex align-items-end justify-content-between">
+                            <div>
+                                <h4 class="mb-0 card-title fs-6">2,545</h4>
+                                <p class="card-subtitle">Earned</p>
                             </div>
-                            <h6 class="mb-0 flex-shrink-0 w35">18%</h6>
+                            <span class="text-success fw-normal">+1.20%</span>
                         </div>
-                        <div class="hstack gap-4">
-                            <h6 class="mb-0 flex-shrink-0 w25">AZ</h6>
-                            <div class="progress bg-light-subtle mt-1 w-100 h-5">
-                                <div class="progress-bar text-bg-indigo" role="progressbar" style="width: 12%"
-                                    aria-valuenow="12" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                    <div id="widgest-chart-3"></div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-lg-3 d-flex align-items-stretch">
+                <div class="card w-100 position-relative overflow-hidden">
+                    <div class="card-body p-4">
+                        <div class="mb-7 pb-8">
+                            <h4 class="mb-0 card-title fs-6">$78,298</h4>
+                            <p class="card-subtitle">Total Earning</p>
+                        </div>
+                        <div id="widgest-chart-4" class="mx-n2"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center justify-content-between mb-4 pb-8">
+                            <h4 class="card-title mb-0">Current Value</h4>
+                            <div class="d-flex align-items-center gap-2">
+                                <button class="btn btn-primary">Buy</button>
+                                <button class="btn btn-outline-primary">Sell</button>
                             </div>
-                            <h6 class="mb-0 flex-shrink-0 w35">12%</h6>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 d-flex align-items-stretch">
+                                <div class="card w-100 position-relative overflow-hidden border shadow-none mb-7 mb-lg-0">
+                                    <div class="card-body">
+                                        <div id="widgest-chart-5" class="mx-n4"></div>
+                                        <div class="d-flex align-items-end justify-content-between mt-7">
+                                            <div>
+                                                <p class="mb-1">Income</p>
+                                                <h4 class="mb-0 fw-semibold">$25,260</h4>
+                                            </div>
+                                            <span class="text-success fw-normal">+1.20%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 d-flex align-items-stretch">
+                                <div class="card w-100 position-relative overflow-hidden border shadow-none mb-7 mb-lg-0">
+                                    <div class="card-body">
+                                        <div id="widgest-chart-6" class="mx-n4"></div>
+                                        <div class="d-flex align-items-end justify-content-between mt-7">
+                                            <div>
+                                                <p class="mb-1">Expance</p>
+                                                <h4 class="mb-0 fw-semibold">$12,260</h4>
+                                            </div>
+                                            <span class="text-success fw-normal">+4.25%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 d-flex align-items-stretch">
+                                <div class="card w-100 position-relative overflow-hidden border shadow-none mb-7 mb-lg-0">
+                                    <div class="card-body">
+                                        <div id="current-year"></div>
+                                        <div class="d-flex align-items-end justify-content-between mt-7">
+                                            <div>
+                                                <p class="mb-1">Current Year</p>
+                                                <h4 class="mb-0 fw-semibold">$98,260</h4>
+                                            </div>
+                                            <span class="text-success fw-normal">+2.5%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="col-lg-8 d-flex align-items-stretch">
-            <div class="card w-100">
-                <div class="card-body">
-                    <div class="table-responsive overflow-x-auto products-tabel">
-                        <table class="table text-nowrap customize-table mb-0 align-middle">
-                            <thead class="text-dark fs-4">
-                                <tr>
-                                    <th>Products</th>
-                                    <th>Payment</th>
-                                    <th>Status</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td class="ps-0">
-                                        <div class="d-flex align-items-center product text-truncate">
-                                            <img src="https://bootstrapdemos.wrappixel.com/spike/dist/assets/images/products/product-7.png"
-                                                class="img-fluid flex-shrink-0" width="60" height="60">
-                                            <div class="ms-3 product-title">
-                                                <h6 class="fs-4 mb-0 text-truncate-2">PlayStation 5
-                                                    DualSense Wireless Controller</h6>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <h5 class="mb-0 fs-4">$120 <span class="text-muted">/499</span>
-                                        </h5>
-                                        <p class="text-muted mb-2">Cancelled</p>
-                                        <div class="progress bg-light-subtle w-100 h-4">
-                                            <div class="progress-bar text-bg-danger" role="progressbar"
-                                                aria-label="Example 4px high" style="width: 100%;" aria-valuenow="100"
-                                                aria-valuemin="0" aria-valuemax="100"></div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <span
-                                            class="badge rounded-pill bg-danger-subtle text-danger border-danger border">Cancelled</span>
-                                    </td>
-                                    <td>
-                                        <div class="dropdown dropstart">
-                                            <a href="javascript:void(0)" class="text-muted " id="dropdownMenuButton"
-                                                data-bs-toggle="dropdown" aria-expanded="false">
-                                                <i class="ti ti-dots-vertical fs-5"></i>
-                                            </a>
-                                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                                <li>
-                                                    <a class="dropdown-item d-flex align-items-center gap-3"
-                                                        href="javascript:void(0)">
-                                                        <i class="fs-4 ti ti-plus"></i>Add
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a class="dropdown-item d-flex align-items-center gap-3"
-                                                        href="javascript:void(0)">
-                                                        <i class="fs-4 ti ti-edit"></i>Edit
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a class="dropdown-item d-flex align-items-center gap-3"
-                                                        href="javascript:void(0)">
-                                                        <i class="fs-4 ti ti-trash"></i>Delete
-                                                    </a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="ps-0">
-                                        <div class="d-flex align-items-center product text-truncate">
-                                            <img src="https://bootstrapdemos.wrappixel.com/spike/dist/assets/images/products/product-9.png"
-                                                class="img-fluid flex-shrink-0" width="60" height="60">
-                                            <div class="ms-3 product-title">
-                                                <h6 class="fs-4 mb-0 text-truncate-2">Sony X85J 75
-                                                    Inch Sony 4K Ultra HD LED Smart G...
-                                                </h6>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <h5 class="mb-0 fs-4">$120 <span class="text-muted">/499</span>
-                                        </h5>
-                                        <p class="text-muted mb-2">Full paid</p>
-                                        <div class="progress bg-light-subtle w-100 h-4">
-                                            <div class="progress-bar text-bg-success" role="progressbar"
-                                                aria-label="Example 4px high" style="width: 100%;" aria-valuenow="100"
-                                                aria-valuemin="0" aria-valuemax="100"></div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <span
-                                            class="badge rounded-pill bg-success-subtle text-success border-success border">Confirmed</span>
-                                    </td>
-                                    <td <div class="dropdown dropstart">
-                                        <a href="javascript:void(0)" class="text-muted " id="dropdownMenuButton"
-                                            data-bs-toggle="dropdown" aria-expanded="false">
-                                            <i class="ti ti-dots-vertical fs-5"></i>
-                                        </a>
-                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                            <li>
-                                                <a class="dropdown-item d-flex align-items-center gap-3"
-                                                    href="javascript:void(0)">
-                                                    <i class="fs-4 ti ti-plus"></i>Add
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a class="dropdown-item d-flex align-items-center gap-3"
-                                                    href="javascript:void(0)">
-                                                    <i class="fs-4 ti ti-edit"></i>Edit
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a class="dropdown-item d-flex align-items-center gap-3"
-                                                    href="javascript:void(0)">
-                                                    <i class="fs-4 ti ti-trash"></i>Delete
-                                                </a>
-                                            </li>
-                                        </ul>
+            <div class="col-lg-4">
+                <div class="card w-100 position-relative">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-8">
+                                <h4 class="card-title mb-9">Yearly Breakup</h4>
+                                <h4 class="fw-semibold mb-2">$36,358</h4>
+                                <div class="d-flex align-items-center mb-7 pb-8">
+                                    <span
+                                        class="me-1 rounded-circle bg-success-subtle round-20 d-flex align-items-center justify-content-center">
+                                        <i class="ti ti-arrow-up-left text-success"></i>
+                                    </span>
+                                    <p class="text-dark me-1 fs-3 mb-0">+9%</p>
+                                    <p class="fs-3 mb-0">last year</p>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <div class="me-4">
+                                        <span class="round-8 text-bg-primary rounded-circle me-2 d-inline-block"></span>
+                                        <span class="fs-2">2022</span>
+                                    </div>
+                                    <div>
+                                        <span class="round-8 bg-primary-subtle rounded-circle me-2 d-inline-block"></span>
+                                        <span class="fs-2">2021</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="d-flex justify-content-center">
+                                    <div id="breakup" class="me-2"></div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    </td>
-                    </tr>
-                    <tr>
-                        <td class="ps-0">
-                            <div class="d-flex align-items-center product text-truncate">
-                                <img src="https://bootstrapdemos.wrappixel.com/spike/dist/assets/images/products/product-6.png"
-                                    class="img-fluid flex-shrink-0" width="60" height="60">
-                                <div class="ms-3 product-title">
-                                    <h6 class="fs-4 mb-0 text-truncate-2">Apple MacBook Pro 13
-                                        inch-M1-8/256GB-space</h6>
+                </div>
+                <div class="card w-100 position-relative overflow-hidden">
+                    <div class="card-body pb-4">
+                        <div class="d-flex align-items-center justify-content-between mb-4">
+                            <h4 class="card-title mb-0"> Monthly Earnings </h4>
+                            <div class="p-2 bg-primary-subtle rounded-1 d-inline-block">
+                                <img src="https://bootstrapdemos.wrappixel.com/spike/dist/assets/images/svgs/icon-master-card-2.svg"
+                                    alt="matdash-img" class="img-fluid" width="24" height="24">
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center mb-7 pb-8">
+                            <h4 class="fw-semibold mb-0 fs-7">$6,820</h4>
+                            <div class="d-flex align-items-center">
+                                <span
+                                    class="me-1 rounded-circle bg-success-subtle round-20 d-flex align-items-center justify-content-center">
+                                    <i class="ti ti-arrow-up-left text-success"></i>
+                                </span>
+                                <p class="text-muted me-1 fs-3 mb-0">+9%</p>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div id="monthly-earning"></div>
+                </div>
+                <div class="card w-100 position-relative overflow-hidden">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center justify-content-between mb-4">
+                            <h4 class="card-title mb-0"> Monthly Earnings </h4>
+                            <div>
+                                <select class="form-select text-dark">
+                                    <option value="1">March 2024</option>
+                                    <option value="2">April 2024</option>
+                                    <option value="3">May 2024</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div id="most-visited" class="rounded-bars mx-n3"></div>
+                        <div class="d-flex align-items-center justify-content-center">
+                            <div class="me-4">
+                                <span class="round-8 text-bg-primary rounded-circle me-2 d-inline-block"></span>
+                                <span>San Francisco</span>
+                            </div>
+                            <div>
+                                <span class="round-8 text-bg-secondary rounded-circle me-2 d-inline-block"></span>
+                                <span>Diego</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card w-100 position-relative overflow-hidden">
+                    <div class="card-body">
+                        <div>
+                            <h5 class="card-title">Yearly Sales</h5>
+                            <p class="card-subtitle mb-0">Every month</p>
+                            <div id="yearly-salary" class="mx-n7"></div>
+                            <div class="d-flex align-items-center justify-content-between mt-3">
+                                <div class="d-flex align-items-center">
+                                    <div
+                                        class="bg-primary-subtle rounded-1 me-8 p-8 d-flex align-items-center justify-content-center">
+                                        <i class="ti ti-grid-dots text-primary fs-6"></i>
+                                    </div>
+                                    <div>
+                                        <p class="fs-3 mb-0 fw-normal">Salary</p>
+                                        <h6 class="fw-semibold text-dark fs-4 mb-0">$36,358</h6>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <div
+                                        class="text-bg-light rounded-1 me-8 p-8 d-flex align-items-center justify-content-center">
+                                        <i class="ti ti-grid-dots text-muted fs-6"></i>
+                                    </div>
+                                    <div>
+                                        <p class="fs-3 mb-0 fw-normal">Expance</p>
+                                        <h6 class="fw-semibold text-dark fs-4 mb-0">$5,296</h6>
+                                    </div>
                                 </div>
                             </div>
-                        </td>
-                        <td>
-                            <h5 class="mb-0 fs-4">$120 <span class="text-muted">/499</span>
-                            </h5>
-                            <p class="text-muted mb-2">Full paid</p>
-                            <div class="progress bg-light-subtle w-100 h-4">
-                                <div class="progress-bar text-bg-success" role="progressbar"
-                                    aria-label="Example 4px high" style="width: 100%;" aria-valuenow="100"
-                                    aria-valuemin="0" aria-valuemax="100">
+                        </div>
+                    </div>
+                </div>
+                <div class="card w-100 position-relative overflow-hidden">
+                    <div class="card-body">
+                        <h4 class="card-title mb-0">Page Impressions</h4>
+                        <div class="row align-items-center">
+                            <div class="col-md-6">
+                                <h4 class="fw-semibold mb-0 mt-4">$456,120</h4>
+                                <p class="mb-1 fs-2 mb-2">(Change Yesterday)</p>
+                                <div class="d-flex align-items-center">
+                                    <span
+                                        class="me-1 rounded-circle bg-danger-subtle round-20 d-flex align-items-center justify-content-center">
+                                        <i class="ti ti-arrow-down-right text-danger"></i>
+                                    </span>
+                                    <p class="text-muted fs-3 mb-0">+9%</p>
                                 </div>
                             </div>
-                        </td>
-                        <td>
-                            <span
-                                class="badge rounded-pill bg-success-subtle text-success border-success border">Confirmed</span>
-                        </td>
-                        <td>
-                            <div class="dropdown dropstart">
-                                <a href="javascript:void(0)" class="text-muted " id="dropdownMenuButton"
-                                    data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="ti ti-dots-vertical fs-5"></i>
-                                </a>
-                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                    <li>
-                                        <a class="dropdown-item d-flex align-items-center gap-3"
-                                            href="javascript:void(0)">
-                                            <i class="fs-4 ti ti-plus"></i>Add
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item d-flex align-items-center gap-3"
-                                            href="javascript:void(0)">
-                                            <i class="fs-4 ti ti-edit"></i>Edit
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item d-flex align-items-center gap-3"
-                                            href="javascript:void(0)">
-                                            <i class="fs-4 ti ti-trash"></i>Delete
-                                        </a>
-                                    </li>
-                                </ul>
+                            <div class="col-md-6">
+                                <div id="impressions"></div>
                             </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="ps-0">
-                            <div class="d-flex align-items-center product text-truncate">
-                                <img src="https://bootstrapdemos.wrappixel.com/spike/dist/assets/images/products/product-8.png"
-                                    class="img-fluid flex-shrink-0" width="60" height="60">
-                                <div class="ms-3 product-title">
-                                    <h6 class="fs-4 mb-0 text-truncate-2">Amazon Basics Mesh,
-                                        Mid-Back, Swivel Office De...
-                                    </h6>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 d-flex align-items-stretch">
+                        <div class="card w-100 position-relative overflow-hidden">
+                            <div class="card-body">
+                                <p class="mb-1 fs-3">Customers</p>
+                                <h4 class="fw-semibold">36,358</h4>
+                                <div class="d-flex align-items-center">
+                                    <span
+                                        class="me-1 rounded-circle bg-danger-subtle round-20 d-flex align-items-center justify-content-center">
+                                        <i class="ti ti-arrow-down-right text-danger"></i>
+                                    </span>
+                                    <p class="text-muted fs-3 mb-0">+9%</p>
                                 </div>
                             </div>
-                        </td>
-                        <td>
-                            <h5 class="mb-0 fs-4">$120 <span class="text-muted">/499</span>
-                            </h5>
-                            <p class="text-muted mb-2">Partially paid</p>
-                            <div class="progress bg-light-subtle w-100 h-4">
-                                <div class="progress-bar text-bg-warning" role="progressbar"
-                                    aria-label="Example 4px high" style="width: 40%;" aria-valuenow="40"
-                                    aria-valuemin="0" aria-valuemax="100">
+                            <div id="customers"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 d-flex align-items-stretch">
+                        <div class="card w-100 position-relative overflow-hidden">
+                            <div class="card-body">
+                                <p class="mb-1 fs-3">Projects</p>
+                                <h4 class="fw-semibold">78,298</h4>
+                                <div class="d-flex align-items-center mb-2">
+                                    <span
+                                        class="me-1 rounded-circle bg-success-subtle round-20 d-flex align-items-center justify-content-center">
+                                        <i class="ti ti-arrow-up-left text-success"></i>
+                                    </span>
+                                    <p class="text-muted fs-3 mb-0">+9%</p>
+                                </div>
+                                <div id="projects" class="rounded-bars mx-n2"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card w-100 position-relative overflow-hidden">
+                    <div class="card-body pb-4">
+                        <h5 class="card-title">Revenue Updates</h5>
+                        <p class="card-subtitle mb-4">Overview of Profit</p>
+                        <div class="d-flex align-items-center">
+                            <div class="me-4">
+                                <span class="round-8 text-bg-primary rounded-circle me-2 d-inline-block"></span>
+                                <span class="fs-2">Footware</span>
+                            </div>
+                            <div>
+                                <span class="round-8 text-bg-secondary rounded-circle me-2 d-inline-block"></span>
+                                <span class="fs-2">Fashionware</span>
+                            </div>
+                        </div>
+                        <div id="revenue-updates" class="rounded-bars mx-n6"></div>
+                    </div>
+                </div>
+                <div class="card w-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Sales Overview</h5>
+                        <p class="card-subtitle mb-4">Every Month</p>
+                        <div id="sales-overview"></div>
+                        <div class="d-flex align-items-center justify-content-between mt-5 pb-2">
+                            <div class="d-flex align-items-center">
+                                <div
+                                    class="bg-primary-subtle rounded-1 me-8 p-8 d-flex align-items-center justify-content-center">
+                                    <i class="ti ti-grid-dots text-primary fs-6"></i>
+                                </div>
+                                <div>
+                                    <h6 class="fw-semibold text-dark fs-4 mb-0">$23,450</h6>
+                                    <p class="fs-3 mb-0 fw-normal">Profit</p>
                                 </div>
                             </div>
-                        </td>
-                        <td>
-                            <span
-                                class="badge rounded-pill bg-indigo-subtle text-indigo border-indigo border">Confirmed</span>
-                        </td>
-                        <td>
-                            <div class="dropdown dropstart">
-                                <a href="javascript:void(0)" class="text-muted " id="dropdownMenuButton"
-                                    data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="ti ti-dots-vertical fs-5"></i>
-                                </a>
-                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                    <li>
-                                        <a class="dropdown-item d-flex align-items-center gap-3"
-                                            href="javascript:void(0)">
-                                            <i class="fs-4 ti ti-plus"></i>Add
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item d-flex align-items-center gap-3"
-                                            href="javascript:void(0)">
-                                            <i class="fs-4 ti ti-edit"></i>Edit
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item d-flex align-items-center gap-3"
-                                            href="javascript:void(0)">
-                                            <i class="fs-4 ti ti-trash"></i>Delete
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="ps-0 border-bottom-0">
-                            <div class="d-flex align-items-center product text-truncate">
-                                <img src="https://bootstrapdemos.wrappixel.com/spike/dist/assets/images/products/product-5.png"
-                                    class="img-fluid flex-shrink-0" width="60" height="60">
-                                <div class="ms-3 product-title">
-                                    <h6 class="fs-4 mb-0 text-truncate-2">iPhone 13 pro max-Pacific
-                                        Blue-128GB storage</h6>
+                            <div class="d-flex align-items-center">
+                                <div
+                                    class="bg-secondary-subtle rounded-1 me-8 p-8 d-flex align-items-center justify-content-center">
+                                    <i class="ti ti-grid-dots text-secondary fs-6"></i>
+                                </div>
+                                <div>
+                                    <h6 class="fw-semibold text-dark fs-4 mb-0">$23,450</h6>
+                                    <p class="fs-3 mb-0 fw-normal">Expance</p>
                                 </div>
                             </div>
-                        </td>
-                        <td class="border-bottom-0">
-                            <h5 class="mb-0 fs-4">$180 <span class="text-muted">/499</span>
-                            </h5>
-                            <p class="text-muted mb-2">Partially paid</p>
-                            <div class="progress bg-light-subtle w-100 h-4">
-                                <div class="progress-bar text-bg-warning" role="progressbar"
-                                    aria-label="Example 4px high" style="width: 40%;" aria-valuenow="40"
-                                    aria-valuemin="0" aria-valuemax="100">
-                                </div>
-                            </div>
-                        </td>
-                        <td class="border-bottom-0">
-                            <span
-                                class="badge rounded-pill bg-indigo-subtle text-indigo border-indigo border">Confirmed</span>
-                        </td>
-                        <td class="border-bottom-0">
-                            <div class="dropdown dropstart">
-                                <a href="javascript:void(0)" class="text-muted " id="dropdownMenuButton"
-                                    data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="ti ti-dots-vertical fs-5"></i>
-                                </a>
-                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                    <li>
-                                        <a class="dropdown-item d-flex align-items-center gap-3"
-                                            href="javascript:void(0)">
-                                            <i class="fs-4 ti ti-plus"></i>Add
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item d-flex align-items-center gap-3"
-                                            href="javascript:void(0)">
-                                            <i class="fs-4 ti ti-edit"></i>Edit
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item d-flex align-items-center gap-3"
-                                            href="javascript:void(0)">
-                                            <i class="fs-4 ti ti-trash"></i>Delete
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </td>
-                    </tr>
-                    </tbody>
-                    </table>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="col-12">
-        <div class="card mb-0">
-            <div class="card-body">
-                <div class="d-md-flex justify-content-between mb-9">
-                    <div class="mb-9 mb-md-0">
-                        <h4 class="card-title">Latest Reviews</h4>
-                        <p class="card-subtitle mb-0">Review received across all channels</p>
-                    </div>
-                    <div class="d-flex align-items-center">
-                        <form class="position-relative me-3 w-100">
-                            <input type="text" class="form-control search-chat py-2 ps-5" id="text-srh"
-                                placeholder="Search">
-                            <i
-                                class="ti ti-search position-absolute top-50 start-0 translate-middle-y fs-6 text-dark ms-3"></i>
-                        </form>
-                        <div class="dropdown">
-                            <a href="javascript:void(0)" class="btn border-dark-subtle shadow-none px-3"
-                                id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="ti ti-dots-vertical fs-5"></i>
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
-                                <li>
-                                    <a class="dropdown-item d-flex align-items-center gap-3" href="javascript:void(0)">
-                                        <i class="fs-4 ti ti-plus"></i>Add
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item d-flex align-items-center gap-3" href="javascript:void(0)">
-                                        <i class="fs-4 ti ti-edit"></i>Edit
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item d-flex align-items-center gap-3" href="javascript:void(0)">
-                                        <i class="fs-4 ti ti-trash"></i>Delete
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div class="table-responsive overflow-x-auto latest-reviews-table">
-                    <table class="table align-middle text-nowrap">
-                        <thead class="text-dark fs-4">
-                            <tr>
-                                <th class="ps-0">
-                                    #
-                                </th>
-                                <th>Products</th>
-                                <th>Customer</th>
-                                <th>Reviews</th>
-                                <th>Status</th>
-                                <th>Time</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td class="ps-0">
-                                    <div class="form-check mb-0 flex-shrink-0">
-                                        <input class="form-check-input" type="checkbox" value=""
-                                            id="flexCheckDefault1">
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="d-flex align-items-center product text-truncate">
-                                        <img src="https://bootstrapdemos.wrappixel.com/spike/dist/assets/images/products/product-5.png"
-                                            class="img-fluid flex-shrink-0" width="60" height="60">
-                                        <div class="ms-3 product-title">
-                                            <h6 class="fs-4 mb-0 text-truncate-2">iPhone 13 pro
-                                                max-Pacific Blue-128GB storage</h6>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="d-flex align-items-center text-truncate">
-                                        <img src="https://bootstrapdemos.wrappixel.com/spike/dist/assets/images/profile/user-2.jpg"
-                                            alt="spike-img" class="img-fluid rounded-circle flex-shrink-0" width="40"
-                                            height="40">
-                                        <div class="ms-3">
-                                            <h4 class="card-title mb-1 fs-4">Arlene McCoy</h4>
-                                            <p class="card-subtitle">macoy@arlene.com</p>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="product-reviews">
-                                        <ul class="list-unstyled d-flex align-items-center mb-0">
-                                            <li>
-                                                <a class="me-1 " href="javascript:void(0)"><iconify-icon
-                                                        icon="solar:star-bold" class="text-warning"></iconify-icon></a>
-                                            </li>
-                                            <li>
-                                                <a class="me-1 " href="javascript:void(0)"><iconify-icon
-                                                        icon="solar:star-bold" class="text-warning"></iconify-icon></a>
-                                            </li>
-                                            <li>
-                                                <a class="me-1 " href="javascript:void(0)"><iconify-icon
-                                                        icon="solar:star-bold" class="text-warning"></iconify-icon></a>
-                                            </li>
-                                            <li>
-                                                <a class="me-1 " href="javascript:void(0)"><iconify-icon
-                                                        icon="solar:star-bold-duotone"
-                                                        class="text-warning"></iconify-icon></a>
-                                            </li>
-                                            <li>
-                                                <a class="" href="javascript:void(0)"><iconify-icon
-                                                        icon="solar:star-line-duotone"
-                                                        class="text-warning"></iconify-icon></a>
-                                            </li>
-                                        </ul>
-                                        <p class="text-dark mb-0 fw-normal text-truncate-2">
-                                            This theme is great. Clean and easy to
-                                            understand. Perfect for those who don't have
-                                            <br>
-                                            time to... <a href="javascript:void(0)">See more</a>
-                                        </p>
-                                    </div>
-                                </td>
-                                <td>
-                                    <span
-                                        class="badge rounded-pill bg-success-subtle text-success border-success border">Confirmed</span>
-                                </td>
-                                <td>
-                                    <p class="mb-0">Nov 8</p>
-                                </td>
-                                <td>
-                                    <div class="dropdown dropstart">
-                                        <a href="javascript:void(0)" class="text-muted " id="dropdownMenuButton"
-                                            data-bs-toggle="dropdown" aria-expanded="false">
-                                            <i class="ti ti-dots-vertical fs-5"></i>
-                                        </a>
-                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                            <li>
-                                                <a class="dropdown-item d-flex align-items-center gap-3"
-                                                    href="javascript:void(0)">
-                                                    <i class="fs-4 ti ti-plus"></i>Add
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a class="dropdown-item d-flex align-items-center gap-3"
-                                                    href="javascript:void(0)">
-                                                    <i class="fs-4 ti ti-edit"></i>Edit
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a class="dropdown-item d-flex align-items-center gap-3"
-                                                    href="javascript:void(0)">
-                                                    <i class="fs-4 ti ti-trash"></i>Delete
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="ps-0">
-                                    <div class="form-check mb-0 flex-shrink-0">
-                                        <input class="form-check-input" type="checkbox" value=""
-                                            id="flexCheckDefault2">
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="d-flex align-items-center product text-truncate">
-                                        <img src="https://bootstrapdemos.wrappixel.com/spike/dist/assets/images/products/product-6.png"
-                                            class="img-fluid flex-shrink-0" width="60" height="60">
-                                        <div class="ms-3 product-title">
-                                            <h6 class="fs-4 mb-0 text-truncate-2">Apple MacBook Pro 13
-                                                inch-M1-8/256GB-space</h6>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="d-flex align-items-center text-truncate">
-                                        <img src="https://bootstrapdemos.wrappixel.com/spike/dist/assets/images/profile/user-3.jpg"
-                                            alt="spike-img" class="img-fluid rounded-circle flex-shrink-0" width="40"
-                                            height="40">
-                                        <div class="ms-3">
-                                            <h4 class="card-title mb-1 fs-4">Jerome Bell</h4>
-                                            <p class="card-subtitle">belljerome@yahoo.com</p>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="product-reviews">
-                                        <ul class="list-unstyled d-flex align-items-center mb-0">
-                                            <li>
-                                                <a class="me-1 " href="javascript:void(0)"><iconify-icon
-                                                        icon="solar:star-bold" class="text-warning"></iconify-icon></a>
-                                            </li>
-                                            <li>
-                                                <a class="me-1 " href="javascript:void(0)"><iconify-icon
-                                                        icon="solar:star-bold" class="text-warning"></iconify-icon></a>
-                                            </li>
-                                            <li>
-                                                <a class="me-1 " href="javascript:void(0)"><iconify-icon
-                                                        icon="solar:star-bold" class="text-warning"></iconify-icon></a>
-                                            </li>
-                                            <li>
-                                                <a class="me-1 " href="javascript:void(0)"><iconify-icon
-                                                        icon="solar:star-bold" class="text-warning"></iconify-icon></a>
-                                            </li>
-                                            <li>
-                                                <a class="" href="javascript:void(0)"><iconify-icon
-                                                        icon="solar:star-line-duotone"
-                                                        class="text-warning"></iconify-icon></a>
-                                            </li>
-                                        </ul>
-                                        <p class="text-dark mb-0 fw-normal text-truncate-2">
-                                            It's a Mac, after all. Once you've gone Mac,there's no going
-                                            back. My first Mac
-                                            lastedover nine years.
-                                        </p>
-                                    </div>
-                                </td>
-                                <td>
-                                    <span
-                                        class="badge rounded-pill bg-warning-subtle text-warning border-warning border">Pending</span>
-                                </td>
-                                <td>
-                                    <p class="mb-0">Nov 8</p>
-                                </td>
-                                <td>
-                                    <div class="dropdown dropstart">
-                                        <a href="javascript:void(0)" class="text-muted " id="dropdownMenuButton"
-                                            data-bs-toggle="dropdown" aria-expanded="false">
-                                            <i class="ti ti-dots-vertical fs-5"></i>
-                                        </a>
-                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                            <li>
-                                                <a class="dropdown-item d-flex align-items-center gap-3"
-                                                    href="javascript:void(0)">
-                                                    <i class="fs-4 ti ti-plus"></i>Add
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a class="dropdown-item d-flex align-items-center gap-3"
-                                                    href="javascript:void(0)">
-                                                    <i class="fs-4 ti ti-edit"></i>Edit
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a class="dropdown-item d-flex align-items-center gap-3"
-                                                    href="javascript:void(0)">
-                                                    <i class="fs-4 ti ti-trash"></i>Delete
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="ps-0">
-                                    <div class="form-check mb-0 flex-shrink-0">
-                                        <input class="form-check-input" type="checkbox" value=""
-                                            id="flexCheckDefault3">
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="d-flex align-items-center product text-truncate">
-                                        <img src="https://bootstrapdemos.wrappixel.com/spike/dist/assets/images/products/product-7.png"
-                                            class="img-fluid flex-shrink-0" width="60" height="60">
-                                        <div class="ms-3 product-title">
-                                            <h6 class="fs-4 mb-0 text-truncate-2">PlayStation 5
-                                                DualSense Wireless Controller</h6>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="d-flex align-items-center text-truncate">
-                                        <img src="https://bootstrapdemos.wrappixel.com/spike/dist/assets/images/profile/user-4.jpg"
-                                            alt="spike-img" class="img-fluid rounded-circle flex-shrink-0" width="40"
-                                            height="40">
-                                        <div class="ms-3">
-                                            <h4 class="card-title mb-1 fs-4">Jacob Jones</h4>
-                                            <p class="card-subtitle">jones009@hotmail.com</p>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="product-reviews">
-                                        <ul class="list-unstyled d-flex align-items-center mb-0">
-                                            <li>
-                                                <a class="me-1 " href="javascript:void(0)"><iconify-icon
-                                                        icon="solar:star-bold" class="text-warning"></iconify-icon></a>
-                                            </li>
-                                            <li>
-                                                <a class="me-1 " href="javascript:void(0)"><iconify-icon
-                                                        icon="solar:star-bold" class="text-warning"></iconify-icon></a>
-                                            </li>
-                                            <li>
-                                                <a class="me-1 " href="javascript:void(0)"><iconify-icon
-                                                        icon="solar:star-bold" class="text-warning"></iconify-icon></a>
-                                            </li>
-                                            <li>
-                                                <a class="me-1 " href="javascript:void(0)"><iconify-icon
-                                                        icon="solar:star-bold-duotone"
-                                                        class="text-warning"></iconify-icon></a>
-                                            </li>
-                                            <li>
-                                                <a class="" href="javascript:void(0)"><iconify-icon
-                                                        icon="solar:star-line-duotone"
-                                                        class="text-warning"></iconify-icon></a>
-                                            </li>
-                                        </ul>
-                                        <p class="text-dark mb-0 fw-normal text-truncate-2">
-                                            The best experience we could hope for.Customer service team
-                                            is amazing and thequality
-                                            of their products... <a href="javascript:void(0)">See
-                                                more</a>
-                                        </p>
-                                    </div>
-                                </td>
-                                <td>
-                                    <span
-                                        class="badge rounded-pill bg-warning-subtle text-warning border-warning border">Pending</span>
-                                </td>
-                                <td>
-                                    <p class="mb-0">Nov 8</p>
-                                </td>
-                                <td>
-                                    <div class="dropdown dropstart">
-                                        <a href="javascript:void(0)" class="text-muted " id="dropdownMenuButton"
-                                            data-bs-toggle="dropdown" aria-expanded="false">
-                                            <i class="ti ti-dots-vertical fs-5"></i>
-                                        </a>
-                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                            <li>
-                                                <a class="dropdown-item d-flex align-items-center gap-3"
-                                                    href="javascript:void(0)">
-                                                    <i class="fs-4 ti ti-plus"></i>Add
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a class="dropdown-item d-flex align-items-center gap-3"
-                                                    href="javascript:void(0)">
-                                                    <i class="fs-4 ti ti-edit"></i>Edit
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a class="dropdown-item d-flex align-items-center gap-3"
-                                                    href="javascript:void(0)">
-                                                    <i class="fs-4 ti ti-trash"></i>Delete
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="ps-0">
-                                    <div class="form-check mb-0 flex-shrink-0">
-                                        <input class="form-check-input" type="checkbox" value=""
-                                            id="flexCheckDefault4">
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="d-flex align-items-center product text-truncate">
-                                        <img src="https://bootstrapdemos.wrappixel.com/spike/dist/assets/images/products/product-8.png"
-                                            class="img-fluid flex-shrink-0" width="60" height="60">
-                                        <div class="ms-3 product-title">
-                                            <h6 class="fs-4 mb-0 text-truncate-2">Amazon Basics Mesh,
-                                                Mid-Back, Swivel Office De...
-                                            </h6>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="d-flex align-items-center text-truncate">
-                                        <img src="https://bootstrapdemos.wrappixel.com/spike/dist/assets/images/profile/user-5.jpg"
-                                            alt="spike-img" class="img-fluid rounded-circle flex-shrink-0" width="40"
-                                            height="40">
-                                        <div class="ms-3">
-                                            <h4 class="card-title mb-1 fs-4">Annette Black</h4>
-                                            <p class="card-subtitle">blackanne@yahoo.com</p>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="product-reviews">
-                                        <ul class="list-unstyled d-flex align-items-center mb-0">
-                                            <li>
-                                                <a class="me-1 " href="javascript:void(0)"><iconify-icon
-                                                        icon="solar:star-bold" class="text-warning"></iconify-icon></a>
-                                            </li>
-                                            <li>
-                                                <a class="me-1 " href="javascript:void(0)"><iconify-icon
-                                                        icon="solar:star-bold" class="text-warning"></iconify-icon></a>
-                                            </li>
-                                            <li>
-                                                <a class="me-1 " href="javascript:void(0)"><iconify-icon
-                                                        icon="solar:star-bold" class="text-warning"></iconify-icon></a>
-                                            </li>
-                                            <li>
-                                                <a class="me-1 " href="javascript:void(0)"><iconify-icon
-                                                        icon="solar:star-bold-duotone"
-                                                        class="text-warning"></iconify-icon></a>
-                                            </li>
-                                            <li>
-                                                <a class="" href="javascript:void(0)"><iconify-icon
-                                                        icon="solar:star-line-duotone"
-                                                        class="text-warning"></iconify-icon></a>
-                                            </li>
-                                        </ul>
-                                        <p class="text-dark mb-0 fw-normal text-truncate-2">
-                                            The controller is quite comfy for me. Despiteits increased
-                                            size, the controller still
-                                            fits well
-                                            <br>in my hands.
-                                        </p>
-                                    </div>
-                                </td>
-                                <td>
-                                    <span
-                                        class="badge rounded-pill bg-success-subtle text-success border-success border">Confirmed</span>
-                                </td>
-                                <td>
-                                    <p class="mb-0">Nov 8</p>
-                                </td>
-                                <td>
-                                    <div class="dropdown dropstart">
-                                        <a href="javascript:void(0)" class="text-muted " id="dropdownMenuButton"
-                                            data-bs-toggle="dropdown" aria-expanded="false">
-                                            <i class="ti ti-dots-vertical fs-5"></i>
-                                        </a>
-                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                            <li>
-                                                <a class="dropdown-item d-flex align-items-center gap-3"
-                                                    href="javascript:void(0)">
-                                                    <i class="fs-4 ti ti-plus"></i>Add
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a class="dropdown-item d-flex align-items-center gap-3"
-                                                    href="javascript:void(0)">
-                                                    <i class="fs-4 ti ti-edit"></i>Edit
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a class="dropdown-item d-flex align-items-center gap-3"
-                                                    href="javascript:void(0)">
-                                                    <i class="fs-4 ti ti-trash"></i>Delete
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="ps-0">
-                                    <div class="form-check mb-0 flex-shrink-0">
-                                        <input class="form-check-input" type="checkbox" value=""
-                                            id="flexCheckDefault5">
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="d-flex align-items-center product text-truncate">
-                                        <img src="https://bootstrapdemos.wrappixel.com/spike/dist/assets/images/products/product-9.png"
-                                            class="img-fluid flex-shrink-0" width="60" height="60">
-                                        <div class="ms-3 product-title">
-                                            <h6 class="fs-4 mb-0 text-truncate-2">Sony X85J 75 Inch
-                                                Sony 4K Ultra HD LED Smart G...
-                                            </h6>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="d-flex align-items-center text-truncate">
-                                        <img src="https://bootstrapdemos.wrappixel.com/spike/dist/assets/images/profile/user-6.jpg"
-                                            alt="spike-img" class="img-fluid rounded-circle flex-shrink-0" width="40"
-                                            height="40">
-                                        <div class="ms-3">
-                                            <h4 class="card-title mb-1 fs-4">Albert Flores</h4>
-                                            <p class="card-subtitle">albertflo9@gmail.com</p>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="product-reviews">
-                                        <ul class="list-unstyled d-flex align-items-center mb-0">
-                                            <li>
-                                                <a class="me-1 " href="javascript:void(0)"><iconify-icon
-                                                        icon="solar:star-bold" class="text-warning"></iconify-icon></a>
-                                            </li>
-                                            <li>
-                                                <a class="me-1 " href="javascript:void(0)"><iconify-icon
-                                                        icon="solar:star-bold" class="text-warning"></iconify-icon></a>
-                                            </li>
-                                            <li>
-                                                <a class="me-1 " href="javascript:void(0)"><iconify-icon
-                                                        icon="solar:star-bold" class="text-warning"></iconify-icon></a>
-                                            </li>
-                                            <li>
-                                                <a class="me-1 " href="javascript:void(0)"><iconify-icon
-                                                        icon="solar:star-bold-duotone"
-                                                        class="text-warning"></iconify-icon></a>
-                                            </li>
-                                            <li>
-                                                <a class="" href="javascript:void(0)"><iconify-icon
-                                                        icon="solar:star-line-duotone"
-                                                        class="text-warning"></iconify-icon></a>
-                                            </li>
-                                        </ul>
-                                        <p class="text-dark mb-0 fw-normal text-truncate-2">
-                                            This theme is great. Perfect for those whodon't have time to
-                                            start everything from
-                                            <br>scratch.
-                                        </p>
-                                    </div>
-                                </td>
-                                <td>
-                                    <span
-                                        class="badge rounded-pill bg-warning-subtle text-warning border-warning border">Pending</span>
-                                </td>
-                                <td>
-                                    <p class="mb-0">Nov 8</p>
-                                </td>
-                                <td>
-                                    <div class="dropdown dropstart">
-                                        <a href="javascript:void(0)" class="text-muted " id="dropdownMenuButton"
-                                            data-bs-toggle="dropdown" aria-expanded="false">
-                                            <i class="ti ti-dots-vertical fs-5"></i>
-                                        </a>
-                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                            <li>
-                                                <a class="dropdown-item d-flex align-items-center gap-3"
-                                                    href="javascript:void(0)">
-                                                    <i class="fs-4 ti ti-plus"></i>Add
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a class="dropdown-item d-flex align-items-center gap-3"
-                                                    href="javascript:void(0)">
-                                                    <i class="fs-4 ti ti-edit"></i>Edit
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a class="dropdown-item d-flex align-items-center gap-3"
-                                                    href="javascript:void(0)">
-                                                    <i class="fs-4 ti ti-trash"></i>Delete
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="d-flex align-items-center justify-content-between mt-10">
-                    <p class="mb-0 fw-normal">1-6 of 32</p>
-                    <nav aria-label="Page navigation example">
-                        <ul class="pagination mb-0 align-items-center">
-                            <li class="page-item">
-                                <a class="page-link border-0 d-flex align-items-center text-muted fw-normal"
-                                    href="javascript:void(0)"><iconify-icon icon="solar:alt-arrow-left-line-duotone"
-                                        class="fs-5"></iconify-icon>Previous</a>
-                            </li>
-                            <li class="page-item">
-                                <a class="page-link border-0 d-flex align-items-center fw-normal"
-                                    href="javascript:void(0)">Next<iconify-icon icon="solar:alt-arrow-right-line-duotone"
-                                        class="fs-5"></iconify-icon></a>
-                            </li>
-                        </ul>
-                    </nav>
-                </div>
-            </div>
-        </div>
-    </div>
+@endsection
+@section('scripts')
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const branchSelect = document.getElementById('branch-select');
+
+            branchSelect.addEventListener('change', function() {
+                const branchId = this.value;
+                const currentUrl = new URL(window.location.href);
+
+                if (branchId) {
+                    currentUrl.searchParams.set('branch_id', branchId);
+                } else {
+                    currentUrl.searchParams.delete('branch_id');
+                }
+
+                currentUrl.searchParams.delete('rap_id');
+
+                window.location.href = currentUrl.toString();
+            });
+            const ctx = document.getElementById('tyleGheChart');
+
+            if (!ctx) {
+                console.error("Không tìm thấy canvas #tyleGheChart");
+                return;
+            }
+
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Lấp đầy', 'Còn trống'],
+                    datasets: [{
+                        label: 'Tỷ lệ ghế',
+                        data: [{{ $tyLeLapDayGhe }}, {{ 100 - $tyLeLapDayGhe }}],
+                        backgroundColor: ['#6C5DD3', '#E0E0E0'],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    cutout: '60%',
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.label + ": " + context.parsed + "%";
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
 @endsection
