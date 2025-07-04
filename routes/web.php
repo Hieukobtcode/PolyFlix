@@ -158,10 +158,6 @@ Route::post('dang-xuat', [AuthController::class, 'logout'])->name('logout');
 // ========================================================================================================================================================
 
 
-
-
-
-
 // Route mời quản lý chi nhánh/ rạp
 Route::post('/gui-loi-moi', [InviteController::class, 'sendInvite'])->name('invite.send');
 Route::get('/nhap-thong-tin', [InviteController::class, 'showForm'])->name('invite.form');

@@ -648,6 +648,7 @@ $(document).ready(function () {
 
         updateSummary();
     });
+
     // Lắng nghe sự kiện click trên nút Next
     $("#btn-dat-ve").on("click", function () {
         if (!validateSeatSelection()) {
@@ -656,8 +657,67 @@ $(document).ready(function () {
             );
             return false;
         }
-        // Thêm logic submit form nếu cần
-        $("#booking-form").submit();
+
+        // Hiển thị loading
+        $(this)
+            .prop("disabled", true)
+            .html('<i class="fas fa-spinner fa-spin"></i> Đang xử lý...');
+
+        // Chuẩn bị dữ liệu đặt vé
+        const formData = new FormData();
+        formData.append(
+            "suat_chieu_id",
+            $('input[name="suat_chieu_id"]').val()
+        );
+
+        // Thêm ghế đã chọn
+        $(".ghe-chieu.selected").each(function () {
+            formData.append("ghe_ids[]", $(this).data("seat-id"));
+        });
+
+        // Thêm đồ ăn
+        $('input[name^="do_an"]').each(function () {
+            const quantity = parseInt($(this).val()) || 0;
+            if (quantity > 0) {
+                const doAnId = $(this).attr("name").match(/\d+/)[0];
+                formData.append(`do_an[${doAnId}]`, quantity);
+            }
+        });
+
+        // Thêm combo
+        $('input[name^="combo"]').each(function () {
+            const quantity = parseInt($(this).val()) || 0;
+            if (quantity > 0) {
+                const comboId = $(this).attr("name").match(/\d+/)[0];
+                formData.append(`combo[${comboId}]`, quantity);
+            }
+        });
+
+        // Gửi request đặt vé
+        $.ajax({
+            url: "/dat-ve",
+            method: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            headers: {
+                "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+            },
+            success: function (response) {
+                if (response.success) {
+                    // Chuyển đến trang thanh toán
+                    window.location.href = response.redirect_url;
+                } else {
+                    alert(response.message || "Có lỗi xảy ra!");
+                    resetBookingButton();
+                }
+            },
+            error: function (xhr) {
+                const response = xhr.responseJSON;
+                alert(response?.message || "Có lỗi xảy ra khi đặt vé!");
+                resetBookingButton();
+            },
+        });
     });
 
     // Hàm để thêm class 'ghe-doi' cho ghế đôi khi load trang
