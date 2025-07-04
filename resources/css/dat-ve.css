@@ -566,7 +566,11 @@
 
 
 
-.selected-by-other {
+.ghe-chieu.selected-by-other {
     background-color: orange !important;
-    cursor: not-allowed;
+    /* border: 2px solid orange; */
+}
+.ghe-chieu.selected-by-other.selected {
+    background-color: orange !important;
+    /* border: 2px solid orange; */
 }
