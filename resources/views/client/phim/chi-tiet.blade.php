@@ -2,7 +2,11 @@
 
 @section('content')
     <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+    
+        @vite(entrypoints: 'resources/js/trang-chu.js')
+
     <style>
+        
         html {
             scroll-behavior: smooth;
         }
@@ -558,6 +562,23 @@
             animation: spin 0.9s linear infinite;
             margin: 0 auto;
         }
+         .list-movie {
+        display: flex;
+        gap: 20px;
+        justify-content: center;
+        margin-top: 20px;
+        flex-wrap: nowrap; /* Không xuống hàng */
+        overflow-x: auto;  /* Cuộn ngang nếu không đủ */
+        padding-bottom: 10px;
+        }
+        .btn-see-more {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 100px;
+    }
+        
+    
+    
 
         @keyframes spin {
             to {
@@ -708,6 +729,7 @@
                 <h4 class="section-title">
                     SUẤT CHIẾU
                 </h4>
+                
 
                 <div id="lich-chieu-list">
 
@@ -715,6 +737,80 @@
             </div>
 
         </div>
+         <!-- Swiper CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
+
+<div class="swiper list-movie">
+    <div class="swiper-wrapper">
+        @foreach ($allPhims as $phim)
+            <div class="swiper-slide">
+                <div class="movie clickable-movie" data-href="{{ route('phim.chi-tiet', $phim->id) }}">
+                    <div class="img-wrapper">
+                        <a href="{{ route('phim.chi-tiet', $phim->id) }}">
+                            <img src="{{ asset('storage/' . $phim->poster) }}" alt="{{ $phim->ten_phim }}">
+                        </a>
+                        <div class="age-label">{{ $phim->do_tuoi }}</div>
+                        <div class="overlay">
+                            <a href="{{ route('phim.chi-tiet', $phim->id) }}#lich-chieu">
+                                <button class="btn buy">
+                                    <i class="fa-solid fa-ticket"></i> Mua vé
+                                </button>
+                            </a>
+                            <button class="btn trailer" data-video="{{ $phim->trailer }}" onclick="showTrailer(this)">
+                                <i class="fa-solid fa-video"></i> Trailer
+                            </button>
+                        </div>
+                    </div>
+                    <a href="{{ route('phim.chi-tiet', $phim->id) }}">
+                        <p>{{ $phim->ten_phim }}</p>
+                    </a>
+                </div>
+            </div>
+        @endforeach
+    </div>
+
+    <!-- Nút điều hướng phía dưới -->
+    <div class="swiper-navigation">
+        <div class="swiper-button-prev custom-nav"></div>
+        <div class="swiper-button-next custom-nav"></div>
+    </div>
+</div>
+
+<!-- Swiper JS -->
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        new Swiper(".list-movie", {
+            slidesPerView: 4,
+            spaceBetween: 20,
+            loop: true,
+            navigation: {
+                nextEl: ".swiper-button-next",
+                prevEl: ".swiper-button-prev",
+            },
+            autoplay: {
+                delay: 4000,
+                disableOnInteraction: false,
+            },
+            breakpoints: {
+                1200: { slidesPerView: 4 },
+                992: { slidesPerView: 3 },
+                768: { slidesPerView: 2 },
+                576: { slidesPerView: 1 }
+            }
+        });
+    });
+</script>
+
+
+
+
+
+ <a href="{{ route('phim.dang-chieu') }}" class="btn-see-more">
+        <button class="btn-see">XEM THÊM</button>
+    </a>
+  
 
     </div>
     </div>
@@ -822,6 +918,37 @@
             }
         });
     </script>
+<!-- jQuery & Slick Carousel JS -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
+
+<script>
+    $(document).ready(function(){
+        $('.list-movie').slick({
+            slidesToShow: 3, // 3 phim 1 hàng
+            slidesToScroll: 1,
+            autoplay: true,
+            autoplaySpeed: 4000,
+            arrows: true,
+            dots: false,
+            infinite: true,
+            responsive: [
+                {
+                    breakpoint: 992,
+                    settings: {
+                        slidesToShow: 2
+                    }
+                },
+                {
+                    breakpoint: 576,
+                    settings: {
+                        slidesToShow: 1
+                    }
+                }
+            ]
+        });
+    });
+</script>
 
 
 @endsection
