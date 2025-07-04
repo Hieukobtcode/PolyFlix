@@ -4,7 +4,7 @@
 <style>
     {
         ! ! collect($loaiGhes)->map(function ($loai) {
-                $class =\Illuminate\Support\Str::slug($loai->ten_loai_ghe);
+                $class=\Illuminate\Support\Str::slug($loai->ten_loai_ghe);
                 return ".ghe-chieu.{$class} { background-color: {$loai->chu_thich_mau_ghe}; }";
             })->implode("\n") ! !
     }
@@ -78,14 +78,14 @@
                                     {{ \Illuminate\Support\Str::slug($ghe->loaiGhe->ten_loai_ghe ?? 'thuong') }}
 
                                     {{-- Ghế đôi --}}
-                                    {{ $ghe->loaiGhe->id == 12 ? 'ghe-doi' : '' }}"
-                            data-seat-id="{{ $ghe->id }}" data-seat-name="{{ $ghe->ma_ghe }}"
-                            data-ten-loai-ghe="{{ $ghe->loaiGhe->ten_loai_ghe ?? 'Thường' }}"
+                                    {{ $ghe->loaiGhe->id == 12 ? 'ghe-doi' : '' }}" data-seat-id="{{ $ghe->id }}"
+                            data-seat-name="{{ $ghe->ma_ghe }}"
+                            data-ten-loai-ghe="{{ $ghe->loaiGhe->ten_loai_ghe ?? 'Thường' }}" data-gia-ve-co-ban="0"
                             data-phu-thu-loai-phong="{{ $ghe->phu_thu_loai_phong }}"
                             data-phu-thu-loai-ghe="{{ $ghe->phu_thu_loai_ghe }}"
                             data-phu-thu-rap-phim="{{ $ghe->phu_thu_rap_phim }}"
-                            data-seat-type-id="{{ $ghe->loaiGhe->id }}"
-                            @if ($ghe->trang_thai == 'bao_tri' || $ghe->da_dat) disabled @endif>
+                            data-seat-type-id="{{ $ghe->loaiGhe->id }}" @if ($ghe->trang_thai == 'bao_tri' ||
+                            $ghe->da_dat) disabled @endif>
                             {{-- Hiển thị x nếu ghế đang bảo trì --}}
                             {{ $ghe->trang_thai == 'bao_tri' ? 'x' : $ghe->ma_ghe }}
                         </div>
@@ -140,9 +140,8 @@
                             <div class="quantity-control">
                                 <button type="button" class="qty-btn minus"
                                     data-target="do-an-{{ $doAn->id }}">-</button>
-                                <input type="number" name="do_an[{{ $doAn->id }}]"
-                                    id="do-an-{{ $doAn->id }}" value="0" min="0" max="10"
-                                    readonly>
+                                <input type="number" name="do_an[{{ $doAn->id }}]" id="do-an-{{ $doAn->id }}" value="0"
+                                    min="0" max="10" readonly>
                                 <button type="button" class="qty-btn plus"
                                     data-target="do-an-{{ $doAn->id }}">+</button>
                             </div>
@@ -164,9 +163,8 @@
                             <div class="quantity-control">
                                 <button type="button" class="qty-btn minus"
                                     data-target="combo-{{ $combo->id }}">-</button>
-                                <input type="number" name="combo[{{ $combo->id }}]"
-                                    id="combo-{{ $combo->id }}" value="0" min="0" max="10"
-                                    readonly>
+                                <input type="number" name="combo[{{ $combo->id }}]" id="combo-{{ $combo->id }}"
+                                    value="0" min="0" max="10" readonly>
                                 <button type="button" class="qty-btn plus"
                                     data-target="combo-{{ $combo->id }}">+</button>
                             </div>

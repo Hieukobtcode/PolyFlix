@@ -175,7 +175,7 @@ class DatVeController extends Controller
 
         DB::beginTransaction();
         try {
-            $suatChieu = SuatChieu::findOrFail($request->suat_chieu_id);
+            $suatChieu = SuatChieu::with(['phongChieu.rapPhim', 'phongChieu.loaiPhong'])->findOrFail($request->suat_chieu_id);
 
             // Kiểm tra ghế còn trống
             $gheDaDat = DB::table('chi_tiet_dat_ves')
@@ -208,8 +208,13 @@ class DatVeController extends Controller
             foreach ($request->ghe_ids as $gheId) {
                 $ghe = GheNgoi::with('loaiGhe')->find($gheId);
                 $phuThuGhe = ($ghe->loaiGhe->phu_thu ?? 0);
+                $phuThuLoaiPhong = $suatChieu->phongChieu->loaiPhong->phu_thu ?? 0;
                 $phuThuRap = $suatChieu->phongChieu->rapPhim->phu_thu ?? 0;
-                $giaVe = $phuThuGhe + $phuThuRap;
+
+                // Sử dụng logic giống tinhTongTien()
+                $giaVeCoBan = 0; // Temporary 0 để test
+                $giaVe = $giaVeCoBan + $phuThuLoaiPhong + $phuThuGhe;
+                // Không cộng phụ thu rạp vào từng ghế vì đã cộng 1 lần trong tinhTongTien()
 
                 $chiTiet = ChiTietDatVe::create([
                     'dat_ve_id' => $datVe->id,
@@ -289,18 +294,26 @@ class DatVeController extends Controller
     {
         $tongTien = 0;
 
+        // Lấy thông tin suất chiếu
+        $suatChieu = SuatChieu::with(['phongChieu.rapPhim', 'phongChieu.loaiPhong'])->find($request->suat_chieu_id);
+        $phuThuRap = $suatChieu->phongChieu->rapPhim->phu_thu ?? 0;
+        $phuThuLoaiPhong = $suatChieu->phongChieu->loaiPhong->phu_thu ?? 0;
+
+        // Giá vé cơ bản (có thể lấy từ cấu hình hoặc mặc định)
+        $giaVeCoBan = 0; // Temporary 0 để test
+
         // Tính tiền ghế
         $gheIds = $request->ghe_ids;
-        $suatChieu = SuatChieu::find($request->suat_chieu_id);
-        $phuThuRap = $suatChieu->phongChieu->rapPhim->phu_thu ?? 0;
-
         foreach ($gheIds as $gheId) {
             $ghe = GheNgoi::with('loaiGhe')->find($gheId);
             $phuThuGhe = $ghe->loaiGhe->phu_thu ?? 0;
-            $tongTien += $phuThuGhe;
+
+            // Giá cho 1 ghế = giá cơ bản + phụ thu loại phòng + phụ thu loại ghế
+            $giaMotGhe = $giaVeCoBan + $phuThuLoaiPhong + $phuThuGhe;
+            $tongTien += $giaMotGhe;
         }
 
-        // Thêm phụ thu rạp
+        // Cộng phụ thu rạp CHỈ 1 LẦN cho tất cả ghế
         $tongTien += $phuThuRap;
 
         // Tính tiền đồ ăn

@@ -343,34 +343,109 @@
     border-radius: 6px;
     text-align: center;
     line-height: 32px;
-    font-size: 0.9rem;
-    color: #000000;
-    transition: all 0.3s;
+    font-size: 12px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    position: relative;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+/* Ghế trống - có thể chọn */
 .ghe-chieu.available {
+    background-color: #f8f9fa;
+    color: #495057;
+    border-color: #dee2e6;
     cursor: pointer;
-    border: 1px solid #ccc;
 }
 
+.ghe-chieu.available:hover {
+    background-color: #e9ecef;
+    border-color: #adb5bd;
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Ghế đã chọn */
+.ghe-chieu.selected {
+    background-color: #dc3545 !important;
+    color: white !important;
+    border: 2px solid #b02a37 !important;
+    box-shadow: 0 0 10px rgba(220, 53, 69, 0.5) !important;
+    transform: scale(1.05);
+}
+
+/* Ghế đã được đặt */
 .ghe-chieu.occupied {
     background-color: #6c757d !important;
+    color: white !important;
     cursor: not-allowed;
-    opacity: 0.5;
+    opacity: 0.7;
 }
 
-.ghe-chieu.selected {
-    border: 2px solid #28a745;
-    box-shadow: 0 0 5px #28a745;
+/* Ghế bảo trì */
+.ghe-chieu.maintenance {
+    background-color: #ffc107 !important;
+    color: #212529 !important;
+    cursor: not-allowed;
+    opacity: 0.8;
 }
-.ghe-chieu.selected {
-    background-color: #dc3545 !important; /* đỏ đậm */
+
+/* Ghế đang được chọn bởi người khác */
+.ghe-chieu.selected-by-other {
+    background-color: #fd7e14 !important;
+    color: white !important;
+    cursor: not-allowed;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(253, 126, 20, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(253, 126, 20, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(253, 126, 20, 0);
+    }
+}
+
+/* Ghế VIP */
+.ghe-chieu.vip {
+    background-color: #ffd700;
+    color: #212529;
+}
+
+.ghe-chieu.vip.available {
+    background-color: #ffd700;
+    color: #212529;
+    border-color: #ffed4e;
+}
+
+.ghe-chieu.vip.available:hover {
+    background-color: #ffed4e;
+    border-color: #fff382;
+}
+
+/* Ghế đôi */
+.ghe-chieu.ghe-doi {
+    border-radius: 12px;
+    background-color: #e91e63;
     color: white;
-    border: 2px solid #b02a37;
-    box-shadow: 0 0 10px rgba(220, 53, 69, 0.5);
-    transform: scale(1.05);
-    transition: all 0.3s ease;
 }
+
+.ghe-chieu.ghe-doi.available {
+    background-color: #f8bbd9;
+    color: #ad1457;
+    border-color: #f48fb1;
+}
+
+.ghe-chieu.ghe-doi.available:hover {
+    background-color: #f48fb1;
+    color: white;
+}
+
 .seat-legend-wrapper {
     display: flex;
     justify-content: center;
@@ -476,4 +551,383 @@
 .selected-by-other {
     background-color: orange !important;
     cursor: not-allowed;
+}
+
+/* ============ FOOD SELECTION STYLING ============ */
+
+/* Phần chọn đồ ăn */
+.food-selection {
+    background: var(--primary-gradient);
+    border-radius: 12px;
+    padding: 25px;
+    margin-bottom: 30px;
+    box-shadow: var(--shadow);
+}
+
+.food-selection h3 {
+    color: var(--accent-yellow);
+    margin-bottom: 25px;
+    text-align: center;
+    font-size: 24px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Food tabs styling */
+.food-tabs {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 30px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50px;
+    padding: 5px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.tab-btn {
+    padding: 12px 30px;
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.7);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-radius: 50px;
+    position: relative;
+    font-size: 16px;
+}
+
+.tab-btn.active {
+    color: #1a0933;
+    background: var(--accent-yellow);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 235, 59, 0.3);
+}
+
+.tab-btn:hover:not(.active) {
+    color: white;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Food grid layout */
+.food-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+    margin-top: 20px;
+}
+
+/* Food item card */
+.food-item {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+    position: relative;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.food-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+}
+
+.food-item img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.food-item:hover img {
+    transform: scale(1.05);
+}
+
+/* Food info section */
+.food-info {
+    padding: 20px;
+    text-align: center;
+}
+
+.food-info h4 {
+    color: #1a0933;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    line-height: 1.3;
+}
+
+.food-info .description {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 12px;
+    line-height: 1.4;
+    opacity: 0.8;
+}
+
+.food-info .price {
+    color: var(--accent-orange);
+    font-size: 20px;
+    font-weight: 800;
+    margin-bottom: 15px;
+    text-shadow: 0 2px 4px rgba(255, 152, 0, 0.2);
+}
+
+/* Quantity control styling */
+.quantity-control {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    background: rgba(106, 51, 153, 0.1);
+    border-radius: 25px;
+    padding: 8px 15px;
+    margin-top: 10px;
+}
+
+.qty-btn {
+    width: 35px;
+    height: 35px;
+    border: 2px solid #663399;
+    background: white;
+    color: #663399;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 18px;
+    transition: all 0.3s ease;
+    position: relative;
+    box-shadow: 0 3px 10px rgba(102, 51, 153, 0.2);
+}
+
+.qty-btn:hover {
+    background: #663399;
+    color: white;
+    transform: scale(1.1);
+    box-shadow: 0 5px 15px rgba(102, 51, 153, 0.4);
+}
+
+.qty-btn:active {
+    transform: scale(0.95);
+}
+
+.quantity-control input {
+    width: 60px;
+    text-align: center;
+    border: 2px solid rgba(102, 51, 153, 0.3);
+    border-radius: 10px;
+    padding: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #1a0933;
+    background: white;
+    transition: all 0.3s ease;
+}
+
+.quantity-control input:focus {
+    outline: none;
+    border-color: #663399;
+    box-shadow: 0 0 0 3px rgba(102, 51, 153, 0.1);
+}
+
+/* Tab content */
+.tab-content {
+    display: none;
+    animation: fadeIn 0.3s ease;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .food-grid {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+    }
+
+    .food-selection {
+        padding: 20px;
+    }
+
+    .food-tabs {
+        flex-direction: column;
+        border-radius: 15px;
+    }
+
+    .tab-btn {
+        margin: 2px 0;
+        border-radius: 10px;
+    }
+
+    .food-item img {
+        height: 150px;
+    }
+
+    .food-info {
+        padding: 15px;
+    }
+}
+
+@media (max-width: 576px) {
+    .food-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .food-selection h3 {
+        font-size: 20px;
+    }
+
+    .qty-btn {
+        width: 32px;
+        height: 32px;
+        font-size: 16px;
+    }
+
+    .quantity-control input {
+        width: 50px;
+        padding: 6px;
+        font-size: 14px;
+    }
+}
+
+/* ============ BOOKING BUTTON STYLING ============ */
+
+/* Nút đặt vé */
+.btn-primary,
+#btn-dat-ve {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 50px;
+    font-size: 18px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 25px rgba(238, 90, 36, 0.3);
+    position: relative;
+    overflow: hidden;
+    min-width: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.btn-primary:not(:disabled):hover,
+#btn-dat-ve:not(:disabled):hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 35px rgba(238, 90, 36, 0.4);
+    background: linear-gradient(135deg, #ff7675 0%, #fd79a8 100%);
+}
+
+.btn-primary:not(:disabled):active,
+#btn-dat-ve:not(:disabled):active {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(238, 90, 36, 0.3);
+}
+
+/* Nút bị disabled */
+.btn-primary:disabled,
+#btn-dat-ve:disabled {
+    background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: 0 4px 15px rgba(149, 165, 166, 0.2);
+    opacity: 0.7;
+}
+
+/* Loading state */
+.btn-primary.loading,
+#btn-dat-ve.loading {
+    background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+    cursor: wait;
+}
+
+/* Ripple effect */
+.btn-primary::before,
+#btn-dat-ve::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transition: width 0.3s ease, height 0.3s ease, top 0.3s ease, left 0.3s ease;
+    z-index: 0;
+}
+
+.btn-primary:not(:disabled):active::before,
+#btn-dat-ve:not(:disabled):active::before {
+    width: 300px;
+    height: 300px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.btn-primary span,
+#btn-dat-ve span {
+    position: relative;
+    z-index: 1;
+}
+
+/* Summary content styling */
+.summary-content {
+    color: white;
+}
+
+.summary-content h4 {
+    color: var(--accent-yellow);
+    margin-bottom: 15px;
+    font-size: 16px;
+    border-bottom: 1px solid rgba(255, 235, 59, 0.3);
+    padding-bottom: 8px;
+}
+
+.summary-content .selected-seats,
+.summary-content .selected-food {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+    backdrop-filter: blur(5px);
+}
+
+#selected-seats-list,
+#selected-food-list {
+    color: #e3f2fd;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+#total-amount {
+    font-size: 28px;
+    font-weight: 900;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    color: #4caf50;
 }

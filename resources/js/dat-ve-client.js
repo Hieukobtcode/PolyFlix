@@ -21,10 +21,8 @@ function initDatVe() {
 
 // Xử lý chọn ghế
 function setupSeatSelection() {
-    $(".seat.available").on("click", function () {
-        $(this).toggleClass("selected");
-        updateOrderSummary();
-    });
+    // Không cần handler đơn giản ở đây vì đã có handler phức tạp bên dưới
+    console.log("Seat selection setup completed");
 }
 
 // Xử lý tab đồ ăn
@@ -122,13 +120,40 @@ function setupQuantityControls() {
 // Lấy danh sách ghế đã chọn
 function getSelectedSeats() {
     const seats = [];
-    $(".seat.selected").each(function () {
+    console.log("=== DEBUG TÍNH GIÁ GHẾ ===");
+
+    $(".ghe-chieu.selected").each(function () {
+        // Lấy các phụ thu từ data attributes
+        const phuThuLoaiPhong =
+            parseFloat($(this).data("phu-thu-loai-phong")) || 0;
+        const phuThuLoaiGhe = parseFloat($(this).data("phu-thu-loai-ghe")) || 0;
+        const phuThuRapPhim = parseFloat($(this).data("phu-thu-rap-phim")) || 0;
+
+        // Giá vé cơ bản (nếu có trong data, nếu không thì 50000đ mặc định)
+        const giaVeCoBan = parseFloat($(this).data("gia-ve-co-ban")) || 0;
+
+        // Tính giá cho 1 ghế = giá cơ bản + phụ thu loại phòng + phụ thu loại ghế
+        // (Phụ thu rạp sẽ được cộng 1 lần cho tất cả ở cuối)
+        const totalPrice = giaVeCoBan + phuThuLoaiPhong + phuThuLoaiGhe;
+
+        const seatName = $(this).data("seat-name");
+        console.log(`Ghế ${seatName}:`);
+        console.log(`  - Giá cơ bản: ${giaVeCoBan}`);
+        console.log(`  - Phụ thu loại phòng: ${phuThuLoaiPhong}`);
+        console.log(`  - Phụ thu loại ghế: ${phuThuLoaiGhe}`);
+        console.log(`  - Phụ thu rạp: ${phuThuRapPhim}`);
+        console.log(`  - Giá ghế (không bao gồm phụ thu rạp): ${totalPrice}`);
+
         seats.push({
             id: $(this).data("seat-id"),
-            name: $(this).data("seat-name"),
-            price: $(this).data("seat-price"),
+            name: seatName,
+            type: $(this).data("ten-loai-ghe") || "Thường",
+            price: totalPrice,
+            rapSurcharge: phuThuRapPhim, // Lưu riêng để cộng 1 lần sau
         });
     });
+
+    console.log("=== KẾT THÚC DEBUG GHẾ ===");
     return seats;
 }
 
@@ -230,10 +255,24 @@ function updateSelectedSeats(seats) {
     if (seats.length === 0) {
         container.text("Chưa chọn ghế");
     } else {
-        const seatNames = seats.map((seat) => seat.name).join(", ");
+        // Nhóm ghế theo loại
+        const seatsByType = {};
+        seats.forEach((seat) => {
+            if (!seatsByType[seat.type]) {
+                seatsByType[seat.type] = [];
+            }
+            seatsByType[seat.type].push(seat.name);
+        });
+
+        // Tạo chuỗi hiển thị theo định dạng "Tên loại ghế: G9, G10"
+        const seatDetails = [];
+        for (let type in seatsByType) {
+            seatDetails.push(`${type}: ${seatsByType[type].join(", ")}`);
+        }
+
         const totalPrice = seats.reduce((sum, seat) => sum + seat.price, 0);
         container.html(`
-            <div>${seatNames}</div>
+            <div>${seatDetails.join("; ")}</div>
             <div class="text-muted">${formatCurrency(totalPrice)}</div>
         `);
     }
@@ -265,14 +304,40 @@ function updateSelectedFood(food, combos) {
 function calculateTotal(seats, food, combos) {
     let total = 0;
 
-    // Tính tiền ghế
-    total += seats.reduce((sum, seat) => sum + seat.price, 0);
+    console.log("=== TÍNH TỔNG TIỀN DEBUG ===");
+
+    // Tính tiền ghế (đã bao gồm giá cơ bản + phụ thu loại phòng + phụ thu loại ghế)
+    const seatTotal = seats.reduce((sum, seat) => sum + seat.price, 0);
+    total += seatTotal;
+    console.log("Tiền ghế (không bao gồm phụ thu rạp):", seatTotal);
+
+    // Cộng phụ thu rạp CHỈ 1 LẦN (không phải cho từng ghế)
+    if (seats.length > 0) {
+        const rapSurcharge = seats[0].rapSurcharge || 0; // Lấy từ ghế đầu tiên
+        total += rapSurcharge;
+        console.log("Phụ thu rạp (1 lần):", rapSurcharge);
+    }
+
+    console.log("Tổng tiền ghế (bao gồm phụ thu rạp):", total);
 
     // Tính tiền đồ ăn
-    total += food.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    const foodTotal = food.reduce(
+        (sum, item) => sum + item.price * item.quantity,
+        0
+    );
+    total += foodTotal;
+    console.log("Tiền đồ ăn:", foodTotal);
 
     // Tính tiền combo
-    total += combos.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    const comboTotal = combos.reduce(
+        (sum, item) => sum + item.price * item.quantity,
+        0
+    );
+    total += comboTotal;
+    console.log("Tiền combo:", comboTotal);
+
+    console.log("TỔNG CUỐI CÙNG:", total);
+    console.log("=== KẾT THÚC DEBUG ===");
 
     return total;
 }
@@ -319,56 +384,21 @@ function showSuccess(message) {
 $(document).ready(function () {
     let selectedSeatTypeId = null; // Lưu ID loại ghế đang chọn
 
-    // Hàm cập nhật danh sách ghế và tổng tiền
+    // Hàm cập nhật danh sách ghế và tổng tiền - THỐNG NHẤT
     function updateSummary() {
+        // Sử dụng function updateOrderSummary để tính đầy đủ
+        updateOrderSummary();
+
+        // Chỉ cập nhật logic enable/disable button và selectedSeatTypeId
         const selectedSeats = $(".ghe-chieu.selected");
-        const seatList = $("#selected-seats-list");
-        const totalAmount = $("#total-amount");
         const btnDatVe = $("#btn-dat-ve");
 
         if (selectedSeats.length === 0) {
-            seatList.text("Chưa chọn ghế");
-            totalAmount.text("0đ");
             btnDatVe.prop("disabled", true);
-            selectedSeatTypeId = null; // Đặt lại khi không còn ghế nào
-            return;
+            selectedSeatTypeId = null;
+        } else {
+            btnDatVe.prop("disabled", false);
         }
-
-        let total = 0;
-        let seatsByType = {}; // Đối tượng để nhóm ghế theo loại
-
-        selectedSeats.each(function () {
-            const seatName = $(this).data("seat-name");
-            const tenLoaiGhe = $(this).data("ten-loai-ghe") || "Thường";
-            const phuThuLoaiPhong =
-                parseFloat($(this).data("phu-thu-loai-phong")) || 0;
-            const phuThuLoaiGhe =
-                parseFloat($(this).data("phu-thu-loai-ghe")) || 0;
-            const phuThuRapPhim =
-                parseFloat($(this).data("phu-thu-rap-phim")) || 0;
-            total += phuThuLoaiPhong + phuThuLoaiGhe + phuThuRapPhim;
-
-            // Nhóm ghế theo loại
-            if (!seatsByType[tenLoaiGhe]) {
-                seatsByType[tenLoaiGhe] = [];
-            }
-            seatsByType[tenLoaiGhe].push(seatName);
-
-            // Debug giá trị
-            // console.log(
-            //     `Seat: ${seatName}, LoaiPhong: ${phuThuLoaiPhong}, LoaiGhe: ${phuThuLoaiGhe}, RapPhim: ${phuThuRapPhim}`
-            // );
-        });
-
-        // Tạo chuỗi hiển thị theo định dạng "Tên loại ghế: G9, G10"
-        let seatDetails = [];
-        for (let type in seatsByType) {
-            seatDetails.push(`${type}: ${seatsByType[type].join(", ")}`);
-        }
-        seatList.text(seatDetails.join("; "));
-
-        totalAmount.text(`${total.toLocaleString("vi-VN")}đ`);
-        btnDatVe.prop("disabled", false);
     }
 
     // Hàm lấy số thứ tự của ghế từ tên ghế (ví dụ: A1 -> 1, A10 -> 10)
@@ -462,11 +492,20 @@ $(document).ready(function () {
 
     // Lắng nghe sự kiện click trên các ghế
     $(".ghe-chieu").on("click", function () {
+        // Kiểm tra nếu ghế không thể chọn
         if (
             $(this).hasClass("occupied") ||
             $(this).hasClass("maintenance") ||
+            $(this).hasClass("selected-by-other") ||
             $(this).prop("disabled")
         ) {
+            console.log("Seat cannot be selected:", $(this).data("seat-name"));
+            return;
+        }
+
+        // Chỉ cho phép chọn ghế available
+        if (!$(this).hasClass("available") && !$(this).hasClass("selected")) {
+            console.log("Seat is not available:", $(this).data("seat-name"));
             return;
         }
 
@@ -477,7 +516,11 @@ $(document).ready(function () {
         const maxSeats = 10;
         const seatId = $(this).data("seat-id");
 
+        console.log("Clicking seat:", seatName, "Type:", seatTypeId);
+
+        // Xử lý ghế đôi
         if (isCoupleSeat) {
+            console.log("Processing couple seat");
             const seatNumber = getSeatNumber(seatName);
             const row = seatName.match(/[A-Za-z]+/)[0];
             const partnerSeatNumber =
@@ -487,9 +530,11 @@ $(document).ready(function () {
                 `.ghe-chieu[data-seat-name="${partnerSeatName}"]`
             );
 
+            // Kiểm tra ghế đôi có thể chọn không
             if (
                 partnerSeat.hasClass("occupied") ||
                 partnerSeat.hasClass("maintenance") ||
+                partnerSeat.hasClass("selected-by-other") ||
                 partnerSeat.prop("disabled")
             ) {
                 alert(
@@ -498,6 +543,7 @@ $(document).ready(function () {
                 return;
             }
 
+            // Kiểm tra loại ghế
             if (
                 selectedSeatTypeId &&
                 selectedSeatTypeId !== seatTypeId &&
@@ -507,6 +553,7 @@ $(document).ready(function () {
                 return;
             }
 
+            // Kiểm tra số lượng ghế tối đa
             if (
                 !$(this).hasClass("selected") &&
                 selectedSeatsCount + 2 > maxSeats
@@ -517,46 +564,31 @@ $(document).ready(function () {
 
             selectedSeatTypeId = seatTypeId;
             const isSelected = $(this).hasClass("selected");
+
             if (isSelected) {
+                // Bỏ chọn ghế đôi
                 $(this).removeClass("selected");
                 partnerSeat.removeClass("selected");
-
-                [$(this), partnerSeat].forEach((el) => {
-                    const seatId = el.data("seat-id");
-                    $.ajax({
-                        url: "/huy-chon-ghe",
-                        method: "POST",
-                        headers: {
-                            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr(
-                                "content"
-                            ),
-                        },
-                        data: {
-                            ghe_id: seatId,
-                        },
-                    });
-                });
+                console.log(
+                    "Deselected couple seats:",
+                    seatName,
+                    partnerSeatName
+                );
             } else {
+                // Chọn ghế đôi
                 $(this).addClass("selected");
                 partnerSeat.addClass("selected");
-
-                [$(this), partnerSeat].forEach((el) => {
-                    const seatId = el.data("seat-id");
-                    $.ajax({
-                        url: "/chon-ghe",
-                        method: "POST",
-                        headers: {
-                            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr(
-                                "content"
-                            ),
-                        },
-                        data: {
-                            ghe_id: seatId,
-                        },
-                    });
-                });
+                console.log(
+                    "Selected couple seats:",
+                    seatName,
+                    partnerSeatName
+                );
             }
         } else {
+            // Xử lý ghế đơn
+            console.log("Processing single seat");
+
+            // Kiểm tra loại ghế
             if (
                 selectedSeatTypeId &&
                 selectedSeatTypeId !== seatTypeId &&
@@ -566,6 +598,7 @@ $(document).ready(function () {
                 return;
             }
 
+            // Kiểm tra số lượng ghế tối đa
             if (
                 !$(this).hasClass("selected") &&
                 selectedSeatsCount + 1 > maxSeats
@@ -575,23 +608,17 @@ $(document).ready(function () {
             }
 
             selectedSeatTypeId = seatTypeId;
-            const isSelected = $(this).hasClass("selected");
             $(this).toggleClass("selected");
 
-            $.ajax({
-                url: isSelected ? "/huy-chon-ghe" : "/chon-ghe",
-                method: "POST",
-                headers: {
-                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr(
-                        "content"
-                    ),
-                },
-                data: {
-                    ghe_id: seatId,
-                },
-            });
+            const isNowSelected = $(this).hasClass("selected");
+            console.log(
+                "Seat",
+                seatName,
+                isNowSelected ? "selected" : "deselected"
+            );
         }
 
+        // Cập nhật giao diện
         updateSummary();
     });
 

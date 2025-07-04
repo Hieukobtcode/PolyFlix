@@ -63,9 +63,28 @@ Route::middleware('auth')->group(function () {
     // Thanh toán
     Route::get('/thanh-toan/{datVeId}', [ThanhToanController::class, 'index'])->name('client.thanh-toan.index');
     Route::post('/thanh-toan/xu-ly', [ThanhToanController::class, 'xuLyThanhToan'])->name('client.thanh-toan.xu-ly');
-    Route::get('/thanh-toan/callback', [ThanhToanController::class, 'callback'])->name('client.thanh-toan.callback');
     Route::post('/thanh-toan/huy/{datVeId}', [ThanhToanController::class, 'huyThanhToan'])->name('client.thanh-toan.huy');
 });
+
+// Payment callback - MUST be outside auth middleware for external services
+Route::get('/thanh-toan/callback', [ThanhToanController::class, 'callback'])->name('client.thanh-toan.callback');
+
+// MoMo callback routes (both GET and POST)
+Route::get('/thanh-toan/momo/callback', [\App\Http\Controllers\Client\MomoController::class, 'callback'])->name('client.thanh-toan.momo.callback');
+Route::post('/thanh-toan/momo/callback', [\App\Http\Controllers\Client\MomoController::class, 'callback']);
+
+// MoMo test routes (for development/testing)
+Route::get('/test-momo', function () {
+    return view('momo-test');
+})->name('momo.test');
+
+// Shortcut cho test MoMo
+Route::get('/momo', function () {
+    return view('momo-test');
+});
+
+Route::post('/test-momo/create', [\App\Http\Controllers\Client\MomoController::class, 'createTestPayment'])->name('momo.test.create');
+Route::get('/test-momo/callback', [\App\Http\Controllers\Client\MomoController::class, 'testCallback'])->name('momo.test.callback');
 
 // Ghế đang được chọn
 Route::post('/chon-ghe', [\App\Http\Controllers\Client\DatVeController::class, 'chonGhe'])->name('client.ghe.chon');

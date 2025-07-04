@@ -25,6 +25,7 @@ class ThanhToanController extends Controller
             'nguoiDung',
             'suatChieu.phim',
             'suatChieu.phongChieu.rapPhim.chiNhanh',
+            'suatChieu.phongChieu.loaiPhong',
             'gheNgois.loaiGhe',
             'combos',
             'doAns'
@@ -35,11 +36,20 @@ class ThanhToanController extends Controller
 
         // Tính tổng tiền chi tiết
         $tongTienGhe = 0;
+        $giaVeCoBan = 0; // Tạm thời set = 0 để debug vấn đề tính toán
+        $phuThuRap = $datVe->suatChieu->phongChieu->rapPhim->phu_thu ?? 0;
+        $phuThuLoaiPhong = $datVe->suatChieu->phongChieu->loaiPhong->phu_thu ?? 0;
+
         foreach ($datVe->gheNgois as $ghe) {
             $phuThuGhe = $ghe->loaiGhe->phu_thu ?? 0;
-            $phuThuRap = $datVe->suatChieu->phongChieu->rapPhim->phu_thu ?? 0;
-            $tongTienGhe += $phuThuGhe + $phuThuRap;
+
+            // Giá cho 1 ghế = giá cơ bản + phụ thu loại phòng + phụ thu loại ghế
+            $giaMotGhe = $giaVeCoBan + $phuThuLoaiPhong + $phuThuGhe;
+            $tongTienGhe += $giaMotGhe;
         }
+
+        // Cộng phụ thu rạp CHỈ 1 LẦN cho tất cả ghế
+        $tongTienGhe += $phuThuRap;
 
         $tongTienCombo = 0;
         foreach ($datVe->combos as $combo) {
@@ -129,23 +139,54 @@ class ThanhToanController extends Controller
      */
     private function thanhToanMomo($datVe)
     {
-        // Mock thanh toán MoMo - thực tế cần tích hợp API MoMo
+        // Sử dụng MoMo Sandbox thực tế
         Log::info('Xử lý thanh toán MoMo cho đặt vé: ' . $datVe->id);
 
-        // Tạo URL thanh toán giả lập
-        $paymentUrl = route('client.thanh-toan.callback', [
-            'dat_ve_id' => $datVe->id,
-            'method' => 'momo',
-            'status' => 'success'
-        ]);
+        // Tính tổng tiền chính xác
+        $tongTienGhe = 0;
+        $giaVeCoBan = 0; // Tạm thời set = 0 để debug vấn đề tính toán
+        $phuThuRap = $datVe->suatChieu->phongChieu->rapPhim->phu_thu ?? 0;
+        $phuThuLoaiPhong = $datVe->suatChieu->phongChieu->loaiPhong->phu_thu ?? 0;
 
-        DB::commit();
+        foreach ($datVe->gheNgois as $ghe) {
+            $phuThuGhe = $ghe->loaiGhe->phu_thu ?? 0;
+            $giaMotGhe = $giaVeCoBan + $phuThuLoaiPhong + $phuThuGhe;
+            $tongTienGhe += $giaMotGhe;
+        }
+        $tongTienGhe += $phuThuRap;
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Đang chuyển đến cổng thanh toán MoMo...',
-            'payment_url' => $paymentUrl
-        ]);
+        $tongTienCombo = 0;
+        foreach ($datVe->combos as $combo) {
+            $tongTienCombo += $combo->gia * $combo->pivot->so_luong;
+        }
+
+        $tongTienDoAn = 0;
+        foreach ($datVe->doAns as $doAn) {
+            $tongTienDoAn += $doAn->gia * $doAn->pivot->so_luong;
+        }
+
+        $totalAmount = $tongTienGhe + $tongTienCombo + $tongTienDoAn;
+
+        try {
+            // Gọi MomoController để tạo payment
+            $momoController = new \App\Http\Controllers\Client\MomoController();
+            $momoResponse = $momoController->createPayment($datVe->id, $totalAmount);
+
+            if (isset($momoResponse['payUrl']) && $momoResponse['resultCode'] == 0) {
+                DB::commit();
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Đang chuyển đến cổng thanh toán MoMo...',
+                    'payment_url' => $momoResponse['payUrl']
+                ]);
+            } else {
+                throw new \Exception('Không thể tạo link thanh toán MoMo: ' . ($momoResponse['message'] ?? 'Lỗi không xác định'));
+            }
+        } catch (\Exception $e) {
+            Log::error('Lỗi tạo thanh toán MoMo: ' . $e->getMessage());
+            throw new \Exception('Có lỗi xảy ra khi kết nối tới MoMo. Vui lòng thử lại sau.');
+        }
     }
 
     /**
@@ -202,6 +243,31 @@ class ThanhToanController extends Controller
         // Mock thanh toán Banking - hiển thị thông tin chuyển khoản
         Log::info('Xử lý thanh toán Banking cho đặt vé: ' . $datVe->id);
 
+        // Tính lại tổng tiền để đảm bảo chính xác
+        $tongTienGhe = 0;
+        $giaVeCoBan = 0; // Tạm thời set = 0 để debug vấn đề tính toán
+        $phuThuRap = $datVe->suatChieu->phongChieu->rapPhim->phu_thu ?? 0;
+        $phuThuLoaiPhong = $datVe->suatChieu->phongChieu->loaiPhong->phu_thu ?? 0;
+
+        foreach ($datVe->gheNgois as $ghe) {
+            $phuThuGhe = $ghe->loaiGhe->phu_thu ?? 0;
+            $giaMotGhe = $giaVeCoBan + $phuThuLoaiPhong + $phuThuGhe;
+            $tongTienGhe += $giaMotGhe;
+        }
+        $tongTienGhe += $phuThuRap;
+
+        $tongTienCombo = 0;
+        foreach ($datVe->combos as $combo) {
+            $tongTienCombo += $combo->gia * $combo->pivot->so_luong;
+        }
+
+        $tongTienDoAn = 0;
+        foreach ($datVe->doAns as $doAn) {
+            $tongTienDoAn += $doAn->gia * $doAn->pivot->so_luong;
+        }
+
+        $tongThanhTien = $tongTienGhe + $tongTienCombo + $tongTienDoAn;
+
         DB::commit();
 
         return response()->json([
@@ -212,7 +278,7 @@ class ThanhToanController extends Controller
                 'bank_name' => 'Ngân hàng Techcombank',
                 'account_number' => '19036766589018',
                 'account_name' => 'CONG TY TNHH POLYFLIX',
-                'amount' => $datVe->tong_tien,
+                'amount' => $tongThanhTien,
                 'content' => 'POLYFLIX ' . $datVe->ma_dat_ve
             ]
         ]);

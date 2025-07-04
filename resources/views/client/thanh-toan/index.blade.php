@@ -197,9 +197,14 @@
                         <button type="button" id="btn-pay" class="btn-payment" disabled>
                             <i class="fas fa-lock"></i> Thanh toán ngay
                         </button>
-                        <a href="{{ route('client.thanh-toan.huy', $datVe->id) }}" class="btn-cancel">
-                            <i class="fas fa-times"></i> Hủy đặt vé
-                        </a>
+
+                        <!-- Hủy đặt vé - Form POST -->
+                        <form method="POST" action="{{ route('client.thanh-toan.huy', $datVe->id) }}" style="display: inline;">
+                            @csrf
+                            <button type="submit" class="btn-cancel" onclick="return confirmCancel()">
+                                <i class="fas fa-times"></i> Hủy đặt vé
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -358,6 +363,11 @@
                 showConfirmButton: false
             });
         });
+    }
+
+    // Confirm cancel booking
+    function confirmCancel() {
+        return confirm('Bạn có chắc chắn muốn hủy đặt vé này không?\n\nLưu ý: Việc hủy vé không thể hoàn tác!');
     }
 </script>
 @endsection
