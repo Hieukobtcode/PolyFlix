@@ -217,7 +217,7 @@
 
         window.Echo.channel('ghe-duoc-chon')
             .listen('.ghe-duoc-chon', function(e) {
-                // console.log("Nhận được event realtime:", e);
+                console.log("Nhận được event realtime:", e);
 
                 const ghe = document.querySelector(`.ghe-chieu[data-seat-id="${e.gheId}"]`);
                 const currentUserId = parseInt(document.querySelector('meta[name="user-id"]').content);
@@ -228,7 +228,7 @@
             });
         window.Echo.channel('ghe-bi-huy')
             .listen('.ghe-bi-huy', function(e) {
-                // console.log("Ghế bị huỷ realtime:", e);
+                console.log("Ghế bị huỷ realtime:", e);
 
                 const ghe = document.querySelector(`.ghe-chieu[data-seat-id="${e.gheId}"]`);
                 const currentUserId = parseInt(document.querySelector('meta[name="user-id"]').content);

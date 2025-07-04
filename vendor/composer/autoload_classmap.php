@@ -9,6 +9,7 @@ return array(
     'Anhskohbo\\NoCaptcha\\Facades\\NoCaptcha' => $vendorDir . '/anhskohbo/no-captcha/src/Facades/NoCaptcha.php',
     'Anhskohbo\\NoCaptcha\\NoCaptcha' => $vendorDir . '/anhskohbo/no-captcha/src/NoCaptcha.php',
     'Anhskohbo\\NoCaptcha\\NoCaptchaServiceProvider' => $vendorDir . '/anhskohbo/no-captcha/src/NoCaptchaServiceProvider.php',
+    'App\\Events\\GheBiHuyChon' => $baseDir . '/app/Events/GheBiHuyChon.php',
     'App\\Events\\GheDangDuocChon' => $baseDir . '/app/Events/GheDangDuocChon.php',
     'App\\Helpers\\IdFormatter' => $baseDir . '/app/Helpers/IdFormatter.php',
     'App\\Http\\Controllers\\Admin\\BaiVietController' => $baseDir . '/app/Http/Controllers/Admin/BaiVietController.php',
