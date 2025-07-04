@@ -317,7 +317,7 @@
                 </div>
                 <div class="milestone-labels">
                     @foreach ($milestones as $moc)
-                        <span>{{ $moc }} vé</span>
+                        <span>{{ $moc }} đ</span>
                     @endforeach
                 </div>
             </div>

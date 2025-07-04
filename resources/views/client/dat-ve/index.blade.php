@@ -43,7 +43,7 @@
                             {{ \Carbon\Carbon::parse($suatChieu->ngay_chieu)->format('d/m/Y') }}</p>
                         <p><i class="fas fa-clock"></i> {{ \Carbon\Carbon::parse($suatChieu->bat_dau)->format('H:i') }} -
                             {{ \Carbon\Carbon::parse($suatChieu->ket_thuc)->format('H:i') }}</p>
-                        <p><i class="fas fa-film"></i> {{ $suatChieu->phien_ban_phim ?? $suatChieu->formatted_version }}</p>
+                        <p><i class="fas fa-film"></i> {{ $suatChieu->formatted_version }}</p>
                     </div>
                     <div class="cinema-info">
                         <p><i class="fas fa-map-marker-alt"></i>
@@ -345,7 +345,7 @@
                                         const partnerSeatName = row + partnerSeatNumber;
                                         const partnerSeat = document.querySelector(
                                             `.ghe-chieu[data-seat-name="${partnerSeatName}"]`
-                                            );
+                                        );
 
                                         // Cập nhật cả hai ghế
                                         [gheElement, partnerSeat].forEach((seat) => {
