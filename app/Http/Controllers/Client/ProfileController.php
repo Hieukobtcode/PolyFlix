@@ -17,8 +17,8 @@ class ProfileController extends Controller
         }
 
         // Lấy mốc cấp bậc từ bảng cap_bac_thes
-        $milestones = CapBacThe::orderBy('tong_so_ve_da_mua', 'asc')
-            ->pluck('tong_so_ve_da_mua');
+        $milestones = CapBacThe::orderBy('tong_chi_tieu', 'asc')
+            ->pluck('tong_chi_tieu');
 
         return view("client.profile", compact('milestones'));
     }
