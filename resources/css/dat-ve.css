@@ -472,8 +472,105 @@
     --container-width: 78%;
     --max-width: 1200px;
 }
+.list-movie {
+    display: flex;
+    flex-wrap: nowrap; /* Không cho xuống hàng */
+    justify-content: center;
+    gap: 20px;
+    margin: 40px auto;
+    padding: 0 10px;
+    max-width: 1200px;
+    overflow-x: auto; /* Trượt ngang nếu quá nhỏ */
+}
 
-.selected-by-other {
+.movie {
+    flex: 0 0 calc(25% - 20px);
+    background-color: #4c2a94;
+    border-radius: 12px;
+    overflow: hidden;
+    color: white;
+    text-align: center;
+    position: relative;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.img-wrapper {
+    position: relative;
+    width: 100%;
+    height: 320px;
+    overflow: hidden;
+}
+
+.img-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(0.9);
+}
+
+.age-label {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: red;
+    color: white;
+    font-weight: bold;
+    padding: 4px 8px;
+    border-radius: 4px;
+    z-index: 3;
+}
+
+/* 👇 Đây là phần bạn đưa lên: overlay */
+.list-movie .movie .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 15px;
+    background-color: rgba(87, 84, 84, 0.522);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    gap: 10px;
+    transition: 0.3s ease;
+    z-index: 2;
+}
+
+.movie:hover .overlay {
+    opacity: 1;
+}
+
+.overlay .btn {
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 0.9rem;
+    width: 120px;
+    text-align: center;
+}
+
+.buy {
+    background-color: orange;
+    color: white;
+    border: none;
+}
+
+.trailer {
+    background-color: transparent;
+    color: white;
+    border: 2px solid white;
+}
+
+
+
+.ghe-chieu.selected-by-other {
     background-color: orange !important;
-    cursor: not-allowed;
+    /* border: 2px solid orange; */
+}
+.ghe-chieu.selected-by-other.selected {
+    background-color: orange !important;
+    /* border: 2px solid orange; */
 }
