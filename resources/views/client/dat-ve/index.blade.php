@@ -368,7 +368,7 @@
                 })
                 .then(data => {
                     if (data && data.success) {
-                        console.log('✅ Đã chọn ghế thành công!');
+                        console.log(' Đã chọn ghế thành công!');
                         gheElement.classList.add('selected-by-me');
                         gheElement.disabled = false;
                     }
