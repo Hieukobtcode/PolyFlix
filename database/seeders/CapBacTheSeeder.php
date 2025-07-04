@@ -13,7 +13,7 @@ class CapBacTheSeeder extends Seeder
             [
                 'ten'                => 'Đồng',
                 'mo_ta'              => 'Cấp mặc định ban đầu',
-                'tong_so_ve_da_mua'  => 0,
+                'tong_chi_tieu'      => 0,
                 'phan_tram_ve'       => 0,
                 'phan_tram_dich_vu'  => 0,
                 'is_default'         => 1,
@@ -23,7 +23,7 @@ class CapBacTheSeeder extends Seeder
             [
                 'ten'                => 'Bạc',
                 'mo_ta'              => 'Ưu đãi khi mua từ 20 vé',
-                'tong_so_ve_da_mua'  => 20,
+                'tong_chi_tieu'      => 20,
                 'phan_tram_ve'       => 5,
                 'phan_tram_dich_vu'  => 2,
                 'is_default'         => 0,
@@ -33,7 +33,7 @@ class CapBacTheSeeder extends Seeder
             [
                 'ten'                => 'Vàng',
                 'mo_ta'              => 'Ưu đãi khi mua từ 50 vé',
-                'tong_so_ve_da_mua'  => 50,
+                'tong_chi_tieu'      => 50,
                 'phan_tram_ve'       => 10,
                 'phan_tram_dich_vu'  => 5,
                 'is_default'         => 0,
@@ -43,7 +43,7 @@ class CapBacTheSeeder extends Seeder
             [
                 'ten'                => 'Kim Cương',
                 'mo_ta'              => 'Khách hàng thân thiết nhất',
-                'tong_so_ve_da_mua'  => 100,
+                'tong_chi_tieu'      => 100,
                 'phan_tram_ve'       => 15,
                 'phan_tram_dich_vu'  => 10,
                 'is_default'         => 0,

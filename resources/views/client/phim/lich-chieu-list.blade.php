@@ -16,6 +16,7 @@
         @endforeach
     </div>
 @endforeach
+
 @if ($groupedSuatChieus->isEmpty())
     <div class="text-muted">Không có suất chiếu phù hợp.</div>
 @endif

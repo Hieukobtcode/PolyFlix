@@ -32,7 +32,7 @@ class DatabaseSeeder extends Seeder
             LoaiGheSeeder::class,
             LoaiPhongSeeder::class,
             PhongChieuSeeder::class,
-            GheNgoiSeeder::class,
+            // GheNgoiSeeder::class,
             PhuDePhimSeeder::class,
             DinhDangPhimSeeder::class,
             CapBacTheSeeder::class,

@@ -76,13 +76,13 @@ class PhimsController extends Controller
         $chiNhanhs = $phim->chiNhanhs;
 
         $ngay_chieu = request('ngay_chieu');
-
         $ngayChieus = SuatChieu::where('phim_id', $phim->id)
-            ->select('ngay_chieu')->distinct()->pluck('ngay_chieu');
+            ->select('ngay_chieu')
+            ->distinct()
+            ->pluck('ngay_chieu');
 
         $days = [];
         $today = Carbon::today();
-
         for ($i = 0; $i < 7; $i++) {
             $date = $today->copy()->addDays($i);
             $label = $date->translatedFormat('l');
@@ -107,7 +107,7 @@ class PhimsController extends Controller
                     $q->where('bat_dau', '>', $now->format('H:i:s'));
                 }
             })
-            ->with(['rapPhims', 'dinhDangPhim'])
+            ->with(['rapPhim', 'dinhDangPhim'])
             ->get();
 
         $groupedSuatChieus = $suatChieus->groupBy(function ($sc) {
@@ -138,7 +138,6 @@ class PhimsController extends Controller
             'allPhims'
         ));
     }
-
 
     public function loadLichChieu($id)
     {
@@ -187,7 +186,7 @@ class PhimsController extends Controller
             }
         }
 
-        $suatChieus = $query->with(['rapPhims', 'dinhDangPhim'])->get();
+        $suatChieus = $query->with(['rapPhim', 'dinhDangPhim'])->get();
 
         $groupedSuatChieus = $suatChieus->groupBy(function ($sc) {
             return $sc->phongChieu?->rapPhim?->ten_rap ?? 'Không xác định';
