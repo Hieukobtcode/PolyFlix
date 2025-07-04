@@ -68,8 +68,8 @@
                                 <td>{{ $capBacThe->mo_ta ?? 'Không có mô tả' }}</td>
                             </tr>
                             <tr>
-                                <th class="fw-semibold text-muted">Tổng số vé đã mua:</th>
-                                <td>{{ number_format($capBacThe->tong_so_ve_da_mua) }} đ</td>
+                                <th class="fw-semibold text-muted">Tổng chi tiêu:</th>
+                                <td>{{ number_format($capBacThe->tong_chi_tieu) }} đ</td>
                             </tr>
                             <tr>
                                 <th class="fw-semibold text-muted">Phần trăm hoàn tiền:</th>

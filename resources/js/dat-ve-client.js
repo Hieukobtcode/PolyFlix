@@ -13,7 +13,7 @@ function initDatVe() {
     setupSeatSelection();
     setupFoodTabs();
     setupQuantityControls();
-    setupBookingButton();
+    // setupBookingButton();
 
     // Cập nhật tóm tắt ban đầu
     updateOrderSummary();
@@ -355,9 +355,9 @@ $(document).ready(function () {
             seatsByType[tenLoaiGhe].push(seatName);
 
             // Debug giá trị
-            console.log(
-                `Seat: ${seatName}, LoaiPhong: ${phuThuLoaiPhong}, LoaiGhe: ${phuThuLoaiGhe}, RapPhim: ${phuThuRapPhim}`
-            );
+            // console.log(
+            //     `Seat: ${seatName}, LoaiPhong: ${phuThuLoaiPhong}, LoaiGhe: ${phuThuLoaiGhe}, RapPhim: ${phuThuRapPhim}`
+            // );
         });
 
         // Tạo chuỗi hiển thị theo định dạng "Tên loại ghế: G9, G10"
@@ -475,6 +475,7 @@ $(document).ready(function () {
         const isCoupleSeat = $(this).hasClass("ghe-doi");
         const selectedSeatsCount = $(".ghe-chieu.selected").length;
         const maxSeats = 10;
+        const seatId = $(this).data("seat-id");
 
         if (isCoupleSeat) {
             const seatNumber = getSeatNumber(seatName);
@@ -519,9 +520,41 @@ $(document).ready(function () {
             if (isSelected) {
                 $(this).removeClass("selected");
                 partnerSeat.removeClass("selected");
+
+                [$(this), partnerSeat].forEach((el) => {
+                    const seatId = el.data("seat-id");
+                    $.ajax({
+                        url: "/huy-chon-ghe",
+                        method: "POST",
+                        headers: {
+                            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr(
+                                "content"
+                            ),
+                        },
+                        data: {
+                            ghe_id: seatId,
+                        },
+                    });
+                });
             } else {
                 $(this).addClass("selected");
                 partnerSeat.addClass("selected");
+
+                [$(this), partnerSeat].forEach((el) => {
+                    const seatId = el.data("seat-id");
+                    $.ajax({
+                        url: "/chon-ghe",
+                        method: "POST",
+                        headers: {
+                            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr(
+                                "content"
+                            ),
+                        },
+                        data: {
+                            ghe_id: seatId,
+                        },
+                    });
+                });
             }
         } else {
             if (
@@ -542,7 +575,21 @@ $(document).ready(function () {
             }
 
             selectedSeatTypeId = seatTypeId;
+            const isSelected = $(this).hasClass("selected");
             $(this).toggleClass("selected");
+
+            $.ajax({
+                url: isSelected ? "/huy-chon-ghe" : "/chon-ghe",
+                method: "POST",
+                headers: {
+                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr(
+                        "content"
+                    ),
+                },
+                data: {
+                    ghe_id: seatId,
+                },
+            });
         }
 
         updateSummary();

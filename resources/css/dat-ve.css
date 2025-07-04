@@ -565,3 +565,8 @@
 }
 
 
+
+.selected-by-other {
+    background-color: orange !important;
+    cursor: not-allowed;
+}
