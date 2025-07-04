@@ -20,9 +20,7 @@ use Illuminate\Support\Facades\Cache;
 
 class DatVeController extends Controller
 {
-    /**
-     * Hiển thị trang đặt vé chi tiết
-     */
+
     public function index(Request $request)
     {
         $suatChieuId = $request->input('suat_chieu_id');
@@ -31,7 +29,6 @@ class DatVeController extends Controller
             return redirect()->route('home')->with('error', 'Vui lòng chọn suất chiếu!');
         }
 
-        // Lấy thông tin suất chiếu với các mối quan hệ cần thiết
         $suatChieu = SuatChieu::with([
             'phim',
             'phongChieu.rapPhim.chiNhanh',
@@ -55,20 +52,20 @@ class DatVeController extends Controller
             ->pluck('chi_tiet_dat_ves.ghe_id')
             ->toArray();
 
-        // ✅ Lấy danh sách ghế và đánh dấu trạng thái
+        // Lấy danh sách ghế theo phòng chiếu
         $gheNgois = $suatChieu->phongChieu->gheNgois()
             ->with(['loaiGhe'])
             ->orderBy('hang')
             ->orderBy('cot')
             ->get()
-            ->map(function ($ghe) use ($gheDaDat) {
+            ->map(function ($ghe) use ($gheDaDat, $suatChieu) {
                 $ghe->da_dat = in_array($ghe->id, $gheDaDat);
-                $ghe->phu_thu_loai_phong = optional($ghe->phongChieu->loaiPhong)->phu_thu ?? 0;
+                $ghe->phu_thu_loai_phong = optional($suatChieu->phongChieu->loaiPhong)->phu_thu ?? 0;
                 $ghe->phu_thu_loai_ghe = optional($ghe->loaiGhe)->phu_thu ?? 0;
-                $ghe->phu_thu_rap_phim = optional($ghe->phongChieu->rapPhim)->phu_thu ?? 0;
+                $ghe->phu_thu_rap_phim = optional($suatChieu->phongChieu->rapPhim)->phu_thu ?? 0;
 
-                // ✅ Nếu ghế đang được giữ bởi người khác
-                $ghe->dang_duoc_chon = $ghe->trang_thai === 'da_chon' && $ghe->dang_chon_user_id !== Auth::id();
+                $userIdDangChon = Cache::get("ghe_dang_chon_{$ghe->id}");
+                $ghe->dang_duoc_chon = $userIdDangChon && $userIdDangChon != Auth::id();
 
                 return $ghe;
             });
@@ -96,6 +93,16 @@ class DatVeController extends Controller
         }
 
         // Lấy danh sách loại ghế
+        // Hủy ghế tạm thời do user hiện tại giữ nhưng F5 lại
+        foreach ($gheNgois as $ghe) {
+            $userIdDangChon = Cache::get("ghe_dang_chon_{$ghe->id}");
+            if ($userIdDangChon == Auth::id()) {
+                Cache::forget("ghe_dang_chon_{$ghe->id}");
+                event(new GheBiHuyChon($ghe->id, $userIdDangChon));
+            }
+        }
+
+        // Lấy danh sách loại ghế để lấy màu
         $loaiGhes = \App\Models\LoaiGhe::all();
 
         // Lấy danh sách đồ ăn và combo
@@ -317,7 +324,7 @@ class DatVeController extends Controller
 
         DB::beginTransaction();
         try {
-            $suatChieu = SuatChieu::findOrFail($request->suat_chieu_id);
+            $suatChieu = SuatChieu::with(['phongChieu.rapPhim', 'phongChieu.loaiPhong'])->findOrFail($request->suat_chieu_id);
 
             // Kiểm tra ghế còn trống
             $gheDaDat = DB::table('chi_tiet_dat_ves')
@@ -350,8 +357,13 @@ class DatVeController extends Controller
             foreach ($request->ghe_ids as $gheId) {
                 $ghe = GheNgoi::with('loaiGhe')->find($gheId);
                 $phuThuGhe = ($ghe->loaiGhe->phu_thu ?? 0);
+                $phuThuLoaiPhong = $suatChieu->phongChieu->loaiPhong->phu_thu ?? 0;
                 $phuThuRap = $suatChieu->phongChieu->rapPhim->phu_thu ?? 0;
-                $giaVe = $phuThuGhe + $phuThuRap;
+
+                // Sử dụng logic giống tinhTongTien()
+                $giaVeCoBan = 0; // Temporary 0 để test
+                $giaVe = $giaVeCoBan + $phuThuLoaiPhong + $phuThuGhe;
+                // Không cộng phụ thu rạp vào từng ghế vì đã cộng 1 lần trong tinhTongTien()
 
                 $chiTiet = ChiTietDatVe::create([
                     'dat_ve_id' => $datVe->id,
@@ -384,8 +396,9 @@ class DatVeController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Đặt vé thành công!',
-                'dat_ve_id' => $datVe->id
+                'message' => 'Đặt vé thành công! Chuyển đến trang thanh toán...',
+                'dat_ve_id' => $datVe->id,
+                'redirect_url' => route('client.thanh-toan.index', $datVe->id)
             ]);
         } catch (\Exception $e) {
             DB::rollback();
@@ -424,18 +437,26 @@ class DatVeController extends Controller
     {
         $tongTien = 0;
 
+        // Lấy thông tin suất chiếu
+        $suatChieu = SuatChieu::with(['phongChieu.rapPhim', 'phongChieu.loaiPhong'])->find($request->suat_chieu_id);
+        $phuThuRap = $suatChieu->phongChieu->rapPhim->phu_thu ?? 0;
+        $phuThuLoaiPhong = $suatChieu->phongChieu->loaiPhong->phu_thu ?? 0;
+
+        // Giá vé cơ bản (có thể lấy từ cấu hình hoặc mặc định)
+        $giaVeCoBan = 0; // Temporary 0 để test
+
         // Tính tiền ghế
         $gheIds = $request->ghe_ids;
-        $suatChieu = SuatChieu::find($request->suat_chieu_id);
-        $phuThuRap = $suatChieu->phongChieu->rapPhim->phu_thu ?? 0;
-
         foreach ($gheIds as $gheId) {
             $ghe = GheNgoi::with('loaiGhe')->find($gheId);
             $phuThuGhe = $ghe->loaiGhe->phu_thu ?? 0;
-            $tongTien += $phuThuGhe;
+
+            // Giá cho 1 ghế = giá cơ bản + phụ thu loại phòng + phụ thu loại ghế
+            $giaMotGhe = $giaVeCoBan + $phuThuLoaiPhong + $phuThuGhe;
+            $tongTien += $giaMotGhe;
         }
 
-        // Thêm phụ thu rạp
+        // Cộng phụ thu rạp CHỈ 1 LẦN cho tất cả ghế
         $tongTien += $phuThuRap;
 
         // Tính tiền đồ ăn

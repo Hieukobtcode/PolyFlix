@@ -100,34 +100,6 @@
         });
     </script>
 
-
-    <div class="booking-fast">
-        <div class="btn">
-            <span>ĐẶT VÉ NHANH</span>
-        </div>
-        <div class="select">
-            <select required name="select-chi-nhanh" id="select-chi-nhanh" class="movie-select">
-                <option value="" disabled selected>1-Chọn rạp</option>
-            </select>
-            <select required name="select-phim" id="select-phim" class="movie-select" disabled>
-                <option disabled selected value="">2-Chọn phim</option>
-            </select>
-            <select required name="select-date" id="select-date" class="movie-select" disabled>
-                <option disabled selected value="">3-Chọn ngày</option>
-            </select>
-            <select required name="select-suat" id="select-suat" class="movie-select" disabled>
-                <option disabled selected value="">4-Chọn suất</option>
-            </select>
-            <button id="btn-dat-ngay" disabled>Đặt ngay</button>
-        </div>
-
-        <!-- Loading indicator -->
-        <div id="booking-loading" class="booking-loading" style="display: none;">
-            <div class="spinner"></div>
-            <span>Đang tải...</span>
-        </div>
-    </div>
-
     <div class="menu">
         <button type="button"></button>
         <p class="movie">PHIM</p>
@@ -141,8 +113,6 @@
             </p>
         </div>
     </div>
-
-    {{-- </div> --}}
 
     <div class="list-movie">
         @foreach ($allPhims as $phim)
@@ -165,11 +135,9 @@
         @endforeach
     </div>
 
-
     <a href="{{ route('phim.dang-chieu') }}" class="btn-see-more">
         <button class="btn-see">XEM THÊM</button>
     </a>
-
 
     <div class="khuyen-mai">
         <p>KHUYẾN MÃI</p>
@@ -183,7 +151,7 @@
     <a href="{{ route('khuyen-mai.index') }}">
         <button class="btn-km">TẤT CẢ ƯU ĐÃI</button>
     </a>
-    {{--  --}}
+
     <div class="goc-dien-anh-wrapper">
         @include('client.partials.goc-dien-anh', [
             'phims' => $phims,
@@ -191,6 +159,7 @@
             'baiViet' => $baiViet ?? [],
         ])
     </div>
+
     <!-- Popup trailer -->
     <div id="trailerPopup"
         style="display:none; position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);

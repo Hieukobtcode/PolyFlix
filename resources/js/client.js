@@ -40,12 +40,7 @@ function loadChiNhanhs() {
             });
 
             hideLoading();
-        },
-        error: function () {
-            console.error("Error loading chi nhanhs");
-            hideLoading();
-            showError("Không thể tải danh sách rạp. Vui lòng thử lại!");
-        },
+        }
     });
 }
 

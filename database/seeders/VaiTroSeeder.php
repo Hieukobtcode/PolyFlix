@@ -4,12 +4,13 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\VaiTro;
+use App\Models\RapPhim;
 
 class VaiTroSeeder extends Seeder
 {
     public function run(): void
     {
-        VaiTro::insert([
+        $vaiTros = [
             [
                 'id' => 1,
                 'ten' => 'SupperAdmin',
@@ -35,6 +36,15 @@ class VaiTroSeeder extends Seeder
                 'ten' => 'Khách Hàng',
                 'mo_ta' => 'Người dùng hệ thống, có thể đặt vé, xem lịch chiếu, đánh giá phim.'
             ],
-        ]);
+        ];
+
+        foreach ($vaiTros as $vaiTro) {
+            VaiTro::updateOrCreate(
+                ['id' => $vaiTro['id']],
+                $vaiTro
+            );
+        }
+
+        $rapPhims = RapPhim::all()->groupBy('chi_nhanh_id');
     }
 }
