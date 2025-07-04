@@ -25,9 +25,6 @@ use Illuminate\Support\Facades\DB;
 
 class ThongKeController extends Controller
 {
-    /**
-     * Hiển thị trang thống kê tổng quan
-     */
     public function index(Request $request)
     {
         $tongDoanhThuHeThong = DatVe::sum('tong_tien');
@@ -64,6 +61,25 @@ class ThongKeController extends Controller
             return $item;
         });
 
+        $topDoanhThuPhimHeThong = DatVe::join('suat_chieus', 'dat_ves.suat_chieu_id', '=', 'suat_chieus.id')
+            ->join('phims', 'suat_chieus.phim_id', '=', 'phims.id')
+            ->select(
+                'phims.id',
+                'phims.ten_phim',
+                DB::raw('SUM(dat_ves.tong_tien) as tong_doanh_thu')
+            )
+            ->groupBy('phims.id', 'phims.ten_phim')
+            ->orderByDesc('tong_doanh_thu')
+            ->limit(5)
+            ->get();
+
+        $topDoanhThuPhimHeThong->transform(function ($item) use ($tongDoanhThuHeThong) {
+            $item->phan_tram = $tongDoanhThuHeThong > 0
+                ? round(($item->tong_doanh_thu / $tongDoanhThuHeThong) * 100, 2)
+                : 0;
+            return $item;
+        });
+
         $danhSachChiNhanh = ChiNhanh::all();
         $danhSachRap = RapPhim::all();
 
@@ -79,12 +95,61 @@ class ThongKeController extends Controller
             'danhSachChiNhanh',
             'danhSachRap',
             'top5ChiNhanh',
+            'topDoanhThuPhimHeThong'
         ));
     }
 
-    /**
-     * Hiển thị dashboard thống kê
-     */
+    //Lấy doanh thu theo tuần
+    public function layDoanhThuTheoTuan()
+    {
+        $today = Carbon::today();
+        $startOfWeek = $today->copy()->startOfWeek(Carbon::MONDAY);
+        $endOfWeek = $today;
+
+        $dates = [];
+        $doanhThu = [];
+
+        for ($date = $startOfWeek; $date->lte($endOfWeek); $date->addDay()) {
+            $label = 'T' . $date->dayOfWeekIso; 
+            $dates[] = $label;
+
+            $tong = DatVe::whereDate('created_at', $date->toDateString())
+                ->sum('tong_tien');
+
+            $doanhThu[] = $tong;
+        }
+
+        return response()->json([
+            'labels' => $dates,
+            'values' => $doanhThu
+        ]);
+    }
+
+    public function layDoanhThuTheoThang()
+    {
+        $today = Carbon::today();
+        $startOfMonth = $today->copy()->startOfMonth();
+        $endOfMonth = $today;
+
+        $dates = [];
+        $doanhThu = [];
+
+        for ($date = $startOfMonth; $date->lte($endOfMonth); $date->addDay()) {
+            $label = $date->format('d'); 
+            $dates[] = $label;
+
+            $tong = DatVe::whereDate('created_at', $date->toDateString())
+                ->sum('tong_tien');
+
+            $doanhThu[] = $tong;
+        }
+
+        return response()->json([
+            'labels' => $dates,
+            'values' => $doanhThu
+        ]);
+    }
+
     public function dashboard(Request $request)
     {
         // Xử lý bộ lọc theo ngày

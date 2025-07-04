@@ -234,8 +234,6 @@
         // Khi có người chọn ghế -> tất cả client khác sẽ nhận được sự kiện này
         window.Echo.channel('ghe-duoc-chon')
             .listen('.ghe-duoc-chon', function(e) {
-                console.log('Đã nhận được sự kiện ghe-duoc-chon:', e);
-        
                 const ghe = document.querySelector(`.ghe-chieu[data-seat-id="${e.gheId}"]`);
                 const currentUserId = parseInt(document.querySelector('meta[name="user-id"]').content);
         

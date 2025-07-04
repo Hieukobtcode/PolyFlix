@@ -44,8 +44,12 @@ use App\Http\Controllers\Client\LienHeController as ClientLienHeController;
 use App\Http\Controllers\Client\TheLoaiController;
 use App\Models\TheLoaiPhim;
 
-                                                                                                                                                                                        
+
 Route::get('/', [TrangChuController::class, 'index'])->name('home');
+
+Route::get('/api/doanh-thu-week', [ThongKeController::class, 'layDoanhThuTheoTuan']);
+Route::get('/api/doanh-thu-month', [ThongKeController::class, 'layDoanhThuTheoThang']);
+
 
 // API cho đặt vé nhanh
 Route::get('/api/chi-nhanhs', [TrangChuController::class, 'getChiNhanhs'])->name('api.chi-nhanhs');
