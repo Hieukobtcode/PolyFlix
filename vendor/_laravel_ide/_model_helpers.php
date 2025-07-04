@@ -3838,6 +3838,9 @@ namespace App\Models {
      * @property \Illuminate\Support\Carbon|null $created_at
      * @property mixed $trang_thai
      * @property string $phuong_thuc_tt
+     * @property string|null $ghi_chu
+     * @property string|null $ngay_thanh_toan
+     * @property string|null $ma_giao_dich
      * @property float $tong_tien
      * @property int|null $khuyen_mai_id
      * @property int $suat_chieu_id
@@ -3862,6 +3865,9 @@ namespace App\Models {
      * @method static \Illuminate\Database\Eloquent\Builder<DatVe>|DatVe whereSuatChieuId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<DatVe>|DatVe whereKhuyenMaiId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<DatVe>|DatVe whereTongTien($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<DatVe>|DatVe whereMaGiaoDich($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<DatVe>|DatVe whereNgayThanhToan($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<DatVe>|DatVe whereGhiChu($value)
      * @method static \Illuminate\Database\Eloquent\Builder<DatVe>|DatVe wherePhuongThucTt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<DatVe>|DatVe whereTrangThai($value)
      * @method static \Illuminate\Database\Eloquent\Builder<DatVe>|DatVe whereCreatedAt($value)
@@ -4802,6 +4808,7 @@ namespace App\Models {
     /**
      * App\Models\GheNgoi
      *
+     * @property int|null $dang_chon_user_id
      * @property \Illuminate\Support\Carbon|null $updated_at
      * @property \Illuminate\Support\Carbon|null $created_at
      * @property mixed $trang_thai
@@ -4822,6 +4829,7 @@ namespace App\Models {
      * @method static \Illuminate\Database\Eloquent\Builder<GheNgoi>|GheNgoi whereTrangThai($value)
      * @method static \Illuminate\Database\Eloquent\Builder<GheNgoi>|GheNgoi whereCreatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<GheNgoi>|GheNgoi whereUpdatedAt($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<GheNgoi>|GheNgoi whereDangChonUserId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<GheNgoi>|GheNgoi newModelQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<GheNgoi>|GheNgoi newQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<GheNgoi>|GheNgoi query()
@@ -11794,7 +11802,7 @@ namespace App\Models {
      * @property-read \App\Models\Phim $phim
      * @property-read \App\Models\PhongChieu $phongChieu
      * @property-read \App\Models\ChiNhanh $chiNhanh
-     * @property-read \App\Models\RapPhim $rapPhims
+     * @property-read \App\Models\RapPhim $rapPhim
      * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\DatVe> $datVes
      * @property-read int|null $datVes_count
      * @property-read \App\Models\DinhDangPhim $dinhDangPhim
