@@ -96,7 +96,7 @@ Route::get('/phim-tab', [TrangChuController::class, 'loadPhimTab'])->name('clien
 Route::get('/phim/{id}/lich-chieu', [PhimsController::class, 'loadLichChieu'])->name('phim.load-lich-chieu');
 
 // Chi tiết phim
-Route::get('phim/{id}', [PhimsController::class, 'show'])->name('phim.chi-tiet');
+Route::get('phim/{ten_phim}', [PhimsController::class, 'show'])->name('phim.chi-tiet');
 
 
 //Thể loại

@@ -96,14 +96,14 @@
 
     <div class="list-movie">
         @foreach ($allPhims as $phim)
-            <div class="movie clickable-movie" data-href="{{ route('phim.chi-tiet', $phim->id) }}">
+            <div class="movie clickable-movie" data-href="{{ route('phim.chi-tiet', urlencode($phim->ten_phim)) }}">
                 <div class="img-wrapper">
-                    <a href="{{ route('phim.chi-tiet', $phim->id) }}">
+                    <a href="{{ route('phim.chi-tiet', urlencode($phim->ten_phim)) }}">
                         <img src="{{ asset('storage/' . $phim->poster) }}" alt="{{ $phim->ten_phim }}">
                     </a>
                     <div class="age-label">{{ $phim->do_tuoi }}</div>
                     <div class="overlay">
-                        <a href="{{ route('phim.chi-tiet', $phim->id) }}#lich-chieu">
+                        <a href="{{ route('phim.chi-tiet', urlencode($phim->ten_phim)) }}#lich-chieu">
                             <button class="btn buy">
                                 <i class="fa-solid fa-ticket"></i> Mua vé
                             </button>
@@ -113,8 +113,8 @@
                         </button>
                     </div>
                 </div>
-                <a href="{{ route('phim.chi-tiet', $phim->id) }}">
-                    <p>{{ $phim->ten_phim }}</p>
+                <a href="{{ route('phim.chi-tiet', urlencode($phim->ten_phim)) }}">
+                    <p class="ten-phim">{{ $phim->ten_phim }}</p>
                 </a>
             </div>
         @endforeach
@@ -342,6 +342,69 @@
                 if (e.target.closest('.btn') || e.target.closest('a')) return;
                 window.location.href = this.dataset.href;
             });
+
+            document.querySelectorAll('.menu .list a.tab-phim-item').forEach(tab => {
+                tab.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const selectedTab = this.dataset.tab;
+
+                    fetch(`/phim-tab?tab=${selectedTab}`)
+                        .then(res => res.json())
+                        .then(data => {
+                            const movieList = document.querySelector('.list-movie');
+                            movieList.innerHTML = '';
+                            data.phims.forEach(phim => {
+                                const poster = phim.poster ? `/storage/${phim.poster}` :
+                                    '/logo/no-image.png';
+                                const encodedTenPhim = encodeURIComponent(phim
+                                .ten_phim);
+                                const item = `
+                            <div class="movie clickable-movie" data-href="/phim/${encodedTenPhim}">
+                                <div class="img-wrapper">
+                                    <img src="${poster}" alt="${phim.ten_phim}">
+                                    <div class="age-label">${phim.do_tuoi ?? ''}</div>
+                                    <div class="overlay">
+                                        <a href="/phim/${encodedTenPhim}#lich-chieu">
+                                            <button class="btn buy"><i class="fa-solid fa-ticket"></i> Mua vé</button>
+                                        </a>
+                                        <button class="btn trailer" data-video="${phim.trailer}">
+                                            <i class="fa-solid fa-video"></i> Trailer
+                                        </button>
+                                    </div>
+                                </div>
+                                <p class="ten-phim">${phim.ten_phim}</p>
+                            </div>`;
+                                movieList.insertAdjacentHTML('beforeend', item);
+                            });
+
+                            bindTrailerEvents(); // ✅ gán lại sự kiện Trailer
+
+                            document.querySelectorAll('.clickable-movie').forEach(div => {
+                                div.addEventListener('click', function(e) {
+                                    if (e.target.closest('.btn') || e.target
+                                        .closest('a')) return;
+                                    window.location.href = this.dataset.href;
+                                });
+                            });
+
+                            const btnSeeMore = document.querySelector('.btn-see-more');
+                            if (btnSeeMore) {
+                                btnSeeMore.href = selectedTab === 'sap-chieu' ?
+                                    '/phim-sap-chieu' : '/phim-dang-chieu';
+                            }
+
+                            document.querySelectorAll('.menu .list a.tab-phim-item').forEach(
+                                t => t.classList.remove('active'));
+                            tab.classList.add('active');
+                        });
+                });
+            });
+        });
+
+        document.getElementById('overlayBg').addEventListener('click', function() {
+            document.getElementById('trailerIframe').src = '';
+            document.getElementById('trailerPopup').style.display = 'none';
+            this.style.display = 'none';
         });
     </script>
 @endsection
