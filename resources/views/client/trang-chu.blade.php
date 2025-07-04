@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
         integrity="sha512-dYkA5Kj8SGrWJQ2r7S4JblmQo2+3ZJfzv+y5eA6TeK4kD4i2yHMyhzTKoH9yKxKdRYg3C1f58TbzOdKJejO3dg=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
-    @vite('resources/js/trang-chu.js')
+    @vite(entrypoints: 'resources/js/trang-chu.js')
 
     <style>
         html {
