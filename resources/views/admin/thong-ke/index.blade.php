@@ -145,16 +145,21 @@
                                 <h4 class="card-title mb-1">Top doanh thu phim</h4>
                             </div>
                         </div>
-                        <div class="d-flex align-items-center justify-content-between mb-2">
-                            <div class="d-flex align-items-center">
-                                <i class="ti ti-circle text-primary fs-4 me-2"></i>
-                                <p class="mb-0">Phim</p>
-                            </div>
-                            <p class="mb-0">
-                                
-                            </p>
-                        </div>
-
+                        @if ($topDoanhThuPhimHeThong->isEmpty())
+                            <p class="text-muted">Không có doanh thu.</p>
+                        @else
+                            @foreach ($topDoanhThuPhimHeThong as $item)
+                                <div class="d-flex align-items-center justify-content-between mb-2">
+                                    <div class="d-flex align-items-center">
+                                        <i class="ti ti-circle text-primary fs-4 me-2"></i>
+                                        <p class="mb-0">{{ Str::limit($item->ten_phim, 30, '...') }}</p>
+                                    </div>
+                                    <p class="mb-0">
+                                        {{ $item->phan_tram }}%
+                                    </p>
+                                </div>
+                            @endforeach
+                        @endif
                     </div>
                 </div>
             </div>
@@ -162,62 +167,21 @@
 
         <div class="col-lg-6 d-flex align-items-stretch">
             <div class="card w-100">
-                {{-- <div class="card-body border-bottom position-relative">
-                    <h4 class="card-title mb-1">Thống kê PolyFLix</h4>
-                    <p id="thong-ke-theo" class="card-subtitle mb-0">Tổng theo toàn hệ thống</p>
-                    <div class="mt-6">
-                        <ul class="list-unstyled mb-0">
-                            <li class="d-flex align-items-center mb-9">
-                                <div
-                                    class="bg-success-subtle p-6 me-3 rounded-circle d-flex align-items-center justify-content-center">
-                                    <iconify-icon icon="mdi:ticket-outline" class="fs-7 text-success"></iconify-icon>
-                                </div>
-                                <div>
-                                    <h6 class="mb-1 fs-4">{{ $veDaBans }}</h6>
-                                    <p class="mb-0">Vé đã bán</p>
-                                </div>
-                            </li>
-                            <li class="d-flex align-items-center mb-9">
-                                <div
-                                    class="bg-warning-subtle p-6 me-3 rounded-circle d-flex align-items-center justify-content-center">
-                                    <iconify-icon icon="mdi:movie-open-outline" class="fs-6 text-warning"></iconify-icon>
-                                </div>
-                                <div>
-                                    <h6 class="mb-1 fs-4">{{ $phimDangChieus }}</h6>
-                                    <p class="mb-0">Phim đang chiếu</p>
-                                </div>
-                            </li>
-                            <li class="d-flex align-items-center">
-                                <div
-                                    class="bg-indigo-subtle p-6 me-3 rounded-circle d-flex align-items-center justify-content-center">
-                                    <iconify-icon icon="mdi:movie-open-outline" class="fs-6 text-warning"></iconify-icon>
-                                </div>
-                                <div>
-                                    <h6 class="mb-1 fs-4">{{ $phimSapChieus }}</h6>
-                                    <p class="mb-0">Phim sắp chiếu</p>
-                                </div>
-                            </li>
-                        </ul>
-                        <div class="man-working-on-laptop">
-                            <img src="https://bootstrapdemos.wrappixel.com/spike/dist/assets/images/backgrounds/man-working-on-laptop.png"
-                                alt="spike-img" class="img-fluid">
-                        </div>
-                    </div>
-                </div> --}}
                 <div class="card-body pb-2">
                     <div class="d-flex align-items-baseline justify-content-between">
                         <div>
                             <h4 class="card-title mb-1">Tổng doanh thu</h4>
                         </div>
-                        <select class="form-select fw-bold w-auto shadow-none">
-                            <option value="1">Tuần</option>
-                            <option value="2">Tháng</option>
+                        <select id="chonThoiGian" class="form-select fw-bold w-auto shadow-none">
+                            <option value="week">Tuần</option>
+                            <option value="month">Tháng</option>
                         </select>
                     </div>
-                    <div id="netsells" class="mx-n6"></div>
+                    <canvas id="netsells" class="mx-n6" height="300"></canvas>
                 </div>
             </div>
         </div>
+
 
         <div class="col-lg-3 d-flex align-items-stretch">
             <div class="d-block w-100">
@@ -601,55 +565,123 @@
         document.addEventListener("DOMContentLoaded", function() {
             const branchSelect = document.getElementById('branch-select');
 
-            branchSelect.addEventListener('change', function() {
-                const branchId = this.value;
-                const currentUrl = new URL(window.location.href);
+            if (branchSelect) {
+                branchSelect.addEventListener('change', function() {
+                    const branchId = this.value;
+                    const currentUrl = new URL(window.location.href);
 
-                if (branchId) {
-                    currentUrl.searchParams.set('branch_id', branchId);
-                } else {
-                    currentUrl.searchParams.delete('branch_id');
-                }
+                    if (branchId) {
+                        currentUrl.searchParams.set('branch_id', branchId);
+                    } else {
+                        currentUrl.searchParams.delete('branch_id');
+                    }
 
-                currentUrl.searchParams.delete('rap_id');
-
-                window.location.href = currentUrl.toString();
-            });
-            const ctx = document.getElementById('tyleGheChart');
-
-            if (!ctx) {
-                console.error("Không tìm thấy canvas #tyleGheChart");
-                return;
+                    currentUrl.searchParams.delete('rap_id');
+                    window.location.href = currentUrl.toString();
+                });
             }
 
-            new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Lấp đầy', 'Còn trống'],
-                    datasets: [{
-                        label: 'Tỷ lệ ghế',
-                        data: [{{ $tyLeLapDayGhe }}, {{ 100 - $tyLeLapDayGhe }}],
-                        backgroundColor: ['#6C5DD3', '#E0E0E0'],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    cutout: '60%',
-                    plugins: {
-                        legend: {
-                            position: 'bottom'
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return context.label + ": " + context.parsed + "%";
+            const ctxDoughnut = document.getElementById('tyleGheChart');
+
+            if (ctxDoughnut) {
+                new Chart(ctxDoughnut, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Lấp đầy', 'Còn trống'],
+                        datasets: [{
+                            label: 'Tỷ lệ ghế',
+                            data: [{{ $tyLeLapDayGhe }}, {{ 100 - $tyLeLapDayGhe }}],
+                            backgroundColor: ['#6C5DD3', '#E0E0E0'],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        cutout: '60%',
+                        plugins: {
+                            legend: {
+                                position: 'bottom'
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return context.label + ": " + context.parsed.toFixed(2) + "%";
+                                    }
                                 }
                             }
                         }
                     }
-                }
-            });
+                });
+            }
+
+            const ctxBar = document.getElementById('netsells');
+            let barChart = null;
+
+            function taiDuLieuDoanhThu(loai) {
+                fetch(`/api/doanh-thu-${loai}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (barChart) barChart.destroy();
+
+                        barChart = new Chart(ctxBar, {
+                            type: 'bar',
+                            data: {
+                                labels: data.labels,
+                                datasets: [{
+                                    label: 'Doanh thu',
+                                    data: data.values,
+                                    backgroundColor: '#4F46E5'
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                plugins: {
+                                    tooltip: {
+                                        callbacks: {
+                                            label: function(context) {
+                                                return new Intl.NumberFormat('vi-VN', {
+                                                    style: 'currency',
+                                                    currency: 'VND'
+                                                }).format(context.parsed.y);
+                                            }
+                                        }
+                                    },
+                                    legend: {
+                                        display: false
+                                    }
+                                },
+                                scales: {
+                                    x: {
+                                        ticks: {
+                                            maxRotation: 45,
+                                            minRotation: 45
+                                        }
+                                    },
+                                    y: {
+                                        ticks: {
+                                            callback: function(val) {
+                                                return new Intl.NumberFormat('vi-VN', {
+                                                    style: 'currency',
+                                                    currency: 'VND'
+                                                }).format(val);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    });
+            }
+
+            taiDuLieuDoanhThu('week');
+
+            const chonThoiGian = document.getElementById('chonThoiGian');
+            if (chonThoiGian) {
+                chonThoiGian.addEventListener('change', function() {
+                    const loai = this.value === '1' ? 'week' : 'month';
+                    taiDuLieuDoanhThu(loai);
+                });
+            }
         });
     </script>
 @endsection
