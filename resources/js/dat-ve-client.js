@@ -472,10 +472,33 @@ $(document).ready(function () {
 
         const seatName = $(this).data("seat-name");
         const seatTypeId = $(this).data("seat-type-id");
-        const isCoupleSeat = $(this).hasClass("ghe-doi");
         const selectedSeatsCount = $(".ghe-chieu.selected").length;
         const maxSeats = 10;
         const seatId = $(this).data("seat-id");
+        const isCoupleSeat = $(this).hasClass("ghe-doi");
+
+        // Hàm hủy ghế
+        const cancelSeat = (seatElement, seatId) => {
+            seatElement.removeClass("selected");
+            $.ajax({
+                url: "/huy-chon-ghe",
+                method: "POST",
+                headers: {
+                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr(
+                        "content"
+                    ),
+                },
+                data: {
+                    ghe_id: seatId,
+                },
+                success: () => {
+                    console.log(`Ghế ${seatId} đã được hủy chọn`);
+                },
+                error: (error) => {
+                    console.error(`Lỗi khi hủy ghế ${seatId}:`, error);
+                },
+            });
+        };
 
         if (isCoupleSeat) {
             const seatNumber = getSeatNumber(seatName);
@@ -498,45 +521,39 @@ $(document).ready(function () {
                 return;
             }
 
+            // Kiểm tra loại ghế
             if (
                 selectedSeatTypeId &&
                 selectedSeatTypeId !== seatTypeId &&
                 $(".ghe-chieu.selected").length > 0
             ) {
                 alert("Bạn chỉ có thể chọn ghế cùng loại!");
+                // Hủy chọn ghế hiện tại và ghế đôi
+                cancelSeat($(this), seatId);
+                cancelSeat(partnerSeat, partnerSeat.data("seat-id"));
                 return;
             }
 
+            // Kiểm tra số lượng ghế
             if (
                 !$(this).hasClass("selected") &&
                 selectedSeatsCount + 2 > maxSeats
             ) {
                 alert("Bạn không thể chọn quá 10 ghế!");
+                // Hủy chọn ghế hiện tại và ghế đôi
+                cancelSeat($(this), seatId);
+                cancelSeat(partnerSeat, partnerSeat.data("seat-id"));
                 return;
             }
 
             selectedSeatTypeId = seatTypeId;
             const isSelected = $(this).hasClass("selected");
             if (isSelected) {
-                $(this).removeClass("selected");
-                partnerSeat.removeClass("selected");
-
-                [$(this), partnerSeat].forEach((el) => {
-                    const seatId = el.data("seat-id");
-                    $.ajax({
-                        url: "/huy-chon-ghe",
-                        method: "POST",
-                        headers: {
-                            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr(
-                                "content"
-                            ),
-                        },
-                        data: {
-                            ghe_id: seatId,
-                        },
-                    });
-                });
+                // Hủy chọn cặp ghế
+                cancelSeat($(this), seatId);
+                cancelSeat(partnerSeat, partnerSeat.data("seat-id"));
             } else {
+                // Chọn cặp ghế
                 $(this).addClass("selected");
                 partnerSeat.addClass("selected");
 
@@ -553,24 +570,36 @@ $(document).ready(function () {
                         data: {
                             ghe_id: seatId,
                         },
+                        success: () => {
+                            console.log(`Ghế ${seatId} đã được chọn`);
+                        },
+                        error: (error) => {
+                            console.error(`Lỗi khi chọn ghế ${seatId}:`, error);
+                        },
                     });
                 });
             }
         } else {
+            // Kiểm tra loại ghế (ghế đơn)
             if (
                 selectedSeatTypeId &&
                 selectedSeatTypeId !== seatTypeId &&
                 $(".ghe-chieu.selected").length > 0
             ) {
                 alert("Bạn chỉ có thể chọn ghế cùng loại!");
+                // Hủy chọn ghế
+                cancelSeat($(this), seatId);
                 return;
             }
 
+            // Kiểm tra số lượng ghế (ghế đơn)
             if (
                 !$(this).hasClass("selected") &&
                 selectedSeatsCount + 1 > maxSeats
             ) {
-                alert("Bạn không thể chọn quá 10 ghế!");
+                alert("Bạn not thể chọn quá 10 ghế!");
+                // Hủy chọn ghế
+                cancelSeat($(this), seatId);
                 return;
             }
 
@@ -588,6 +617,19 @@ $(document).ready(function () {
                 },
                 data: {
                     ghe_id: seatId,
+                },
+                success: () => {
+                    console.log(
+                        `Ghế ${seatId} ${
+                            isSelected ? "đã được hủy" : "đã được chọn"
+                        }`
+                    );
+                },
+                error: (error) => {
+                    console.error(
+                        `Lỗi khi ${isSelected ? "hủy" : "chọn"} ghế ${seatId}:`,
+                        error
+                    );
                 },
             });
         }
