@@ -50,7 +50,7 @@ Route::middleware('auth')->group(function () {
     // Đặt vé client
     Route::get('/dat-ve', [\App\Http\Controllers\Client\DatVeController::class, 'indexDatVe'])->name('client.dat-ve');
     Route::post('/dat-ve', [\App\Http\Controllers\Client\DatVeController::class, 'store'])->name('client.dat-ve.store');
-    Route::get('/dat-ve/ket-qua/{id}', [\App\Http\Controllers\Client\DatVeController::class, 'ketQua'])->name('client.dat-ve.ket-qua');
+    Route::get('/dat-ve/ket-qua/{ma_ve}', [\App\Http\Controllers\Client\DatVeController::class, 'ketQua'])->name('client.dat-ve.ket-qua');
 
     // Thanh toán
     Route::get('/thanh-toan/{datVeId}', [ThanhToanController::class, 'index'])->name('client.thanh-toan.index');

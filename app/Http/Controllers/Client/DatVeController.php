@@ -264,7 +264,7 @@ class DatVeController extends Controller
                     $ghe->phu_thu_loai_ghe = optional($ghe->loaiGhe)->phu_thu ?? 0;
                     $ghe->phu_thu_rap_phim = optional($suatChieu->phongChieu->rapPhim)->phu_thu ?? 0;
 
-                    \Log::info('Ghe ID: ' . $ghe->id . ', LoaiGhe: ' . ($ghe->loaiGhe ? $ghe->loaiGhe->ten_loai_ghe : 'null') .
+                    Log::info('Ghe ID: ' . $ghe->id . ', LoaiGhe: ' . ($ghe->loaiGhe ? $ghe->loaiGhe->ten_loai_ghe : 'null') .
                         ', PhuThuLoaiPhong: ' . $ghe->phu_thu_loai_phong .
                         ', PhuThuLoaiGhe: ' . $ghe->phu_thu_loai_ghe .
                         ', PhuThuRapPhim: ' . $ghe->phu_thu_rap_phim);
@@ -344,7 +344,7 @@ class DatVeController extends Controller
 
             // Tạo đơn đặt vé
             $datVe = DatVe::create([
-                'ma_dat_ve' => 'DV' . time() . rand(100, 999),
+                'ma_dat_ve' => time() . rand(100, 999),
                 'user_id' => Auth::id(),
                 'suat_chieu_id' => $request->suat_chieu_id,
                 'tong_tien' => $tongTien,
@@ -413,9 +413,9 @@ class DatVeController extends Controller
         }
     }
 
-    public function ketQua($id)
+    public function ketQua($maDatVe)
     {
-        // Kiểm tra user đã đăng nhập và vé thuộc về user này
+        // Kiểm tra user đã đăng nhập
         if (!Auth::check()) {
             return redirect()->route('home')->with('error', 'Vui lòng đăng nhập để xem vé!');
         }
@@ -426,12 +426,14 @@ class DatVeController extends Controller
             'suatChieu.phongChieu.rapPhim.chiNhanh',
             'gheNgois.loaiGhe',
             'combos.doAns'
-        ])->where('id', $id)
+        ])
+            ->where('ma_dat_ve', $maDatVe)
             ->where('user_id', Auth::id())
             ->firstOrFail();
 
         return view('client.dat-ve.ket-qua', compact('datVe'));
     }
+
 
     private function tinhTongTien($request)
     {
