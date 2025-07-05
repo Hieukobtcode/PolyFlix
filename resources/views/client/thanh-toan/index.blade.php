@@ -459,6 +459,7 @@
             });
         }
 
+        // time
         // Confirm cancel booking
         function confirmCancel() {
             const confirmed = confirm(

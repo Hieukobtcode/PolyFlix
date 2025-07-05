@@ -389,6 +389,7 @@
             });
         });
 
+
         let countdownTimer;
 
         function startTimer(duration, display) {
