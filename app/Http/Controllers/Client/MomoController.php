@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Log;
 
 class MomoController extends Controller
 {
-    // Thông tin MoMo Sandbox (công khai cho test)
     private $partnerCode = "MOMO";
     private $accessKey = "F8BBA842ECF85";
     private $secretKey = "K951B6PE1waDMi640xX08PD3vg6EkVlz";
@@ -23,15 +22,17 @@ class MomoController extends Controller
     public function createPayment($datVeId, $amount)
     {
         try {
-            $orderId = 'POLYFLIX_' . $datVeId . '_' . time();
-            $requestId = time() . "";
+            $orderId = 'POLYFLIX_' . $datVeId . '_' . uniqid(); // Tạo ID duy nhất
+            $requestId = uniqid((string)time(), true);          // Tránh trùng request
+
             $orderInfo = "Thanh toán vé xem phim PolyFlix - Mã đặt vé: " . $datVeId;
             $redirectUrl = route('client.thanh-toan.momo.callback');
             $ipnUrl = route('client.thanh-toan.momo.callback');
-            $extraData = json_encode(['dat_ve_id' => $datVeId]);
+
+            $extraData = base64_encode(json_encode(['dat_ve_id' => $datVeId])); // Encode đúng cách
             $requestType = "captureWallet";
 
-            // Tạo signature
+            // Chuỗi tạo chữ ký (signature)
             $rawHash = "accessKey=" . $this->accessKey .
                 "&amount=" . $amount .
                 "&extraData=" . $extraData .
@@ -67,12 +68,18 @@ class MomoController extends Controller
 
             Log::info('MoMo response:', $jsonResult);
 
+            // Kiểm tra lỗi phía MoMo (ví dụ lỗi 1005)
+            if (isset($jsonResult['resultCode']) && $jsonResult['resultCode'] != 0) {
+                Log::warning('MoMo payment error - Code: ' . $jsonResult['resultCode'] . ', Message: ' . $jsonResult['message']);
+            }
+
             return $jsonResult;
         } catch (\Exception $e) {
             Log::error('Lỗi tạo thanh toán MoMo: ' . $e->getMessage());
             throw $e;
         }
     }
+
 
     /**
      * Xử lý callback từ MoMo
@@ -239,4 +246,7 @@ class MomoController extends Controller
         curl_close($ch);
         return $result;
     }
+
+
+    
 }

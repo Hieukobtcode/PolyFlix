@@ -344,7 +344,7 @@ class DatVeController extends Controller
 
             // Tạo đơn đặt vé
             $datVe = DatVe::create([
-                'ma_dat_ve' => 'DV' . time() . rand(100, 999),
+                'ma_dat_ve' => time() . rand(100, 999),
                 'user_id' => Auth::id(),
                 'suat_chieu_id' => $request->suat_chieu_id,
                 'tong_tien' => $tongTien,
@@ -413,9 +413,8 @@ class DatVeController extends Controller
         }
     }
 
-    public function ketQua($id)
+    public function ketQua($maDatVe)
     {
-        // Kiểm tra user đã đăng nhập và vé thuộc về user này
         if (!Auth::check()) {
             return redirect()->route('home')->with('error', 'Vui lòng đăng nhập để xem vé!');
         }
@@ -426,12 +425,14 @@ class DatVeController extends Controller
             'suatChieu.phongChieu.rapPhim.chiNhanh',
             'gheNgois.loaiGhe',
             'combos.doAns'
-        ])->where('id', $id)
+        ])
+            ->where('ma_dat_ve', $maDatVe)
             ->where('user_id', Auth::id())
             ->firstOrFail();
 
         return view('client.dat-ve.ket-qua', compact('datVe'));
     }
+
 
     private function tinhTongTien($request)
     {
