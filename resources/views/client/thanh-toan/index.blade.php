@@ -35,19 +35,53 @@
                 <!-- Header -->
                 <div class="payment-header">
                     <h1>Thanh toán</h1>
-                    <p>Vui lòng chọn phương thức thanh toán để hoàn tất đặt vé</p>
+
                 </div>
-
+                <input type="hidden" id="ma_dat_ve" value="{{ $datVe->ma_dat_ve }}">
                 <div class="payment-content">
-                    <!-- Left side - Payment methods -->
                     <div class="payment-methods">
-                        <h3>Chọn phương thức thanh toán</h3>
-
+                        <h3>Quét mã để thanh toán</h3>
                         <form id="payment-form">
                             @csrf
                             <input type="hidden" name="dat_ve_id" value="{{ $datVe->id }}">
 
-                            <!-- MoMo -->
+
+                            {{-- Ngân hàng
+                            <div class="payment-option momo" data-method="momo">
+                                <input type="radio" name="phuong_thuc_tt" value="momo" id="momo">
+                                <label for="bank" class="payment-option-content">
+                                    <div class="payment-icon">
+                                        <i class="fab fa-apple-pay"></i>
+                                    </div>
+                                    <div class="payment-details">
+                                        <h4>Ví MoMo</h4>
+                                        <p>Thanh toán nhanh chóng và bảo mật với ví điện tử MoMo</p>
+                                    </div>
+                                </label>
+
+                            </div> --}}
+
+                            <!-- TPBank -->
+                            <div class="tpbank">
+                                <div class="tpbank-info">
+                                    <div class="tpbank-info">
+                                        <div class="tpbank-img">
+                                            <img src="{{ asset('tpbank/tpbank.png') }}" alt="">
+                                            <p>TPBank</p>
+                                        </div>
+                                        <div class="tpbank-info-user">
+                                            <div class="tpbank-account">00006479070</div>
+                                            <div class="tpbank-name">LE TRUNG HIEU</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tpbank-qr">
+                                    <img src="https://qr.sepay.vn/img?acc=00006479070&bank=TPBank&amount={{ $tongThanhTien }}&des=POLYFLIX{{ $datVe->ma_dat_ve }}"
+                                        alt="TPBank" class="tpbank-logo">
+                                </div>
+                            </div>
+
+                            {{-- <!-- MoMo -->
                             <div class="payment-option momo" data-method="momo">
                                 <input type="radio" name="phuong_thuc_tt" value="momo" id="momo">
                                 <label for="momo" class="payment-option-content">
@@ -87,35 +121,8 @@
                                         <p>Thanh toán liền tay với ví điện tử ZaloPay</p>
                                     </div>
                                 </label>
-                            </div>
+                            </div> --}}
 
-                            <!-- Banking -->
-                            <div class="payment-option banking" data-method="banking">
-                                <input type="radio" name="phuong_thuc_tt" value="banking" id="banking">
-                                <label for="banking" class="payment-option-content">
-                                    <div class="payment-icon">
-                                        <i class="fas fa-university"></i>
-                                    </div>
-                                    <div class="payment-details">
-                                        <h4>Chuyển khoản ngân hàng</h4>
-                                        <p>Chuyển khoản trực tiếp qua ngân hàng</p>
-                                    </div>
-                                </label>
-                            </div>
-
-                            <!-- COD -->
-                            <div class="payment-option cod" data-method="cod">
-                                <input type="radio" name="phuong_thuc_tt" value="cod" id="cod">
-                                <label for="cod" class="payment-option-content">
-                                    <div class="payment-icon">
-                                        <i class="fas fa-hand-holding-usd"></i>
-                                    </div>
-                                    <div class="payment-details">
-                                        <h4>Thanh toán tại quầy</h4>
-                                        <p>Thanh toán trực tiếp tại rạp trước giờ chiếu 30 phút</p>
-                                    </div>
-                                </label>
-                            </div>
                         </form>
 
                         <!-- Banking info (hidden by default) -->
@@ -156,7 +163,6 @@
                     <div class="order-summary">
                         <div class="time-order">05:00</div>
                         <h3>Thông tin đặt vé</h3>
-
                         <!-- Movie summary -->
                         <div class="movie-summary">
                             <div class="movie-info">
@@ -167,15 +173,30 @@
                                 <div class="movie-details">
                                     <h4>{{ $datVe->suatChieu->phim->ten_phim }}</h4>
                                     <div class="movie-meta">
-                                        <div><i class="fas fa-map-marker-alt"></i>
-                                            {{ $datVe->suatChieu->phongChieu->rapPhim->chiNhanh->ten_chi_nhanh }}</div>
-                                        <div><i class="fas fa-door-open"></i> {{ $datVe->suatChieu->phongChieu->ten_phong }}
+                                        <div>
+                                            <i class="fas fa-map-marker-alt"></i>
+                                            {{ $datVe->suatChieu->phongChieu->rapPhim->chiNhanh->ten_chi_nhanh }}
                                         </div>
-                                        <div><i class="fas fa-calendar"></i>
+
+                                        <div>
+                                            <i class="fas fa-clapperboard"></i>
+                                            {{ $datVe->suatChieu->phongChieu->rapPhim->ten_rap }}
+                                        </div>
+
+                                        <div><i class="fas fa-door-open"></i>
+                                            {{ $datVe->suatChieu->phongChieu->ten_phong }}
+                                        </div>
+
+                                        <div>
+                                            <i class="fas fa-calendar"></i>
                                             {{ \Carbon\Carbon::parse($datVe->suatChieu->ngay_chieu)->format('d/m/Y') }}
                                         </div>
-                                        <div><i class="fas fa-clock"></i>
-                                            {{ \Carbon\Carbon::parse($datVe->suatChieu->bat_dau)->format('H:i') }}</div>
+
+                                        <div>
+                                            <i class="fas fa-clock"></i>
+                                            {{ \Carbon\Carbon::parse($datVe->suatChieu->bat_dau)->format('H:i') }}
+                                        </div>
+
                                     </div>
                                 </div>
                             </div>
@@ -216,29 +237,38 @@
                             </div>
                         </div>
 
-                        <!-- Order info -->
+
+                        {{-- <!-- Order info -->
                         <div class="order-info">
                             <p><strong>Mã đặt vé:</strong> {{ $datVe->ma_dat_ve }}</p>
                             <p><strong>Thời gian đặt:</strong> {{ $datVe->created_at->format('d/m/Y H:i') }}</p>
-                        </div>
+                        </div> --}}
 
                         <!-- Action buttons -->
                         <div class="action-buttons">
-                            <button type="button" id="btn-pay" class="btn-payment" disabled>
+                            {{-- <button type="button" id="btn-pay" class="btn-payment" disabled>
                                 <i class="fas fa-lock"></i> Thanh toán ngay
-                            </button>
+                            </button> --}}
 
                             <!-- Hủy đặt vé - Form POST -->
                             <form method="POST" action="{{ route('client.thanh-toan.huy', $datVe->id) }}"
-                                style="display: inline;">
+                                style="display: flex;">
                                 @csrf
                                 <button type="submit" class="btn-cancel" onclick="return confirmCancel()">
-                                    <i class="fas fa-times"></i> Hủy đặt vé
+                                    <i class="fas fa-times"></i> Hủy
                                 </button>
+
                             </form>
+                            @php
+                                $maVe = $datVe->ma_dat_ve;
+                            @endphp
+                            <button class="btn-confirm" onclick="kiemTraThanhToan('{{ $maVe }}')">Kiểm tra thanh
+                                toán
+                            </button>
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
     </div>
@@ -248,7 +278,37 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
+        function kiemTraThanhToan(maDatVe) {
+            console.log("Bắt đầu kiểm tra thanh toán với mã:", maDatVe);
+
+            $.ajax({
+                url: "/check-payment-status",
+                method: "GET",
+                data: {
+                    ma_dat_ve: maDatVe
+                },
+                success: function(res) {
+                    console.log("Kết quả từ server:", res);
+
+                    if (res.success) {
+                        window.location.href = `/dat-ve/ket-qua/${maDatVe}`;
+                    } else {
+                        alert("Không tìm thấy giao dịch: " + res.message);
+                    }
+
+                },
+                error: function(xhr, status, error) {
+                    console.error("Lỗi khi gửi yêu cầu:", {
+                        status: status,
+                        error: error,
+                        responseText: xhr.responseText
+                    });
+                    alert("Đã xảy ra lỗi hệ thống khi kiểm tra thanh toán.");
+                }
+            });
+        }
         $(document).ready(function() {
+
             // Handle payment method selection
             $('.payment-option').on('click', function() {
                 $('.payment-option').removeClass('selected');
@@ -383,6 +443,7 @@
             function formatCurrency(amount) {
                 return new Intl.NumberFormat('vi-VN').format(amount);
             }
+
         });
 
         // Copy to clipboard function
@@ -536,5 +597,7 @@
                 }
             }
         });
+            return confirm('Bạn có chắc chắn muốn hủy đặt vé này không?\n\nLưu ý: Việc hủy vé không thể hoàn tác!');
+        }
     </script>
 @endsection

@@ -206,6 +206,7 @@
                         <h4>Tổng tiền: <span id="total-amount">0đ</span></h4>
                     </div>
                     <div class="time-seat">05:00</div>
+
                     <button type="button" id="btn-dat-ve" class="btn-primary" disabled>Đặt vé</button>
                 </div>
             </div>
@@ -233,7 +234,7 @@
             broadcaster: 'socket.io',
             host: window.location.hostname + ':6001',
         });
-
+        
         // Khi có người chọn ghế -> tất cả client khác sẽ nhận được sự kiện này
         window.Echo.channel('ghe-duoc-chon')
             .listen('.ghe-duoc-chon', function(e) {
@@ -276,7 +277,8 @@
                 }
             });
 
-        // Khi người dùng hủy chọn ghế
+        
+            // Khi người dùng hủy chọn ghế
         window.Echo.channel('ghe-bi-huy')
             .listen('.ghe-bi-huy', function(e) {
                 const ghe = document.querySelector(`.ghe-chieu[data-seat-id="${e.gheId}"]`);
@@ -310,7 +312,6 @@
         document.querySelectorAll('.ghe-chieu.selected-by-other').forEach(ghe => {
             ghe.disabled = true;
         });
-
         // Gắn sự kiện click vào từng ghế
         document.querySelectorAll('.ghe-chieu').forEach(ghe => {
             ghe.addEventListener('click', function() {

@@ -79,11 +79,6 @@
     gap: 10px;
 }
 
-.payment-methods h3::before {
-    content: "💳";
-    font-size: 1.2em;
-}
-
 .payment-option {
     background: white;
     border: 2px solid #e2e8f0;
@@ -206,11 +201,6 @@
     gap: 10px;
 }
 
-.order-summary h3::before {
-    content: "🎫";
-    font-size: 1.2em;
-}
-
 .movie-summary {
     background: white;
     border-radius: 16px;
@@ -250,7 +240,21 @@
 .movie-meta {
     font-size: 0.85rem;
     color: #718096;
-    line-height: 1.4;
+    line-height: 1.6;
+    padding: 12px 16px; 
+    border-radius: 8px;
+}
+
+.movie-meta > div {
+    margin-bottom: 8px; /* Tăng khoảng cách giữa các dòng */
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Khoảng cách giữa icon và text */
+}
+
+.movie-meta i {
+    color: #4a5568; /* Màu icon đồng nhất */
+    min-width: 18px;
 }
 
 .movie-meta i {
@@ -355,7 +359,7 @@
 }
 
 .btn-cancel {
-    background: white;
+    background: rgb(237, 237, 124);
     color: #718096;
     border: 2px solid #e2e8f0;
     padding: 12px 25px;
@@ -369,6 +373,25 @@
 }
 
 .btn-cancel:hover {
+    border-color: #cbd5e0;
+    color: #4a5568;
+    transform: translateY(-1px);
+}
+.btn-confirm {
+    background: rgb(124, 245, 124);
+    color: #718096;
+    border: 2px solid #e2e8f0;
+    padding: 12px 25px;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    text-align: center;
+}
+
+.btn-confirm:hover {
     border-color: #cbd5e0;
     color: #4a5568;
     transform: translateY(-1px);
@@ -544,4 +567,49 @@
         transform: scale(1);
         opacity: 1;
     }
+}
+
+.tpbank {
+    width: auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    color: black;
+    display: flex;
+    padding: 20px;
+    background: linear-gradient(to right, #e9e3f5, #fef1e8);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.tpbank .tpbank-info {
+    width: 70%;
+}
+
+.tpbank-info-user {
+    margin-top: 100px;
+    font-size: 20px;
+}
+
+.tpbank-account {
+    letter-spacing: 5px;
+}
+
+.tpbank-name {
+    letter-spacing: 4px;
+}
+
+.tpbank .tpbank-img {
+    display: flex;
+    align-items: center;
+}
+
+.tpbank .tpbank-img img {
+    width: 100px;
+}
+
+.tpbank .tpbank-qr {
+    width: 30%;
+}
+
+.tpbank .tpbank-qr img {
+    width: 200px;
 }
