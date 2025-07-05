@@ -4,13 +4,10 @@ namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
 use App\Models\DatVe;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Http;
-
 
 class ThanhToanController extends Controller
 {
@@ -364,129 +361,6 @@ class ThanhToanController extends Controller
 
             return redirect()->route('home')
                 ->with('error', 'Có lỗi xảy ra khi hủy đặt vé!');
-        }
-    }
-
-    public function kiemTraTrangThai(Request $request)
-    {
-        try {
-            if (!$request->filled('ma_dat_ve')) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Thiếu mã đặt vé.'
-                ], 400);
-            }
-
-            $maDatVe = strtoupper($request->ma_dat_ve);
-            $noiDungCanTim = 'POLYFLIX' . $maDatVe;
-
-            $now = Carbon::now('Asia/Ho_Chi_Minh');
-            $tenPhutTruoc = $now->copy()->subMinutes(10);
-
-            $url = 'https://my.sepay.vn/userapi/transactions/list';
-            $token = '464COBT8L1ZNKM2A079JMPPG7KBE5YSSIWHAJUKMXVRE2WJD3GAQVCUPUEXCHBDW';
-
-            $response = Http::withHeaders([
-                'Authorization' => 'Bearer ' . $token,
-                'Content-Type'  => 'application/json',
-            ])->get($url);
-
-            if ($response->unauthorized()) {
-                Log::warning("Unauthorized API call with token: $token");
-                return response()->json([
-                    'success' => false,
-                    'message' => 'API từ chối quyền truy cập. Token sai hoặc không hợp lệ.'
-                ], 401);
-            }
-
-            if (!$response->successful()) {
-                Log::error('Lỗi khi gọi API SePay: ' . $response->body());
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Không thể kết nối đến hệ thống thanh toán.'
-                ], 500);
-            }
-
-            $data = $response->json();
-
-            if (
-                !isset($data['status']) || $data['status'] != 200 ||
-                !isset($data['transactions']) || !is_array($data['transactions'])
-            ) {
-                Log::error('Phản hồi không hợp lệ từ SePay: ' . json_encode($data));
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Dữ liệu trả về từ API không hợp lệ.'
-                ], 500);
-            }
-
-            foreach ($data['transactions'] as $giaoDich) {
-                if (!isset($giaoDich['transaction_date'], $giaoDich['transaction_content'])) {
-                    continue;
-                }
-
-                try {
-                    $thoiGianGiaoDich = Carbon::createFromFormat('Y-m-d H:i:s', $giaoDich['transaction_date']);
-                } catch (\Exception $e) {
-                    Log::warning("Thời gian giao dịch không đúng định dạng: " . $giaoDich['transaction_date']);
-                    continue;
-                }
-
-                if ($thoiGianGiaoDich->between($tenPhutTruoc, $now)) {
-                    $noiDungGiaoDich = strtoupper($giaoDich['transaction_content']);
-
-                    if (strpos($noiDungGiaoDich, $noiDungCanTim) !== false) {
-                        $datVe = DatVe::where('ma_dat_ve', $maDatVe)->first();
-
-                        if ($datVe) {
-                            $soTienThanhToan = floatval($giaoDich['amount_in']);
-                            $tongTienPhaiTra = floatval($datVe->tong_tien);
-
-                            if ($soTienThanhToan < $tongTienPhaiTra) {
-                                // Số tiền không đủ
-                                $datVe->trang_thai = 'Giao dịch thất bại';
-                                $datVe->ghi_chu = 'Số tiền thanh toán không đủ';
-                                $datVe->save();
-
-                                return response()->json([
-                                    'success' => false,
-                                    'message' => 'Giao dịch thất bại: số tiền thanh toán không đủ.'
-                                ]);
-                            }
-
-                            // Giao dịch hợp lệ
-                            $datVe->noi_dung_chuyen_khoan = $giaoDich['transaction_content'];
-                            $datVe->ma_giao_dich = $giaoDich['reference_number'];
-                            $datVe->ngay_thanh_toan = $giaoDich['transaction_date'];
-                            $datVe->phuong_thuc_tt  = 'Online Banking';
-                            $datVe->trang_thai = 'Đã thanh toán';
-                            $datVe->save();
-                        } else {
-                            Log::warning("Không tìm thấy bản ghi đặt vé với mã: $maDatVe");
-                        }
-
-                        return response()->json([
-                            'success' => true,
-                            'message' => 'Đã thanh toán thành công.',
-                            'giao_dich' => $giaoDich
-                        ]);
-                    }
-                }
-            }
-
-            return response()->json([
-                'success' => false,
-                'message' => 'Không tìm thấy giao dịch phù hợp trong 10 phút gần nhất.'
-            ], 404);
-        } catch (\Throwable $e) {
-            Log::error('Lỗi hệ thống khi kiểm tra thanh toán: ' . $e->getMessage(), [
-                'trace' => $e->getTraceAsString()
-            ]);
-
-            return response()->json([
-                'success' => false,
-                'message' => 'Lỗi hệ thống: ' . $e->getMessage()
-            ], 500);
         }
     }
 }
