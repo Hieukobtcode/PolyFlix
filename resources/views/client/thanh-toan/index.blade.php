@@ -1,6 +1,28 @@
 @extends('layouts.client')
 
 @section('styles')
+    <style>
+        .time-order {
+            font-size: 28px;
+            font-weight: 700;
+            color: #e74c3c;
+            text-align: center;
+            margin: 15px auto;
+            padding: 12px;
+            background-color: #fff3f3;
+            border-radius: 8px;
+            border: 2px solid #ffcdd2;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            max-width: 200px;
+        }
+
+        .time-order.warning {
+            animation: blink 1s infinite;
+            background-color: #ffe6e6;
+            border-color: #ff8a80;
+        }
+    </style>
     @vite('resources/css/thanh-toan.css')
 @endsection
 
@@ -13,16 +35,16 @@
                 <!-- Header -->
                 <div class="payment-header">
                     <h1>Thanh toán</h1>
-                    {{-- <p>Vui lòng chọn phương thức thanh toán để hoàn tất đặt vé</p> --}}
+
                 </div>
                 <input type="hidden" id="ma_dat_ve" value="{{ $datVe->ma_dat_ve }}">
                 <div class="payment-content">
                     <div class="payment-methods">
                         <h3>Quét mã để thanh toán</h3>
-
                         <form id="payment-form">
                             @csrf
                             <input type="hidden" name="dat_ve_id" value="{{ $datVe->id }}">
+
 
                             {{-- Ngân hàng
                             <div class="payment-option momo" data-method="momo">
@@ -36,6 +58,7 @@
                                         <p>Thanh toán nhanh chóng và bảo mật với ví điện tử MoMo</p>
                                     </div>
                                 </label>
+
                             </div> --}}
 
                             <!-- TPBank -->
@@ -138,6 +161,7 @@
 
                     <!-- Right side - Order summary -->
                     <div class="order-summary">
+                        <div class="time-order">05:00</div>
                         <h3>Thông tin đặt vé</h3>
                         <!-- Movie summary -->
                         <div class="movie-summary">
@@ -149,7 +173,6 @@
                                 <div class="movie-details">
                                     <h4>{{ $datVe->suatChieu->phim->ten_phim }}</h4>
                                     <div class="movie-meta">
-
                                         <div>
                                             <i class="fas fa-map-marker-alt"></i>
                                             {{ $datVe->suatChieu->phongChieu->rapPhim->chiNhanh->ten_chi_nhanh }}
@@ -213,6 +236,7 @@
                                 <span class="price-value">{{ number_format($tongThanhTien) }}đ</span>
                             </div>
                         </div>
+
 
                         {{-- <!-- Order info -->
                         <div class="order-info">
@@ -437,6 +461,142 @@
 
         // Confirm cancel booking
         function confirmCancel() {
+            const confirmed = confirm(
+                'Bạn có chắc chắn muốn hủy đặt vé này không?\n\nLưu ý: Việc hủy vé không thể hoàn tác!');
+            if (confirmed) {
+                // Reset timer khi người dùng xác nhận hủy
+                localStorage.removeItem('order_start_time');
+                const timerDisplay = document.querySelector('.time-order');
+                if (timerDisplay) {
+                    timerDisplay.textContent = '05:00';
+                    timerDisplay.classList.remove('warning');
+                }
+                const btnPay = document.getElementById('btn-pay');
+                if (btnPay) {
+                    btnPay.disabled = false;
+                }
+            }
+            return confirmed;
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const ORDER_KEY = 'order_start_time';
+            const timerDisplay = document.querySelector('.time-order');
+            const btnPay = document.getElementById('btn-pay');
+            const timeLimit = 5 * 60; // 5 phút = 300 giây
+            let timer;
+
+            // Hàm reset timer
+            function resetTimer() {
+                clearInterval(timer);
+                localStorage.removeItem(ORDER_KEY);
+                if (timerDisplay) {
+                    timerDisplay.textContent = '05:00';
+                    timerDisplay.classList.remove('warning');
+                }
+                if (btnPay) {
+                    btnPay.disabled = false;
+                }
+            }
+
+            // Kiểm tra và thiết lập thời gian bắt đầu từ localStorage
+            function getStartTime() {
+                let startTime = localStorage.getItem(ORDER_KEY);
+                if (!startTime) {
+                    startTime = new Date().getTime();
+                    localStorage.setItem(ORDER_KEY, startTime);
+                }
+                return parseInt(startTime);
+            }
+
+            // Lấy thời điểm bắt đầu
+            const startTime = getStartTime();
+
+            // Hàm format thời gian
+            function formatTime(seconds) {
+                const minutes = Math.floor(seconds / 60);
+                const remainingSeconds = seconds % 60;
+                return `${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}`;
+            }
+
+            // Hàm cập nhật style của timer
+            function updateTimerStyle(seconds) {
+                if (seconds <= 60) {
+                    timerDisplay.classList.add('warning');
+                } else {
+                    timerDisplay.classList.remove('warning');
+                }
+            }
+
+            // Hàm tự động hủy đặt vé
+            function autoCancel() {
+                const cancelForm = document.querySelector('form');
+                if (cancelForm) {
+                    const autoCancel = document.createElement('input');
+                    autoCancel.type = 'hidden';
+                    autoCancel.name = 'auto_cancel';
+                    autoCancel.value = '1';
+                    cancelForm.appendChild(autoCancel);
+                    resetTimer();
+                    cancelForm.submit();
+                }
+            }
+
+            // Hàm đếm ngược
+            function countdown() {
+                const currentTime = new Date().getTime();
+                const elapsedSeconds = Math.floor((currentTime - startTime) / 1000);
+                const timeLeft = timeLimit - elapsedSeconds;
+
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    timerDisplay.textContent = '00:00';
+                    if (btnPay) btnPay.disabled = true;
+                    autoCancel();
+                    return;
+                }
+
+                timerDisplay.textContent = formatTime(timeLeft);
+                updateTimerStyle(timeLeft);
+                if (btnPay) btnPay.disabled = false;
+            }
+
+            // Kiểm tra ngay khi load trang xem đã hết thời gian chưa
+            const currentTime = new Date().getTime();
+            const elapsedSeconds = Math.floor((currentTime - startTime) / 1000);
+
+            if (elapsedSeconds >= timeLimit) {
+                timerDisplay.textContent = '00:00';
+                if (btnPay) btnPay.disabled = true;
+                autoCancel();
+            } else {
+                // Khởi tạo timer và cập nhật mỗi giây
+                countdown();
+                timer = setInterval(countdown, 1000);
+
+                // Xử lý khi user rời trang
+                window.addEventListener('beforeunload', function() {
+                    clearInterval(timer);
+                });
+
+                // Xử lý khi tab không active
+                document.addEventListener('visibilitychange', function() {
+                    if (document.hidden) {
+                        clearInterval(timer);
+                    } else {
+                        countdown();
+                        timer = setInterval(countdown, 1000);
+                    }
+                });
+
+                // Xử lý nút thanh toán
+                if (btnPay) {
+                    btnPay.addEventListener('click', function() {
+                        resetTimer();
+                    });
+                }
+            }
+        });
             return confirm('Bạn có chắc chắn muốn hủy đặt vé này không?\n\nLưu ý: Việc hủy vé không thể hoàn tác!');
         }
     </script>

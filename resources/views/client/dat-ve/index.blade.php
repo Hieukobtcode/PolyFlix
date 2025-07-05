@@ -5,7 +5,12 @@
         {!! collect($loaiGhes)->map(function ($loai) {
                 $class = \Illuminate\Support\Str::slug($loai->ten_loai_ghe);
                 return ".ghe-chieu.{$class} { background-color: {$loai->chu_thich_mau_ghe}; }";
-            })->implode("\n") !!}
+            })->implode("\n") !!} .time-seat {
+            font-size: 20px;
+            font-weight: bold;
+            color: #dc3545;
+            margin: 10px 0;
+        }
     </style>
 
     @vite('resources/css/trang-chu.css')
@@ -200,6 +205,7 @@
                     <div class="total-price">
                         <h4>Tổng tiền: <span id="total-amount">0đ</span></h4>
                     </div>
+                    <div class="time-seat">05:00</div>
 
                     <button type="button" id="btn-dat-ve" class="btn-primary" disabled>Đặt vé</button>
                 </div>
@@ -382,5 +388,133 @@
                     });
             });
         });
+
+        let countdownTimer;
+
+        function startTimer(duration, display) {
+            if (countdownTimer) {
+                clearInterval(countdownTimer);
+            }
+
+            let timer = duration;
+            let startTime = Date.now();
+            let endTime = startTime + (timer * 1000);
+
+            // Lưu thời gian kết thúc vào localStorage
+            localStorage.setItem('timerEndTime', endTime);
+
+            function updateTimer() {
+                let currentTime = Date.now();
+                let remainingTime = Math.ceil((endTime - currentTime) / 1000);
+
+                if (remainingTime <= 0) {
+                    clearInterval(countdownTimer);
+                    handleTimeout();
+                    return;
+                }
+
+                let minutes = parseInt(remainingTime / 60, 10);
+                let seconds = parseInt(remainingTime % 60, 10);
+
+                minutes = minutes < 10 ? "0" + minutes : minutes;
+                seconds = seconds < 10 ? "0" + seconds : seconds;
+
+                display.textContent = minutes + ":" + seconds;
+            }
+
+            updateTimer();
+            countdownTimer = setInterval(updateTimer, 1000);
+        }
+
+        function handleTimeout() {
+            // Clear localStorage
+            localStorage.removeItem('timerEndTime');
+
+            // Bỏ chọn hết ghế
+            const selectedSeatsList = document.getElementById('selected-seats-list');
+            if (selectedSeatsList) {
+                selectedSeatsList.textContent = "Chưa chọn ghế";
+            }
+
+            // Disable nút đặt vé
+            const btnDatVe = document.getElementById('btn-dat-ve');
+            if (btnDatVe) {
+                btnDatVe.disabled = true;
+            }
+
+            // Hiển thị thông báo
+            alert('Đã hết thời gian giữ ghế!');
+
+            // Chuyển về trang home
+            window.location.href = '/';
+        }
+
+        function clearTimer() {
+            if (countdownTimer) {
+                clearInterval(countdownTimer);
+            }
+            localStorage.removeItem('timerEndTime');
+
+            const timeDisplay = document.querySelector('.time-seat');
+            if (timeDisplay) {
+                timeDisplay.textContent = "05:00";
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const selectedSeatsList = document.getElementById('selected-seats-list');
+            const timeDisplay = document.querySelector('.time-seat');
+            const btnDatVe = document.getElementById('btn-dat-ve');
+
+            // Thêm event listener cho nút đặt vé
+            if (btnDatVe) {
+                btnDatVe.addEventListener('click', function() {
+                    clearTimer(); // Xóa timer khi bấm nút đặt vé
+                });
+            }
+
+            // Kiểm tra xem có timer đang chạy từ trước không
+            const savedEndTime = localStorage.getItem('timerEndTime');
+            if (savedEndTime) {
+                const currentTime = Date.now();
+                const remainingTime = Math.ceil((savedEndTime - currentTime) / 1000);
+
+                if (remainingTime > 0) {
+                    startTimer(remainingTime, timeDisplay);
+                } else {
+                    handleTimeout();
+                }
+            }
+
+            // Observer để theo dõi thay đổi trong selected-seats-list
+            const selectedSeatsObserver = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    if (selectedSeatsList && timeDisplay &&
+                        selectedSeatsList.textContent !== "Chưa chọn ghế" &&
+                        !localStorage.getItem('timerEndTime')) {
+                        startTimer(5 * 60, timeDisplay);
+                    }
+                });
+            });
+
+            if (selectedSeatsList) {
+                selectedSeatsObserver.observe(selectedSeatsList, {
+                    childList: true,
+                    characterData: true,
+                    subtree: true
+                });
+            }
+        });
+
+        // Xử lý khi rời trang
+        window.addEventListener('beforeunload', function() {
+            const timeDisplay = document.querySelector('.time-seat');
+            if (timeDisplay &&
+                timeDisplay.textContent !== "05:00" &&
+                timeDisplay.textContent !== "Hết giờ!") {
+                // Timer đang chạy, đã được lưu trong localStorage
+            }
+        });
     </script>
+
 @endsection
