@@ -56,6 +56,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/thanh-toan/{datVeId}', [ThanhToanController::class, 'index'])->name('client.thanh-toan.index');
     Route::post('/thanh-toan/xu-ly', [ThanhToanController::class, 'xuLyThanhToan'])->name('client.thanh-toan.xu-ly');
     Route::post('/thanh-toan/huy/{datVeId}', [ThanhToanController::class, 'huyThanhToan'])->name('client.thanh-toan.huy');
+    Route::get('/check-payment-status', [ThanhToanController::class, 'kiemTraTrangThai']);
 });
 
 // Payment callback - MUST be outside auth middleware for external services
