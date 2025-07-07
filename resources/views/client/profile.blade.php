@@ -332,7 +332,8 @@
         <div class="right-panel">
             <div class="tab-nav">
                 <a href="#" class="tab-link active" data-tab="profile-tab">Thông Tin Cá Nhân</a>
-                <a href="#" class="tab-link" data-tab="history-tab">Lịch Sử Giao Dịch</a>
+                <a href="#" class="tab-link" data-tab="history-tab">Lịch Sử Đặt Vé</a>
+                <a href="#" class="tab-link" data-tab="history-point-tab">Lịch Sử Điểm</a>
             </div>
 
             {{-- Tab Thông Tin Cá Nhân --}}
@@ -435,6 +436,51 @@
                         </tr>
                     </tbody>
                 </table>
+            </div>
+
+            {{-- Tab Lịch Sử Điểm --}}
+            <div id="history-point-tab" class="tab-content" style="display: none;">
+                <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+                    <thead>
+                        <tr style="background: #009688; color: #fff;">
+                            <th style="padding: 10px; text-align: left;">#</th>
+                            <th style="padding: 10px; text-align: left;">Thay đổi</th>
+                            <th style="padding: 10px; text-align: left;">Lý do</th>
+                            <th style="padding: 10px; text-align: left;">Thời gian</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($lichSuDiem as $index => $item)
+                            <tr style="background: #f1f8f7; color: #004d40;">
+                                <td style="padding: 10px;">
+                                    {{ ($lichSuDiem->currentPage() - 1) * $lichSuDiem->perPage() + $loop->iteration }}
+                                </td>
+                                <td style="padding: 10px;">
+                                    @if ($item->thay_doi >= 0)
+                                        <span style="color: green;">+{{ $item->thay_doi }}</span>
+                                    @else
+                                        <span style="color: red;">{{ $item->thay_doi }}</span>
+                                    @endif
+                                </td>
+                                <td style="padding: 10px;">{{ $item->ly_do ?? 'Không rõ' }}</td>
+                                <td style="padding: 10px;">{{ $item->thoi_gian }}</td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="4" style="padding: 10px; text-align: center; color: gray;">
+                                    Bạn chưa có lịch sử điểm nào.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+
+                {{-- Phân trang --}}
+                @if ($lichSuDiem->hasPages())
+                    <div style="margin-top: 20px;">
+                        {{ $lichSuDiem->withQueryString()->links() }}
+                    </div>
+                @endif
             </div>
         </div>
     </div>

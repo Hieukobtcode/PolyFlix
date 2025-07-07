@@ -181,10 +181,84 @@
                             </div>
                         </div>
 
-                        <div class="card">
-                            <div class="card-body p-4">
-                                Hiển thị các đơn hàng 
+                        <!-- Tabs navigation -->
+                        <ul class="nav nav-tabs" id="myTab" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="orders-tab" data-bs-toggle="tab"
+                                    data-bs-target="#orders" type="button" role="tab" aria-controls="orders"
+                                    aria-selected="true">
+                                    Lịch sử các đơn hàng
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="points-tab" data-bs-toggle="tab" data-bs-target="#points"
+                                    type="button" role="tab" aria-controls="points" aria-selected="false">
+                                    Lịch sử điểm
+                                </button>
+                            </li>
+                        </ul>
+
+                        <!-- Tabs content -->
+                        <div class="tab-content mt-3" id="myTabContent">
+                            <div class="tab-pane fade show active" id="orders" role="tabpanel"
+                                aria-labelledby="orders-tab">
+                                <div class="card">
+                                    <div class="card-body p-4">
+                                        Lịch sử các đơn hàng
+                                    </div>
+                                </div>
                             </div>
+                            <div class="tab-pane fade" id="points" role="tabpanel" aria-labelledby="points-tab">
+                                <div class="card">
+                                    <div class="card-body p-4">
+                                        <h5 class="mb-3">Lịch sử điểm</h5>
+
+                                        @if ($lichSuDiem->isEmpty())
+                                            <p class="text-muted">Người dùng chưa có lịch sử điểm.</p>
+                                        @else
+                                            <div class="table-responsive">
+                                                <table class="table table-bordered">
+                                                    <thead class="thead-light">
+                                                        <tr>
+                                                            <th>ID</th>
+                                                            <th>Thay đổi</th>
+                                                            <th>Lý do</th>
+                                                            <th>Thời gian</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @foreach ($lichSuDiem as $item)
+                                                            <tr>
+                                                                <td>
+                                                                    {{ ($lichSuDiem->currentPage() - 1) * $lichSuDiem->perPage() + $loop->iteration }}
+                                                                </td>
+                                                                <td>
+                                                                    @if ($item->thay_doi >= 0)
+                                                                        <span
+                                                                            class="text-success">+{{ $item->thay_doi }}</span>
+                                                                    @else
+                                                                        <span
+                                                                            class="text-danger">{{ $item->thay_doi }}</span>
+                                                                    @endif
+                                                                </td>
+                                                                <td>{{ $item->ly_do ?? 'Không rõ' }}</td>
+                                                                <td>{{ $item->thoi_gian }}</td>
+                                                            </tr>
+                                                        @endforeach
+                                                    </tbody>
+                                                </table>
+                                            </div>
+
+                                            <!-- PHÂN TRANG -->
+                                            <div class="mt-3">
+                                                {{ $lichSuDiem->withQueryString()->links() }}
+                                            </div>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                            {{-- end lịch sử điểm --}}
+
                         </div>
 
                     </div>
