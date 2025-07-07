@@ -262,8 +262,8 @@
                             @php
                                 $maVe = $datVe->ma_dat_ve;
                             @endphp
-                            <button class="btn-confirm" onclick="kiemTraThanhToan('{{ $maVe }}')">Kiểm tra thanh
-                                toán
+                            <button class="btn-confirm" onclick="kiemTraThanhToan('{{ $maVe }}')">
+                                Kiểm tra thanh toán
                             </button>
                         </div>
                     </div>
@@ -279,7 +279,6 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         function kiemTraThanhToan(maDatVe) {
-            console.log("Bắt đầu kiểm tra thanh toán với mã:", maDatVe);
 
             $.ajax({
                 url: "/check-payment-status",
@@ -308,6 +307,7 @@
             });
         }
         $(document).ready(function() {
+
 
             // Handle payment method selection
             $('.payment-option').on('click', function() {
@@ -597,7 +597,6 @@
                 }
             }
         });
-            return confirm('Bạn có chắc chắn muốn hủy đặt vé này không?\n\nLưu ý: Việc hủy vé không thể hoàn tác!');
-        }
+        
     </script>
 @endsection
