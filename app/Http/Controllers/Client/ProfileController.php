@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
 use App\Models\CapBacThe;
+use App\Models\LichSuDiem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -16,11 +17,19 @@ class ProfileController extends Controller
             return redirect()->route('home');
         }
 
+        // Lấy người dùng hiện tại
+        $user = Auth::user();
+
         // Lấy mốc cấp bậc từ bảng cap_bac_thes
         $milestones = CapBacThe::orderBy('tong_chi_tieu', 'asc')
             ->pluck('tong_chi_tieu');
 
-        return view("client.profile", compact('milestones'));
+        // Lấy lịch sử điểm của user đang đăng nhập, mới nhất trước, phân trang
+        $lichSuDiem = LichSuDiem::where('users_id', $user->id)
+            ->orderBy('thoi_gian', 'desc')
+            ->paginate(5);
+
+        return view("client.profile", compact('milestones', 'lichSuDiem', 'user'));
     }
 
     public function updatePassword(Request $request)

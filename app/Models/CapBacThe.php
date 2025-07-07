@@ -16,7 +16,6 @@ class CapBacThe extends Model
         'mo_ta',
         'tong_chi_tieu',
         'phan_tram_ve',
-        'phan_tram_dich_vu',
         'is_default',
     ];
 
