@@ -40,6 +40,7 @@ use App\Http\Controllers\Admin\RequestController;
 use App\Http\Controllers\Client\LoginController;
 use App\Http\Controllers\Client\ProfileController;
 use App\Http\Controllers\Client\KhuyenMaiController;
+use App\Http\Controllers\Admin\KhuyenMaiController as AdminKhuyenMaiController;
 use App\Http\Controllers\Client\PhimsController;
 use App\Http\Controllers\Client\LienHeController as ClientLienHeController;
 use App\Http\Controllers\Client\TheLoaiController;
@@ -217,11 +218,11 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access', 'per
 
     // Quản lý khuyến mãi
     Route::prefix('khuyen-mai')->name('khuyen-mai.')->group(function () {
-        Route::get('thong-ke-su-dung', [KhuyenMaiController::class, 'thongKeSuDung'])->name('thong-ke-su-dung');
-        Route::post('{khuyenMai}/assign-chi-nhanh', [KhuyenMaiController::class, 'assignToChiNhanh'])->name('assign-chi-nhanh');
+        Route::get('thong-ke-su-dung', [AdminKhuyenMaiController::class, 'thongKeSuDung'])->name('thong-ke-su-dung');
+        Route::post('{khuyenMai}/assign-chi-nhanh', [AdminKhuyenMaiController::class, 'assignToChiNhanh'])->name('assign-chi-nhanh');
     });
 
-    Route::resource('khuyen-mai', KhuyenMaiController::class);
+    Route::resource('khuyen-mai', AdminKhuyenMaiController::class);
 
     // Quản lý rạp phim
     Route::resource('rap-phim', RapphimController::class);
@@ -285,11 +286,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access', 'per
     Route::resource('cap-bac-the', CapBacTheController::class);
     Route::put('cap-bac-the/{capBacThe}/set-default', [CapBacTheController::class, 'setDefault'])->name('cap-bac-the.set-default');
 
-    Route::prefix('khuyen-mai')->name('khuyen-mai.')->group(function () {
-        Route::post('{khuyenMai}/assign-chi-nhanh', [KhuyenMaiController::class, 'assignToChiNhanh'])->name('assign-chi-nhanh');
-        Route::get('thong-ke-su-dung', [KhuyenMaiController::class, 'thongKeSuDung'])->name('thong-ke-su-dung');
-    });
-    Route::resource('khuyen-mai', KhuyenMaiController::class);
+
 
 
     Route::post('suat-chieu/bulk-delete', [SuatChieuController::class, 'bulkDelete'])->name('suat-chieu.bulk-delete');

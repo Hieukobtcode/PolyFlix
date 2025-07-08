@@ -2,12 +2,14 @@
 
 @section('styles')
 <style>
-    {
-        ! ! collect($loaiGhes)->map(function ($loai) {
-                $class=\Illuminate\Support\Str::slug($loai->ten_loai_ghe);
-                return ".ghe-chieu.{$class} { background-color: {$loai->chu_thich_mau_ghe}; }";
-            })->implode("\n") ! !
-    }
+{
+     ! ! collect($loaiGhes)->map(function ($loai) {
+            $class=\Illuminate\Support\Str::slug($loai->ten_loai_ghe);
+            return ".ghe-chieu.{$class} { background-color: {$loai->chu_thich_mau_ghe}; }";
+        }
+
+    )->implode("\n") ! !
+}
 </style>
 
 @vite('resources/css/trang-chu.css')
@@ -213,37 +215,37 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/laravel-echo/1.11.3/echo.iife.js"></script>
 
 <script>
-    window.Echo = new Echo({
-        broadcaster: 'socket.io',
-        host: window.location.hostname + ':6001',
+window.Echo = new Echo({
+    broadcaster: 'socket.io',
+    host: window.location.hostname + ':6001',
+});
+
+window.Echo.channel('ghe-duoc-chon')
+    .listen('.ghe-duoc-chon', function(e) {
+        // console.log("Nhận được event realtime:", e);
+
+        const ghe = document.querySelector(`.ghe-chieu[data-seat-id="${e.gheId}"]`);
+        const currentUserId = parseInt(document.querySelector('meta[name="user-id"]').content);
+        if (ghe && e.userId !== currentUserId) {
+            ghe.classList.add("selected-by-other");
+            ghe.disabled = true;
+        }
     });
+window.Echo.channel('ghe-bi-huy')
+    .listen('.ghe-bi-huy', function(e) {
+        // console.log("Ghế bị huỷ realtime:", e);
 
-    window.Echo.channel('ghe-duoc-chon')
-        .listen('.ghe-duoc-chon', function(e) {
-            // console.log("Nhận được event realtime:", e);
+        const ghe = document.querySelector(`.ghe-chieu[data-seat-id="${e.gheId}"]`);
+        const currentUserId = parseInt(document.querySelector('meta[name="user-id"]').content);
 
-            const ghe = document.querySelector(`.ghe-chieu[data-seat-id="${e.gheId}"]`);
-            const currentUserId = parseInt(document.querySelector('meta[name="user-id"]').content);
-            if (ghe && e.userId !== currentUserId) {
-                ghe.classList.add("selected-by-other");
-                ghe.disabled = true;
-            }
-        });
-    window.Echo.channel('ghe-bi-huy')
-        .listen('.ghe-bi-huy', function(e) {
-            // console.log("Ghế bị huỷ realtime:", e);
-
-            const ghe = document.querySelector(`.ghe-chieu[data-seat-id="${e.gheId}"]`);
-            const currentUserId = parseInt(document.querySelector('meta[name="user-id"]').content);
-
-            if (ghe && e.userId !== currentUserId) {
-                ghe.classList.remove("selected-by-other");
-                ghe.disabled = false;
-            }
-        });
-    document.querySelectorAll('.ghe-chieu.selected-by-other').forEach((ghe) => {
-        ghe.disabled = true;
+        if (ghe && e.userId !== currentUserId) {
+            ghe.classList.remove("selected-by-other");
+            ghe.disabled = false;
+        }
     });
+document.querySelectorAll('.ghe-chieu.selected-by-other').forEach((ghe) => {
+    ghe.disabled = true;
+});
 </script>
 
 @endsection
