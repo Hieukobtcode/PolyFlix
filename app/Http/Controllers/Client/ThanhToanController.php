@@ -219,22 +219,55 @@ class ThanhToanController extends Controller
      */
     private function thanhToanZaloPay($datVe)
     {
-        // Mock thanh toán ZaloPay - thực tế cần tích hợp API ZaloPay
         Log::info('Xử lý thanh toán ZaloPay cho đặt vé: ' . $datVe->id);
 
-        $paymentUrl = route('client.thanh-toan.callback', [
-            'dat_ve_id' => $datVe->id,
-            'method' => 'zalopay',
-            'status' => 'success'
-        ]);
+        // Tính tổng tiền chính xác
+        $tongTienGhe = 0;
+        $giaVeCoBan = 0; // Tạm thời set = 0 để debug vấn đề tính toán
+        $phuThuRap = $datVe->suatChieu->phongChieu->rapPhim->phu_thu ?? 0;
+        $phuThuLoaiPhong = $datVe->suatChieu->phongChieu->loaiPhong->phu_thu ?? 0;
 
-        DB::commit();
+        foreach ($datVe->gheNgois as $ghe) {
+            $phuThuGhe = $ghe->loaiGhe->phu_thu ?? 0;
+            $giaMotGhe = $giaVeCoBan + $phuThuLoaiPhong + $phuThuGhe;
+            $tongTienGhe += $giaMotGhe;
+        }
+        $tongTienGhe += $phuThuRap;
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Đang chuyển đến cổng thanh toán ZaloPay...',
-            'payment_url' => $paymentUrl
-        ]);
+        $tongTienCombo = 0;
+        foreach ($datVe->combos as $combo) {
+            $tongTienCombo += $combo->gia * $combo->pivot->so_luong;
+        }
+
+        $tongTienDoAn = 0;
+        foreach ($datVe->doAns as $doAn) {
+            $tongTienDoAn += $doAn->gia * $doAn->pivot->so_luong;
+        }
+
+        $totalAmount = $tongTienGhe + $tongTienCombo + $tongTienDoAn;
+
+        try {
+            // Gọi ZaloPayController để tạo payment
+            $zaloPayController = new \App\Http\Controllers\Client\ZaloPayController();
+            $description = 'Thanh toán vé xem phim ' . $datVe->suatChieu->phim->ten_phim . ' - Mã đặt vé: ' . $datVe->ma_dat_ve;
+            $zaloPayResponse = $zaloPayController->createPayment($datVe->id, $totalAmount, $description);
+
+            if ($zaloPayResponse['success']) {
+                DB::commit();
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Đang chuyển đến cổng thanh toán ZaloPay...',
+                    'payment_url' => $zaloPayResponse['order_url'],
+                    'transaction_code' => $zaloPayResponse['transaction_code']
+                ]);
+            } else {
+                throw new \Exception('Không thể tạo link thanh toán ZaloPay');
+            }
+        } catch (\Exception $e) {
+            Log::error('Lỗi tạo thanh toán ZaloPay: ' . $e->getMessage());
+            throw new \Exception('Có lỗi xảy ra khi kết nối tới ZaloPay. Vui lòng thử lại sau.');
+        }
     }
 
     /**

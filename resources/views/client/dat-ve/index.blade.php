@@ -1,17 +1,16 @@
 @extends('layouts.client')
 
 @section('styles')
-    <style>
-        {!! collect($loaiGhes)->map(function ($loai) {
-                $class = \Illuminate\Support\Str::slug($loai->ten_loai_ghe);
-                return ".ghe-chieu.{$class} { background-color: {$loai->chu_thich_mau_ghe}; }";
-            })->implode("\n") !!} .time-seat {
-            font-size: 20px;
-            font-weight: bold;
-            color: #dc3545;
-            margin: 10px 0;
+<style>
+{
+     ! ! collect($loaiGhes)->map(function ($loai) {
+            $class=\Illuminate\Support\Str::slug($loai->ten_loai_ghe);
+            return ".ghe-chieu.{$class} { background-color: {$loai->chu_thich_mau_ghe}; }";
         }
-    </style>
+
+    )->implode("\n") ! !
+}
+</style>
 
     @vite('resources/css/trang-chu.css')
     @vite('resources/css/dat-ve.css')
