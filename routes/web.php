@@ -70,6 +70,10 @@ Route::middleware('auth')->group(function () {
 // Payment callback - MUST be outside auth middleware for external services
 Route::get('/thanh-toan/callback', [ThanhToanController::class, 'callback'])->name('client.thanh-toan.callback');
 
+// ZaloPay callback routes
+Route::post('/api/payments/zalopay/callback', [\App\Http\Controllers\Client\ZaloPayController::class, 'handleCallback'])->name('zalopay.callback');
+Route::get('/thanh-toan/ket-qua', [\App\Http\Controllers\Client\ZaloPayController::class, 'handleReturn'])->name('zalopay.return');
+
 // MoMo callback routes (both GET and POST)
 Route::get('/thanh-toan/momo/callback', [\App\Http\Controllers\Client\MomoController::class, 'callback'])->name('client.thanh-toan.momo.callback');
 Route::post('/thanh-toan/momo/callback', [\App\Http\Controllers\Client\MomoController::class, 'callback']);
