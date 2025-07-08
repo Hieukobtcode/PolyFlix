@@ -18,6 +18,7 @@ use App\Models\BaiViet;
 
 class PhimsController extends Controller
 {
+
     public function phimDangChieu()
     {
         $phims = Phim::with(['comments.user'])
@@ -57,13 +58,15 @@ class PhimsController extends Controller
         return view('client.phim.phim-list', compact('phims', 'ratings', 'banners', 'tab', 'baiViet'));
     }
 
-    public function show($id)
+    public function show($ten_phim)
     {
-        $phim = Phim::with(['theLoais', 'dinhDangs', 'phuDes', 'chiNhanhs', 'rapPhims', 'ratings'])->findOrFail($id);
+        $phim = Phim::with(['theLoais', 'dinhDangs', 'phuDes', 'chiNhanhs', 'rapPhims', 'ratings'])
+            ->where('ten_phim', urldecode($ten_phim))
+            ->firstOrFail();
 
         $raps = RapPhim::all();
 
-        $dinhDangPhims = SuatChieu::where('phim_id', $id)
+        $dinhDangPhims = SuatChieu::where('phim_id', $phim->id)
             ->select('phien_ban_phim')
             ->distinct()
             ->pluck('phien_ban_phim')
@@ -73,12 +76,12 @@ class PhimsController extends Controller
         $chiNhanhs = $phim->chiNhanhs;
 
         $ngay_chieu = request('ngay_chieu');
-
-        $ngayChieus = SuatChieu::where('phim_id', $id)
-            ->select('ngay_chieu')->distinct()->pluck('ngay_chieu');
+        $ngayChieus = SuatChieu::where('phim_id', $phim->id)
+            ->select('ngay_chieu')
+            ->distinct()
+            ->pluck('ngay_chieu');
 
         $days = [];
-
         $today = Carbon::today();
         for ($i = 0; $i < 7; $i++) {
             $date = $today->copy()->addDays($i);
@@ -92,33 +95,35 @@ class PhimsController extends Controller
             ];
         }
 
-
         $selectedDate = $ngay_chieu ?: $today->format('Y-m-d');
         $currentIndex = collect($days)->search(fn($item) => $item['date'] === $selectedDate);
 
         $now = Carbon::now();
 
-        $suatChieus = SuatChieu::where('phim_id', $id)
+        $suatChieus = SuatChieu::where('phim_id', $phim->id)
             ->when($ngay_chieu, function ($q) use ($ngay_chieu, $now) {
                 $q->where('ngay_chieu', $ngay_chieu);
                 if ($ngay_chieu == $now->toDateString()) {
                     $q->where('bat_dau', '>', $now->format('H:i:s'));
                 }
             })
-            ->with(['phongChieu.rapPhim', 'dinhDangPhim'])
+            ->with(['rapPhim', 'dinhDangPhim'])
             ->get();
 
         $groupedSuatChieus = $suatChieus->groupBy(function ($sc) {
-            return $sc->phongChieu?->rapPhim?->ten_rap ?? 'Không xác định';
+            return $sc->rapPhims && $sc->rapPhims->ten_rap ? $sc->rapPhims->ten_rap : 'Không xác định';
         })->map(function ($items) {
             return $items->groupBy(function ($sc) {
                 return $sc->phien_ban_phim ?? 'Không xác định';
             });
         });
-        $phimDangChieu = Phim::where('id', '!=', $id)->latest()->limit(3)->get();
+
+        $phimDangChieu = Phim::where('id', '!=', $phim->id)->latest()->limit(3)->get();
 
         $phim->diem_trung_binh = round($phim->ratings->avg('rating'), 1);
         $phim->so_danh_gia = $phim->ratings->count();
+
+        $allPhims = Phim::all();
 
         return view('client.phim.chi-tiet', compact(
             'phim',
@@ -129,7 +134,8 @@ class PhimsController extends Controller
             'ngayChieus',
             'phimDangChieu',
             'groupedSuatChieus',
-            'dinhDangPhims'
+            'dinhDangPhims',
+            'allPhims'
         ));
     }
 
@@ -137,21 +143,11 @@ class PhimsController extends Controller
     {
         $ngay_chieu = request('ngay_chieu');
         $chi_nhanh_id = request('chi_nhanh_id');
-        $now = Carbon::now();
 
-        $query = SuatChieu::where('phim_id', $id)
-            ->where('trang_thai', 'hoat_dong');  // Chỉ lấy suất chiếu hoạt động
+        $query = SuatChieu::where('phim_id', $id);
 
         if ($ngay_chieu) {
             $query->where('ngay_chieu', $ngay_chieu);
-
-            // Nếu là ngày hôm nay, chỉ lấy suất chiếu chưa qua
-            if ($ngay_chieu == $now->toDateString()) {
-                $query->where('bat_dau', '>', $now->format('H:i:s'));
-            }
-        } else {
-            // Nếu không chọn ngày, mặc định lấy từ hôm nay trở đi
-            $query->where('ngay_chieu', '>=', $now->toDateString());
         }
 
         if ($chi_nhanh_id) {
@@ -190,7 +186,7 @@ class PhimsController extends Controller
             }
         }
 
-        $suatChieus = $query->with(['phongChieu.rapPhim', 'dinhDangPhim'])->get();
+        $suatChieus = $query->with(['rapPhim', 'dinhDangPhim'])->get();
 
         $groupedSuatChieus = $suatChieus->groupBy(function ($sc) {
             return $sc->phongChieu?->rapPhim?->ten_rap ?? 'Không xác định';

@@ -47,7 +47,7 @@ class CapBacTheController extends Controller
             'mo_ta' => 'required|string|max:255',
             'tong_chi_tieu' => 'required|integer|min:0|max:10000000',
             'phan_tram_ve' => 'required|integer|min:0|max:30', // tối đa 30%
-            'phan_tram_dich_vu' => 'required|integer|min:0|max:30', // tối đa 30%
+            // 'phan_tram_dich_vu' => 'required|integer|min:0|max:30', // tối đa 30%
             'is_default' => 'boolean',
         ], [
             'ten.required' => 'Tên cấp bậc là bắt buộc.',
@@ -65,10 +65,10 @@ class CapBacTheController extends Controller
             'phan_tram_ve.integer' => 'Phần trăm hoàn tiền phải là số nguyên.',
             'phan_tram_ve.min' => 'Phần trăm hoàn tiền phải lớn hơn hoặc bằng 0.',
             'phan_tram_ve.max' => 'Phần trăm hoàn tiền không được vượt quá 30%.',
-            'phan_tram_dich_vu.required' => 'Phần trăm ưu đãi dịch vụ là bắt buộc.',
-            'phan_tram_dich_vu.integer' => 'Phần trăm ưu đãi dịch vụ phải là số nguyên.',
-            'phan_tram_dich_vu.min' => 'Phần trăm ưu đãi dịch vụ phải lớn hơn hoặc bằng 0.',
-            'phan_tram_dich_vu.max' => 'Phần trăm ưu đãi dịch vụ không được vượt quá 30%.',
+            // 'phan_tram_dich_vu.required' => 'Phần trăm ưu đãi dịch vụ là bắt buộc.',
+            // 'phan_tram_dich_vu.integer' => 'Phần trăm ưu đãi dịch vụ phải là số nguyên.',
+            // 'phan_tram_dich_vu.min' => 'Phần trăm ưu đãi dịch vụ phải lớn hơn hoặc bằng 0.',
+            // 'phan_tram_dich_vu.max' => 'Phần trăm ưu đãi dịch vụ không được vượt quá 30%.',
         ]);
 
         if ($validator->fails()) {
@@ -121,7 +121,7 @@ class CapBacTheController extends Controller
             'mo_ta' => 'required|string|max:255',
             'tong_chi_tieu' => 'required|integer|min:0|max:10000000',
             'phan_tram_ve' => 'required|integer|min:0|max:30', // tối đa 30%
-            'phan_tram_dich_vu' => 'required|integer|min:0|max:30', // tối đa 30%
+            // 'phan_tram_dich_vu' => 'required|integer|min:0|max:30', // tối đa 30%
             'is_default' => 'boolean',
         ], [
             'ten.required' => 'Tên cấp bậc là bắt buộc.',
@@ -139,10 +139,10 @@ class CapBacTheController extends Controller
             'phan_tram_ve.integer' => 'Phần trăm hoàn tiền phải là số nguyên.',
             'phan_tram_ve.min' => 'Phần trăm hoàn tiền phải lớn hơn hoặc bằng 0.',
             'phan_tram_ve.max' => 'Phần trăm hoàn tiền không được vượt quá 30%.',
-            'phan_tram_dich_vu.required' => 'Phần trăm ưu đãi dịch vụ là bắt buộc.',
-            'phan_tram_dich_vu.integer' => 'Phần trăm ưu đãi dịch vụ phải là số nguyên.',
-            'phan_tram_dich_vu.min' => 'Phần trăm ưu đãi dịch vụ phải lớn hơn hoặc bằng 0.',
-            'phan_tram_dich_vu.max' => 'Phần trăm ưu đãi dịch vụ không được vượt quá 30%.',
+            // 'phan_tram_dich_vu.required' => 'Phần trăm ưu đãi dịch vụ là bắt buộc.',
+            // 'phan_tram_dich_vu.integer' => 'Phần trăm ưu đãi dịch vụ phải là số nguyên.',
+            // 'phan_tram_dich_vu.min' => 'Phần trăm ưu đãi dịch vụ phải lớn hơn hoặc bằng 0.',
+            // 'phan_tram_dich_vu.max' => 'Phần trăm ưu đãi dịch vụ không được vượt quá 30%.',
         ]);
 
         if ($validator->fails()) {

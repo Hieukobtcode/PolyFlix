@@ -6,26 +6,27 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\VaiTro;
+use App\Models\LichSuDiem;
 
 class UserController extends Controller
 {
     public function index(Request $request)
     {
         $query = User::query();
-        
+
         if ($request->has('keyword') && $request->keyword) {
             $query->where('name', 'like', '%' . $request->keyword . '%')
-            ->orWhere('email', 'like', '%' . $request->keyword . '%');
+                ->orWhere('email', 'like', '%' . $request->keyword . '%');
         }
-        
+
         if ($request->has('status') && $request->status !== null) {
             $query->where('trang_thai', $request->status);
         }
-        
+
         $users = $query->paginate(10);
         $vaiTros = VaiTro::all();
 
-        return view('admin.users.index', compact('users','vaiTros'));
+        return view('admin.users.index', compact('users', 'vaiTros'));
     }
 
     public function create()
@@ -56,7 +57,13 @@ class UserController extends Controller
     public function show($id)
     {
         $user = User::with('vaiTro')->findOrFail($id);
-        return view('admin.users.show', compact('user'));
+
+        // Lấy lịch sử điểm mới nhất và phân trang
+        $lichSuDiem = LichSuDiem::where('users_id', $user->id)
+            ->orderBy('thoi_gian', 'desc')
+            ->paginate(10); // mỗi trang 10 dòng
+
+        return view('admin.users.show', compact('user', 'lichSuDiem'));
     }
 
     public function edit($id)

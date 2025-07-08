@@ -59,6 +59,7 @@
     margin-bottom: 25px;
     font-size: 1.5rem;
     font-weight: 600;
+  
 }
 
 .payment-option {
@@ -289,6 +290,25 @@
         transform: rotate(360deg);
     }
 }
+.btn-confirm {
+    background: rgb(124, 245, 124);
+    color: #718096;
+    border: 2px solid #e2e8f0;
+    padding: 12px 25px;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    text-align: center;
+}
+
+.btn-confirm:hover {
+    border-color: #cbd5e0;
+    color: #4a5568;
+    transform: translateY(-1px);
+}
 
 /* Banking Info Modal */
 .banking-info {
@@ -396,4 +416,49 @@
 
 .alert i {
     font-size: 1.2rem;
+}
+
+.tpbank {
+    width: auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    color: black;
+    display: flex;
+    padding: 20px;
+    background: linear-gradient(to right, #e9e3f5, #fef1e8);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.tpbank .tpbank-info {
+    width: 70%;
+}
+
+.tpbank-info-user {
+    margin-top: 100px;
+    font-size: 20px;
+}
+
+.tpbank-account {
+    letter-spacing: 5px;
+}
+
+.tpbank-name {
+    letter-spacing: 4px;
+}
+
+.tpbank .tpbank-img {
+    display: flex;
+    align-items: center;
+}
+
+.tpbank .tpbank-img img {
+    width: 100px;
+}
+
+.tpbank .tpbank-qr {
+    width: 30%;
+}
+
+.tpbank .tpbank-qr img {
+    width: 200px;
 }

@@ -1,11 +1,33 @@
 @extends('layouts.client')
 
 @section('styles')
-@vite('resources/css/thanh-toan.css')
+    <style>
+        .time-order {
+            font-size: 28px;
+            font-weight: 700;
+            color: #e74c3c;
+            text-align: center;
+            margin: 15px auto;
+            padding: 12px;
+            background-color: #fff3f3;
+            border-radius: 8px;
+            border: 2px solid #ffcdd2;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            max-width: 200px;
+        }
+
+        .time-order.warning {
+            animation: blink 1s infinite;
+            background-color: #ffe6e6;
+            border-color: #ff8a80;
+        }
+    </style>
+    @vite('resources/css/thanh-toan.css')
 @endsection
 
 @section('title', 'Thanh toán vé xem phim')
-
+a
 @section('content')
 <div class="thanh-toan-container">
     <div class="container">
@@ -185,10 +207,10 @@
                         <i class="fas fa-times"></i> Hủy đặt vé
                     </button>
                 </form>
+   
             </div>
         </div>
     </div>
-</div>
 @endsection
 
 @section('scripts')
@@ -229,12 +251,8 @@
             };
             $('#btn-pay').html(texts[method] || '<i class="fas fa-lock"></i> Thanh toán ngay');
         }
+        $(document).ready(function() {
 
-        // Handle payment submission
-        $('#btn-pay').on('click', function() {
-            const selectedMethod = $('input[name="phuong_thuc_tt"]:checked').val();
-
-            if (!selectedMethod) {
                 Swal.fire({
                     icon: 'warning',
                     title: 'Chưa chọn phương thức thanh toán',
@@ -297,10 +315,21 @@
                             }).then(() => {
                                 window.location.href = response.redirect_url;
                             });
+           
                         }
-                    } else {
-                        showError(response.message);
+                    },
+                    error: function(xhr) {
+                        const response = xhr.responseJSON;
+                        showError(response?.message || 'Có lỗi xảy ra khi xử lý thanh toán!');
+                    },
+                    complete: function() {
+                        // Reset loading state
+                        $('.payment-content').removeClass('loading');
+                        $('#btn-pay').prop('disabled', false);
+                        updatePaymentButtonText($('input[name="phuong_thuc_tt"]:checked')
+                            .val());
                     }
+
                 },
                 error: function(xhr) {
                     const response = xhr.responseJSON;
@@ -317,8 +346,22 @@
                     }
                 }
             });
-        });
 
+            // Helper functions
+            function showError(message) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi thanh toán',
+                    text: message,
+                    confirmButtonColor: '#3f2b96'
+                });
+            }
+
+            function formatCurrency(amount) {
+                return new Intl.NumberFormat('vi-VN').format(amount);
+            }
+
+        });
         // Helper functions
         function showError(message) {
             Swal.fire({
@@ -326,25 +369,149 @@
                 title: 'Lỗi thanh toán',
                 text: message,
                 confirmButtonColor: '#667eea'
+
             });
         }
 
-        function formatCurrency(amount) {
-            return new Intl.NumberFormat('vi-VN').format(amount);
+        // Confirm cancel booking
+        function confirmCancel() {
+            const confirmed = confirm(
+                'Bạn có chắc chắn muốn hủy đặt vé này không?\n\nLưu ý: Việc hủy vé không thể hoàn tác!');
+            if (confirmed) {
+                // Reset timer khi người dùng xác nhận hủy
+                localStorage.removeItem('order_start_time');
+                const timerDisplay = document.querySelector('.time-order');
+                if (timerDisplay) {
+                    timerDisplay.textContent = '05:00';
+                    timerDisplay.classList.remove('warning');
+                }
+                const btnPay = document.getElementById('btn-pay');
+                if (btnPay) {
+                    btnPay.disabled = false;
+                }
+            }
+            return confirmed;
         }
-    });
 
-    // Copy to clipboard function
-    function copyToClipboard(text) {
-        navigator.clipboard.writeText(text).then(function() {
-            Swal.fire({
-                icon: 'success',
-                title: 'Đã sao chép!',
-                text: 'Thông tin đã được sao chép vào clipboard',
-                timer: 1500,
-                showConfirmButton: false
-            });
+        document.addEventListener('DOMContentLoaded', function() {
+            const ORDER_KEY = 'order_start_time';
+            const timerDisplay = document.querySelector('.time-order');
+            const btnPay = document.getElementById('btn-pay');
+            const timeLimit = 5 * 60; // 5 phút = 300 giây
+            let timer;
+
+            // Hàm reset timer
+            function resetTimer() {
+                clearInterval(timer);
+                localStorage.removeItem(ORDER_KEY);
+                if (timerDisplay) {
+                    timerDisplay.textContent = '05:00';
+                    timerDisplay.classList.remove('warning');
+                }
+                if (btnPay) {
+                    btnPay.disabled = false;
+                }
+            }
+
+            // Kiểm tra và thiết lập thời gian bắt đầu từ localStorage
+            function getStartTime() {
+                let startTime = localStorage.getItem(ORDER_KEY);
+                if (!startTime) {
+                    startTime = new Date().getTime();
+                    localStorage.setItem(ORDER_KEY, startTime);
+                }
+                return parseInt(startTime);
+            }
+
+            // Lấy thời điểm bắt đầu
+            const startTime = getStartTime();
+
+            // Hàm format thời gian
+            function formatTime(seconds) {
+                const minutes = Math.floor(seconds / 60);
+                const remainingSeconds = seconds % 60;
+                return `${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}`;
+            }
+
+            // Hàm cập nhật style của timer
+            function updateTimerStyle(seconds) {
+                if (seconds <= 60) {
+                    timerDisplay.classList.add('warning');
+                } else {
+                    timerDisplay.classList.remove('warning');
+                }
+            }
+
+            // Hàm tự động hủy đặt vé
+            function autoCancel() {
+                const cancelForm = document.querySelector('form');
+                if (cancelForm) {
+                    const autoCancel = document.createElement('input');
+                    autoCancel.type = 'hidden';
+                    autoCancel.name = 'auto_cancel';
+                    autoCancel.value = '1';
+                    cancelForm.appendChild(autoCancel);
+                    resetTimer();
+                    cancelForm.submit();
+                }
+            }
+
+            // Hàm đếm ngược
+            function countdown() {
+                const currentTime = new Date().getTime();
+                const elapsedSeconds = Math.floor((currentTime - startTime) / 1000);
+                const timeLeft = timeLimit - elapsedSeconds;
+
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    timerDisplay.textContent = '00:00';
+                    if (btnPay) btnPay.disabled = true;
+                    autoCancel();
+                    return;
+                }
+
+                timerDisplay.textContent = formatTime(timeLeft);
+                updateTimerStyle(timeLeft);
+                if (btnPay) btnPay.disabled = false;
+            }
+
+            // Kiểm tra ngay khi load trang xem đã hết thời gian chưa
+            const currentTime = new Date().getTime();
+            const elapsedSeconds = Math.floor((currentTime - startTime) / 1000);
+
+            if (elapsedSeconds >= timeLimit) {
+                timerDisplay.textContent = '00:00';
+                if (btnPay) btnPay.disabled = true;
+                autoCancel();
+            } else {
+                // Khởi tạo timer và cập nhật mỗi giây
+                countdown();
+                timer = setInterval(countdown, 1000);
+
+                // Xử lý khi user rời trang
+                window.addEventListener('beforeunload', function() {
+                    clearInterval(timer);
+                });
+
+                // Xử lý khi tab không active
+                document.addEventListener('visibilitychange', function() {
+                    if (document.hidden) {
+                        clearInterval(timer);
+                    } else {
+                        countdown();
+                        timer = setInterval(countdown, 1000);
+                    }
+                });
+
+                // Xử lý nút thanh toán
+                if (btnPay) {
+                    btnPay.addEventListener('click', function() {
+                        resetTimer();
+                    });
+                }
+            }
         });
     }
 </script>
 @endsection
+
