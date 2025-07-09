@@ -2,17 +2,30 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Models\LoaiGhe;
 use App\Models\RapPhim;
 use App\Models\ChiNhanh;
-use App\Models\LoaiGhe;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class RapPhimController extends Controller
 {
-    public function index(Request $request)
+        public function index(Request $request)
     {
         $query = RapPhim::query();
+
+        // ✅ Quản lý chi nhánh chỉ thấy rạp thuộc chi nhánh mình quản lý
+        if (Auth::user()->vai_tro_id == 2) {
+            $query->whereHas('chiNhanh', function ($q) {
+                $q->where('quan_ly_id', Auth::id());
+            });
+        }
+
+        // ✅ Quản lý rạp chỉ thấy rạp mình quản lý
+        if (Auth::user()->vai_tro_id == 3) {
+            $query->where('quan_ly_id', Auth::id());
+        }
 
         if ($request->has('keyword') && $request->keyword) {
             $query->where('ten_rap', 'like', '%' . $request->keyword . '%');
@@ -31,9 +44,15 @@ class RapPhimController extends Controller
     {
         $id = request()->chiNhanhId;
         $chiNhanh = ChiNhanh::findOrFail($id);
+
+        //  Quản lý chi nhánh chỉ tạo rạp trong chi nhánh mình quản lý
+        if (Auth::user()->vai_tro_id == 2 && $chiNhanh->quan_ly_id != Auth::id()) {
+            return redirect()->route('admin.chi-nhanh.index')
+                ->with('error', 'Bạn không có quyền tạo rạp cho chi nhánh này.');
+        }
+
         return view('admin.rap-phim.create', compact('chiNhanh'));
     }
-
 
     public function store(Request $request)
     {
@@ -43,6 +62,14 @@ class RapPhimController extends Controller
             'trang_thai' => 'required|in:đang hoạt động,bảo trì,đã đóng',
             'chi_nhanh_id' => 'required|exists:chi_nhanhs,id',
         ]);
+
+        $chiNhanh = ChiNhanh::findOrFail($validated['chi_nhanh_id']);
+
+        // Quản lý chi nhánh chỉ lưu rạp thuộc chi nhánh mình quản lý
+        if (Auth::user()->vai_tro_id == 2 && $chiNhanh->quan_ly_id != Auth::id()) {
+            return redirect()->route('admin.chi-nhanh.index')
+                ->with('error', 'Bạn không có quyền thêm rạp cho chi nhánh này.');
+        }
 
         RapPhim::create($validated);
 
@@ -56,14 +83,37 @@ class RapPhimController extends Controller
         $loaiGhes = LoaiGhe::all();
         $rapPhim = RapPhim::with(['phongChieus'])->findOrFail($id);
 
+        //  Quản lý chi nhánh chỉ xem rạp thuộc chi nhánh mình quản lý
+        if (Auth::user()->vai_tro_id == 2 && $rapPhim->chiNhanh->quan_ly_id != Auth::id()) {
+            return redirect()->route('admin.chi-nhanh.index')
+                ->with('error', 'Bạn không có quyền xem rạp này.');
+        }
+
+        //  Quản lý rạp chỉ xem rạp mình quản lý
+        if (Auth::user()->vai_tro_id == 3 && $rapPhim->quan_ly_id != Auth::id()) {
+            return redirect()->route('admin.chi-nhanh.show',$rapPhim->chi_nhanh_id)
+                ->with('error', 'Bạn không có quyền xem rạp này.');
+        }
+
         return view('admin.rap-phim.show', compact('rapPhim', 'loaiGhes'));
     }
-
 
     public function edit($id)
     {
         $rapPhim = RapPhim::findOrFail($id);
         $chiNhanhs = ChiNhanh::all();
+
+        //  Quản lý chi nhánh chỉ sửa rạp thuộc chi nhánh mình quản lý
+        if (Auth::user()->vai_tro_id == 2 && $rapPhim->chiNhanh->quan_ly_id != Auth::id()) {
+            return redirect()->route('admin.rap-phim.index')
+                ->with('error', 'Bạn không có quyền chỉnh sửa rạp này.');
+        }
+
+        //  Quản lý rạp chỉ sửa rạp mình quản lý
+        if (Auth::user()->vai_tro_id == 3 && $rapPhim->quan_ly_id != Auth::id()) {
+            return redirect()->route('admin.rap-phim.index')
+                ->with('error', 'Bạn không có quyền chỉnh sửa rạp này.');
+        }
 
         return view('admin.rap-phim.edit', compact('rapPhim', 'chiNhanhs'));
     }
@@ -78,11 +128,25 @@ class RapPhimController extends Controller
         ]);
 
         $rapPhim = RapPhim::findOrFail($id);
+
+        //  Quản lý chi nhánh chỉ cập nhật rạp thuộc chi nhánh mình quản lý
+        if (Auth::user()->vai_tro_id == 2 && $rapPhim->chiNhanh->quan_ly_id != Auth::id()) {
+            return redirect()->route('admin.rap-phim.index')
+                ->with('error', 'Bạn không có quyền cập nhật rạp này.');
+        }
+
+        //  Quản lý rạp chỉ cập nhật rạp mình quản lý
+        if (Auth::user()->vai_tro_id == 3 && $rapPhim->quan_ly_id != Auth::id()) {
+            return redirect()->route('admin.rap-phim.index')
+                ->with('error', 'Bạn không có quyền cập nhật rạp này.');
+        }
+
         $rapPhim->update($request->all());
 
-
-        return redirect()->route('admin.chi-nhanh.show', $rapPhim->chi_nhanh_id)->with('success', 'Cập nhật rạp chiếu thành công');
+        return redirect()->route('admin.chi-nhanh.show', $rapPhim->chi_nhanh_id)
+            ->with('success', 'Cập nhật rạp chiếu thành công');
     }
+
 
     public function destroy($id)
     {

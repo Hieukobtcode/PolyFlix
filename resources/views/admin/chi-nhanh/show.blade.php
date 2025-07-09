@@ -76,10 +76,16 @@
                                             </td>
                                             <td class="text-center">
                                                 @if ($rap->quan_ly_id)
-                                                    <a href="{{ route('admin.users.show', $rap->quan_ly_id) }}"
-                                                        class="text-decoration-none fw-medium">
-                                                        {{ $rap->quanLy->name ?? 'ID: ' . $rap->quan_ly_id }}
-                                                    </a>
+                                                    @if (Auth::user()->vai_tro_id == 1)
+                                                        <a href="{{ route('admin.users.show', $rap->quan_ly_id) }}"
+                                                            class="text-decoration-none fw-medium">
+                                                            {{ $rap->quanLy->name ?? 'ID: ' . $rap->quan_ly_id }}
+                                                        </a>
+                                                    @elseif(Auth::user()->vai_tro_id == 2 && $rap->chiNhanh->quan_ly_id == Auth::id())
+                                                        <span class="text-decoration-none fw-medium">
+                                                            {{ $rap->quanLy->name ?? 'ID: ' . $rap->quan_ly_id }}
+                                                        </span>
+                                                    @endif
                                                 @elseif (array_key_exists($rap->id, $pendingRapEmails))
                                                     <button type="button"
                                                         class="badge bg-warning-subtle text-warning border-0"
@@ -111,12 +117,14 @@
                                                                 <i class="ti ti-edit fs-5"></i> Chỉnh sửa
                                                             </a>
                                                         </li>
-                                                        <li>
-                                                            <a class="dropdown-item d-flex align-items-center gap-2"
-                                                                href="{{ route('admin.phong-chieu.create', ['rap_phim_id' => $rap->id]) }}">
-                                                                <i class="ti ti-plus fs-5"></i> Thêm phòng
-                                                            </a>
-                                                        </li>
+                                                        @if (Auth::user()->vai_tro_id !== 2)
+                                                            <li>
+                                                                <a class="dropdown-item d-flex align-items-center gap-2"
+                                                                    href="{{ route('admin.phong-chieu.create', ['rap_phim_id' => $rap->id]) }}">
+                                                                    <i class="ti ti-plus fs-5"></i> Thêm phòng
+                                                                </a>
+                                                            </li>
+                                                        @endif
                                                         @if (!$rap->quan_ly_id && !in_array($rap->id, $pendingRapInvites))
                                                             <li>
                                                                 <button

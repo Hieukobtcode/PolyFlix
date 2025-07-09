@@ -1288,14 +1288,14 @@ namespace App\Models {
      * @property boolean $is_default
      * @property int $phan_tram_dich_vu
      * @property int $phan_tram_ve
-     * @property int $tong_so_ve_da_mua
+     * @property int $tong_chi_tieu
      * @property string $mo_ta
      * @property string $ten
      * @property int $id
      * @method static \Illuminate\Database\Eloquent\Builder<CapBacThe>|CapBacThe whereId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<CapBacThe>|CapBacThe whereTen($value)
      * @method static \Illuminate\Database\Eloquent\Builder<CapBacThe>|CapBacThe whereMoTa($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<CapBacThe>|CapBacThe whereTongSoVeDaMua($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<CapBacThe>|CapBacThe whereTongChiTieu($value)
      * @method static \Illuminate\Database\Eloquent\Builder<CapBacThe>|CapBacThe wherePhanTramVe($value)
      * @method static \Illuminate\Database\Eloquent\Builder<CapBacThe>|CapBacThe wherePhanTramDichVu($value)
      * @method static \Illuminate\Database\Eloquent\Builder<CapBacThe>|CapBacThe whereIsDefault($value)
@@ -4802,6 +4802,7 @@ namespace App\Models {
     /**
      * App\Models\GheNgoi
      *
+     * @property int|null $dang_chon_user_id
      * @property \Illuminate\Support\Carbon|null $updated_at
      * @property \Illuminate\Support\Carbon|null $created_at
      * @property mixed $trang_thai
@@ -4822,6 +4823,7 @@ namespace App\Models {
      * @method static \Illuminate\Database\Eloquent\Builder<GheNgoi>|GheNgoi whereTrangThai($value)
      * @method static \Illuminate\Database\Eloquent\Builder<GheNgoi>|GheNgoi whereCreatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<GheNgoi>|GheNgoi whereUpdatedAt($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<GheNgoi>|GheNgoi whereDangChonUserId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<GheNgoi>|GheNgoi newModelQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<GheNgoi>|GheNgoi newQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<GheNgoi>|GheNgoi query()
@@ -5135,6 +5137,7 @@ namespace App\Models {
      * @property decimal:2 $gia_tri_giam
      * @property mixed $loai_giam_gia
      * @property string $mo_ta
+     * @property string|null $hinh_anh
      * @property string $ten
      * @property string $ma_khuyen_mai
      * @property int $id
@@ -5149,6 +5152,7 @@ namespace App\Models {
      * @method static \Illuminate\Database\Eloquent\Builder<KhuyenMai>|KhuyenMai whereId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<KhuyenMai>|KhuyenMai whereMaKhuyenMai($value)
      * @method static \Illuminate\Database\Eloquent\Builder<KhuyenMai>|KhuyenMai whereTen($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<KhuyenMai>|KhuyenMai whereHinhAnh($value)
      * @method static \Illuminate\Database\Eloquent\Builder<KhuyenMai>|KhuyenMai whereMoTa($value)
      * @method static \Illuminate\Database\Eloquent\Builder<KhuyenMai>|KhuyenMai whereLoaiGiamGia($value)
      * @method static \Illuminate\Database\Eloquent\Builder<KhuyenMai>|KhuyenMai whereGiaTriGiam($value)
