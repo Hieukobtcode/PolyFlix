@@ -21,10 +21,8 @@ function initDatVe() {
 
 // Xử lý chọn ghế
 function setupSeatSelection() {
-    $(".seat.available").on("click", function () {
-        $(this).toggleClass("selected");
-        updateOrderSummary();
-    });
+    // Không cần handler đơn giản ở đây vì đã có handler phức tạp bên dưới
+    console.log("Seat selection setup completed");
 }
 
 // Xử lý tab đồ ăn
@@ -66,69 +64,43 @@ function setupQuantityControls() {
     });
 }
 
-// Xử lý nút đặt vé
-// function setupBookingButton() {
-//     $("#btn-dat-ve").on("click", function () {
-//         if ($(this).prop("disabled")) return;
-
-//         const selectedSeats = getSelectedSeats();
-//         if (selectedSeats.length === 0) {
-//             showError("Vui lòng chọn ít nhất một ghế!");
-//             return;
-//         }
-
-//         // Hiển thị loading
-//         $(this).prop("disabled", true).text("Đang xử lý...");
-
-//         // Chuẩn bị dữ liệu
-//         const formData = prepareBookingData();
-
-//         // Gửi request
-//         console.log("Sending booking request...", formData);
-//         $.ajax({
-//             url: "/dat-ve",
-//             method: "POST",
-//             data: formData,
-//             headers: {
-//                 "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
-//             },
-//             success: function (response) {
-//                 console.log("Booking response:", response);
-//                 if (response.success) {
-//                     showSuccess("Đặt vé thành công!");
-//                     // Chuyển đến trang kết quả đặt vé client
-//                     setTimeout(() => {
-//                         console.log(
-//                             "Redirecting to:",
-//                             `/dat-ve/ket-qua/${response.dat_ve_id}`
-//                         );
-//                         window.location.href = `/dat-ve/ket-qua/${response.dat_ve_id}`;
-//                     }, 1500);
-//                 } else {
-//                     showError(response.message || "Có lỗi xảy ra!");
-//                     resetBookingButton();
-//                 }
-//             },
-//             error: function (xhr) {
-//                 console.error("Booking error:", xhr);
-//                 const response = xhr.responseJSON;
-//                 showError(response?.message || "Có lỗi xảy ra khi đặt vé!");
-//                 resetBookingButton();
-//             },
-//         });
-//     });
-// }
-
 // Lấy danh sách ghế đã chọn
 function getSelectedSeats() {
     const seats = [];
-    $(".seat.selected").each(function () {
+    console.log("=== DEBUG TÍNH GIÁ GHẾ ===");
+
+    $(".ghe-chieu.selected").each(function () {
+        // Lấy các phụ thu từ data attributes
+        const phuThuLoaiPhong =
+            parseFloat($(this).data("phu-thu-loai-phong")) || 0;
+        const phuThuLoaiGhe = parseFloat($(this).data("phu-thu-loai-ghe")) || 0;
+        const phuThuRapPhim = parseFloat($(this).data("phu-thu-rap-phim")) || 0;
+
+        // Giá vé cơ bản (nếu có trong data, nếu không thì 50000đ mặc định)
+        const giaVeCoBan = parseFloat($(this).data("gia-ve-co-ban")) || 0;
+
+        // Tính giá cho 1 ghế = giá cơ bản + phụ thu loại phòng + phụ thu loại ghế
+        // (Phụ thu rạp sẽ được cộng 1 lần cho tất cả ở cuối)
+        const totalPrice = giaVeCoBan + phuThuLoaiPhong + phuThuLoaiGhe;
+
+        const seatName = $(this).data("seat-name");
+        console.log(`Ghế ${seatName}:`);
+        console.log(`  - Giá cơ bản: ${giaVeCoBan}`);
+        console.log(`  - Phụ thu loại phòng: ${phuThuLoaiPhong}`);
+        console.log(`  - Phụ thu loại ghế: ${phuThuLoaiGhe}`);
+        console.log(`  - Phụ thu rạp: ${phuThuRapPhim}`);
+        console.log(`  - Giá ghế (không bao gồm phụ thu rạp): ${totalPrice}`);
+
         seats.push({
             id: $(this).data("seat-id"),
-            name: $(this).data("seat-name"),
-            price: $(this).data("seat-price"),
+            name: seatName,
+            type: $(this).data("ten-loai-ghe") || "Thường",
+            price: totalPrice,
+            rapSurcharge: phuThuRapPhim, // Lưu riêng để cộng 1 lần sau
         });
     });
+
+    console.log("=== KẾT THÚC DEBUG GHẾ ===");
     return seats;
 }
 
@@ -230,10 +202,24 @@ function updateSelectedSeats(seats) {
     if (seats.length === 0) {
         container.text("Chưa chọn ghế");
     } else {
-        const seatNames = seats.map((seat) => seat.name).join(", ");
+        // Nhóm ghế theo loại
+        const seatsByType = {};
+        seats.forEach((seat) => {
+            if (!seatsByType[seat.type]) {
+                seatsByType[seat.type] = [];
+            }
+            seatsByType[seat.type].push(seat.name);
+        });
+
+        // Tạo chuỗi hiển thị theo định dạng "Tên loại ghế: G9, G10"
+        const seatDetails = [];
+        for (let type in seatsByType) {
+            seatDetails.push(`${type}: ${seatsByType[type].join(", ")}`);
+        }
+
         const totalPrice = seats.reduce((sum, seat) => sum + seat.price, 0);
         container.html(`
-            <div>${seatNames}</div>
+            <div>${seatDetails.join("; ")}</div>
             <div class="text-muted">${formatCurrency(totalPrice)}</div>
         `);
     }
@@ -265,14 +251,40 @@ function updateSelectedFood(food, combos) {
 function calculateTotal(seats, food, combos) {
     let total = 0;
 
-    // Tính tiền ghế
-    total += seats.reduce((sum, seat) => sum + seat.price, 0);
+    console.log("=== TÍNH TỔNG TIỀN DEBUG ===");
+
+    // Tính tiền ghế (đã bao gồm giá cơ bản + phụ thu loại phòng + phụ thu loại ghế)
+    const seatTotal = seats.reduce((sum, seat) => sum + seat.price, 0);
+    total += seatTotal;
+    console.log("Tiền ghế (không bao gồm phụ thu rạp):", seatTotal);
+
+    // Cộng phụ thu rạp CHỈ 1 LẦN (không phải cho từng ghế)
+    if (seats.length > 0) {
+        const rapSurcharge = seats[0].rapSurcharge || 0; // Lấy từ ghế đầu tiên
+        total += rapSurcharge;
+        console.log("Phụ thu rạp (1 lần):", rapSurcharge);
+    }
+
+    console.log("Tổng tiền ghế (bao gồm phụ thu rạp):", total);
 
     // Tính tiền đồ ăn
-    total += food.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    const foodTotal = food.reduce(
+        (sum, item) => sum + item.price * item.quantity,
+        0
+    );
+    total += foodTotal;
+    console.log("Tiền đồ ăn:", foodTotal);
 
     // Tính tiền combo
-    total += combos.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    const comboTotal = combos.reduce(
+        (sum, item) => sum + item.price * item.quantity,
+        0
+    );
+    total += comboTotal;
+    console.log("Tiền combo:", comboTotal);
+
+    console.log("TỔNG CUỐI CÙNG:", total);
+    console.log("=== KẾT THÚC DEBUG ===");
 
     return total;
 }
@@ -645,8 +657,67 @@ $(document).ready(function () {
             );
             return false;
         }
-        // Thêm logic submit form nếu cần
-        $("#booking-form").submit();
+
+        // Hiển thị loading
+        $(this)
+            .prop("disabled", true)
+            .html('<i class="fas fa-spinner fa-spin"></i> Đang xử lý...');
+
+        // Chuẩn bị dữ liệu đặt vé
+        const formData = new FormData();
+        formData.append(
+            "suat_chieu_id",
+            $('input[name="suat_chieu_id"]').val()
+        );
+
+        // Thêm ghế đã chọn
+        $(".ghe-chieu.selected").each(function () {
+            formData.append("ghe_ids[]", $(this).data("seat-id"));
+        });
+
+        // Thêm đồ ăn
+        $('input[name^="do_an"]').each(function () {
+            const quantity = parseInt($(this).val()) || 0;
+            if (quantity > 0) {
+                const doAnId = $(this).attr("name").match(/\d+/)[0];
+                formData.append(`do_an[${doAnId}]`, quantity);
+            }
+        });
+
+        // Thêm combo
+        $('input[name^="combo"]').each(function () {
+            const quantity = parseInt($(this).val()) || 0;
+            if (quantity > 0) {
+                const comboId = $(this).attr("name").match(/\d+/)[0];
+                formData.append(`combo[${comboId}]`, quantity);
+            }
+        });
+
+        // Gửi request đặt vé
+        $.ajax({
+            url: "/dat-ve",
+            method: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            headers: {
+                "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+            },
+            success: function (response) {
+                if (response.success) {
+                    // Chuyển đến trang thanh toán
+                    window.location.href = response.redirect_url;
+                } else {
+                    alert(response.message || "Có lỗi xảy ra!");
+                    resetBookingButton();
+                }
+            },
+            error: function (xhr) {
+                const response = xhr.responseJSON;
+                alert(response?.message || "Có lỗi xảy ra khi đặt vé!");
+                resetBookingButton();
+            },
+        });
     });
 
     // Hàm để thêm class 'ghe-doi' cho ghế đôi khi load trang

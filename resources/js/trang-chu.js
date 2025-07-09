@@ -40,10 +40,6 @@ function loadChiNhanhs() {
 
             hideLoading();
         },
-        error: function () {
-            hideLoading();
-            showError("Không thể tải danh sách rạp. Vui lòng thử lại!");
-        },
     });
 }
 

@@ -1,6 +1,6 @@
 {
-  "_bootstrap-eMHK6VFw.js": {
-    "file": "assets/bootstrap-eMHK6VFw.js",
+  "_bootstrap-DNxiirP_.js": {
+    "file": "assets/bootstrap-DNxiirP_.js",
     "name": "bootstrap"
   },
   "_jquery-ARPk3Jhh.js": {
@@ -8,17 +8,17 @@
     "name": "jquery"
   },
   "resources/css/app.css": {
-    "file": "assets/app-DmHdbO0F.css",
+    "file": "assets/app-CiiJY4GP.css",
     "src": "resources/css/app.css",
     "isEntry": true
   },
   "resources/css/client.css": {
-    "file": "assets/client-Cag89w_C.css",
+    "file": "assets/client-BhcwGwLX.css",
     "src": "resources/css/client.css",
     "isEntry": true
   },
   "resources/css/dat-ve.css": {
-    "file": "assets/dat-ve-DaEeU6Iv.css",
+    "file": "assets/dat-ve-CKEJZg2b.css",
     "src": "resources/css/dat-ve.css",
     "isEntry": true
   },
@@ -27,26 +27,31 @@
     "src": "resources/css/ghe-ngoi.css",
     "isEntry": true
   },
+  "resources/css/thanh-toan.css": {
+    "file": "assets/thanh-toan-CAHCXIy6.css",
+    "src": "resources/css/thanh-toan.css",
+    "isEntry": true
+  },
   "resources/css/trang-chu.css": {
     "file": "assets/trang-chu-DZeRVgpu.css",
     "src": "resources/css/trang-chu.css",
     "isEntry": true
   },
   "resources/js/app.js": {
-    "file": "assets/app-BZav9Bpp.js",
+    "file": "assets/app-Bis-qGJC.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
     "imports": [
       "_jquery-ARPk3Jhh.js",
-      "_bootstrap-eMHK6VFw.js"
+      "_bootstrap-DNxiirP_.js"
     ],
     "css": [
       "assets/app-C621yXhz.css"
     ]
   },
   "resources/js/client.js": {
-    "file": "assets/client-wiI7-Pqy.js",
+    "file": "assets/client-DnZCQ5Th.js",
     "name": "client",
     "src": "resources/js/client.js",
     "isEntry": true,
@@ -57,11 +62,11 @@
       "resources/js/trang-chu.js"
     ],
     "css": [
-      "assets/client-Cag89w_C.css"
+      "assets/client-BhcwGwLX.css"
     ]
   },
   "resources/js/dat-ve-client.js": {
-    "file": "assets/dat-ve-client-Dd5mqgJt.js",
+    "file": "assets/dat-ve-client-Bw0tPq8Y.js",
     "name": "dat-ve-client",
     "src": "resources/js/dat-ve-client.js",
     "isEntry": true,
@@ -69,27 +74,36 @@
       "_jquery-ARPk3Jhh.js"
     ],
     "css": [
-      "assets/dat-ve-DaEeU6Iv.css"
+      "assets/dat-ve-CKEJZg2b.css"
     ]
   },
   "resources/js/dat-ve.js": {
-    "file": "assets/dat-ve-Dl47R_s4.js",
+    "file": "assets/dat-ve-D82a0KYN.js",
     "name": "dat-ve",
     "src": "resources/js/dat-ve.js",
     "isEntry": true,
     "imports": [
       "_jquery-ARPk3Jhh.js",
-      "_bootstrap-eMHK6VFw.js"
-    ],
-    "css": [
-      "assets/dat-ve-DaEeU6Iv.css"
+      "_bootstrap-DNxiirP_.js"
     ]
   },
   "resources/js/ghe-ngoi.js": {
-    "file": "assets/ghe-ngoi-DxV6V80X.js",
+    "file": "assets/ghe-ngoi-rvQMb1jR.js",
     "name": "ghe-ngoi",
     "src": "resources/js/ghe-ngoi.js",
     "isEntry": true
+  },
+  "resources/js/login.js": {
+    "file": "assets/login-DcaelkpG.js",
+    "name": "login",
+    "src": "resources/js/login.js",
+    "isEntry": true,
+    "imports": [
+      "_jquery-ARPk3Jhh.js"
+    ],
+    "css": [
+      "assets/login-B1Ztfz35.css"
+    ]
   },
   "resources/js/page.js": {
     "file": "assets/page-DnbVVlfQ.js",

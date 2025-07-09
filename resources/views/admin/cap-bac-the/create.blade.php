@@ -45,20 +45,20 @@
                                 @enderror
                             </div>
 
-                            {{-- % hoàn tiền & % ưu đãi dịch vụ --}}
+                            {{-- % hoàn điểm & % ưu đãi dịch vụ --}}
                             <div class="row">
                                 <div class="col-md-6 mb-4">
-                                    <label for="phan_tram_ve" class="form-label fw-semibold">Phần trăm hoàn tiền (%) <span
+                                    <label for="phan_tram_ve" class="form-label fw-semibold">Phần trăm hoàn điểm (%) <span
                                             class="text-danger">*</span></label>
                                     <input type="number" id="phan_tram_ve" name="phan_tram_ve"
                                         class="form-control rounded @error('phan_tram_ve') is-invalid @enderror"
-                                        value="{{ old('phan_tram_ve', 0) }}" placeholder="Nhập % hoàn tiền">
+                                        value="{{ old('phan_tram_ve', 0) }}" placeholder="Nhập % hoàn điểm">
                                     <div class="form-text">Tỷ lệ tích điểm khi đặt vé.</div>
                                     @error('phan_tram_ve')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
-                                <div class="col-md-6 mb-4">
+                                {{-- <div class="col-md-6 mb-4">
                                     <label for="phan_tram_dich_vu" class="form-label fw-semibold">Phần trăm ưu đãi dịch vụ
                                         (%) <span class="text-danger">*</span></label>
                                     <input type="number" id="phan_tram_dich_vu" name="phan_tram_dich_vu"
@@ -68,7 +68,7 @@
                                     @error('phan_tram_dich_vu')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
-                                </div>
+                                </div> --}}
                             </div>
 
                             {{-- Mặc định --}}

@@ -72,13 +72,13 @@
                                 <td>{{ number_format($capBacThe->tong_chi_tieu) }} đ</td>
                             </tr>
                             <tr>
-                                <th class="fw-semibold text-muted">Phần trăm hoàn tiền:</th>
+                                <th class="fw-semibold text-muted">Phần trăm hoàn điểm:</th>
                                 <td>{{ $capBacThe->phan_tram_ve }}%</td>
                             </tr>
-                            <tr>
+                            {{-- <tr>
                                 <th class="fw-semibold text-muted">Phần trăm ưu đãi DV:</th>
                                 <td>{{ $capBacThe->phan_tram_dich_vu }}%</td>
-                            </tr>
+                            </tr> --}}
                             <tr>
                                 <th class="fw-semibold text-muted">Trạng thái:</th>
                                 <td>
@@ -111,7 +111,7 @@
                                             aria-valuemax="100">{{ $capBacThe->phan_tram_ve }}%</div>
                                     </div>
                                 </div>
-                                <div>
+                                {{-- <div>
                                     <h6 class="fw-semibold">Ưu đãi dịch vụ</h6>
                                     <div class="progress rounded">
                                         <div class="progress-bar bg-primary" role="progressbar"
@@ -119,7 +119,7 @@
                                             aria-valuenow="{{ $capBacThe->phan_tram_dich_vu }}" aria-valuemin="0"
                                             aria-valuemax="100">{{ $capBacThe->phan_tram_dich_vu }}%</div>
                                     </div>
-                                </div>
+                                </div> --}}
                             </div>
                         </div>
                     </div>
