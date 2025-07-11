@@ -96,16 +96,16 @@ class TrangChuController extends Controller
             ->join('rap_phims', 'phong_chieus.rap_phim_id', '=', 'rap_phims.id')
             ->where('suat_chieus.phim_id', $phimId)
             ->where('rap_phims.chi_nhanh_id', $chiNhanhId)
-            ->where('suat_chieus.ngay_chieu', '>=', Carbon::today())
+            ->where('suat_chieus.ngay_bat_dau', '>=', Carbon::today())
             ->where('suat_chieus.trang_thai', 'hoat_dong')
-            ->select('suat_chieus.ngay_chieu')
+            ->select('suat_chieus.ngay_bat_dau')
             ->distinct()
-            ->orderBy('suat_chieus.ngay_chieu')
+            ->orderBy('suat_chieus.ngay_bat_dau')
             ->get()
             ->map(function ($item) {
                 return [
-                    'ngay_chieu' => $item->ngay_chieu,
-                    'ngay_hien_thi' => Carbon::parse($item->ngay_chieu)->locale('vi')->isoFormat('dddd - DD/MM')
+                    'ngay_bat_dau' => $item->ngay_bat_dau,
+                    'ngay_hien_thi' => Carbon::parse($item->ngay_bat_dau)->locale('vi')->isoFormat('dddd - DD/MM')
                 ];
             });
 
@@ -116,14 +116,14 @@ class TrangChuController extends Controller
     {
         $phimId = $request->input('phim_id');
         $chiNhanhId = $request->input('chi_nhanh_id');
-        $ngayChieu = $request->input('ngay_chieu');
+        $ngayChieu = $request->input('ngay_bat_dau');
 
         $suatChieus = SuatChieu::with(['phongChieu.rapPhim', 'phongChieu.loaiPhong'])
             ->join('phong_chieus', 'suat_chieus.phong_chieu_id', '=', 'phong_chieus.id')
             ->join('rap_phims', 'phong_chieus.rap_phim_id', '=', 'rap_phims.id')
             ->where('suat_chieus.phim_id', $phimId)
             ->where('rap_phims.chi_nhanh_id', $chiNhanhId)
-            ->where('suat_chieus.ngay_chieu', $ngayChieu)
+            ->where('suat_chieus.ngay_bat_dau', $ngayChieu)
             ->where('suat_chieus.trang_thai', 'hoat_dong')
             ->select('suat_chieus.*')
             ->orderBy('suat_chieus.bat_dau')
@@ -190,7 +190,7 @@ class TrangChuController extends Controller
         $threeDaysLater = $today->copy()->addDays(3);
 
         $suatChieuTheoPhim = SuatChieu::whereIn('phim_id', $phimDangChieu->pluck('id'))
-            ->whereBetween('ngay_chieu', [$today, $threeDaysLater])
+            ->whereBetween('ngay_bat_dau', [$today, $threeDaysLater])
             ->whereHas('phongChieu', function ($query) use ($rap) {
                 $query->where('rap_phim_id', $rap->id);
             })
@@ -210,7 +210,7 @@ class TrangChuController extends Controller
                 ->get()
                 ->filter(function ($suat) use ($phim) {
                     return $phim->ngay_phat_hanh &&
-                        Carbon::parse($suat->ngay_chieu)->lt(Carbon::parse($phim->ngay_phat_hanh));
+                        Carbon::parse($suat->ngay_bat_dau)->lt(Carbon::parse($phim->ngay_phat_hanh));
                 });
 
             if ($suatDacBiet->isNotEmpty()) {

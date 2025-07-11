@@ -27,18 +27,9 @@
                             <option value="">-- Tất cả rạp --</option>
                         </select>
                     </div>
-
-                    <div class="col-md-3">
-                        <select name="phim" id="phim" class="form-select rounded">
-                            <option value="">-- Tất cả phim--</option>
-                        </select>
-                    </div>
-
-
+                </form>
 
             </div>
-
-            </form>
 
             <!-- Bảng dữ liệu -->
             <div class="table-responsive">
@@ -146,14 +137,14 @@
                                                 </tr>
 
                                                 <tr class="suat-row"
-                                                    data-ngay="{{ \Carbon\Carbon::parse($suat->ngay_chieu)->format('Y-m-d') }}"
+                                                    data-ngay="{{ \Carbon\Carbon::parse($suat->ngay_bat_dau)->format('Y-m-d') }}"
                                                     data-room="{{ $suat->phongChieu->ten_phong }}">
                                                     <td>
                                                         <input type="checkbox" class="suat-checkbox"
                                                             value="{{ $suat->id }}"
                                                             data-group="check-all-{{ $phimId }}">
                                                     </td>
-                                                    <td>{{ \Carbon\Carbon::parse($suat->ngay_chieu)->format('d/m/Y') }}
+                                                    <td>{{ \Carbon\Carbon::parse($suat->ngay_bat_dau)->format('d/m/Y') }}
                                                     </td>
                                                     <td>{{ \Carbon\Carbon::parse($suat->bat_dau)->format('H:i') }} -
                                                         {{ \Carbon\Carbon::parse($suat->ket_thuc)->format('H:i') }}</td>
