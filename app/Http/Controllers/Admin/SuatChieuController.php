@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Auth;
-
+use App\Models\RapPhim;
 
 class SuatChieuController extends Controller
 {
@@ -40,23 +40,40 @@ class SuatChieuController extends Controller
 
     public function index(Request $request)
     {
+        $user = auth()->user();
         $query = SuatChieu::with(['phim', 'phongChieu.rapPhim.chiNhanh']);
 
-        // Lọc theo chi nhánh
-        if ($request->filled('chi_nhanh')) {
+        // Lấy chi nhánh quản lý (nếu có)
+        $chiNhanh = $user->chiNhanhDangQuanLy;
+
+        // ===== PHÂN QUYỀN =====
+        if ($user->vai_tro_id == 2 && $chiNhanh) {
+            // Admin chi nhánh: suất chiếu thuộc các rạp của chi nhánh đó
+            $query->whereHas('phongChieu.rapPhim', function ($q) use ($chiNhanh) {
+                $q->where('chi_nhanh_id', $chiNhanh->id);
+            });
+        }
+
+        if ($user->vai_tro_id == 3) {
+            // Admin rạp: suất chiếu thuộc rạp của chính mình
+            $query->whereHas('phongChieu.rapPhim', function ($q) use ($user) {
+                $q->where('id', $user->rap_phim_id);
+            });
+        }
+
+        // ===== BỘ LỌC =====
+        if ($user->vai_tro_id == 1 && $request->filled('chi_nhanh')) {
             $query->whereHas('phongChieu.rapPhim.chiNhanh', function ($q) use ($request) {
                 $q->where('id', $request->chi_nhanh);
             });
         }
 
-        // Lọc theo rạp
-        if ($request->filled('rap')) {
+        if (in_array($user->vai_tro_id, [1, 2]) && $request->filled('rap')) {
             $query->whereHas('phongChieu.rapPhim', function ($q) use ($request) {
                 $q->where('id', $request->rap);
             });
         }
 
-        // Lọc theo ngày
         if ($request->filled('ngay_bat_dau')) {
             $query->whereDate('ngay_bat_dau', '>=', $request->ngay_bat_dau);
         } else {
@@ -67,7 +84,6 @@ class SuatChieuController extends Controller
             $query->whereDate('ngay_ket_thuc', '<=', $request->ngay_ket_thuc);
         }
 
-        // Lọc theo tên phim
         if ($request->filled('ten_phim')) {
             $query->whereHas('phim', function ($q) use ($request) {
                 $q->where('ten_phim', 'like', '%' . $request->ten_phim . '%');
@@ -78,9 +94,21 @@ class SuatChieuController extends Controller
             ->orderBy('bat_dau')
             ->paginate(20);
 
-        $chiNhanhs = ChiNhanh::with('rapPhims')->get();
+        // ===== CHI NHÁNH / RẠP HIỂN THỊ TRONG VIEW =====
+        if ($user->vai_tro_id == 1) {
+            $chiNhanhs = ChiNhanh::with('rapPhims')->get();
+        } elseif ($user->vai_tro_id == 2 && $chiNhanh) {
+            $chiNhanhs = collect([$chiNhanh->load('rapPhims')]);
+        } elseif ($user->vai_tro_id == 3) {
+            $rap = RapPhim::with('chiNhanh')->find($user->rap_phim_id);
+            $chiNhanhs = collect([$rap->chiNhanh->load(['rapPhims' => function ($q) use ($user) {
+                $q->where('id', $user->rap_phim_id);
+            }])]);
+        } else {
+            $chiNhanhs = collect();
+        }
 
-        return view('admin.suat-chieu.index', compact('suatChieus', 'chiNhanhs'));
+        return view('admin.suat-chieu.index', compact('suatChieus', 'chiNhanhs', 'user'));
     }
 
     public function create()
