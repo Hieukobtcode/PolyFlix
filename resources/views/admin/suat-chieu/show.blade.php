@@ -72,7 +72,7 @@
                             <div class="d-flex">
                                 <label class="fw-semibold w-40">Ngày chiếu:</label>
                                 <div class="flex-grow-1">
-                                    {{ \Carbon\Carbon::parse($suatChieu->ngay_chieu)->format('d/m/Y') }}
+                                    {{ \Carbon\Carbon::parse($suatChieu->ngay_bat_dau)->format('d/m/Y') }}
                                 </div>
                             </div>
                         </div>
