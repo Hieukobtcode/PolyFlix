@@ -13100,6 +13100,7 @@ namespace App\Models {
      * @property-read int|null $ratings_count
      * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\LichSuDiem> $lichSuDiem
      * @property-read int|null $lichSuDiem_count
+     * @property-read \App\Models\ChiNhanh $chiNhanhDangQuanLy
      * @property-read \Illuminate\Database\Eloquent\Collection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
      * @property-read int|null $notifications_count
      * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereId($value)

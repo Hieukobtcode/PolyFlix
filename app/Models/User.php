@@ -70,4 +70,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(LichSuDiem::class, 'users_id');
     }
+
+    // User là quản lý của 1 chi nhánh
+    public function chiNhanhDangQuanLy()
+    {
+        return $this->hasOne(ChiNhanh::class, 'quan_ly_id');
+    }
 }
