@@ -193,7 +193,31 @@ a
                             </div>
                         @endif
 
-                        <div class="price-row">
+                            <p><strong>Mã đặt vé:</strong> {{ $datVe->ma_dat_ve }}</p>
+                            <p><strong>Thời gian đặt:</strong> {{ $datVe->created_at->format('d/m/Y H:i') }}</p>
+                        </div> --}}
+
+                        <!-- Action buttons -->
+                        <div class="action-buttons">
+                            {{-- <button type="button" id="btn-pay" class="btn-payment" disabled>
+                                <i class="fas fa-lock"></i> Thanh toán ngay
+                            </button> --}}
+
+                            <!-- Hủy đặt vé - Form POST -->
+                            <form method="POST" action="{{ route('client.thanh-toan.huy', $datVe->id) }}"
+                                style="display: flex;">
+                                @csrf
+                                <button type="submit" class="btn-cancel" onclick="return confirmCancel()">
+                                    <i class="fas fa-times"></i> Hủy
+                                </button>
+
+                            </form>
+                            @php
+                                $maVe = $datVe->ma_dat_ve;
+                            @endphp
+                            <button class="btn-confirm" onclick="kiemTraThanhToan('{{ $maVe }}')">
+                                Kiểm tra thanh toán
+                            </button>
                             <span><strong>Tổng cộng</strong></span>
                             <span><strong>{{ number_format($tongThanhTien) }}đ</strong></span>
                         </div>
@@ -234,8 +258,27 @@ a
                         // Enable payment button
                         $('#btn-pay').prop('disabled', false);
 
-                        const method = $(this).data('method');
+@section('scripts')
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function kiemTraThanhToan(maDatVe) {
 
+            $.ajax({
+                url: "/check-payment-status",
+                method: "GET",
+                data: {
+                    ma_dat_ve: maDatVe
+                },
+                success: function(res) {
+                    console.log("Kết quả từ server:", res);
+
+                    if (res.success) {
+                        window.location.href = `/dat-ve/ket-qua/${maDatVe}`;
+                    } else {
+                        alert("Không tìm thấy giao dịch: " + res.message);
+                    }
+                        const method = $(this).data('method');
                         // Show/hide banking info
                         if (method === 'banking') {
                             $('#banking-info').addClass('show');
@@ -246,6 +289,29 @@ a
                         // Update button text
                         updatePaymentButtonText(method);
                     });
+                    alert("Đã xảy ra lỗi hệ thống khi kiểm tra thanh toán.");
+                }
+            });
+        }
+        $(document).ready(function() {
+
+
+            // Handle payment method selection
+            $('.payment-option').on('click', function() {
+                $('.payment-option').removeClass('selected');
+                $(this).addClass('selected');
+                $(this).find('input[type="radio"]').prop('checked', true);
+
+                // Enable payment button
+                $('#btn-pay').prop('disabled', false);
+
+                // Show/hide banking info
+                const method = $(this).data('method');
+                if (method === 'banking') {
+                    $('#banking-info').addClass('show');
+                } else {
+                    $('#banking-info').removeClass('show');
+                }
 
                     // Update payment button text
                     function updatePaymentButtonText(method) {
@@ -522,5 +588,5 @@ a
                     }
                 });
             }
-        </script>
-    @endsection
+    </script>
+@endsection

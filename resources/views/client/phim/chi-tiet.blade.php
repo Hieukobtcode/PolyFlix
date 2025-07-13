@@ -563,15 +563,8 @@
         }
 
         .list-movie {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-            margin-top: 20px;
-            flex-wrap: nowrap;
-            /* Không xuống hàng */
-            overflow-x: auto;
-            /* Cuộn ngang nếu không đủ */
-            padding-bottom: 10px;
+            width: 100%;
+            margin-left: 1130px;
         }
 
         .btn-see-more {
@@ -585,9 +578,26 @@
                 transform: rotate(360deg);
             }
         }
+
+        .swiper {
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .swiper-wrapper {
+            display: flex;
+        }
+
+        .swiper-slide {
+            flex-shrink: 0;
+            width: auto;
+        }
     </style>
 
-    <div class="container py-3">
+    <div class="container py-3" style="margin: 0px auto; padding:0px;">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+        <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
         <input type="hidden" id="phimIdInput" value="{{ $phim->id }}">
         <div class="movie-detail-wrapper"
             style="background:rgba(35,40,74,0.90); width:100%;  border-radius:16px; box-shadow:0 4px 22px #0d10205e; padding: 28px 22px;">
@@ -739,88 +749,44 @@
             </div>
 
         </div>
-        <!-- Swiper CSS -->
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 
-
-
-        <!-- Swiper JS -->
-        <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-        <script>
-            document.addEventListener("DOMContentLoaded", function() {
-                new Swiper(".list-movie", {
-                    slidesPerView: 4,
-                    spaceBetween: 20,
-                    loop: true,
-                    navigation: {
-                        nextEl: ".swiper-button-next",
-                        prevEl: ".swiper-button-prev",
-                    },
-                    autoplay: {
-                        delay: 4000,
-                        disableOnInteraction: false,
-                    },
-                    breakpoints: {
-                        1200: {
-                            slidesPerView: 4
-                        },
-                        992: {
-                            slidesPerView: 3
-                        },
-                        768: {
-                            slidesPerView: 2
-                        },
-                        576: {
-                            slidesPerView: 1
-                        }
-                    }
-                });
-            });
-        </script>
-
-
-
-    </div>
-
-    <div class="swiper list-movie">
-        <div class="swiper-wrapper">
-            @foreach ($allPhims as $phim)
-                <div class="swiper-slide">
-                    <div class="movie clickable-movie" style="display: flex; gap:4"
-                        data-href="{{ route('phim.chi-tiet', $phim->id) }}">
-                        <div class="img-wrapper">
-                            <a href="{{ route('phim.chi-tiet', $phim->id) }}">
-                                <img src="{{ asset('storage/' . $phim->poster) }}" alt="{{ $phim->ten_phim }}">
-                            </a>
-                            <div class="age-label">{{ $phim->do_tuoi }}</div>
-                            <div class="overlay">
-                                <a href="{{ route('phim.chi-tiet', $phim->id) }}#lich-chieu">
-                                    <button class="btn buy">
-                                        <i class="fa-solid fa-ticket"></i> Mua vé
-                                    </button>
+        <div class="swiper list-movie">
+            <div class="swiper-wrapper">
+                @foreach ($allPhims as $phim)
+                    <div class="swiper-slide">
+                        <div class="movie clickable-movie" data-href="{{ route('phim.chi-tiet', $phim->id) }}">
+                            <div class="img-wrapper">
+                                <a href="{{ route('phim.chi-tiet', $phim->id) }}">
+                                    <img src="{{ asset('storage/' . $phim->poster) }}" alt="{{ $phim->ten_phim }}">
                                 </a>
-                                <button class="btn trailer" data-video="{{ $phim->trailer }}" onclick="showTrailer(this)">
-                                    <i class="fa-solid fa-video"></i> Trailer
-                                </button>
+                                <div class="age-label">{{ $phim->do_tuoi }}</div>
+                                <div class="overlay">
+                                    <a href="{{ route('phim.chi-tiet', $phim->id) }}#lich-chieu">
+                                        <button class="btn buy">
+                                            <i class="fa-solid fa-ticket"></i> Mua vé
+                                        </button>
+                                    </a>
+                                    <button class="btn trailer" data-video="{{ $phim->trailer }}"
+                                        onclick="showTrailer(this)">
+                                        <i class="fa-solid fa-video"></i> Trailer
+                                    </button>
+                                </div>
                             </div>
+                            <a href="{{ route('phim.chi-tiet', $phim->id) }}">
+                                <p>{{ $phim->ten_phim }}</p>
+                            </a>
                         </div>
-                        <a href="{{ route('phim.chi-tiet', $phim->id) }}">
-                            <p>{{ $phim->ten_phim }}</p>
-                        </a>
                     </div>
-                </div>
-            @endforeach
-        </div>
+                @endforeach
+            </div>
 
-        <div class="swiper-navigation">
-            <div class="swiper-button-prev custom-nav"></div>
-            <div class="swiper-button-next custom-nav"></div>
+            <a href="{{ route('phim.dang-chieu') }}" class="btn-see-more">
+                <button class="btn-see">XEM THÊM</button>
+            </a>
         </div>
-
-        <a href="{{ route('phim.dang-chieu') }}" class="btn-see-more">
-            <button class="btn-see">XEM THÊM</button>
-        </a>
     </div>
+
+
 
     <div id="trailerPopup"
         style="display:none; width:auto; height:auto; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%);
@@ -834,6 +800,38 @@
     <div id="overlayBg"
         style="display:none; position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:998;">
     </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            new Swiper(".list-movie", {
+                slidesPerView: 4,
+                spaceBetween: 20,
+                loop: true,
+                navigation: {
+                    nextEl: ".swiper-button-next",
+                    prevEl: ".swiper-button-prev",
+                },
+                autoplay: {
+                    delay: 4000,
+                    disableOnInteraction: false,
+                },
+                breakpoints: {
+                    1200: {
+                        slidesPerView: 4
+                    },
+                    992: {
+                        slidesPerView: 3
+                    },
+                    768: {
+                        slidesPerView: 2
+                    },
+                    576: {
+                        slidesPerView: 1
+                    }
+                }
+            });
+        });
+    </script>
 
     <script>
         function convertYoutubeUrl(url) {
