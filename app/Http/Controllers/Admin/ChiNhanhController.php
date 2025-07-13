@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use App\Mail\MoiQuanLyChiNhanh;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 
 class ChiNhanhController extends Controller
@@ -18,26 +19,39 @@ class ChiNhanhController extends Controller
     {
         $query = ChiNhanh::with('rapPhims');
 
+        //  Nếu user là quản lý chi nhánh (vai_tro_id == 2)
+        if (Auth::user()->vai_tro_id == 2) {
+            $query->where('quan_ly_id', Auth::id());
+        }
+
+        //  Filter theo từ khóa
         if ($request->has('keyword') && $request->keyword) {
             $query->where('ten_chi_nhanh', 'like', '%' . $request->keyword . '%');
         }
 
+        //  Filter theo trạng thái
         if ($request->has('status') && $request->status) {
             $query->where('trang_thai', $request->status);
         }
-
+        //  Phân trang
         $chiNhanhs = $query->paginate(10);
 
-        $pendingInvites = DB::table('quan_ly_invites')
-        ->where('used', 0)
-        ->pluck('chi_nhanh_id')
-        ->toArray();
-        $pendingEmails = DB::table('quan_ly_invites')
-        ->where('used', 0)
-        ->pluck('email', 'chi_nhanh_id')
-        ->toArray();
+        //  Lấy danh sách lời mời quản lý (chỉ cần cho super admin)
+        $pendingInvites = [];
+        $pendingEmails = [];
+        if (Auth::user()->vai_tro_id == 1) {
+            $pendingInvites = DB::table('quan_ly_invites')
+                ->where('used', 0)
+                ->pluck('chi_nhanh_id')
+                ->toArray();
 
-        return view('admin.chi-nhanh.index', compact('chiNhanhs','pendingInvites','pendingEmails'));
+            $pendingEmails = DB::table('quan_ly_invites')
+                ->where('used', 0)
+                ->pluck('email', 'chi_nhanh_id')
+                ->toArray();
+        }
+
+        return view('admin.chi-nhanh.index', compact('chiNhanhs', 'pendingInvites', 'pendingEmails'));
     }
 
     public function create()
@@ -83,21 +97,37 @@ class ChiNhanhController extends Controller
 
     public function show($id)
     {
-        $pendingRapInvites = DB::table('quan_ly_invites')
-        ->where('used', 0)
-        ->pluck('rap_phim_id')
-        ->toArray();
-        $pendingRapEmails = DB::table('quan_ly_invites')
-        ->where('used', 0)
-        ->pluck('email', 'rap_phim_id')
-        ->toArray();
         $chiNhanh = ChiNhanh::with('rapPhims')->findOrFail($id);
+
+        //  Check quyền: nếu user là quản lý chi nhánh thì phải quản lý chi nhánh này
+        if (Auth::user()->vai_tro_id == 2 && $chiNhanh->quan_ly_id != Auth::id()) {
+            return redirect()->route('admin.chi-nhanh.index')
+                ->with('error', 'Bạn không có quyền truy cập chi nhánh này.');
+        }
+
+        $pendingRapInvites = DB::table('quan_ly_invites')
+            ->where('used', 0)
+            ->pluck('rap_phim_id')
+            ->toArray();
+
+        $pendingRapEmails = DB::table('quan_ly_invites')
+            ->where('used', 0)
+            ->pluck('email', 'rap_phim_id')
+            ->toArray();
+
         $pendingInvites = DB::table('quan_ly_invites')
-        ->where('used', 0)
-        ->pluck('chi_nhanh_id')
-        ->toArray();
-        return view('admin.chi-nhanh.show', compact('chiNhanh','pendingRapInvites','pendingRapEmails','pendingInvites'));
+            ->where('used', 0)
+            ->pluck('chi_nhanh_id')
+            ->toArray();
+
+        return view('admin.chi-nhanh.show', compact(
+            'chiNhanh',
+            'pendingRapInvites',
+            'pendingRapEmails',
+            'pendingInvites'
+        ));
     }
+
 
     public function destroy($id)
     {

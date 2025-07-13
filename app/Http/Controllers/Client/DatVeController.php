@@ -38,7 +38,7 @@ class DatVeController extends Controller
 
         // Kiểm tra suất chiếu còn hiệu lực
         $now = Carbon::now();
-        $ngayGioChieu = Carbon::parse($suatChieu->ngay_chieu . ' ' . $suatChieu->bat_dau);
+        $ngayGioChieu = Carbon::parse($suatChieu->ngay_bat_dau . ' ' . $suatChieu->bat_dau);
 
         if ($ngayGioChieu->isPast()) {
             return redirect()->route('home')->with('error', 'Suất chiếu đã qua. Vui lòng chọn suất chiếu khác!');
@@ -238,7 +238,7 @@ class DatVeController extends Controller
 
             // Kiểm tra suất chiếu còn hiệu lực
             $now = Carbon::now();
-            $ngayGioChieu = Carbon::parse($suatChieu->ngay_chieu . ' ' . $suatChieu->bat_dau);
+            $ngayGioChieu = Carbon::parse($suatChieu->ngay_bat_dau . ' ' . $suatChieu->bat_dau);
 
             if ($ngayGioChieu->isPast()) {
                 return redirect()->route('home')->with('error', 'Suất chiếu đã qua. Vui lòng chọn suất chiếu khác!');

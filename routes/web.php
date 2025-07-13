@@ -41,6 +41,7 @@ use App\Http\Controllers\Admin\RequestController;
 use App\Http\Controllers\Client\LoginController;
 use App\Http\Controllers\Client\ProfileController;
 use App\Http\Controllers\Client\KhuyenMaiController;
+use App\Http\Controllers\Admin\KhuyenMaiController as AdminKhuyenMaiController;
 use App\Http\Controllers\Client\PhimsController;
 use App\Http\Controllers\Client\LienHeController as ClientLienHeController;
 use App\Http\Controllers\Client\TheLoaiController;
@@ -62,6 +63,10 @@ Route::middleware('auth')->group(function () {
 
 // Payment callback - MUST be outside auth middleware for external services
 Route::get('/thanh-toan/callback', [ThanhToanController::class, 'callback'])->name('client.thanh-toan.callback');
+
+// ZaloPay callback routes
+Route::post('/api/payments/zalopay/callback', [\App\Http\Controllers\Client\ZaloPayController::class, 'handleCallback'])->name('zalopay.callback');
+Route::get('/thanh-toan/ket-qua', [\App\Http\Controllers\Client\ZaloPayController::class, 'handleReturn'])->name('zalopay.return');
 
 // MoMo callback routes (both GET and POST)
 Route::get('/thanh-toan/momo/callback', [\App\Http\Controllers\Client\MomoController::class, 'callback'])->name('client.thanh-toan.momo.callback');
@@ -165,8 +170,8 @@ Route::post('/gui-loi-moi', [InviteController::class, 'sendInvite'])->name('invi
 Route::get('/nhap-thong-tin', [InviteController::class, 'showForm'])->name('invite.form');
 Route::post('/gui-thong-tin', [InviteController::class, 'submitForm'])->name('invite.submit');
 
-Route::get('/suat-chieu/theo-phong-ngay', [SuatChieuController::class, 'theoPhongVaNgay'])
-    ->name('admin.suat-chieu.theo-phong-ngay');
+Route::get('/admin/suat-chieu/theo-phong-va-ngay', [SuatChieuController::class, 'theoPhongVaNgay'])
+    ->name('admin.suat-chieu.theo-phong-va-ngay');
 
 // Group route cho admin
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access', 'permission.check'])->group(function () {
@@ -210,8 +215,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access', 'per
 
     // Quản lý khuyến mãi
     Route::prefix('khuyen-mai')->name('khuyen-mai.')->group(function () {
-        Route::get('thong-ke-su-dung', [KhuyenMaiController::class, 'thongKeSuDung'])->name('thong-ke-su-dung');
-        Route::post('{khuyenMai}/assign-chi-nhanh', [KhuyenMaiController::class, 'assignToChiNhanh'])->name('assign-chi-nhanh');
+        Route::get('thong-ke-su-dung', [AdminKhuyenMaiController::class, 'thongKeSuDung'])->name('thong-ke-su-dung');
+        Route::post('{khuyenMai}/assign-chi-nhanh', [AdminKhuyenMaiController::class, 'assignToChiNhanh'])->name('assign-chi-nhanh');
     });
 
     Route::resource('khuyen-mai', AdminKhuyenMaiController::class);
@@ -278,13 +283,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access', 'per
     Route::resource('cap-bac-the', CapBacTheController::class);
     Route::put('cap-bac-the/{capBacThe}/set-default', [CapBacTheController::class, 'setDefault'])->name('cap-bac-the.set-default');
 
-    Route::prefix('khuyen-mai')->name('khuyen-mai.')->group(function () {
-        Route::post('{khuyenMai}/assign-chi-nhanh', [KhuyenMaiController::class, 'assignToChiNhanh'])->name('assign-chi-nhanh');
-        Route::get('thong-ke-su-dung', [KhuyenMaiController::class, 'thongKeSuDung'])->name('thong-ke-su-dung');
-    });
-    Route::resource('khuyen-mai', KhuyenMaiController::class);
 
 
+
+    Route::post('suat-chieu/luu-suat-chieu', [SuatChieuController::class, 'luuSuatChieu'])->name('suat-chieu.luu-suat-chieu');
     Route::post('suat-chieu/bulk-delete', [SuatChieuController::class, 'bulkDelete'])->name('suat-chieu.bulk-delete');
     Route::post('suat-chieu/bulk-toggle-status', [SuatChieuController::class, 'bulkToggleStatus'])->name('suat-chieu.bulk-toggle-status');
     Route::post('suat-chieu/{suatChieu}/toggle-status', [SuatChieuController::class, 'toggleStatus']);

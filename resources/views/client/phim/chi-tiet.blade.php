@@ -881,7 +881,7 @@
         </div>
     `);
 
-                let url = `/phim/${phimId}/lich-chieu?ngay_chieu=${currentDate}&chi_nhanh_id=${currentChiNhanh}`;
+                let url = `/phim/${phimId}/lich-chieu?ngay_bat_dau=${currentDate}&chi_nhanh_id=${currentChiNhanh}`;
                 $.ajax({
                     url: url,
                     method: 'GET',

@@ -2,14 +2,11 @@
 
 @section('styles')
     <style>
-        {!! collect($loaiGhes)->map(function ($loai) {
-                $class = \Illuminate\Support\Str::slug($loai->ten_loai_ghe);
-                return ".ghe-chieu.{$class} { background-color: {$loai->chu_thich_mau_ghe}; }";
-            })->implode("\n") !!} .time-seat {
-            font-size: 20px;
-            font-weight: bold;
-            color: #dc3545;
-            margin: 10px 0;
+        {
+            ! ! collect($loaiGhes)->map(function ($loai) {
+                    $class=\Illuminate\Support\Str::slug($loai->ten_loai_ghe);
+                    return ".ghe-chieu.{$class} { background-color: {$loai->chu_thich_mau_ghe}; }";
+                })->implode("\n") ! !
         }
     </style>
 
@@ -45,7 +42,7 @@
                     <div class="movie-meta">
                         <p><i class="fas fa-clock"></i> {{ $suatChieu->phim->thoi_luong }} phút</p>
                         <p><i class="fas fa-calendar"></i>
-                            {{ \Carbon\Carbon::parse($suatChieu->ngay_chieu)->format('d/m/Y') }}</p>
+                            {{ \Carbon\Carbon::parse($suatChieu->ngay_bat_dau)->format('d/m/Y') }}</p>
                         <p><i class="fas fa-clock"></i> {{ \Carbon\Carbon::parse($suatChieu->bat_dau)->format('H:i') }} -
                             {{ \Carbon\Carbon::parse($suatChieu->ket_thuc)->format('H:i') }}</p>
                         <p><i class="fas fa-film"></i> {{ $suatChieu->formatted_version }}</p>
@@ -234,7 +231,7 @@
             broadcaster: 'socket.io',
             host: window.location.hostname + ':6001',
         });
-        
+
         // Khi có người chọn ghế -> tất cả client khác sẽ nhận được sự kiện này
         window.Echo.channel('ghe-duoc-chon')
             .listen('.ghe-duoc-chon', function(e) {
@@ -277,8 +274,8 @@
                 }
             });
 
-        
-            // Khi người dùng hủy chọn ghế
+
+        // Khi người dùng hủy chọn ghế
         window.Echo.channel('ghe-bi-huy')
             .listen('.ghe-bi-huy', function(e) {
                 const ghe = document.querySelector(`.ghe-chieu[data-seat-id="${e.gheId}"]`);

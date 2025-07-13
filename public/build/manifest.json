@@ -27,6 +27,11 @@
     "src": "resources/css/ghe-ngoi.css",
     "isEntry": true
   },
+  "resources/css/thanh-toan.css": {
+    "file": "assets/thanh-toan-CAHCXIy6.css",
+    "src": "resources/css/thanh-toan.css",
+    "isEntry": true
+  },
   "resources/css/trang-chu.css": {
     "file": "assets/trang-chu-DZeRVgpu.css",
     "src": "resources/css/trang-chu.css",
@@ -61,7 +66,7 @@
     ]
   },
   "resources/js/dat-ve-client.js": {
-    "file": "assets/dat-ve-client-Cyi-Ckzg.js",
+    "file": "assets/dat-ve-client-Bw0tPq8Y.js",
     "name": "dat-ve-client",
     "src": "resources/js/dat-ve-client.js",
     "isEntry": true,

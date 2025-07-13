@@ -75,4 +75,32 @@ class DatVe extends Model
     {
         return $this->belongsToMany(GheNgoi::class, 'chi_tiet_dat_ves', 'dat_ve_id', 'ghe_id');
     }
+
+    /**
+     * Relationship với bảng transactions
+     */
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class, 'dat_ve_id');
+    }
+
+    /**
+     * Lấy transaction thành công cuối cùng
+     */
+    public function successTransaction()
+    {
+        return $this->hasOne(Transaction::class, 'dat_ve_id')
+            ->where('status', 'success')
+            ->latest();
+    }
+
+    /**
+     * Lấy transaction pending cuối cùng
+     */
+    public function pendingTransaction()
+    {
+        return $this->hasOne(Transaction::class, 'dat_ve_id')
+            ->where('status', 'pending')
+            ->latest();
+    }
 }

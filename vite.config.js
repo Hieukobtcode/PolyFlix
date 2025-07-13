@@ -11,6 +11,7 @@ export default defineConfig({
                 "resources/css/client.css",
                 "resources/css/trang-chu.css",
                 "resources/css/dat-ve.css",
+                "resources/css/thanh-toan.css",
                 "resources/css/ghe-ngoi.css",
                 "resources/js/client.js",
                 "resources/js/trang-chu.js",

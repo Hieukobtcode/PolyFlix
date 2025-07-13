@@ -160,7 +160,7 @@
         <form action="{{ route('verify.submit') }}" method="POST">
             @csrf
             <input type="hidden" name="email" value="{{ old('email', session('email')) }}">
-            <input type="text" name="otp" placeholder="Nhập mã OTP" required>
+            <input type="text" name="otp" placeholder="Nhập mã OTP">
             <button type="submit">XÁC NHẬN</button>
         </form>
     </div>

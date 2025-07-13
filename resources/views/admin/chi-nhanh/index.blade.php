@@ -4,226 +4,6 @@
     @section('page-title', 'Quản lý Chi Nhánh')
     @section('breadcrumb', 'Danh sách Chi Nhánh')
 
-    {{-- @section('styles')
-        <style>
-            .card {
-                border-radius: 16px;
-                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-                border: 1px solid #e0e6ed;
-                overflow: hidden;
-            }
-
-            .card-header {
-                background: linear-gradient(90deg, #f6c343, #f08a24);
-                color: #fff;
-                padding: 1rem 1.5rem;
-                border-bottom: 2px solid #fff;
-            }
-
-            .card-header h5 {
-                font-weight: 700;
-                letter-spacing: 0.5px;
-                font-size: 1.25rem;
-            }
-
-            /* Input đẹp */
-            .form-control {
-                border-radius: 12px;
-                border: 1px solid #d8dbe0;
-                padding: 10px 16px;
-                font-size: 1rem;
-                transition: all 0.3s ease;
-            }
-
-            .form-control:focus {
-                border-color: #f08a24;
-                box-shadow: 0 0 0 0.2rem rgba(240, 138, 36, 0.25);
-                outline: none;
-            }
-
-            .select2-container .select2-selection--single {
-                border-radius: 12px !important;
-                border: 1px solid #d8dbe0 !important;
-                padding: 8px 12px;
-                height: auto !important;
-                min-height: 44px;
-                font-size: 1rem;
-                display: flex;
-                align-items: center;
-                transition: all 0.3s ease;
-                background-color: #fff;
-            }
-
-            /* Khi có chọn trạng thái — vùng cam ôm trọn box */
-            .select2-selection--single.is-active {
-                background-color: #28a745 !important;
-                border-color: #28a745 !important;
-                color: #fff !important;
-                box-shadow: 0 4px 8px rgba(40, 167, 69, 0.25);
-            }
-
-            /* Tạm dừng → cam */
-            .select2-selection--single.is-pause {
-                background-color: #f08a24 !important;
-                border-color: #f08a24 !important;
-                color: #fff !important;
-                box-shadow: 0 4px 8px rgba(240, 138, 36, 0.25);
-            }
-
-            /* Đóng cửa → xám */
-            .select2-selection--single.is-closed {
-                background-color: #6c757d !important;
-                border-color: #6c757d !important;
-                color: #fff !important;
-                box-shadow: 0 4px 8px rgba(108, 117, 125, 0.25);
-            }
-
-            /* Text của option được chọn */
-            .select2-container--default .select2-selection--single .select2-selection__rendered {
-                padding: 0;
-                margin: 0;
-                color: inherit;
-                font-weight: 600;
-                font-size: 0.95rem;
-                line-height: 1.5;
-            }
-
-            /* Placeholder khi chưa chọn */
-            .select2-container--default .select2-selection__placeholder {
-                color: #999 !important;
-                background: none !important;
-            }
-
-            /* Clear button X */
-            .select2-container--default .select2-selection__clear {
-                color: #fff !important;
-                font-size: 1.2em;
-                margin-right: 10px;
-                cursor: pointer;
-            }
-
-            .select2-container--default .select2-selection__clear:hover {
-                color: #ffdcb3 !important;
-            }
-
-            /* Focus */
-            .select2-container--default.select2-container--focus .select2-selection {
-                border-color: #f08a24 !important;
-                box-shadow: 0 0 0 0.2rem rgba(240, 138, 36, 0.25) !important;
-            }
-
-            /* Dropdown option hover */
-            .select2-results__option {
-                transition: all 0.2s ease;
-            }
-
-            .select2-results__option--highlighted {
-                background-color: #f08a24 !important;
-                color: #fff !important;
-                transition: all 0.2s ease;
-            }
-
-            /* Option selected */
-            .select2-results__option--selected {
-                background-color: #f6c343 !important;
-                color: #fff !important;
-            }
-
-
-
-            .table {
-                border-collapse: separate;
-                border-spacing: 0;
-                border-radius: 12px;
-                overflow: hidden;
-            }
-
-            .table thead {
-                color: #fff;
-            }
-
-            .table thead th {
-                background: #f6c343;
-                padding: 1rem;
-                font-weight: 700;
-                letter-spacing: 0.5px;
-                border: none;
-                color: #fff;
-                /* để chữ trắng */
-            }
-
-
-            .table tbody tr {
-                background-color: #fff;
-                transition: none;
-            }
-
-
-            .table tbody tr:hover td {
-                background-color: rgba(142, 244, 255, 0.277);
-                transform: scale(1.015);
-            }
-
-            .table tbody td {
-                border: none !important;
-                /* Xóa toàn bộ border */
-                box-shadow: none;
-                /* Không bị line giữa các td */
-                padding: 1.1rem 0.9rem;
-                transition: transform 0.8s ease, box-shadow 0.8s ease, background-color 0.8s ease;
-            }
-
-            .pagination {
-                justify-content: flex-end;
-            }
-
-            .pagination .page-item .page-link {
-                border-radius: 8px;
-                margin: 0 2px;
-                transition: all 0.2s ease;
-            }
-
-            .pagination .page-item .page-link:hover {
-                background-color: #5A8DEE;
-                color: #fff;
-                border-color: #5A8DEE;
-            }
-
-
-
-            /* Modal animation */
-            .modal.fade .modal-dialog {
-                transform: scale(0.95);
-                transition: all 0.3s ease-out;
-                opacity: 0;
-            }
-
-            .modal.fade.show .modal-dialog {
-                transform: scale(1);
-                opacity: 1;
-            }
-
-
-
-            .btn-poly {
-                background-color: #fff3cd;
-                color: #f08a24;
-                border: 1px solid #f08a24;
-                font-weight: 600;
-                letter-spacing: 0.5px;
-                transition: all 0.3s ease;
-            }
-
-            .btn-poly:hover {
-                background-color: #ff5900;
-                color: #ffffff;
-                border-color: #f08a24;
-                transform: translateY(-2px);
-                box-shadow: 0 4px 12px rgba(248, 191, 49, 0.637);
-            }
-        </style>
-    @endsection --}}
-
     @section('content')
 
 
@@ -233,57 +13,66 @@
             <div class="card shadow-lg border-0 mb-4">
 
                 <div class="card-body">
-                    <!-- Form search realtime + select filter -->
-                    <div class="row mb-4 g-2 align-items-center">
+                    @if (Auth::user()->vai_tro_id == 1)
+                        <!-- Form search realtime + select filter -->
+                        <div class="row mb-4 g-2 align-items-center">
 
-                        <!-- Tên chi nhánh -->
-                        <div class="col-md-3">
-                            <input type="text" id="searchTenChiNhanh" class="form-control"
-                                placeholder="Tìm theo tên chi nhánh...">
+                            <!-- Tên chi nhánh -->
+                            <div class="col-md-3">
+                                <input type="text" id="searchTenChiNhanh" class="form-control"
+                                    placeholder="Tìm theo tên chi nhánh...">
+                            </div>
+
+                            <!-- Tên quản lý -->
+                            <div style="display: none" class="col-md-3">
+                                <input type="text" id="searchTenQuanLy" class="form-control"
+                                    placeholder="Tìm theo tên quản lý...">
+                            </div>
+
+                            <!-- Trạng thái quản lý -->
+                            <div style="display: none" class="col-md-3">
+                                <select name="quan_ly" class="form-select">
+                                    <option value="" disabled {{ request('quan_ly') === null ? 'selected' : '' }}
+                                        hidden>
+                                        Quản lý</option>
+                                    <option value="all" {{ request('quan_ly') === 'all' ? 'selected' : '' }}>Tất cả
+                                    </option>
+                                    <option value="phan_cong" {{ request('quan_ly') === 'phan_cong' ? 'selected' : '' }}>Đã
+                                        phân
+                                        công</option>
+                                    <option value="chua_phan_cong"
+                                        {{ request('quan_ly') === 'chua_phan_cong' ? 'selected' : '' }}>Chưa phân công
+                                    </option>
+                                </select>
+                            </div>
+
+                            <!-- Trạng thái chi nhánh (cái cũ) -->
+                            <div style="display: none" class="col-md-3">
+                                <select id="statusFilter" class="form-select">
+                                    <option value="" {{ request('statusFilter') === null ? 'selected' : '' }} disabled
+                                        hidden>Trạng thái</option>
+                                    <option value="hoat_dong"
+                                        {{ request('statusFilter') == 'hoat_dong' ? 'selected' : '' }}>
+                                        Hoạt động</option>
+                                    <option value="tam_dung" {{ request('statusFilter') == 'tam_dung' ? 'selected' : '' }}>
+                                        Tạm
+                                        dừng</option>
+                                    <option value="dong_cua" {{ request('statusFilter') == 'dong_cua' ? 'selected' : '' }}>
+                                        Đóng
+                                        cửa</option>
+                                </select>
+                            </div>
+
+
                         </div>
 
-                        <!-- Tên quản lý -->
-                        <div style="display: none" class="col-md-3">
-                            <input type="text" id="searchTenQuanLy" class="form-control"
-                                placeholder="Tìm theo tên quản lý...">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <a href="{{ route('admin.chi-nhanh.create') }}"
+                                class="btn btn-sm btn-primary d-inline-flex align-items-center gap-2 py-2 px-3">
+                                <i class="ti ti-plus"></i> Thêm chi nhánh
+                            </a>
                         </div>
-
-                        <!-- Trạng thái quản lý -->
-                        <div style="display: none" class="col-md-3">
-                            <select name="quan_ly" class="form-select">
-                                <option value="" disabled {{ request('quan_ly') === null ? 'selected' : '' }} hidden>
-                                    Quản lý</option>
-                                <option value="all" {{ request('quan_ly') === 'all' ? 'selected' : '' }}>Tất cả</option>
-                                <option value="phan_cong" {{ request('quan_ly') === 'phan_cong' ? 'selected' : '' }}>Đã phân
-                                    công</option>
-                                <option value="chua_phan_cong"
-                                    {{ request('quan_ly') === 'chua_phan_cong' ? 'selected' : '' }}>Chưa phân công</option>
-                            </select>
-                        </div>
-
-                        <!-- Trạng thái chi nhánh (cái cũ) -->
-                        <div style="display: none" class="col-md-3">
-                            <select id="statusFilter" class="form-select">
-                                <option value="" {{ request('statusFilter') === null ? 'selected' : '' }} disabled
-                                    hidden>Trạng thái</option>
-                                <option value="hoat_dong" {{ request('statusFilter') == 'hoat_dong' ? 'selected' : '' }}>
-                                    Hoạt động</option>
-                                <option value="tam_dung" {{ request('statusFilter') == 'tam_dung' ? 'selected' : '' }}>Tạm
-                                    dừng</option>
-                                <option value="dong_cua" {{ request('statusFilter') == 'dong_cua' ? 'selected' : '' }}>Đóng
-                                    cửa</option>
-                            </select>
-                        </div>
-
-
-                    </div>
-                    
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <a href="{{ route('admin.chi-nhanh.create') }}"
-                            class="btn btn-sm btn-primary d-inline-flex align-items-center gap-2 py-2 px-3">
-                            <i class="ti ti-plus"></i> Thêm chi nhánh
-                        </a>
-                    </div>
+                    @endif
                     <!-- Table mới đẹp -->
                     <div class="table-responsive">
                         <table class="table text-nowrap align-middle mb-0">
@@ -313,94 +102,156 @@
                                 </tr>
                             </thead>
                             <tbody id="chiNhanhTable">
-                                @forelse($chiNhanhs as $index => $chiNhanh)
-                                    <tr class="data-row"
-                                        data-state-ql="@if ($chiNhanh->quan_ly_id) da_phan_cong
-                @elseif (in_array($chiNhanh->id, $pendingInvites)) dang_phan_cong
-                @else chua_phan_cong @endif"
-                                        data-state-cn="{{ $chiNhanh->trang_thai }}"
-                                        data-ten-ql="@if ($chiNhanh->quan_ly_id) {{ $chiNhanh->quanLy->name ?? '' }} @elseif (in_array($chiNhanh->id, $pendingInvites)) Đang phân công @else Chưa phân công @endif">
+                                @if (Auth::user()->vai_tro_id == 1)
+                                    @forelse($chiNhanhs as $index => $chiNhanh)
+                                        <tr class="data-row"
+                                            data-state-ql="@if ($chiNhanh->quan_ly_id) da_phan_cong
+                                        @elseif (in_array($chiNhanh->id, $pendingInvites)) dang_phan_cong
+                                        @else chua_phan_cong @endif"
+                                            data-state-cn="{{ $chiNhanh->trang_thai }}"
+                                            data-ten-ql="@if ($chiNhanh->quan_ly_id) {{ $chiNhanh->quanLy->name ?? '' }} @elseif (in_array($chiNhanh->id, $pendingInvites)) Đang phân công @else Chưa phân công @endif">
 
-                                        <td class="text-center">{{ $index + 1 }}</td>
-                                        <td>{{ $chiNhanh->ten_chi_nhanh }}</td>
-                                        <td>{{ $chiNhanh->dia_chi }}</td>
+                                            <td class="text-center">{{ $index + 1 }}</td>
+                                            <td>{{ $chiNhanh->ten_chi_nhanh }}</td>
+                                            <td>{{ $chiNhanh->dia_chi }}</td>
 
-                                        <td class="text-center">
-                                            @if ($chiNhanh->quan_ly_id)
-                                                <a href="{{ route('admin.users.show', $chiNhanh->quan_ly_id) }}"
-                                                    class="text-decoration-none fw-medium">
-                                                    {{ $chiNhanh->quanLy->name ?? 'ID: ' . $chiNhanh->quan_ly_id }}
-                                                </a>
-                                            @elseif (in_array($chiNhanh->id, $pendingInvites))
-                                                <button type="button" class="badge bg-warning-subtle text-warning border-0"
-                                                    data-bs-toggle="modal"
-                                                    data-bs-target="#cancelInviteModal{{ $chiNhanh->id }}">
-                                                    Đang phân công
-                                                </button>
-                                            @else
-                                                <span class="badge bg-secondary-subtle text-muted">Chưa phân công</span>
-                                            @endif
-                                        </td>
+                                            <td class="text-center">
+                                                @if ($chiNhanh->quan_ly_id)
+                                                    <a href="{{ route('admin.users.show', $chiNhanh->quan_ly_id) }}"
+                                                        class="text-decoration-none fw-medium">
+                                                        {{ $chiNhanh->quanLy->name ?? 'ID: ' . $chiNhanh->quan_ly_id }}
+                                                    </a>
+                                                @elseif (in_array($chiNhanh->id, $pendingInvites))
+                                                    <button type="button"
+                                                        class="badge bg-warning-subtle text-warning border-0"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#cancelInviteModal{{ $chiNhanh->id }}">
+                                                        Đang phân công
+                                                    </button>
+                                                @else
+                                                    <span class="badge bg-secondary-subtle text-muted">Chưa phân công</span>
+                                                @endif
+                                            </td>
 
-                                        <td class="text-center">
-                                            {{ \Carbon\Carbon::parse($chiNhanh->created_at)->format('d/m/Y H:i') }}
-                                        </td>
-                                        <td class="text-center">
-                                            @if ($chiNhanh->trang_thai === 'hoat_dong')
-                                                <span class="badge bg-success-subtle text-success">Hoạt động</span>
-                                            @elseif ($chiNhanh->trang_thai === 'tam_dung')
-                                                <span class="badge bg-warning-subtle text-warning">Tạm dừng</span>
-                                            @else
-                                                <span class="badge bg-secondary-subtle text-muted">Đóng cửa</span>
-                                            @endif
-                                        </td>
+                                            <td class="text-center">
+                                                {{ \Carbon\Carbon::parse($chiNhanh->created_at)->format('d/m/Y H:i') }}
+                                            </td>
+                                            <td class="text-center">
+                                                @if ($chiNhanh->trang_thai === 'hoat_dong')
+                                                    <span class="badge bg-success-subtle text-success">Hoạt động</span>
+                                                @elseif ($chiNhanh->trang_thai === 'tam_dung')
+                                                    <span class="badge bg-warning-subtle text-warning">Tạm dừng</span>
+                                                @else
+                                                    <span class="badge bg-secondary-subtle text-muted">Đóng cửa</span>
+                                                @endif
+                                            </td>
 
-                                        <td class="text-center">
-                                            <div class="dropdown dropstart">
-                                                <a href="javascript:void(0)" class="text-muted" data-bs-toggle="dropdown"
-                                                    aria-expanded="false">
-                                                    <i class="ti ti-dots-vertical fs-6"></i>
-                                                </a>
-                                                <ul class="dropdown-menu">
-                                                    <li>
-                                                        <a class="dropdown-item d-flex align-items-center gap-2"
-                                                            href="{{ route('admin.chi-nhanh.show', $chiNhanh->id) }}">
-                                                            <i class="ti ti-eye fs-5"></i> Xem chi nhánh
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item d-flex align-items-center gap-2"
-                                                            href="{{ route('admin.chi-nhanh.edit', $chiNhanh->id) }}">
-                                                            <i class="ti ti-edit fs-5"></i> Chỉnh sửa
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item d-flex align-items-center gap-2"
-                                                            href="{{ route('admin.rap-phim.create', ['chiNhanhId' => $chiNhanh->id]) }}">
-                                                            <i class="ti ti-plus fs-5"></i> Thêm rạp chiếu
-                                                        </a>
-                                                    </li>
-                                                    @if (!$chiNhanh->quan_ly_id && !in_array($chiNhanh->id, $pendingInvites))
+                                            <td class="text-center">
+                                                <div class="dropdown dropstart">
+                                                    <a href="javascript:void(0)" class="text-muted"
+                                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                                        <i class="ti ti-dots-vertical fs-6"></i>
+                                                    </a>
+                                                    <ul class="dropdown-menu">
                                                         <li>
-                                                            <button class="dropdown-item d-flex align-items-center gap-2"
-                                                                data-bs-toggle="modal"
-                                                                data-bs-target="#inviteModal{{ $chiNhanh->id }}">
-                                                                <i class="ti ti-user-plus fs-5 text-warning"></i> Phân công
-                                                                quản lý
-                                                            </button>
+                                                            <a class="dropdown-item d-flex align-items-center gap-2"
+                                                                href="{{ route('admin.chi-nhanh.show', $chiNhanh->id) }}">
+                                                                <i class="ti ti-eye fs-5"></i> Xem chi nhánh
+                                                            </a>
                                                         </li>
-                                                    @endif
-                                                </ul>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="7" class="text-center text-muted py-3">
-                                            <i class="ti ti-folder-open me-1"></i> Không có dữ liệu
-                                        </td>
-                                    </tr>
-                                @endforelse
+                                                        <li>
+                                                            <a class="dropdown-item d-flex align-items-center gap-2"
+                                                                href="{{ route('admin.chi-nhanh.edit', $chiNhanh->id) }}">
+                                                                <i class="ti ti-edit fs-5"></i> Chỉnh sửa
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="dropdown-item d-flex align-items-center gap-2"
+                                                                href="{{ route('admin.rap-phim.create', ['chiNhanhId' => $chiNhanh->id]) }}">
+                                                                <i class="ti ti-plus fs-5"></i> Thêm rạp chiếu
+                                                            </a>
+                                                        </li>
+                                                        @if (!$chiNhanh->quan_ly_id && !in_array($chiNhanh->id, $pendingInvites))
+                                                            <li>
+                                                                <button
+                                                                    class="dropdown-item d-flex align-items-center gap-2"
+                                                                    data-bs-toggle="modal"
+                                                                    data-bs-target="#inviteModal{{ $chiNhanh->id }}">
+                                                                    <i class="ti ti-user-plus fs-5 text-warning"></i> Phân
+                                                                    công
+                                                                    quản lý
+                                                                </button>
+                                                            </li>
+                                                        @endif
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="7" class="text-center text-muted py-3">
+                                                <i class="ti ti-folder-open me-1"></i> Không có dữ liệu
+                                            </td>
+                                        </tr>
+                                    @endforelse
+                                @elseif(Auth::user()->vai_tro_id == 2)
+                                    @forelse($chiNhanhs as $index => $chiNhanh)
+                                        <tr class="data-row" data-state-cn="{{ $chiNhanh->trang_thai }}">
+
+                                            <td class="text-center">{{ $index + 1 }}</td>
+                                            <td>{{ $chiNhanh->ten_chi_nhanh }}</td>
+                                            <td>{{ $chiNhanh->dia_chi }}</td>
+
+                                            <td class="text-center">
+                                                <span class="badge bg-success-subtle text-success">Bạn quản lý</span>
+                                            </td>
+
+                                            <td class="text-center">
+                                                {{ \Carbon\Carbon::parse($chiNhanh->created_at)->format('d/m/Y H:i') }}
+                                            </td>
+                                            <td class="text-center">
+                                                @if ($chiNhanh->trang_thai === 'hoat_dong')
+                                                    <span class="badge bg-success-subtle text-success">Hoạt động</span>
+                                                @elseif ($chiNhanh->trang_thai === 'tam_dung')
+                                                    <span class="badge bg-warning-subtle text-warning">Tạm dừng</span>
+                                                @else
+                                                    <span class="badge bg-secondary-subtle text-muted">Đóng cửa</span>
+                                                @endif
+                                            </td>
+
+                                            <td class="text-center">
+                                                <div class="dropdown dropstart">
+                                                    <a href="javascript:void(0)" class="text-muted"
+                                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                                        <i class="ti ti-dots-vertical fs-6"></i>
+                                                    </a>
+                                                    <ul class="dropdown-menu">
+                                                        <li>
+                                                            <a class="dropdown-item d-flex align-items-center gap-2"
+                                                                href="{{ route('admin.chi-nhanh.show', $chiNhanh->id) }}">
+                                                                <i class="ti ti-eye fs-5"></i> Xem chi nhánh
+                                                            </a>
+                                                        </li>
+                                                       
+                                                        <li>
+                                                            <a class="dropdown-item d-flex align-items-center gap-2"
+                                                                href="{{ route('admin.rap-phim.create', ['chiNhanhId' => $chiNhanh->id]) }}">
+                                                                <i class="ti ti-plus fs-5"></i> Thêm rạp chiếu
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="7" class="text-center text-muted py-3">
+                                                <i class="ti ti-folder-open me-1"></i> Không có chi nhánh nào bạn quản lý
+                                            </td>
+                                        </tr>
+                                    @endforelse
+                                @endif
+
                             </tbody>
                         </table>
 
