@@ -1,6 +1,7 @@
 <?php
 namespace App\Models;
 
+use App\Models\RapPhim;
 use Illuminate\Database\Eloquent\Model;
 
 class DoAn extends Model
@@ -30,6 +31,11 @@ class DoAn extends Model
     {
         return $this->belongsToMany(ChiNhanh::class, 'chi_nhanh_do_an');
     }
+    public function rapPhims()
+    {
+        return $this->belongsToMany(RapPhim::class, 'rap_do_an');
+    }
+
     public function datVes()
     {
         return $this->belongsToMany(DatVe::class, 'dat_ve_do_an')

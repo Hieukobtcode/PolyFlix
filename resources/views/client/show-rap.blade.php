@@ -1,6 +1,9 @@
 @extends('layouts.client')
 
 @section('styles')
+    @php
+        use App\Helpers\IdFormatter;
+    @endphp
     <style>
         :root {
             --primary-gradient: linear-gradient(135deg, #1a0933 0%, #3c1a7a 100%);
@@ -557,14 +560,15 @@
                                         </div>
                                         <div class="hour">
                                             @foreach ($suatChieusTheoVersion as $suat)
-                                                <a href="{{ route('client.dat-ve', ['phim_id' => $suat->phim_id, 'suat_chieu_id' => $suat->id]) }}"
-                                                    class="time-btn">
+                                                @php
+                                                    $params = base64_encode($suat->phim_id . '-' . $suat->id);
+                                                @endphp
+                                                <a href="/dat-ve?params={{ $params }}" class="time-btn">
                                                     {{ \Carbon\Carbon::parse($suat->bat_dau)->format('H:i') }}
                                                 </a>
                                             @endforeach
                                         </div>
                                     @endforeach
-
                                 </details>
                             @endforeach
                             <a href="{{ route('phim.chi-tiet', $item->id) }}" class="view-more">Xem thêm lịch chiếu</a>
@@ -648,8 +652,10 @@
                                         </div>
                                         <div class="hour">
                                             @foreach ($suatChieusTheoPhong as $suat)
-                                                <a href="{{ route('client.dat-ve', ['phim_id' => $suat->phim_id, 'suat_chieu_id' => $suat->id]) }}"
-                                                    class="time-btn">
+                                                @php
+                                                    $params = base64_encode($suat->phim_id . '-' . $suat->id);
+                                                @endphp
+                                                <a href="/dat-ve?params={{ $params }}" class="time-btn">
                                                     {{ \Carbon\Carbon::parse($suat->bat_dau)->format('H:i') }}
                                                 </a>
                                             @endforeach
@@ -745,8 +751,10 @@
                                         </div>
                                         <div class="hour">
                                             @foreach ($suatChieusTheoVersion as $suat)
-                                                <a href="{{ route('client.dat-ve', ['phim_id' => $suat->phim_id, 'suat_chieu_id' => $suat->id]) }}"
-                                                    class="time-btn">
+                                                @php
+                                                    $params = base64_encode($suat->phim_id . '-' . $suat->id);
+                                                @endphp
+                                                <a href="/dat-ve?params={{ $params }}" class="time-btn">
                                                     {{ \Carbon\Carbon::parse($suat->bat_dau)->format('H:i') }}
                                                 </a>
                                             @endforeach

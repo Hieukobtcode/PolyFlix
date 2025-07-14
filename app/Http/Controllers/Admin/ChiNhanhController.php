@@ -97,12 +97,27 @@ class ChiNhanhController extends Controller
 
     public function show($id)
     {
-        $chiNhanh = ChiNhanh::with('rapPhims')->findOrFail($id);
+        $chiNhanh = ChiNhanh::with(['rapPhims' => function ($query) {
+            // Nếu admin rạp, chỉ load các rạp họ quản lý
+            if (Auth::user()->vai_tro_id == 3) {
+                $query->where('quan_ly_id', Auth::id());
+            }
+        }])->findOrFail($id);
 
-        //  Check quyền: nếu user là quản lý chi nhánh thì phải quản lý chi nhánh này
+        // Check quyền: Admin chi nhánh
         if (Auth::user()->vai_tro_id == 2 && $chiNhanh->quan_ly_id != Auth::id()) {
             return redirect()->route('admin.chi-nhanh.index')
                 ->with('error', 'Bạn không có quyền truy cập chi nhánh này.');
+        }
+
+        // Check quyền: Admin rạp
+        if (Auth::user()->vai_tro_id == 3) {
+            $hasRap = $chiNhanh->rapPhims->contains('quan_ly_id', Auth::id());
+
+            if (!$hasRap) {
+                return back()->with('error', 'Bạn không có quyền truy cập chi nhánh này.');
+
+            }
         }
 
         $pendingRapInvites = DB::table('quan_ly_invites')

@@ -19,6 +19,9 @@ class DatVe extends Model
         'tong_tien',
         'phuong_thuc_tt',
         'trang_thai',
+        'ma_giao_dich',
+        'ngay_thanh_toan',
+        'ghi_chu',
     ];
 
     protected $dates = ['thoi_gian_dat', 'ngay_cap_nhat'];
@@ -73,4 +76,31 @@ class DatVe extends Model
         return $this->belongsToMany(GheNgoi::class, 'chi_tiet_dat_ves', 'dat_ve_id', 'ghe_id');
     }
 
+    /**
+     * Relationship với bảng transactions
+     */
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class, 'dat_ve_id');
+    }
+
+    /**
+     * Lấy transaction thành công cuối cùng
+     */
+    public function successTransaction()
+    {
+        return $this->hasOne(Transaction::class, 'dat_ve_id')
+            ->where('status', 'success')
+            ->latest();
+    }
+
+    /**
+     * Lấy transaction pending cuối cùng
+     */
+    public function pendingTransaction()
+    {
+        return $this->hasOne(Transaction::class, 'dat_ve_id')
+            ->where('status', 'pending')
+            ->latest();
+    }
 }

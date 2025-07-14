@@ -1,12 +1,16 @@
 @extends('layouts.client')
 
 @section('styles')
-    <style>
-        {!! collect($loaiGhes)->map(function ($loai) {
-                $class = \Illuminate\Support\Str::slug($loai->ten_loai_ghe);
-                return ".ghe-chieu.{$class} { background-color: {$loai->chu_thich_mau_ghe}; }";
-            })->implode("\n") !!}
-    </style>
+<style>
+{
+     ! ! collect($loaiGhes)->map(function ($loai) {
+            $class=\Illuminate\Support\Str::slug($loai->ten_loai_ghe);
+            return ".ghe-chieu.{$class} { background-color: {$loai->chu_thich_mau_ghe}; }";
+        }
+
+    )->implode("\n") ! !
+}
+</style>
 
     @vite('resources/css/trang-chu.css')
     @vite('resources/css/dat-ve.css')
@@ -28,9 +32,6 @@
         </div>
     @endif
 
-    <div id="thong-bao-ghe" class="alert alert-warning" style="display: none;"></div>
-
-
     <div class="dat-ve-container">
         <div class="container">
             <!-- Thông tin phim -->
@@ -46,7 +47,7 @@
                             {{ \Carbon\Carbon::parse($suatChieu->ngay_chieu)->format('d/m/Y') }}</p>
                         <p><i class="fas fa-clock"></i> {{ \Carbon\Carbon::parse($suatChieu->bat_dau)->format('H:i') }} -
                             {{ \Carbon\Carbon::parse($suatChieu->ket_thuc)->format('H:i') }}</p>
-                        <p><i class="fas fa-film"></i> {{ $suatChieu->phien_ban_phim ?? $suatChieu->formatted_version }}</p>
+                        <p><i class="fas fa-film"></i> {{ $suatChieu->formatted_version }}</p>
                     </div>
                     <div class="cinema-info">
                         <p><i class="fas fa-map-marker-alt"></i>
@@ -203,6 +204,8 @@
                     <div class="total-price">
                         <h4>Tổng tiền: <span id="total-amount">0đ</span></h4>
                     </div>
+                    <div class="time-seat">05:00</div>
+
                     <button type="button" id="btn-dat-ve" class="btn-primary" disabled>Đặt vé</button>
                 </div>
             </div>
@@ -235,10 +238,9 @@
         window.Echo.channel('ghe-duoc-chon')
             .listen('.ghe-duoc-chon', function(e) {
                 console.log('Đã nhận được sự kiện ghe-duoc-chon:', e);
-        
                 const ghe = document.querySelector(`.ghe-chieu[data-seat-id="${e.gheId}"]`);
                 const currentUserId = parseInt(document.querySelector('meta[name="user-id"]').content);
-        
+
                 if (ghe && e.userId !== currentUserId) {
                     // Kiểm tra xem ghế có phải là ghế đôi
                     const isCoupleSeat = ghe.classList.contains("ghe-doi");
@@ -249,7 +251,7 @@
                         const partnerSeatNumber = seatNumber % 2 === 1 ? seatNumber + 1 : seatNumber - 1;
                         const partnerSeatName = row + partnerSeatNumber;
                         const partnerSeat = document.querySelector(`.ghe-chieu[data-seat-name="${partnerSeatName}"]`);
-        
+
                         // Cập nhật cả hai ghế
                         [ghe, partnerSeat].forEach((seat) => {
                             if (seat) {
@@ -261,25 +263,26 @@
                         ghe.classList.add("selected-by-other");
                         ghe.disabled = true;
                     }
-        
+
                     const thongBao = document.getElementById('thong-bao-ghe');
                     if (thongBao) {
                         thongBao.innerText = `⚠️ Ghế số ${e.gheId} vừa được người khác chọn. Vui lòng chọn ghế khác.`;
                         thongBao.style.display = 'block';
-        
+
                         setTimeout(() => {
                             thongBao.style.display = 'none';
                         }, 5000);
                     }
                 }
             });
+
         
-        // Khi người dùng hủy chọn ghế
+            // Khi người dùng hủy chọn ghế
         window.Echo.channel('ghe-bi-huy')
             .listen('.ghe-bi-huy', function(e) {
                 const ghe = document.querySelector(`.ghe-chieu[data-seat-id="${e.gheId}"]`);
                 const currentUserId = parseInt(document.querySelector('meta[name="user-id"]').content);
-        
+
                 if (ghe && e.userId !== currentUserId) {
                     const isCoupleSeat = ghe.classList.contains("ghe-doi");
                     if (isCoupleSeat) {
@@ -289,7 +292,7 @@
                         const partnerSeatNumber = seatNumber % 2 === 1 ? seatNumber + 1 : seatNumber - 1;
                         const partnerSeatName = row + partnerSeatNumber;
                         const partnerSeat = document.querySelector(`.ghe-chieu[data-seat-name="${partnerSeatName}"]`);
-        
+
                         // Cập nhật cả hai ghế
                         [ghe, partnerSeat].forEach((seat) => {
                             if (seat) {
@@ -303,80 +306,214 @@
                     }
                 }
             });
-        
+
         // Khi tải lại trang, vô hiệu hóa các ghế đã bị chọn bởi người khác
         document.querySelectorAll('.ghe-chieu.selected-by-other').forEach(ghe => {
             ghe.disabled = true;
         });
-        
         // Gắn sự kiện click vào từng ghế
         document.querySelectorAll('.ghe-chieu').forEach(ghe => {
             ghe.addEventListener('click', function() {
                 const gheId = this.getAttribute('data-seat-id');
                 const gheElement = this;
-        
+
                 if (gheElement.classList.contains('selected-by-other')) {
                     alert('Ghế này đã được người khác chọn!');
                     gheElement.classList.add('selected-by-other');
                     gheElement.disabled = true;
                     return;
                 }
-        
+
                 fetch('/chon-ghe', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                    },
-                    body: JSON.stringify({
-                        ghe_id: gheId
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                .getAttribute('content')
+                        },
+                        body: JSON.stringify({
+                            ghe_id: gheId
+                        })
                     })
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        if (response.status === 409) {
-                            return response.json().then(data => {
-                                alert(data.message);
-                                // Xử lý ghế đôi
-                                if (gheElement.classList.contains('ghe-doi')) {
-                                    const seatName = gheElement.getAttribute("data-seat-name");
-                                    const seatNumber = parseInt(seatName.match(/\d+/)[0]);
-                                    const row = seatName.match(/[A-Za-z]+/)[0];
-                                    const partnerSeatNumber = seatNumber % 2 === 1 ? seatNumber + 1 : seatNumber - 1;
-                                    const partnerSeatName = row + partnerSeatNumber;
-                                    const partnerSeat = document.querySelector(`.ghe-chieu[data-seat-name="${partnerSeatName}"]`);
-        
-                                    // Cập nhật cả hai ghế
-                                    [gheElement, partnerSeat].forEach((seat) => {
-                                        if (seat) {
-                                            seat.classList.remove('selected', 'selected-by-me');
-                                            seat.classList.add('selected-by-other');
-                                            seat.disabled = true;
-                                        }
-                                    });
-                                } else {
-                                    gheElement.classList.remove('selected', 'selected-by-me');
-                                    gheElement.classList.add('selected-by-other');
-                                    gheElement.disabled = true;
-                                }
-                            });
-                        } else {
-                            throw new Error("Đã xảy ra lỗi không xác định");
+                    .then(response => {
+                        if (!response.ok) {
+                            if (response.status === 409) {
+                                return response.json().then(data => {
+                                    alert(data.message);
+                                    // Xử lý ghế đôi
+                                    if (gheElement.classList.contains('ghe-doi')) {
+                                        const seatName = gheElement.getAttribute(
+                                            "data-seat-name");
+                                        const seatNumber = parseInt(seatName.match(/\d+/)[0]);
+                                        const row = seatName.match(/[A-Za-z]+/)[0];
+                                        const partnerSeatNumber = seatNumber % 2 === 1 ?
+                                            seatNumber + 1 : seatNumber - 1;
+                                        const partnerSeatName = row + partnerSeatNumber;
+                                        const partnerSeat = document.querySelector(
+                                            `.ghe-chieu[data-seat-name="${partnerSeatName}"]`
+                                        );
+
+                                        // Cập nhật cả hai ghế
+                                        [gheElement, partnerSeat].forEach((seat) => {
+                                            if (seat) {
+                                                seat.classList.remove('selected',
+                                                    'selected-by-me');
+                                                seat.classList.add('selected-by-other');
+                                                seat.disabled = true;
+                                            }
+                                        });
+                                    } else {
+                                        gheElement.classList.remove('selected',
+                                            'selected-by-me');
+                                        gheElement.classList.add('selected-by-other');
+                                        gheElement.disabled = true;
+                                    }
+                                });
+                            } else {
+                                throw new Error("Đã xảy ra lỗi không xác định");
+                            }
                         }
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    if (data && data.success) {
-                        console.log(' Đã chọn ghế thành công!');
-                        gheElement.classList.add('selected-by-me');
-                        gheElement.disabled = false;
-                    }
-                })
-                .catch(error => {
-                    console.error('Lỗi khi chọn ghế:', error);
-                });
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data && data.success) {
+                            console.log(' Đã chọn ghế thành công!');
+                            gheElement.classList.add('selected-by-me');
+                            gheElement.disabled = false;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Lỗi khi chọn ghế:', error);
+                    });
             });
         });
-        </script>
+
+        let countdownTimer;
+
+        function startTimer(duration, display) {
+            if (countdownTimer) {
+                clearInterval(countdownTimer);
+            }
+
+            let timer = duration;
+            let startTime = Date.now();
+            let endTime = startTime + (timer * 1000);
+
+            // Lưu thời gian kết thúc vào localStorage
+            localStorage.setItem('timerEndTime', endTime);
+
+            function updateTimer() {
+                let currentTime = Date.now();
+                let remainingTime = Math.ceil((endTime - currentTime) / 1000);
+
+                if (remainingTime <= 0) {
+                    clearInterval(countdownTimer);
+                    handleTimeout();
+                    return;
+                }
+
+                let minutes = parseInt(remainingTime / 60, 10);
+                let seconds = parseInt(remainingTime % 60, 10);
+
+                minutes = minutes < 10 ? "0" + minutes : minutes;
+                seconds = seconds < 10 ? "0" + seconds : seconds;
+
+                display.textContent = minutes + ":" + seconds;
+            }
+
+            updateTimer();
+            countdownTimer = setInterval(updateTimer, 1000);
+        }
+
+        function handleTimeout() {
+            // Clear localStorage
+            localStorage.removeItem('timerEndTime');
+
+            // Bỏ chọn hết ghế
+            const selectedSeatsList = document.getElementById('selected-seats-list');
+            if (selectedSeatsList) {
+                selectedSeatsList.textContent = "Chưa chọn ghế";
+            }
+
+            // Disable nút đặt vé
+            const btnDatVe = document.getElementById('btn-dat-ve');
+            if (btnDatVe) {
+                btnDatVe.disabled = true;
+            }
+
+            // Hiển thị thông báo
+            alert('Đã hết thời gian giữ ghế!');
+
+            // Chuyển về trang home
+            window.location.href = '/';
+        }
+
+        function clearTimer() {
+            if (countdownTimer) {
+                clearInterval(countdownTimer);
+            }
+            localStorage.removeItem('timerEndTime');
+
+            const timeDisplay = document.querySelector('.time-seat');
+            if (timeDisplay) {
+                timeDisplay.textContent = "05:00";
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const selectedSeatsList = document.getElementById('selected-seats-list');
+            const timeDisplay = document.querySelector('.time-seat');
+            const btnDatVe = document.getElementById('btn-dat-ve');
+
+            // Thêm event listener cho nút đặt vé
+            if (btnDatVe) {
+                btnDatVe.addEventListener('click', function() {
+                    clearTimer(); // Xóa timer khi bấm nút đặt vé
+                });
+            }
+
+            // Kiểm tra xem có timer đang chạy từ trước không
+            const savedEndTime = localStorage.getItem('timerEndTime');
+            if (savedEndTime) {
+                const currentTime = Date.now();
+                const remainingTime = Math.ceil((savedEndTime - currentTime) / 1000);
+
+                if (remainingTime > 0) {
+                    startTimer(remainingTime, timeDisplay);
+                } else {
+                    handleTimeout();
+                }
+            }
+
+            // Observer để theo dõi thay đổi trong selected-seats-list
+            const selectedSeatsObserver = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    if (selectedSeatsList && timeDisplay &&
+                        selectedSeatsList.textContent !== "Chưa chọn ghế" &&
+                        !localStorage.getItem('timerEndTime')) {
+                        startTimer(5 * 60, timeDisplay);
+                    }
+                });
+            });
+
+            if (selectedSeatsList) {
+                selectedSeatsObserver.observe(selectedSeatsList, {
+                    childList: true,
+                    characterData: true,
+                    subtree: true
+                });
+            }
+        });
+
+        // Xử lý khi rời trang
+        window.addEventListener('beforeunload', function() {
+            const timeDisplay = document.querySelector('.time-seat');
+            if (timeDisplay &&
+                timeDisplay.textContent !== "05:00" &&
+                timeDisplay.textContent !== "Hết giờ!") {
+                // Timer đang chạy, đã được lưu trong localStorage
+            }
+        });
+    </script>
+
 @endsection

@@ -80,6 +80,20 @@
                                 <ul id="selected-branches" class="list-group"></ul>
                                 <div id="hidden-branch-inputs"></div>
                             </div>
+                            {{-- <div class="mb-3">
+                                <label class="form-label">Chọn rạp</label>
+                                <select id="select-rap" class="form-select" disabled>
+                                    <option value="">-- Chọn rạp --</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Rạp đã chọn</label>
+                                <ul id="selected-raps" class="list-group mb-3"></ul>
+                                <div id="hidden-rap-inputs"></div>
+                            </div> --}}
+
+
 
                             <div class="mb-3">
                                 <label class="form-label">Chọn món ăn</label>
@@ -214,21 +228,48 @@
 </script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const select = document.getElementById('select-chi-nhanh');
-        const list = document.getElementById('selected-branches');
-        const hiddenInputs = document.getElementById('hidden-branch-inputs');
-        const selectedIds = new Set();
+        const selectChiNhanh = document.getElementById('select-chi-nhanh');
+        const selectRap = document.getElementById('select-rap');
+        const selectedBranches = document.getElementById('selected-branches');
+        const hiddenBranchInputs = document.getElementById('hidden-branch-inputs');
+        const selectedRaps = document.getElementById('selected-raps');
+        const hiddenRapInputs = document.getElementById('hidden-rap-inputs');
 
-        select.addEventListener('change', function() {
-            const selectedOption = select.options[select.selectedIndex];
-            const id = selectedOption.value;
-            const ten = selectedOption.dataset.ten;
+        const chiNhanhs = @json($chiNhanhs); // Pass từ Controller
+        const selectedChiNhanhIds = new Set();
+        const selectedRapIds = new Set();
 
-            if (!id || selectedIds.has(id)) return;
+        // Render lại dropdown rạp với tất cả rạp của các chi nhánh đã chọn
+        function renderRaps() {
+            selectRap.innerHTML = '<option value="">-- Chọn rạp --</option>';
+            selectedChiNhanhIds.forEach(cnId => {
+                const cnData = chiNhanhs.find(cn => cn.id == cnId);
+                if (cnData && cnData.rap_phims) {
+                    cnData.rap_phims.forEach(r => {
+                        if (!document.querySelector(`#select-rap option[value="${r.id}"]`)) {
+                            const opt = document.createElement('option');
+                            opt.value = r.id;
+                            opt.textContent = `${r.ten_rap} (${cnData.ten_chi_nhanh})`;
+                            opt.dataset.cnId =
+                            cnId; // lưu chi_nhanh_id để biết rạp thuộc chi nhánh nào
+                            selectRap.appendChild(opt);
+                        }
+                    });
+                }
+            });
+            selectRap.disabled = selectedChiNhanhIds.size === 0;
+        }
 
-            selectedIds.add(id);
+        // Khi chọn chi nhánh
+        selectChiNhanh.addEventListener('change', function() {
+            const id = this.value;
+            const ten = this.options[this.selectedIndex].dataset.ten;
 
-            // Hiển thị ra danh sách đã chọn
+            if (!id || selectedChiNhanhIds.has(id)) return;
+
+            selectedChiNhanhIds.add(id);
+
+            // Hiển thị chi nhánh đã chọn
             const li = document.createElement('li');
             li.className = 'list-group-item d-flex justify-content-between align-items-center';
             li.dataset.id = id;
@@ -236,25 +277,80 @@
             <span>${ten}</span>
             <button type="button" class="btn btn-sm btn-danger btn-xoa-cn" data-id="${id}">Xoá</button>
         `;
-            list.appendChild(li);
+            selectedBranches.appendChild(li);
 
-            // Thêm input hidden
+            // Input hidden cho chi nhánh
             const input = document.createElement('input');
             input.type = 'hidden';
             input.name = 'chi_nhanh_ids[]';
             input.value = id;
-            input.id = 'input-chi_nhanh-' + id;
-            hiddenInputs.appendChild(input);
+            input.id = `input-chi-nhanh-${id}`;
+            hiddenBranchInputs.appendChild(input);
 
-            // Xoá khi nhấn nút
+            // Cập nhật dropdown rạp
+            renderRaps();
+
+            // Xoá chi nhánh
             li.querySelector('.btn-xoa-cn').addEventListener('click', function() {
-                selectedIds.delete(id);
+                const chiNhanhId = this.dataset.id;
+                selectedChiNhanhIds.delete(chiNhanhId);
                 li.remove();
-                document.getElementById('input-chi_nhanh-' + id)?.remove();
+                document.getElementById(`input-chi-nhanh-${chiNhanhId}`)?.remove();
+
+                // Xoá rạp thuộc chi nhánh này khỏi dropdown rạp và danh sách đã chọn
+                selectedRaps.querySelectorAll(`li[data-cn-id="${chiNhanhId}"]`).forEach(rLi => {
+                    const rapId = rLi.dataset.id;
+                    selectedRapIds.delete(rapId);
+                    document.getElementById(`input-rap-${rapId}`)?.remove();
+                    rLi.remove();
+                });
+
+                // Cập nhật lại dropdown rạp
+                renderRaps();
             });
 
-            // Reset select
-            select.selectedIndex = 0;
+            // Reset select chi nhánh
+            selectChiNhanh.selectedIndex = 0;
+        });
+
+        // Khi chọn rạp
+        selectRap.addEventListener('change', function() {
+            const rapId = this.value;
+            const rapText = this.options[this.selectedIndex].textContent;
+            const chiNhanhId = this.options[this.selectedIndex].dataset.cnId;
+
+            if (!rapId || selectedRapIds.has(rapId)) return;
+
+            selectedRapIds.add(rapId);
+
+            // Hiển thị rạp đã chọn
+            const li = document.createElement('li');
+            li.className = 'list-group-item d-flex justify-content-between align-items-center';
+            li.dataset.id = rapId;
+            li.dataset.cnId = chiNhanhId;
+            li.innerHTML = `
+            <span>${rapText}</span>
+            <button type="button" class="btn btn-sm btn-danger btn-xoa-rap" data-id="${rapId}">Xoá</button>
+        `;
+            selectedRaps.appendChild(li);
+
+            // Input hidden cho rạp
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = `rap_phim_ids[${chiNhanhId}][]`;
+            input.value = rapId;
+            input.id = `input-rap-${rapId}`;
+            hiddenRapInputs.appendChild(input);
+
+            // Xoá rạp
+            li.querySelector('.btn-xoa-rap').addEventListener('click', function() {
+                selectedRapIds.delete(rapId);
+                li.remove();
+                document.getElementById(`input-rap-${rapId}`)?.remove();
+            });
+
+            // Reset select rạp
+            selectRap.selectedIndex = 0;
         });
     });
 </script>
