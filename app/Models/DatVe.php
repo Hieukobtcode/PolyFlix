@@ -26,13 +26,12 @@ class DatVe extends Model
 
     protected $dates = ['thoi_gian_dat', 'ngay_cap_nhat'];
 
-    // // Quan hệ: Một đơn đặt vé có nhiều chi tiết đặt vé (ghế)
-    // public function chiTietDatVes()
-    // {
-    //     return $this->hasMany(ChiTietDatVe::class, 'dat_ve_id');
-    // }
+    // Quan hệ: Một đơn đặt vé có nhiều chi tiết đặt vé (ghế)
+    public function chiTietDatVes()
+    {
+        return $this->hasMany(ChiTietDatVe::class, 'dat_ve_id');
+    }
 
-    // Quan hệ: Đơn đặt vé thuộc về người dùng
     public function nguoiDung()
     {
         return $this->belongsTo(User::class, 'user_id');
