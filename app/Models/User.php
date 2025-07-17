@@ -13,6 +13,7 @@ class User extends Authenticatable
     use HasFactory, Notifiable;
 
     protected $fillable = [
+        'cap_bac_id',
         'name',
         'email',
         'password',
@@ -69,5 +70,11 @@ class User extends Authenticatable
     public function lichSuDiem()
     {
         return $this->hasMany(LichSuDiem::class, 'users_id');
+    }
+
+    // User là quản lý của 1 chi nhánh
+    public function chiNhanhDangQuanLy()
+    {
+        return $this->hasOne(ChiNhanh::class, 'quan_ly_id');
     }
 }

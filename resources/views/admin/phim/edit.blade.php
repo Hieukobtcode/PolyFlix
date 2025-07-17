@@ -66,7 +66,7 @@
                                         class="text-danger">*</span></label>
                                 <input type="text" class="form-control rounded @error('ten_phim') is-invalid @enderror"
                                     id="ten_phim" name="ten_phim" value="{{ old('ten_phim', $phim->ten_phim) }}"
-                                    placeholder="Nhập tên phim">
+                                    placeholder="Nhập tên phim" {{ Auth::user()->vai_tro_id == 2 ? 'readonly' : '' }}>
                                 @error('ten_phim')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -75,7 +75,7 @@
                             <div class="mb-4">
                                 <label for="mo_ta" class="form-label fw-semibold">Mô tả</label>
                                 <textarea class="form-control rounded @error('mo_ta') is-invalid @enderror" id="mo_ta" name="mo_ta" rows="4"
-                                    placeholder="Nhập mô tả phim">{{ old('mo_ta', $phim->mo_ta) }}</textarea>
+                                    placeholder="Nhập mô tả phim" {{ Auth::user()->vai_tro_id == 2 ? 'readonly' : '' }}>{{ old('mo_ta', $phim->mo_ta) }}</textarea>
                                 @error('mo_ta')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -87,7 +87,8 @@
                                     <input type="text"
                                         class="form-control rounded @error('dao_dien') is-invalid @enderror" id="dao_dien"
                                         name="dao_dien" value="{{ old('dao_dien', $phim->dao_dien) }}"
-                                        placeholder="Nhập tên đạo diễn">
+                                        placeholder="Nhập tên đạo diễn"
+                                        {{ Auth::user()->vai_tro_id == 2 ? 'readonly' : '' }}>
                                     @error('dao_dien')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -97,8 +98,10 @@
                                     <label for="thoi_luong" class="form-label fw-semibold">Thời lượng (phút)</label>
                                     <input type="number"
                                         class="form-control rounded @error('thoi_luong') is-invalid @enderror"
-                                        id="thoi_luong" name="thoi_luong" value="{{ old('thoi_luong', $phim->thoi_luong) }}"
-                                        min="1" placeholder="Nhập thời lượng">
+                                        id="thoi_luong" name="thoi_luong"
+                                        value="{{ old('thoi_luong', $phim->thoi_luong) }}" min="1"
+                                        placeholder="Nhập thời lượng"
+                                        {{ Auth::user()->vai_tro_id == 2 ? 'readonly' : '' }}>
                                     @error('thoi_luong')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -121,7 +124,7 @@
                                         class="form-control rounded datepicker @error('ngay_phat_hanh') is-invalid @enderror"
                                         id="ngay_phat_hanh" name="ngay_phat_hanh"
                                         value="{{ old('ngay_phat_hanh', $phim->ngay_phat_hanh ? $phim->ngay_phat_hanh->format('Y-m-d') : '') }}"
-                                        placeholder="YYYY-MM-DD">
+                                        placeholder="YYYY-MM-DD" {{ Auth::user()->vai_tro_id == 2 ? 'readonly' : '' }}>
                                     @error('ngay_phat_hanh')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -133,7 +136,7 @@
                                         class="form-control rounded datepicker @error('ngay_ket_thuc') is-invalid @enderror"
                                         id="ngay_ket_thuc" name="ngay_ket_thuc"
                                         value="{{ old('ngay_ket_thuc', $phim->ngay_ket_thuc ? $phim->ngay_ket_thuc->format('Y-m-d') : '') }}"
-                                        placeholder="YYYY-MM-DD">
+                                        placeholder="YYYY-MM-DD" {{ Auth::user()->vai_tro_id == 2 ? 'readonly' : '' }}>
                                     @error('ngay_ket_thuc')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -144,7 +147,8 @@
                                 <div class="col-md-6 mb-4">
                                     <label for="ngon_ngu" class="form-label fw-semibold">Ngôn ngữ</label>
                                     <select class="form-select rounded @error('ngon_ngu') is-invalid @enderror"
-                                        id="ngon_ngu" name="ngon_ngu">
+                                        id="ngon_ngu" name="ngon_ngu"
+                                        {{ Auth::user()->vai_tro_id == 2 ? 'disabled' : '' }}>
                                         <option value="">-- Chọn ngôn ngữ --</option>
                                     </select>
                                     @error('ngon_ngu')
@@ -155,7 +159,8 @@
                                 <div class="col-md-6 mb-4">
                                     <label for="quoc_gia" class="form-label fw-semibold">Quốc gia</label>
                                     <select class="form-select rounded @error('quoc_gia') is-invalid @enderror"
-                                        id="quoc_gia" name="quoc_gia">
+                                        id="quoc_gia" name="quoc_gia"
+                                        {{ Auth::user()->vai_tro_id == 2 ? 'disabled' : '' }}>
                                         <option value="">-- Chọn quốc gia --</option>
                                     </select>
                                     @error('quoc_gia')
@@ -168,7 +173,8 @@
                                 <label for="trailer" class="form-label fw-semibold">Trailer URL (YouTube)</label>
                                 <input type="text" class="form-control rounded @error('trailer') is-invalid @enderror"
                                     id="trailer" name="trailer" value="{{ old('trailer', $phim->trailer) }}"
-                                    placeholder="https://www.youtube.com/watch?v=...">
+                                    placeholder="https://www.youtube.com/watch?v=..."
+                                    {{ Auth::user()->vai_tro_id == 2 ? 'readonly' : '' }}>
                                 @error('trailer')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -179,7 +185,8 @@
                             <div class="mb-4">
                                 <label for="poster" class="form-label fw-semibold">Poster</label>
                                 <input type="file" class="form-control rounded @error('poster') is-invalid @enderror"
-                                    id="poster" name="poster" accept="image/*">
+                                    id="poster" name="poster" accept="image/*"
+                                    {{ Auth::user()->vai_tro_id == 2 ? 'readonly' : '' }}>
                                 <small class="form-text text-muted">Chấp nhận: jpeg, png, jpg, gif. Tối đa: 2MB</small>
                                 @error('poster')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -197,7 +204,7 @@
                                 <label for="do_tuoi" class="form-label fw-semibold">Độ tuổi</label>
                                 <input type="text" class="form-control rounded @error('do_tuoi') is-invalid @enderror"
                                     id="do_tuoi" name="do_tuoi" value="{{ old('do_tuoi', $phim->do_tuoi) }}"
-                                    placeholder="VD: 16+, 18+, P">
+                                    placeholder="VD: 16+, 18+, P" {{ Auth::user()->vai_tro_id == 2 ? 'readonly' : '' }}>
                                 @error('do_tuoi')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -207,7 +214,8 @@
                                 <label for="the_loai_ids" class="form-label fw-semibold">Thể loại <span
                                         class="text-danger">*</span></label>
                                 <select class="form-control select2 rounded @error('the_loai_ids') is-invalid @enderror"
-                                    id="the_loai_ids" name="the_loai_ids[]" multiple>
+                                    id="the_loai_ids" name="the_loai_ids[]" multiple
+                                    {{ Auth::user()->vai_tro_id == 2 ? 'disabled' : '' }}>
                                     @foreach ($theLoaiPhims as $theLoai)
                                         <option value="{{ $theLoai->id }}"
                                             {{ in_array($theLoai->id, old('the_loai_ids', $selectedTheLoais)) ? 'selected' : '' }}>
@@ -224,7 +232,8 @@
                                 <label for="dinh_dang_ids" class="form-label fw-semibold">Định dạng <span
                                         class="text-danger">*</span></label>
                                 <select class="form-control select2 rounded @error('dinh_dang_ids') is-invalid @enderror"
-                                    id="dinh_dang_ids" name="dinh_dang_ids[]" multiple>
+                                    id="dinh_dang_ids" name="dinh_dang_ids[]" multiple
+                                    {{ Auth::user()->vai_tro_id == 2 ? 'disabled' : '' }}>
                                     @foreach ($dinhDangPhims as $dinhDang)
                                         <option value="{{ $dinhDang->id }}"
                                             {{ in_array($dinhDang->id, old('dinh_dang_ids', $selectedDinhDangs)) ? 'selected' : '' }}>
@@ -241,7 +250,8 @@
                                 <label for="phu_de_ids" class="form-label fw-semibold">Phụ đề <span
                                         class="text-danger">*</span></label>
                                 <select class="form-control select2 rounded @error('phu_de_ids') is-invalid @enderror"
-                                    id="phu_de_ids" name="phu_de_ids[]" multiple>
+                                    id="phu_de_ids" name="phu_de_ids[]" multiple
+                                    {{ Auth::user()->vai_tro_id == 2 ? 'disabled' : '' }}>
                                     @foreach ($phuDePhims as $phuDe)
                                         <option value="{{ $phuDe->id }}"
                                             {{ in_array($phuDe->id, old('phu_de_ids', $selectedPhuDes)) ? 'selected' : '' }}>
@@ -276,40 +286,43 @@
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div> --}}
-
-                            <div class="mb-4">
-                                <label for="chi_nhanh_ids" class="form-label fw-semibold">Chi nhánh <span
-                                        class="text-danger">*</span></label>
-                                <select class="form-control select2 rounded @error('chi_nhanh_ids') is-invalid @enderror"
-                                    id="chi_nhanh_ids" name="chi_nhanh_ids[]" multiple>
-                                    @foreach ($chiNhanhs as $chiNhanh)
-                                        <option value="{{ $chiNhanh->id }}"
-                                            {{ in_array($chiNhanh->id, old('chi_nhanh_ids', $selectedChiNhanhs)) ? 'selected' : '' }}>
-                                            {{ $chiNhanh->ten_chi_nhanh }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                @error('chi_nhanh_ids')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <div class="mb-4">
-                                <label for="rap_phim_ids" class="form-label fw-semibold">Rạp <span
-                                        class="text-danger">*</span></label>
-                                <select class="form-control select2 rounded @error('rap_phim_ids') is-invalid @enderror"
-                                    id="rap_phim_ids" name="rap_phim_ids[]" multiple>
-                                    @foreach ($rapPhims as $rapPhim)
-                                        <option value="{{ $rapPhim->id }}"
-                                            {{ in_array($rapPhim->id, old('rap_phim_ids', $selectedRapPhims)) ? 'selected' : '' }}>
-                                            {{ $rapPhim->ten_rap }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                @error('rap_phim_ids')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
+                            @if (Auth::user()->vai_tro_id == 1)
+                                <div class="mb-4">
+                                    <label for="chi_nhanh_ids" class="form-label fw-semibold">Chi nhánh <span
+                                            class="text-danger">*</span></label>
+                                    <select
+                                        class="form-control select2 rounded @error('chi_nhanh_ids') is-invalid @enderror"
+                                        id="chi_nhanh_ids" name="chi_nhanh_ids[]" multiple>
+                                        @foreach ($chiNhanhs as $chiNhanh)
+                                            <option value="{{ $chiNhanh->id }}"
+                                                {{ in_array($chiNhanh->id, old('chi_nhanh_ids', $selectedChiNhanhs)) ? 'selected' : '' }}>
+                                                {{ $chiNhanh->ten_chi_nhanh }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    @error('chi_nhanh_ids')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            @elseif(Auth::user()->vai_tro_id == 2)
+                                <div class="mb-4">
+                                    <label for="rap_phim_ids" class="form-label fw-semibold">Rạp <span
+                                            class="text-danger">*</span></label>
+                                    <select
+                                        class="form-control select2 rounded @error('rap_phim_ids') is-invalid @enderror"
+                                        id="rap_phim_ids" name="rap_phim_ids[]" multiple>
+                                        @foreach ($rapPhims as $rapPhim)
+                                            <option value="{{ $rapPhim->id }}"
+                                                {{ in_array($rapPhim->id, old('rap_phim_ids', $selectedRapPhims)) ? 'selected' : '' }}>
+                                                {{ $rapPhim->ten_rap }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    @error('rap_phim_ids')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            @endif
 
                         </div>
                     </div>

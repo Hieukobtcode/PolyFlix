@@ -124,6 +124,7 @@ class AuthController extends Controller
             $data = session('register_data');
 
             $user = User::create([
+                'cap_bac_id' => 1,
                 'vai_tro_id'         => 5,
                 'name'               => $data['name'],
                 'email'              => $data['email'],

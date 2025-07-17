@@ -5,40 +5,64 @@
         <div class="card shadow-sm border-0">
             <div class="card-body p-4">
                 <!-- Bộ lọc -->
-                <form method="GET" action="{{ route('admin.suat-chieu.index') }}" class="row g-3 mb-4">
+                <form method="GET" action="{{ route('admin.suat-chieu.index') }}" class="row g-3 mb-4 align-items-end">
+
+                    {{-- Tên phim --}}
                     <div class="col-md-3">
-                        <input type="text" name="ten_phim" class="form-control rounded" placeholder="Tìm theo tên phim"
-                            value="{{ request('ten_phim') }}">
+                        <label for="ten_phim" class="form-label">Tên phim</label>
+                        <input type="text" name="ten_phim" class="form-control" value="{{ request('ten_phim') }}">
                     </div>
 
-                    <div class="col-md-3">
-                        <select name="chi_nhanh" id="chi_nhanh" class="form-select rounded">
-                            <option value="">-- Tất cả chi nhánh --</option>
-                            @foreach ($chiNhanhs as $cn)
-                                <option value="{{ $cn->id }}" {{ request('chi_nhanh') == $cn->id ? 'selected' : '' }}>
-                                    {{ $cn->ten_chi_nhanh }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
+                    {{-- Lọc theo chi nhánh (chỉ admin tổng mới thấy) --}}
+                    @if ($user->vai_tro_id == 1)
+                        <div class="col-md-3">
+                            <label for="chi_nhanh" class="form-label">Chi nhánh</label>
+                            <select name="chi_nhanh" id="chi_nhanh" class="form-select">
+                                <option value="">-- Tất cả --</option>
+                                @foreach ($chiNhanhs as $cn)
+                                    <option value="{{ $cn->id }}"
+                                        {{ request('chi_nhanh') == $cn->id ? 'selected' : '' }}>
+                                        {{ $cn->ten_chi_nhanh }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                    @endif
 
-                    <div class="col-md-3">
-                        <select name="rap" id="rap" class="form-select rounded">
-                            <option value="">-- Tất cả rạp --</option>
-                        </select>
-                    </div>
+                    @if ($user->vai_tro_id == 2 && isset($chiNhanhs[0]))
+                        <div class="col-md-3">
+                            <label class="form-label">Chi nhánh</label>
+                            <input type="text" class="form-control" value="{{ $chiNhanhs[0]->ten_chi_nhanh }}" readonly
+                                disabled>
+                        </div>
+                    @endif
 
-                    <div class="col-md-3">
-                        <select name="phim" id="phim" class="form-select rounded">
-                            <option value="">-- Tất cả phim--</option>
-                        </select>
-                    </div>
+                    {{-- Lọc theo rạp (admin tổng và chi nhánh mới được lọc) --}}
+                    @if (in_array($user->vai_tro_id, [1, 2]))
+                        <div class="col-md-3">
+                            <label for="rap" class="form-label">Rạp</label>
+                            <select name="rap" id="rap" class="form-select">
+                                <option value="">-- Tất cả --</option>
+                                @foreach ($chiNhanhs as $cn)
+                                    @foreach ($cn->rapPhims as $rap)
+                                        <option value="{{ $rap->id }}"
+                                            {{ request('rap') == $rap->id ? 'selected' : '' }}>
+                                            {{ $rap->ten_rap }}
+                                        </option>
+                                    @endforeach
+                                @endforeach
+                            </select>
+                        </div>
+                    @endif
 
+                    <div class="col-md-2 d-flex gap-2">
+                        <button type="submit" class="btn btn-primary w-100">Lọc</button>
+                        <a href="{{ route('admin.suat-chieu.index') }}" class="btn btn-secondary w-100">Reset</a>
+                    </div>
+                </form>
 
 
             </div>
-
-            </form>
 
             <!-- Bảng dữ liệu -->
             <div class="table-responsive">
@@ -146,14 +170,14 @@
                                                 </tr>
 
                                                 <tr class="suat-row"
-                                                    data-ngay="{{ \Carbon\Carbon::parse($suat->ngay_chieu)->format('Y-m-d') }}"
+                                                    data-ngay="{{ \Carbon\Carbon::parse($suat->ngay_bat_dau)->format('Y-m-d') }}"
                                                     data-room="{{ $suat->phongChieu->ten_phong }}">
                                                     <td>
                                                         <input type="checkbox" class="suat-checkbox"
                                                             value="{{ $suat->id }}"
                                                             data-group="check-all-{{ $phimId }}">
                                                     </td>
-                                                    <td>{{ \Carbon\Carbon::parse($suat->ngay_chieu)->format('d/m/Y') }}
+                                                    <td>{{ \Carbon\Carbon::parse($suat->ngay_bat_dau)->format('d/m/Y') }}
                                                     </td>
                                                     <td>{{ \Carbon\Carbon::parse($suat->bat_dau)->format('H:i') }} -
                                                         {{ \Carbon\Carbon::parse($suat->ket_thuc)->format('H:i') }}</td>
