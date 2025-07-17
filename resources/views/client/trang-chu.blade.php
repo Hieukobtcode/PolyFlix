@@ -67,7 +67,7 @@
         <div class="swiper-wrapper">
             @foreach ($banners as $banner)
                 <div class="swiper-slide" style="width: 100%">
-                    <img src="{{ asset($banner->hinh_anh) }}" alt="Banner {{ $banner->id }}"
+                    <img src="{{ asset('storage/' . $banner->hinh_anh) }}" alt="Banner {{ $banner->id }}"
                         style="width: 1200px; height: 450px;">
                 </div>
             @endforeach

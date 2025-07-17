@@ -36,11 +36,11 @@ use App\Http\Controllers\Admin\VaiTroController;
 use App\Http\Controllers\SocialAuthController;
 use App\Http\Controllers\Admin\CommentController;
 use App\Http\Controllers\Admin\GiaVeController;
+use App\Http\Controllers\Admin\KhuyenMaiController as AdminKhuyenMaiController;
 use App\Http\Controllers\Admin\RequestController;
 use App\Http\Controllers\Client\LoginController;
 use App\Http\Controllers\Client\ProfileController;
 use App\Http\Controllers\Client\KhuyenMaiController;
-use App\Http\Controllers\Admin\KhuyenMaiController as AdminKhuyenMaiController;
 use App\Http\Controllers\Client\PhimsController;
 use App\Http\Controllers\Client\LienHeController as ClientLienHeController;
 use App\Http\Controllers\Client\TheLoaiController;
@@ -52,41 +52,25 @@ Route::middleware('auth')->group(function () {
     Route::get('/dat-ve', [\App\Http\Controllers\Client\DatVeController::class, 'indexDatVe'])->name('client.dat-ve');
     Route::post('/dat-ve', [\App\Http\Controllers\Client\DatVeController::class, 'store'])->name('client.dat-ve.store');
     Route::get('/dat-ve/ket-qua/{ma_ve}', [\App\Http\Controllers\Client\DatVeController::class, 'ketQua'])->name('client.dat-ve.ket-qua');
+    Route::get('/chi-tiet-dat-ve/{id}', [ProfileController::class, 'chiTietVe'])->name('dat-ve.chi-tiet');
 
     // Thanh toán
     Route::get('/thanh-toan/{datVeId}', [ThanhToanController::class, 'index'])->name('client.thanh-toan.index');
     Route::post('/thanh-toan/xu-ly', [ThanhToanController::class, 'xuLyThanhToan'])->name('client.thanh-toan.xu-ly');
     Route::post('/thanh-toan/huy/{datVeId}', [ThanhToanController::class, 'huyThanhToan'])->name('client.thanh-toan.huy');
-    Route::get('/check-payment-status', [ThanhToanController::class, 'kiemTraTrangThai']);
+
+
+    Route::get('/zalopay/ketqua', [ThanhToanController::class, 'ketQuaThanhToan'])->name('zalopay.ketqua');
+
+    // Profile
+    Route::get('profile', [ProfileController::class, 'index'])->name('profile');
+    Route::post('profile', [ProfileController::class, 'updatePassword'])->name('updatePassword');
+    Route::post('update-avatar', [ProfileController::class, 'updateAvatar'])->name('update.avatar');
+
+    // Ghế đang được chọn
+    Route::post('/chon-ghe', [\App\Http\Controllers\Client\DatVeController::class, 'chonGhe'])->name('client.ghe.chon');
+    Route::post('/huy-chon-ghe', [\App\Http\Controllers\Client\DatVeController::class, 'huyChonGhe'])->name('client.ghe.huy');
 });
-
-// Payment callback - MUST be outside auth middleware for external services
-Route::get('/thanh-toan/callback', [ThanhToanController::class, 'callback'])->name('client.thanh-toan.callback');
-
-// ZaloPay callback routes
-Route::post('/api/payments/zalopay/callback', [\App\Http\Controllers\Client\ZaloPayController::class, 'handleCallback'])->name('zalopay.callback');
-Route::get('/thanh-toan/ket-qua', [\App\Http\Controllers\Client\ZaloPayController::class, 'handleReturn'])->name('zalopay.return');
-
-// MoMo callback routes (both GET and POST)
-Route::get('/thanh-toan/momo/callback', [\App\Http\Controllers\Client\MomoController::class, 'callback'])->name('client.thanh-toan.momo.callback');
-Route::post('/thanh-toan/momo/callback', [\App\Http\Controllers\Client\MomoController::class, 'callback']);
-
-// MoMo test routes (for development/testing)
-Route::get('/test-momo', function () {
-    return view('momo-test');
-})->name('momo.test');
-
-// Shortcut cho test MoMo
-Route::get('/momo', function () {
-    return view('momo-test');
-});
-
-Route::post('/test-momo/create', [\App\Http\Controllers\Client\MomoController::class, 'createTestPayment'])->name('momo.test.create');
-Route::get('/test-momo/callback', [\App\Http\Controllers\Client\MomoController::class, 'testCallback'])->name('momo.test.callback');
-
-// Ghế đang được chọn
-Route::post('/chon-ghe', [\App\Http\Controllers\Client\DatVeController::class, 'chonGhe'])->name('client.ghe.chon');
-Route::post('/huy-chon-ghe', [\App\Http\Controllers\Client\DatVeController::class, 'huyChonGhe'])->name('client.ghe.huy');
 
 Route::get('/', [TrangChuController::class, 'index'])->name('home');
 Route::get('/rap/{uuid}', [TrangChuController::class, 'showrap'])->name('showrap');
@@ -96,12 +80,6 @@ Route::get('/bai-viet/{uuid}', [DanhSachBaiVietController::class, 'show'])->name
 // Liên hệ
 Route::get('/lien-he', [ClientLienHeController::class, 'index'])->name('client.lien-he');
 Route::post('/lien-he', [ClientLienHeController::class, 'store'])->name('client.lien-he.store');
-
-// Profile
-Route::get('profile', [ProfileController::class, 'index'])->name('profile');
-Route::post('profile', [ProfileController::class, 'updatePassword'])->name('updatePassword');
-Route::post('update-avatar', [ProfileController::class, 'updateAvatar'])->name('update.avatar');
-
 
 Route::get('/client.khuyen-mai', [KhuyenMaiController::class, 'index'])->name('khuyen-mai.index');
 Route::get('/phim-dang-chieu', [PhimsController::class, 'phimDangChieu'])->name('phim.dang-chieu');
@@ -123,24 +101,13 @@ Route::get('phim/{ten_phim}', [PhimsController::class, 'show'])->name('phim.chi-
 Route::get('/the-loai/{id}', [App\Http\Controllers\Client\TheLoaiController::class, 'show'])
     ->name('theloai.show');
 
-// Route::prefix('client')->name('client.')->group(function () {
-//     // Trang chủ client
-//     Route::get('/', [HomeController::class, 'index'])->name('home');
-
-//     // Trang khuyến mãi
-//     Route::get('/khuyen-mai', [KhuyenMaiController::class, 'index'])->name('khuyen-mai');
-// // 
-// });
-
 //Quen mk
 Route::get('forgot-pass', [AuthController::class, 'forgotPassForm'])->name('forgot-form');
 Route::post('forgot-pass', [AuthController::class, 'forgotPass'])->name('forgot-pass');
 
-
 // Đăng nhập (chung)
 Route::get('dang-nhap', [AuthController::class, 'showLoginForm'])->name('login.form');
 Route::post('dang-nhap', [AuthController::class, 'login'])->name('login');
-
 
 // Đăng ký (client)
 Route::post('dang-ky', [AuthController::class, 'register'])->name('register');
@@ -149,17 +116,8 @@ Route::get('xac-thuc-email', [AuthController::class, 'showVerifyForm'])->name('v
 
 Route::post('xac-thuc-email', [AuthController::class, 'verifyOtp'])->name('verify.submit');
 
-// GOOGLE
-Route::get('/auth/google', [SocialAuthController::class, 'redirectToGoogle'])->name('google.redirect');
-Route::get('/auth/google/callback', [SocialAuthController::class, 'handleGoogleCallback'])->name('google.callback');
-
-// FACEBOOK
-Route::get('/auth/facebook', [SocialAuthController::class, 'redirectToFacebook'])->name('facebook.redirect');
-Route::get('/auth/facebook/callback', [SocialAuthController::class, 'handleFacebookCallback'])->name('facebook.callback');
-
 // Đăng xuất
 Route::post('dang-xuat', [AuthController::class, 'logout'])->name('logout');
-
 
 // ========================================================================================================================================================
 

@@ -1,9 +1,19 @@
 @extends('layouts.auth')
 @section('content')
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul class="mb-0">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
     <div class="container mt-4">
         <h2 class="mb-4">Thông tin cá nhân</h2>
 
-        <form action="{{ route('invite.submit') }}" method="POST">
+        <form action="{{ route('invite.submit') }}" method="POST" enctype="multipart/form-data">
             @csrf
             <input type="hidden" name="token" value="{{ $invite->token }}">
 
