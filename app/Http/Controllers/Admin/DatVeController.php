@@ -98,9 +98,6 @@ class DatVeController extends Controller
         return view('admin.dat-ve.show', compact('datVe'));
     }
 
-
-
-
     public function guiVe($datVeId)
     {
         $datVe = DatVe::with(['nguoiDung', 'suatChieu.phim', 'combos.doAns'])->findOrFail($datVeId);
@@ -113,6 +110,7 @@ class DatVeController extends Controller
 
         return back()->with('success', 'Đã gửi vé về email người dùng!');
     }
+    
     public function print($id)
     {
         $datVe = DatVe::with([

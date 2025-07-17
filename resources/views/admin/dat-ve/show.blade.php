@@ -319,15 +319,6 @@
 @endphp
 
 <div class="success-container">
-    <!-- Header thành công -->
-    <div class="success-header">
-        <div class="success-icon">
-            <i class="fas fa-check-circle"></i>
-        </div>
-        <h1 class="success-title">Đặt vé thành công!</h1>
-        <p class="success-subtitle">Cảm ơn bạn đã sử dụng dịch vụ PolyFlix. Vé của bạn đã được xác nhận.</p>
-    </div>
-
     <!-- Container chính -->
     <div class="ticket-container">
         <!-- Thông tin vé chính -->
@@ -456,10 +447,12 @@
 
     <!-- Nút hành động -->
     <div class="action-buttons">
+        
         <a href="{{ route('admin.dat_ve.gui_email', $datVe->id) }}" class="btn-modern btn-primary-modern">
             <i class="fas fa-envelope"></i>
             Gửi vé qua email
         </a>
+
         <button onclick="window.print()" class="btn-modern btn-outline-modern">
             <i class="fas fa-print"></i>
             In vé

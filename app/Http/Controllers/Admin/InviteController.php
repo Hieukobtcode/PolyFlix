@@ -53,7 +53,7 @@ class InviteController extends Controller
 
             $inviteData['rap_phim_id'] = $request->rap_phim_id;
         }
-        
+
 
         QuanLyInvite::create($inviteData);
 
@@ -74,13 +74,13 @@ class InviteController extends Controller
         $request->validate([
             'loai_quan_ly' => 'required|in:1,2',
         ]);
-    
+
         if ($request->loai_quan_ly == 1) {
             // Hủy lời mời quản lý chi nhánh
             $request->validate([
                 'chi_nhanh_id' => 'required|integer|exists:chi_nhanhs,id',
             ]);
-    
+
             DB::table('quan_ly_invites')
                 ->where('chi_nhanh_id', $request->chi_nhanh_id)
                 ->where('loai_quan_ly', 1)
@@ -91,14 +91,14 @@ class InviteController extends Controller
             $request->validate([
                 'rap_phim_id' => 'required|integer|exists:rap_phims,id',
             ]);
-    
+
             DB::table('quan_ly_invites')
                 ->where('rap_phim_id', $request->rap_phim_id)
                 ->where('loai_quan_ly', 2)
                 ->where('used', 0)
                 ->update(['used' => 1]);
         }
-    
+
         return back()->with('success', 'Đã hủy lời mời quản lý.');
     }
     public function showForm(Request $request)
@@ -118,8 +118,8 @@ class InviteController extends Controller
         $request->validate([
             'token' => 'required',
             'name' => 'required',
-            'dob' => 'nullable|date',
-            'address' => 'nullable',
+            'dob' => 'required|date',
+            'address' => 'required',
             'phone' => 'required|string|max:20',
             'avatar' => 'nullable|image|max:2048',
         ]);

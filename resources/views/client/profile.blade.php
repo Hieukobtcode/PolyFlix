@@ -424,16 +424,38 @@
                             <th style="padding: 10px; text-align: left;">Phim</th>
                             <th style="padding: 10px; text-align: left;">Trạng thái</th>
                             <th style="padding: 10px; text-align: left;">Số tiền</th>
+                            <th style=" text-align: left;">Hành động</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr style="background: #f1f8f7; color: #004d40;">
-                            <td style="padding: 10px;">10/06/2025</td>
-                            <td style="padding: 10px;">GD123456</td>
-                            <td style="padding: 10px;">Đặt vé phim "Avengers: Endgame"</td>
-                            <td style="padding: 10px;">Thành công</td>
-                            <td style="padding: 10px; color: #f97316;">120.000 đ</td>
-                        </tr>
+                        @forelse ($donDatVeDaThanhToan as $ve)
+                            <tr style="background: #f1f8f7; color: #004d40;">
+                                <td style="padding: 10px;">{{ \Carbon\Carbon::parse($ve->thanh_toan)->format('d/m/Y') }}
+                                </td>
+                                <td style="padding: 10px;">{{ $ve->ma_dat_ve ?? '---' }}</td>
+                                <td style="padding: 10px;">
+                                    Đặt vé phim "{{ $ve->suatChieu->phim->ten_phim ?? 'N/A' }}"
+                                </td>
+                                <td style="padding: 10px;">Chưa xuất vé</td>
+                                <td style="padding: 10px; color: #f97316;">
+                                    {{ number_format($ve->tong_tien, 0, ',', '.') }}
+                                    đ
+                                </td>
+                                <td>
+                                    <a href="#" class="btn-xem-ve" data-id="{{ $ve->id }}"
+                                        style="background: #009688; color: white; padding: 6px 12px; border-radius: 4px; text-decoration: none;">
+                                        Xem
+                                    </a>
+
+                                </td>
+
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="5" style="padding: 10px; color:black; text-align: center;">Không có giao
+                                    dịch nào</td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
@@ -484,53 +506,9 @@
             </div>
         </div>
     </div>
-
-    @if (session('success'))
-        <script>
-            Swal.fire({
-                toast: true,
-                position: 'top-end',
-                icon: 'success',
-                title: '{{ session('success') }}',
-                background: '#10b981',
-                color: '#fff',
-                showCloseButton: true,
-                timer: 7000,
-                timerProgressBar: true,
-                showConfirmButton: false,
-                customClass: {
-                    popup: 'custom-toast'
-                }
-            });
-        </script>
-    @endif
-
-    @if ($errors->any())
-        <script>
-            let errorMessages = `{!! implode('<br>', $errors->all()) !!}`;
-            Swal.fire({
-                toast: true,
-                position: 'top-end',
-                iconHtml: '<i class="fa-solid fa-exclamation fa-bounce" style="color: #facc15; font-size: 18px;"></i>',
-                title: errorMessages,
-                background: '#7c3aed',
-                color: '#fff',
-                showCloseButton: true,
-                timer: 7000,
-                timerProgressBar: true,
-                showConfirmButton: false,
-                customClass: {
-                    popup: 'custom-toast',
-                    icon: 'no-icon-bg',
-                    title: 'text-start'
-                }
-            });
-        </script>
-    @endif
 @endsection
 
 @section('scripts')
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const avatarInput = document.getElementById('avatarUpload');
