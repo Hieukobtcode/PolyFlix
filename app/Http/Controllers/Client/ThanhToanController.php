@@ -321,7 +321,21 @@ class ThanhToanController extends Controller
 
                                             Log::info('Đã cộng điểm cho người dùng ID ' . $nguoiDung->id . ', số điểm: ' . $diemCong);
 
-                                            
+                                            // =========
+
+                                            $tongTienChiTieu = DatVe::where('user_id', $nguoiDung->id)->sum('tong_tien');
+                                            Log::info('tong chi tieu:' .$tongTienChiTieu);
+                                            $capBacMoi = CapBacThe::where('tong_chi_tieu', '<=', $tongTienChiTieu)
+                                                ->orderByDesc('tong_chi_tieu')
+                                                ->first();
+
+                                            if ($capBacMoi && $capBacMoi->id !== $nguoiDung->cap_bac_id) {
+                                                $nguoiDung->cap_bac_id = $capBacMoi->id;
+                                                $nguoiDung->save();
+
+                                                Log::info("Đã cập nhật cấp bậc mới cho người dùng ID {$nguoiDung->id}: {$capBacMoi->ten}");
+                                            }
+
                                         }
                                     } else {
                                         Log::warning('Không tìm thấy cấp bậc ID: ' . $nguoiDung->cap_bac_id);
