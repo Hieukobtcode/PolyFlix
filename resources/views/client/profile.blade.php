@@ -306,18 +306,30 @@
                 </form>
                 <div>
                     <div class="user-name1">🏅 {{ Auth::user()->name }}</div>
-                    <div class="stars">🎁 Hạng</div>
+                    <div class="stars">{{ $tenCapBac }}</div>
                 </div>
             </div>
 
             <div class="spending-progress">
-                <p><strong style="color: #004d40;">Tổng số vé đã đặt:</strong> <span style="color: #f97316;">0 vé</span></p>
-                <div class="progress-bar">
-                    <div class="progress-fill" style="width: 0%"></div>
+                <p>
+                    <strong style="color: #004d40;">Tổng tiền chi tiêu:</strong>
+                    <span style="color: #f97316;">
+                        {{ number_format($tongChiTieu, 0, ',', '.') }}₫
+                    </span>
+                </p>
+
+                {{-- Thanh tiến độ --}}
+                <div class="progress-bar"
+                    style="height: 10px; background-color: #b2dfdb; border-radius: 10px; overflow: hidden;">
+                    <div class="progress-fill"
+                        style="height: 100%; width: {{ $phanTramChiTieu }}%; background-color: #ef4444; transition: width 0.5s;">
+                    </div>
                 </div>
-                <div class="milestone-labels">
+
+                {{-- Các mốc --}}
+                <div class="milestone-labels" style="display: flex; justify-content: space-between; margin-top: 5px;">
                     @foreach ($milestones as $moc)
-                        <span>{{ $moc }} đ</span>
+                        <span>{{ number_format($moc, 0, ',', '.') }} đ</span>
                     @endforeach
                 </div>
             </div>
