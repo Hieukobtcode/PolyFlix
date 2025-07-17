@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
 use App\Mail\GuiVeXemPhim;
+use App\Models\CapBacThe;
 use App\Models\DatVe;
+use App\Models\LichSuDiem;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -42,7 +44,7 @@ class ThanhToanController extends Controller
         foreach ($datVe->gheNgois as $ghe) {
             if ($ghe->trang_thai === 'da_dat') {
                 return response()->json([
-                    'status'  => 'error',
+                    'status' => 'error',
                     'message' => 'Một hoặc nhiều ghế đã được đặt. Vui lòng chọn lại ghế khác.'
                 ]);
             }
@@ -118,7 +120,7 @@ class ThanhToanController extends Controller
         foreach ($datVe->gheNgois as $ghe) {
             if ($ghe->trang_thai === 'da_dat') {
                 return response()->json([
-                    'status'  => 'error',
+                    'status' => 'error',
                     'message' => 'Một hoặc nhiều ghế đã được đặt. Vui lòng chọn lại ghế khác.'
                 ]);
             }
@@ -150,20 +152,20 @@ class ThanhToanController extends Controller
         $tongThanhTien = $tongTienGhe + $tongTienCombo + $tongTienDoAn;
 
         $embedData = [
-            'dat_ve_id'     => $datVe->id,
+            'dat_ve_id' => $datVe->id,
             'nguoi_dung_id' => $datVe->user_id,
-            'ten_phim'      => $datVe->suatChieu->phim->ten_phim,
-            'rap'           => $datVe->suatChieu->phongChieu->rapPhim->ten_rap,
-            'chi_nhanh'     => $datVe->suatChieu->phongChieu->rapPhim->chiNhanh->ten_chi_nhanh ?? '',
-            'suat_chieu'    => $datVe->suatChieu->bat_dau,
-            'tong_tien'     => $tongThanhTien,
-            'redirecturl'  => 'http://127.0.0.1:8000/zalopay/ketqua'
+            'ten_phim' => $datVe->suatChieu->phim->ten_phim,
+            'rap' => $datVe->suatChieu->phongChieu->rapPhim->ten_rap,
+            'chi_nhanh' => $datVe->suatChieu->phongChieu->rapPhim->chiNhanh->ten_chi_nhanh ?? '',
+            'suat_chieu' => $datVe->suatChieu->bat_dau,
+            'tong_tien' => $tongThanhTien,
+            'redirecturl' => 'http://127.0.0.1:8000/zalopay/ketqua'
         ];
 
         $config = [
-            "app_id"   => 2553,
-            "key1"     => "PcY4iZIKFCIdgZvA6ueMcMHHUbRLYjPL",
-            "key2"     => "kLtgPl8HHhfvMuDHPwKfgfsY4Ydm9eIz",
+            "app_id" => 2553,
+            "key1" => "PcY4iZIKFCIdgZvA6ueMcMHHUbRLYjPL",
+            "key2" => "kLtgPl8HHhfvMuDHPwKfgfsY4Ydm9eIz",
             "endpoint" => "https://sb-openapi.zalopay.vn/v2/create"
         ];
 
@@ -173,15 +175,15 @@ class ThanhToanController extends Controller
 
         // Tạo mảng đơn hàng gửi sang ZaloPay
         $order = [
-            "app_id"       => $config["app_id"],
+            "app_id" => $config["app_id"],
             "app_trans_id" => $orderID,
-            "app_time"     => round(microtime(true) * 1000),
-            "app_user"     => $datVe->nguoiDung->id ?? 'guest',
-            "item"         => json_encode([]),
-            "embed_data"   => json_encode($embedData),
-            "amount"       => $tongThanhTien,
-            "description"  => "Thanh toán vé xem phim - Đơn #$orderID",
-            "bank_code"    => "zalopayapp",
+            "app_time" => round(microtime(true) * 1000),
+            "app_user" => $datVe->nguoiDung->id ?? 'guest',
+            "item" => json_encode([]),
+            "embed_data" => json_encode($embedData),
+            "amount" => $tongThanhTien,
+            "description" => "Thanh toán vé xem phim - Đơn #$orderID",
+            "bank_code" => "",
             "callback_url" => "https://poetic-adder-polite.ngrok-free.app/api/zalopay/callback",
         ];
 
@@ -200,8 +202,8 @@ class ThanhToanController extends Controller
         // Gửi POST request sang ZaloPay để tạo đơn hàng
         $context = stream_context_create([
             "http" => [
-                "header"  => "Content-type: application/x-www-form-urlencoded\r\n",
-                "method"  => "POST",
+                "header" => "Content-type: application/x-www-form-urlencoded\r\n",
+                "method" => "POST",
                 "content" => http_build_query($order),
             ]
         ]);
@@ -212,12 +214,12 @@ class ThanhToanController extends Controller
         // XỬ LÝ KẾT QUẢ PHẢN HỒI TỪ ZALOPAY
         if (isset($result['return_code']) && $result['return_code'] == 1) {
             return response()->json([
-                'status'       => 'success',
+                'status' => 'success',
                 'redirect_url' => $result['order_url']
             ]);
         } else {
             return response()->json([
-                'status'  => 'error',
+                'status' => 'error',
                 'message' => 'Không thể tạo đơn hàng ZaloPay. Vui lòng thử lại.'
             ]);
         }
@@ -290,7 +292,47 @@ class ThanhToanController extends Controller
                             } catch (Exception $e) {
                                 Log::error('Gửi mail thất bại: ' . $e->getMessage());
                             }
+
+                            try {
+                                $nguoiDung = $datVe->nguoiDung;
+
+                                if ($nguoiDung && $nguoiDung->cap_bac_id) {
+                                    // Lấy cấp bậc theo ID từ người dùng
+                                    $capBac = CapBacThe::find($nguoiDung->cap_bac_id);
+
+                                    if ($capBac) {
+                                        // Tính điểm dựa trên phần trăm vé
+                                        $tongTien = $datVe->tong_tien;
+                                        $phanTramVe = $capBac->phan_tram_ve;
+                                        $diemCong = round($tongTien * $phanTramVe / 100);
+
+                                        if ($diemCong > 0) {
+                                            // Cộng điểm vào người dùng
+                                            $nguoiDung->diem += $diemCong;
+                                            $nguoiDung->save();
+
+                                            // Ghi vào lịch sử điểm
+                                            LichSuDiem::create([
+                                                'users_id' => $nguoiDung->id,
+                                                'thay_doi' => $diemCong,
+                                                'ly_do' => 'Cộng điểm từ đơn đặt vé #' . $datVe->ma_dat_ve,
+                                                'thoi_gian' => now(),
+                                            ]);
+
+                                            Log::info('Đã cộng điểm cho người dùng ID ' . $nguoiDung->id . ', số điểm: ' . $diemCong);
+
+                                            
+                                        }
+                                    } else {
+                                        Log::warning('Không tìm thấy cấp bậc ID: ' . $nguoiDung->cap_bac_id);
+                                    }
+                                }
+                            } catch (Exception $e) {
+                                Log::error('Lỗi khi cộng điểm: ' . $e->getMessage());
+                            }
                         }
+
+                        // ========================================
 
                         Log::info('ZaloPay callback - Cập nhật trạng thái đơn đặt vé thành công', [
                             'dat_ve_id' => $datVeId
