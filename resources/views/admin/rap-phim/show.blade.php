@@ -5,13 +5,16 @@
             {{-- Cột phải --}}
             <div class="col-md-12">
                 <div class="card shadow-sm border-0">
+
                     <div class="card-header bg-primary text-white py-3 d-flex justify-content-between align-items-center">
                         <strong><i class="fas fa-door-open me-1"></i> Phòng Chiếu: Rạp {{ $rapPhim->ten_rap }}</strong>
-                        <a href="{{ route('admin.phong-chieu.create', ['rap_phim_id' => $rapPhim->id]) }}"
-                            class="btn btn-sm btn-success d-inline-flex align-items-center gap-2 py-2 px-3"
-                            title="Thêm phòng chiếu">
-                            <i class="ti ti-plus"></i> Thêm phòng chiếu
-                        </a>
+                        @if (Auth::user()->vai_tro_id !== 2)
+                            <a href="{{ route('admin.phong-chieu.create', ['rap_phim_id' => $rapPhim->id]) }}"
+                                class="btn btn-sm btn-success d-inline-flex align-items-center gap-2 py-2 px-3"
+                                title="Thêm phòng chiếu">
+                                <i class="ti ti-plus"></i> Thêm phòng chiếu
+                            </a>
+                        @endif
                     </div>
 
                     <div class="card-body p-3">
@@ -65,24 +68,35 @@
                                                             <i class="ti ti-dots-vertical fs-6"></i>
                                                         </a>
                                                         <ul class="dropdown-menu">
-                                                            <li>
-                                                                <a href="{{ route('admin.phong-chieu.edit', $phong->id) }}"
-                                                                    class="dropdown-item d-flex align-items-center gap-2">
-                                                                    <i class="ti ti-edit fs-5"></i> Chỉnh sửa
-                                                                </a>
-                                                            </li>
-                                                            @if (is_null($phong->so_do_ghe_id))
+                                                            @if (Auth::user()->vai_tro_id !== 2)
                                                                 <li>
-                                                                    <button
-                                                                        class="dropdown-item d-flex align-items-center gap-2"
-                                                                        data-bs-toggle="modal"
-                                                                        data-bs-target="#modalSoDoGhe"
-                                                                        data-id="{{ $phong->id }}"
-                                                                        data-tenphong="{{ $phong->ten_phong }}">
-                                                                        <i class="ti ti-plus-circle fs-5 text-success"></i>
-                                                                        Thêm sơ đồ ghế
-                                                                    </button>
+                                                                    <a href="{{ route('admin.phong-chieu.edit', $phong->id) }}"
+                                                                        class="dropdown-item d-flex align-items-center gap-2">
+                                                                        <i class="ti ti-edit fs-5"></i> Chỉnh sửa
+                                                                    </a>
                                                                 </li>
+                                                            @endif
+                                                            @if (is_null($phong->so_do_ghe_id))
+                                                                @if (Auth::user()->vai_tro_id !== 2)
+                                                                    <li>
+                                                                        <button
+                                                                            class="dropdown-item d-flex align-items-center gap-2"
+                                                                            data-bs-toggle="modal"
+                                                                            data-bs-target="#modalSoDoGhe"
+                                                                            data-id="{{ $phong->id }}"
+                                                                            data-tenphong="{{ $phong->ten_phong }}">
+                                                                            <i
+                                                                                class="ti ti-plus-circle fs-5 text-success"></i>
+                                                                            Thêm sơ đồ ghế
+                                                                        </button>
+                                                                    </li>
+                                                                @else
+                                                                    <span
+                                                                        class="dropdown-item d-flex align-items-center gap-2 text-muted">
+
+                                                                        Không có thao tác nào hết !
+                                                                    </span>
+                                                                @endif
                                                             @else
                                                                 <li>
                                                                     <a href="{{ route('admin.ghe-ngoi.show', $phong->id) }}"

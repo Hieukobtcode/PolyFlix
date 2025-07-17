@@ -9,12 +9,14 @@
         <div class="card shadow-sm border-0">
             <div class="card-body p-4">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <div class="d-flex gap-2">
-                        <a href="{{ route('admin.phim.create') }}"
-                            class="btn btn-primary btn-sm d-inline-flex align-items-center gap-2 px-3 py-2">
-                            <i class="ti ti-plus fs-5"></i> Thêm phim
-                        </a>
-                    </div>
+                    @if (Auth::user()->vai_tro_id == 1)
+                        <div class="d-flex gap-2">
+                            <a href="{{ route('admin.phim.create') }}"
+                                class="btn btn-primary btn-sm d-inline-flex align-items-center gap-2 px-3 py-2">
+                                <i class="ti ti-plus fs-5"></i> Thêm phim
+                            </a>
+                        </div>
+                    @endif
                 </div>
 
                 <!-- Bộ lọc -->
@@ -40,7 +42,7 @@
                             <tr>
                                 <th class="text-center" style="width: 5%;">#</th>
                                 <th class="text-center" style="width: 8%;">Poster</th>
-                                <th  style="width: 4%">Tên phim</th>
+                                <th style="width: 4%">Tên phim</th>
                                 <th class="text-center" style="width: 8%;">Thời lượng</th>
                                 <th class="text-center" style="width: 12%;">Ngày phát hành</th>
                                 <th class="text-center" style="width: 12%;">Trạng thái</th>
@@ -96,30 +98,36 @@
                                                         <i class="ti ti-eye fs-5"></i> Xem chi tiết
                                                     </a>
                                                 </li>
-                                                <li>
-                                                    <a class="dropdown-item d-flex align-items-center gap-2"
-                                                        href="{{ route('admin.phim.edit', $phim->id) }}">
-                                                        <i class="ti ti-edit fs-5"></i> Chỉnh sửa
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a class="dropdown-item d-flex align-items-center gap-2"
-                                                        href="{{ route('admin.suat-chieu.create', ['phimId' => $phim->id]) }}">
-                                                        <i class="ti ti-calendar-plus fs-5"></i> Thêm suất chiếu
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <form action="{{ route('admin.phim.destroy', $phim->id) }}"
-                                                        method="POST"
-                                                        onsubmit="return confirm('Bạn có chắc chắn muốn xóa mềm phim này?')">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit"
-                                                            class="dropdown-item d-flex align-items-center gap-2 text-danger">
-                                                            <i class="ti ti-trash fs-5"></i> Xóa
-                                                        </button>
-                                                    </form>
-                                                </li>
+                                                @if (Auth::user()->vai_tro_id !== 3)
+                                                    <li>
+                                                        <a class="dropdown-item d-flex align-items-center gap-2"
+                                                            href="{{ route('admin.phim.edit', $phim->id) }}">
+                                                            <i class="ti ti-edit fs-5"></i> Chỉnh sửa
+                                                        </a>
+                                                    </li>
+                                                @endif
+                                                @if (Auth::user()->vai_tro_id !== 2)
+                                                    <li>
+                                                        <a class="dropdown-item d-flex align-items-center gap-2"
+                                                            href="{{ route('admin.suat-chieu.create', ['phimId' => $phim->id]) }}">
+                                                            <i class="ti ti-calendar-plus fs-5"></i> Thêm suất chiếu
+                                                        </a>
+                                                    </li>
+                                                @endif
+                                                @if (Auth::user()->vai_tro_id == 1)
+                                                    <li>
+                                                        <form action="{{ route('admin.phim.destroy', $phim->id) }}"
+                                                            method="POST"
+                                                            onsubmit="return confirm('Bạn có chắc chắn muốn xóa mềm phim này?')">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="submit"
+                                                                class="dropdown-item d-flex align-items-center gap-2 text-danger">
+                                                                <i class="ti ti-trash fs-5"></i> Xóa
+                                                            </button>
+                                                        </form>
+                                                    </li>
+                                                @endif
                                             </ul>
                                         </div>
                                     </td>

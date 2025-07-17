@@ -38,36 +38,36 @@
                                 @enderror
                             </div>
 
-                            {{-- Tổng vé đã mua --}}
+                            {{-- Tổng chi tiêu --}}
                             <div class="mb-4">
-                                <label for="tong_so_ve_da_mua" class="form-label fw-semibold">Tổng số vé đã mua <span
+                                <label for="tong_chi_tieu" class="form-label fw-semibold">Tổng chi tiêu <span
                                         class="text-danger">*</span></label>
-                                <input type="number" id="tong_so_ve_da_mua" name="tong_so_ve_da_mua" min="0"
-                                    class="form-control rounded @error('tong_so_ve_da_mua') is-invalid @enderror"
-                                    value="{{ old('tong_so_ve_da_mua', $capBacThe->tong_so_ve_da_mua) }}"
-                                    placeholder="Nhập tổng số vé đã mua">
-                                <div class="form-text">Tổng số vé đã mua để đạt được cấp bậc đó.</div>
-                                @error('tong_so_ve_da_mua')
+                                <input type="number" id="tong_chi_tieu" name="tong_chi_tieu" min="0"
+                                    class="form-control rounded @error('tong_chi_tieu') is-invalid @enderror"
+                                    value="{{ old('tong_chi_tieu', $capBacThe->tong_chi_tieu) }}"
+                                    placeholder="Nhập Tổng chi tiêu">
+                                <div class="form-text">Tổng chi tiêu để đạt được cấp bậc đó.</div>
+                                @error('tong_chi_tieu')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
 
-                            {{-- % Hoàn tiền & Ưu đãi --}}
+                            {{-- % Hoàn điểm & Ưu đãi --}}
                             <div class="row">
                                 <div class="col-md-6 mb-4">
-                                    <label for="phan_tram_ve" class="form-label fw-semibold">Phần trăm hoàn tiền (%) <span
+                                    <label for="phan_tram_ve" class="form-label fw-semibold">Phần trăm hoàn điểm (%) <span
                                             class="text-danger">*</span></label>
                                     <input type="number" id="phan_tram_ve" name="phan_tram_ve"
                                         class="form-control rounded @error('phan_tram_ve') is-invalid @enderror"
                                         value="{{ old('phan_tram_ve', $capBacThe->phan_tram_ve) }}"
-                                        placeholder="Nhập % hoàn tiền">
+                                        placeholder="Nhập % hoàn điểm">
                                     <div class="form-text">Tỷ lệ tích điểm khi đặt vé.</div>
                                     @error('phan_tram_ve')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
 
-                                <div class="col-md-6 mb-4">
+                                {{-- <div class="col-md-6 mb-4">
                                     <label for="phan_tram_dich_vu" class="form-label fw-semibold">Phần trăm ưu đãi dịch vụ
                                         (%) <span class="text-danger">*</span></label>
                                     <input type="number" id="phan_tram_dich_vu" name="phan_tram_dich_vu"
@@ -78,7 +78,7 @@
                                     @error('phan_tram_dich_vu')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
-                                </div>
+                                </div> --}}
                             </div>
 
                             {{-- Checkbox mặc định --}}

@@ -1,0 +1,500 @@
+/* Thanh toán CSS */
+.thanh-toan-container {
+    background: radial-gradient(
+        circle at top left,
+        #3f2b96 0%,
+        #454578 40%,
+        #3b3b96 100%
+    );
+    min-height: 100vh;
+    padding: 20px 0;
+}
+
+.thanh-toan-container .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Payment Header */
+.payment-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 30px;
+    border-radius: 15px 15px 0 0;
+    text-align: center;
+    margin-bottom: 0;
+}
+
+.payment-header h2 {
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.payment-header p {
+    margin: 10px 0 0 0;
+    opacity: 0.9;
+    font-size: 1.1rem;
+}
+
+/* Payment Container */
+.payment-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    background: white;
+    border-radius: 0 0 15px 15px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+/* Payment Methods */
+.payment-methods {
+    padding: 30px;
+}
+
+.payment-methods h3 {
+    color: #2d3748;
+    margin-bottom: 25px;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.payment-option {
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.payment-option:hover {
+    border-color: #667eea;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+}
+
+.payment-option.selected {
+    border-color: #667eea;
+    background: linear-gradient(
+        135deg,
+        rgba(102, 126, 234, 0.1) 0%,
+        rgba(118, 75, 162, 0.1) 100%
+    );
+}
+
+.payment-option input[type="radio"] {
+    display: none;
+}
+
+.payment-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5rem;
+}
+
+.payment-icon.zalopay {
+    background: linear-gradient(135deg, #0068ff 0%, #0052cc 100%);
+}
+
+.payment-icon.vnpay {
+    background: linear-gradient(135deg, #1946ba 0%, #0f2c75 100%);
+}
+
+.payment-icon.momo {
+    background: linear-gradient(135deg, #a50065 0%, #7d004f 100%);
+}
+
+.payment-icon.banking {
+    background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+}
+
+.payment-icon.cod {
+    background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+}
+
+.payment-details h4 {
+    margin: 0 0 5px 0;
+    color: #2d3748;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.payment-details p {
+    margin: 0;
+    color: #718096;
+    font-size: 0.9rem;
+}
+
+/* Order Summary */
+.order-summary {
+    background: #f7fafc;
+    padding: 30px;
+    border-left: 1px solid #e2e8f0;
+}
+
+.order-summary h3 {
+    color: #2d3748;
+    margin-bottom: 25px;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.movie-summary {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.movie-info {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.movie-poster {
+    width: 80px;
+    height: 120px;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+.movie-details h4 {
+    margin: 0 0 10px 0;
+    color: #2d3748;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.movie-meta div {
+    margin: 5px 0;
+    color: #718096;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.movie-meta i {
+    color: #667eea;
+    width: 16px;
+}
+
+.seats-info {
+    background: #edf2f7;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 15px;
+}
+
+.seats-info strong {
+    color: #2d3748;
+}
+
+/* Price Details */
+.price-details {
+    background: white;
+    border-radius: 12px;
+    color: black;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.price-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.price-row:last-child {
+    border-bottom: none;
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: #2d3748;
+    margin-top: 10px;
+    padding-top: 15px;
+    border-top: 2px solid #e2e8f0;
+}
+
+.price-row span:last-child {
+    color: #667eea;
+    font-weight: 600;
+}
+
+/* Payment Button */
+.payment-button {
+    width: 100%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.payment-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+}
+
+.payment-button:disabled {
+    background: #cbd5e0;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.payment-button:disabled:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+/* Loading State */
+.payment-loading {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: white;
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+.btn-confirm {
+    background: rgb(124, 245, 124);
+    color: #718096;
+    border: 2px solid #e2e8f0;
+    padding: 12px 25px;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    text-align: center;
+}
+
+.btn-confirm:hover {
+    border-color: #cbd5e0;
+    color: #4a5568;
+    transform: translateY(-1px);
+}
+
+/* Banking Info Modal */
+.banking-info {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    margin-top: 20px;
+    border: 2px solid #48bb78;
+    display: none;
+}
+
+.banking-info.show {
+    display: block;
+}
+
+.banking-info h4 {
+    color: #2d3748;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.bank-detail {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.bank-detail:last-child {
+    border-bottom: none;
+}
+
+.bank-detail strong {
+    color: #2d3748;
+}
+
+.bank-detail span {
+    color: #667eea;
+    font-weight: 600;
+}
+
+.copy-btn {
+    background: #667eea;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    margin-left: 10px;
+    transition: background 0.3s ease;
+}
+
+.copy-btn:hover {
+    background: #5a67d8;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .payment-container {
+        grid-template-columns: 1fr;
+    }
+
+    .payment-header h2 {
+        font-size: 1.5rem;
+    }
+
+    .movie-info {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .payment-option {
+        padding: 15px;
+    }
+
+    .payment-methods,
+    .order-summary {
+        padding: 20px;
+    }
+}
+
+/* Success/Error Messages */
+.alert {
+    padding: 15px 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.alert-success {
+    background: #c6f6d5;
+    border: 1px solid #9ae6b4;
+    color: #22543d;
+}
+
+.alert-error {
+    background: #fed7d7;
+    border: 1px solid #feb2b2;
+    color: #742a2a;
+}
+
+.alert i {
+    font-size: 1.2rem;
+}
+
+.tpbank {
+    width: auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    color: black;
+    display: flex;
+    padding: 20px;
+    background: linear-gradient(to right, #e9e3f5, #fef1e8);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.tpbank .tpbank-info {
+    width: 70%;
+}
+
+.tpbank-info-user {
+    margin-top: 100px;
+    font-size: 20px;
+}
+
+.tpbank-account {
+    letter-spacing: 5px;
+}
+
+.tpbank-name {
+    letter-spacing: 4px;
+}
+
+.tpbank .tpbank-img {
+    display: flex;
+    align-items: center;
+}
+
+.tpbank .tpbank-img img {
+    width: 100px;
+}
+
+.tpbank .tpbank-qr {
+    width: 30%;
+}
+
+.tpbank .tpbank-qr img {
+    width: 200px;
+}
+
+.seat_select {
+    color: black;
+}
+
+.btn-thanh-toan {
+    width: 220px;
+    height: 45px;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(
+        135deg,
+        #4ade80,
+        #22c55e
+    ); 
+    color: white;
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(34, 197, 94, 0.3); 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn-thanh-toan i {
+    font-size: 18px;
+}
+
+.btn-thanh-toan:hover {
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+    box-shadow: 0 6px 14px rgba(22, 163, 74, 0.4);
+    transform: translateY(-2px);
+}

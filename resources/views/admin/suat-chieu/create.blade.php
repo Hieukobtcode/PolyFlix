@@ -31,9 +31,12 @@
                             <br>
                             <span class="fw-semibold text-muted">Ngày kết thúc:</span>
                             <span>{{ $phim->ngay_ket_thuc ? $phim->ngay_ket_thuc->format('d/m/Y') : 'N/A' }}</span>
+                            <br>
+                            <span class="fw-semibold text-muted">Thời lượng:</span>
+                            <span>{{ $phim->thoi_luong }} phút</span>
                         </div>
 
-                        <form action="{{ route('admin.suat-chieu.store') }}" method="POST" id="suat-chieu-form">
+                        <form id="suat-chieu-form">
                             @csrf
                             <input type="hidden" name="phim_id" value="{{ $phim->id }}">
 
@@ -81,14 +84,28 @@
                                 @enderror
                             </div>
 
-                            <div class="mb-4">
-                                <label for="ngay_chieu" class="form-label fw-semibold">Ngày chiếu <span
-                                        class="text-danger">*</span></label>
-                                <input type="date" class="form-control rounded @error('ngay_chieu') is-invalid @enderror"
-                                    id="ngay_chieu" name="ngay_chieu" value="{{ old('ngay_chieu') }}" required>
-                                @error('ngay_chieu')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-6">
+                                    <label for="ngay_bat_dau" class="form-label fw-semibold">Ngày bắt đầu <span
+                                            class="text-danger">*</span></label>
+                                    <input type="date"
+                                        class="form-control rounded @error('ngay_bat_dau') is-invalid @enderror"
+                                        id="ngay_bat_dau" name="ngay_bat_dau" value="{{ old('ngay_bat_dau') }}" required>
+                                    @error('ngay_bat_dau')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="ngay_ket_thuc" class="form-label fw-semibold">Ngày kết thúc <span
+                                            class="text-danger">*</span></label>
+                                    <input type="date"
+                                        class="form-control rounded @error('ngay_ket_thuc') is-invalid @enderror"
+                                        id="ngay_ket_thuc" name="ngay_ket_thuc" value="{{ old('ngay_ket_thuc') }}"
+                                        required>
+                                    @error('ngay_ket_thuc')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
                             </div>
 
                             <div class="mb-4">
@@ -118,25 +135,11 @@
                                 <div class="gio-chieu-group row g-3 mb-3">
                                     <div class="col-md-5">
                                         <label class="form-label">Giờ bắt đầu</label>
-                                        <input type="time"
-                                            class="form-control rounded @error('thucong_bat_dau.*') is-invalid @enderror"
-                                            name="thucong_bat_dau[]">
-                                        @error('thucong_bat_dau.*')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                    <div class="col-md-5">
-                                        <label class="form-label">Giờ kết thúc</label>
-                                        <input type="time"
-                                            class="form-control rounded @error('thucong_ket_thuc.*') is-invalid @enderror"
-                                            name="thucong_ket_thuc[]">
-                                        @error('thucong_ket_thuc.*')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
+                                        <input type="time" class="form-control rounded" name="thucong_bat_dau[]">
                                     </div>
                                     <div class="col-md-2 d-flex align-items-end">
                                         <button type="button" class="btn btn-outline-danger btn-sm remove-gio"
-                                            style="display: none;" onclick="xoaGioChieu(this)" title="Xóa khung giờ">
+                                            style="display: none;" onclick="xoaGioChieu(this)" title="Xóa giờ">
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </div>
@@ -145,7 +148,7 @@
 
                             <div class="mb-4" id="them-gio-chieu-wrapper">
                                 <button type="button" class="btn btn-outline-success" onclick="themGioChieu()"
-                                    title="Thêm khung giờ">
+                                    title="Thêm giờ">
                                     <i class="ti ti-plus me-1"></i> Thêm giờ chiếu
                                 </button>
                             </div>
@@ -153,8 +156,8 @@
                             <!-- Tự động -->
                             <div id="gio-chieu-tu-dong" style="display: none;">
                                 <div class="row g-3 mb-3">
-                                    <div class="col-md-5">
-                                        <label for="tudong_bat_dau" class="form-label">Giờ bắt đầu chung</label>
+                                    <div class="col-md-6">
+                                        <label for="tudong_bat_dau" class="form-label">Giờ bắt đầu</label>
                                         <input type="time" id="tudong_bat_dau" name="tudong_bat_dau"
                                             class="form-control rounded @error('tudong_bat_dau') is-invalid @enderror"
                                             value="{{ old('tudong_bat_dau') }}">
@@ -162,8 +165,8 @@
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
-                                    <div class="col-md-5">
-                                        <label for="tudong_ket_thuc" class="form-label">Giờ kết thúc chung</label>
+                                    <div class="col-md-6">
+                                        <label for="tudong_ket_thuc" class="form-label">Giờ kết thúc</label>
                                         <input type="time" id="tudong_ket_thuc" name="tudong_ket_thuc"
                                             class="form-control rounded @error('tudong_ket_thuc') is-invalid @enderror"
                                             value="{{ old('tudong_ket_thuc') }}">
@@ -177,8 +180,9 @@
                             <div class="d-flex justify-content-end gap-2 mt-4">
                                 <a href="{{ route('admin.suat-chieu.index') }}" class="btn btn-outline-secondary"
                                     title="Hủy">Hủy</a>
-                                <button type="submit" class="btn btn-primary" title="Lưu suất chiếu">
-                                    Lưu suất chiếu
+                                <button type="button" class="btn btn-primary" onclick="taoSuatChieu()"
+                                    title="Tạo suất chiếu">
+                                    Tạo suất chiếu
                                 </button>
                             </div>
                         </form>
@@ -186,50 +190,92 @@
 
                     <!-- Cột phải: Danh sách suất chiếu -->
                     <div class="col-md-6 ps-md-4 mt-4 mt-md-0">
-                        <table class="table table-bordered" id="tbl-suat-chieu">
-                            <thead>
-                                <tr>
-                                    <th class="text-center">Ngày chiếu</th>
-                                    <th class="text-center">Giờ bắt đầu – Kết thúc</th>
-                                    <th class="text-center">Phòng</th>
-                                    <th class="text-center">Phiên bản</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td colspan="4" class="text-center">Vui lòng chọn phòng & ngày để xem suất chiếu.
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h6 class="fw-bold mb-0">Suất chiếu dự kiến</h6>
+                            <button type="button" class="btn btn-success btn-sm" onclick="luuSuatChieu()"
+                                style="display: none;" id="btn-luu-suat-chieu">
+                                <i class="ti ti-device-floppy me-1"></i> Lưu suất chiếu
+                            </button>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="tbl-suat-chieu">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center" style="width: 40px;">
+                                            <input type="checkbox" id="check-all" onchange="toggleCheckAll(this)">
+                                        </th>
+                                        <th class="text-center">Ngày chiếu</th>
+                                        <th class="text-center">Giờ chiếu</th>
+                                        <th class="text-center">Phòng</th>
+                                        <th class="text-center">Phiên bản</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td colspan="5" class="text-center">Chưa có suất chiếu dự kiến.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
+            <!-- Cột phải: Danh sách suất chiếu -->
+            <div class="col-md-6 ps-md-4 mt-4 mt-md-0">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h6 class="fw-bold mb-0">Suất chiếu đã có</h6>
+                </div>
+                <table class="table table-bordered" id="tbl-suat-chieu-da-co">
+                    <thead>
+                        <tr>
+                            <th class="text-center">Ngày chiếu</th>
+                            <th class="text-center">Giờ bắt đầu – Kết thúc</th>
+                            <th class="text-center">Phòng</th>
+                            <th class="text-center">Phiên bản</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="4" class="text-center">Vui lòng chọn phòng & ngày để xem suất chiếu.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
-<script>
-    const apiUrl = @json(route('admin.suat-chieu.theo-phong-ngay'));
-</script>
 
+    <!-- Template cho hàng trong bảng -->
+    <template id="row-template">
+        <tr>
+            <td class="text-center">
+                <input type="checkbox" class="suat-checkbox" checked>
+            </td>
+            <td class="text-center">{ngay_chieu}</td>
+            <td class="text-center">{gio_chieu}</td>
+            <td>{phong}</td>
+            <td>{phien_ban_display}</td>
+        </tr>
+    </template>
 @endsection
 
 @section('scripts')
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-        
-            document.querySelector('.btn-outline-secondary').addEventListener('click', function(e) {
-                if (!confirm('Bạn có muốn hủy và quay lại danh sách?')) {
-                    e.preventDefault();
-                }
-            });
+        let cacSuatChieuDeXuat = [];
 
+        document.addEventListener('DOMContentLoaded', function() {
             toggleCheDo();
 
-            const selPhong = document.getElementById('phong_chieu_id');
-            const inpNgay = document.getElementById('ngay_chieu');
+            // Set min date cho input ngày
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('ngay_bat_dau').min = today;
+            document.getElementById('ngay_ket_thuc').min = today;
 
-            selPhong.addEventListener('change', fetchSuatChieu);
-            inpNgay.addEventListener('change', fetchSuatChieu);
+            // Khi thay đổi ngày bắt đầu, cập nhật min của ngày kết thúc
+            document.getElementById('ngay_bat_dau').addEventListener('change', function() {
+                document.getElementById('ngay_ket_thuc').min = this.value;
+            });
         });
 
         function toggleCheDo() {
@@ -238,29 +284,14 @@
             const tuDongBox = document.getElementById('gio-chieu-tu-dong');
             const themGioWrapper = document.getElementById('them-gio-chieu-wrapper');
 
-            const thuCongBatDaus = document.querySelectorAll('input[name="thucong_bat_dau[]"]');
-            const thuCongKetThucs = document.querySelectorAll('input[name="thucong_ket_thuc[]"]');
-            const tuDongBatDau = document.querySelector('input[name="tudong_bat_dau"]');
-            const tuDongKetThuc = document.querySelector('input[name="tudong_ket_thuc"]');
-
             if (cheDo === 'tu_dong') {
                 thuCongBox.style.display = 'none';
                 themGioWrapper.style.display = 'none';
                 tuDongBox.style.display = 'block';
-
-                thuCongBatDaus.forEach(i => i.required = false);
-                thuCongKetThucs.forEach(i => i.required = false);
-                tuDongBatDau.required = true;
-                tuDongKetThuc.required = true;
             } else {
                 thuCongBox.style.display = 'block';
                 themGioWrapper.style.display = 'block';
                 tuDongBox.style.display = 'none';
-
-                thuCongBatDaus.forEach(i => i.required = true);
-                thuCongKetThucs.forEach(i => i.required = true);
-                tuDongBatDau.required = false;
-                tuDongKetThuc.required = false;
             }
         }
 
@@ -274,62 +305,131 @@
                     <label class="form-label">Giờ bắt đầu</label>
                     <input type="time" name="thucong_bat_dau[]" class="form-control rounded" required>
                 </div>
-                <div class="col-md-5">
-                    <label class="form-label">Giờ kết thúc</label>
-                    <input type="time" name="thucong_ket_thuc[]" class="form-control rounded" required>
-                </div>
                 <div class="col-md-2 d-flex align-items-end">
-                    <button type="button" class="btn btn-outline-danger btn-sm" onclick="xoaGioChieu(this)" title="Xóa khung giờ">
+                    <button type="button" class="btn btn-outline-danger btn-sm" onclick="xoaGioChieu(this)" title="Xóa giờ">
                         <i class="fas fa-trash"></i>
                     </button>
                 </div>
             `;
             container.appendChild(group);
-            toggleCheDo();
         }
 
         function xoaGioChieu(btn) {
             btn.closest('.gio-chieu-group').remove();
-            toggleCheDo();
         }
 
-        function fetchSuatChieu() {
-            const phongId = document.getElementById('phong_chieu_id').value;
-            const ngay = document.getElementById('ngay_chieu').value;
-            const tbody = document.querySelector('#tbl-suat-chieu tbody');
-            tbody.innerHTML = `<tr><td colspan="4" class="text-center">Đang tải...</td></tr>`;
+        function taoSuatChieu() {
+            const form = document.getElementById('suat-chieu-form');
+            const formData = new FormData(form);
 
-            if (!phongId || !ngay) {
-                tbody.innerHTML =
-                    `<tr><td colspan="4" class="text-center">Vui lòng chọn phòng & ngày để xem suất chiếu.</td></tr>`;
-                return;
-            }
-            
-            fetch(`${apiUrl}?phong_chieu_id=${phongId}&ngay_chieu=${ngay}`)
-            .then(res => {
-                    if (!res.ok) throw new Error('Lỗi kết nối');
-                    return res.json();
+            fetch('{{ route('admin.suat-chieu.store') }}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    },
+                    body: formData
                 })
+                .then(response => response.json())
                 .then(data => {
-                    if (data.length === 0) {
-                        tbody.innerHTML =
-                            `<tr><td colspan="4" class="text-center">Chưa có suất chiếu cho lựa chọn này.</td></tr>`;
+                    if (data.success) {
+                        cacSuatChieuDeXuat = data.du_kien;
+                        hienThiSuatChieuDeXuat();
+                        document.getElementById('btn-luu-suat-chieu').style.display = 'block';
                     } else {
-                        tbody.innerHTML = data.map(s => `
-                    <tr>
-                        <td>${s.ngay_chieu}</td>
-                        <td>${s.gio_bat_dau} – ${s.gio_ket_thuc}</td>
-                        <td>${s.phong}</td>
-                        <td>${s.phien_ban}</td>
-                    </tr>
-                `).join('');
+                        alert(data.message || 'Có lỗi xảy ra khi tạo suất chiếu.');
                     }
                 })
-                .catch(err => {
-                    console.error(err);
-                    tbody.innerHTML =
-                        `<tr><td colspan="4" class="text-center text-danger">Lỗi khi tải dữ liệu.</td></tr>`;
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Có lỗi xảy ra khi tạo suất chiếu.');
                 });
         }
+
+        function hienThiSuatChieuDeXuat() {
+            const tbody = document.querySelector('#tbl-suat-chieu tbody');
+            const template = document.getElementById('row-template').innerHTML;
+
+            if (cacSuatChieuDeXuat.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="text-center">Chưa có suất chiếu dự kiến.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = cacSuatChieuDeXuat.map(suat => {
+                return template
+                    .replace('{ngay_chieu}', suat.ngay_bat_dau_display)
+                    .replace('{gio_chieu}', `${suat.bat_dau} - ${suat.ket_thuc}`)
+                    .replace('{phong}', document.getElementById('phong_chieu_id').options[
+                        document.getElementById('phong_chieu_id').selectedIndex
+                    ].text)
+                    .replace('{phien_ban_display}', suat.phien_ban_display || suat.phien_ban.split('-').map(p => p
+                        .charAt(0).toUpperCase() + p
+                        .slice(
+                            1)).join(' - '));
+            }).join('');
+        }
+
+        function toggleCheckAll(checkbox) {
+            document.querySelectorAll('.suat-checkbox').forEach(cb => {
+                cb.checked = checkbox.checked;
+            });
+        }
+
+        function luuSuatChieu() {
+            const checkboxes = document.querySelectorAll('.suat-checkbox:checked');
+            const suatChieuDaChon = Array.from(checkboxes).map((cb, index) => cacSuatChieuDeXuat[index]);
+
+            if (suatChieuDaChon.length === 0) {
+                alert('Vui lòng chọn ít nhất một suất chiếu để lưu.');
+                return;
+            }
+
+            fetch('{{ route('admin.suat-chieu.luu-suat-chieu') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        suat_chieus: suatChieuDaChon
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Lưu suất chiếu thành công!');
+                        window.location.href = '{{ route('admin.suat-chieu.index') }}';
+                    } else {
+                        alert(data.message || 'Có lỗi xảy ra khi lưu suất chiếu.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Có lỗi xảy ra khi lưu suất chiếu.');
+                });
+        }
+
+        function loadSuatChieu() {
+            const phongId = document.getElementById('phong_chieu_id').value;
+            const ngay = document.getElementById('ngay_bat_dau').value;
+
+            if (!phongId || !ngay) return;
+
+            fetch(`/admin/suat-chieu/theo-phong-va-ngay?phong_chieu_id=${phongId}&ngay_bat_dau=${ngay}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.querySelector('#tbl-suat-chieu-da-co tbody').innerHTML = data.html;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.querySelector('#tbl-suat-chieu-da-co tbody').innerHTML =
+                        '<tr><td colspan="4" class="text-center text-danger">Có lỗi xảy ra khi tải dữ liệu.</td></tr>';
+                });
+        }
+
+        // Thêm event listeners
+        document.getElementById('phong_chieu_id').addEventListener('change', loadSuatChieu);
+        document.getElementById('ngay_bat_dau').addEventListener('change', loadSuatChieu);
     </script>
 @endsection

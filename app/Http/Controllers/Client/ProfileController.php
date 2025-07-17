@@ -4,23 +4,46 @@ namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
 use App\Models\CapBacThe;
+use App\Models\DatVe;
+use App\Models\LichSuDiem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use Milon\Barcode\DNS1D;
 
 class ProfileController extends Controller
 {
+
     public function index()
     {
         if (!Auth::check()) {
             return redirect()->route('home');
         }
 
-        // Lấy mốc cấp bậc từ bảng cap_bac_thes
-        $milestones = CapBacThe::orderBy('tong_so_ve_da_mua', 'asc')
-            ->pluck('tong_so_ve_da_mua');
+        $user = Auth::user();
 
-        return view("client.profile", compact('milestones'));
+        $milestones = CapBacThe::orderBy('tong_chi_tieu', 'asc')
+            ->pluck('tong_chi_tieu');
+
+        $lichSuDiem = LichSuDiem::where('users_id', $user->id)
+            ->orderBy('thoi_gian', 'desc')
+            ->paginate(5);
+
+        // Lấy đơn đặt vé đã thanh toán
+        $donDatVeDaThanhToan = DatVe::with('suatChieu.phim')
+            ->where('user_id', $user->id)
+            ->where('trang_thai', 'Đã thanh toán')
+            ->orderBy('ngay_thanh_toan', 'desc')
+            ->get();
+
+
+        return view("client.profile", compact(
+            'milestones',
+            'lichSuDiem',
+            'user',
+            'donDatVeDaThanhToan'
+        ));
     }
 
     public function updatePassword(Request $request)
@@ -65,5 +88,61 @@ class ProfileController extends Controller
         }
 
         return response()->json(['error' => 'Không có ảnh nào được tải lên.'], 400);
+    }
+
+    public function chiTietVe($id)
+    {
+        try {
+            $ve = DatVe::with([
+                'suatChieu.phim',
+                'suatChieu.phongChieu.rapPhim.chiNhanh',
+                'suatChieu.phongChieu.loaiPhong',
+                'gheNgois.loaiGhe',
+                'combos',
+                'doAns'
+            ])->findOrFail($id);
+
+            $maVachHtml = (new DNS1D)->getBarcodeHTML($ve->ma_dat_ve, 'C128', 2, 60);
+
+            $data = [
+                'ma_dat_ve' => $ve->ma_dat_ve,
+                'ten_phim' => optional($ve->suatChieu->phim)->ten_phim,
+                'thoi_gian_chieu' => optional($ve->suatChieu)->bat_dau,
+                'phong' => optional($ve->suatChieu->phongChieu)->ten_phong,
+                'ma_vach_html' => $maVachHtml,
+                'rap' => optional(optional($ve->suatChieu->phongChieu)->rapPhim)->ten_rap,
+                'chi_nhanh' => optional(optional(optional($ve->suatChieu->phongChieu)->rapPhim)->chiNhanh)->dia_chi,
+                'danh_sach_ghe' => $ve->gheNgois->pluck('ma_ghe')->implode(', '),
+
+                'combo' => $ve->combos->map(function ($combo) {
+                    return [
+                        'ten' => $combo->ten_combo,
+                        'gia' => number_format($combo->gia, 0, ',', '.') . 'đ',
+                        'so_luong' => $combo->pivot->so_luong
+                    ];
+                }),
+
+                'do_an' => $ve->doAns->map(function ($doAn) {
+                    return [
+                        'ten' => $doAn->ten_do_an,
+                        'gia' => number_format($doAn->gia, 0, ',', '.') . 'đ',
+                        'so_luong' => $doAn->pivot->so_luong
+                    ];
+                }),
+
+                'tong_tien' => number_format($ve->tong_tien, 0, ',', '.') . ' đ',
+                'thanh_toan_luc' => optional($ve->thanh_toan) ? \Carbon\Carbon::parse($ve->thanh_toan)->format('H:i d/m/Y') : null,
+            ];
+            Log::info($data);
+            return response()->json($data);
+        } catch (\Exception $e) {
+            // Ghi log lỗi để kiểm tra chi tiết
+            Log::error('Lỗi lấy chi tiết vé: ' . $e->getMessage());
+            return response()->json([
+                'error' => true,
+                'message' => 'Không thể lấy chi tiết vé!',
+                'debug' => $e->getMessage(),
+            ], 500);
+        }
     }
 }

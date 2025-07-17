@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\ChiTietDatVeController;
 use App\Http\Controllers\Admin\DatVeController;
 use App\Http\Controllers\Client\DanhSachBaiVietController;
+use App\Http\Controllers\Client\ThanhToanController;
 use App\Http\Controllers\Client\TrangChuController;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
@@ -35,6 +36,7 @@ use App\Http\Controllers\Admin\VaiTroController;
 use App\Http\Controllers\SocialAuthController;
 use App\Http\Controllers\Admin\CommentController;
 use App\Http\Controllers\Admin\GiaVeController;
+use App\Http\Controllers\Admin\KhuyenMaiController as AdminKhuyenMaiController;
 use App\Http\Controllers\Admin\RequestController;
 use App\Http\Controllers\Client\LoginController;
 use App\Http\Controllers\Client\ProfileController;
@@ -42,26 +44,33 @@ use App\Http\Controllers\Client\KhuyenMaiController;
 use App\Http\Controllers\Client\PhimsController;
 use App\Http\Controllers\Client\LienHeController as ClientLienHeController;
 use App\Http\Controllers\Client\TheLoaiController;
-use App\Models\TheLoaiPhim;
 
-
-// ============================================================================================================================================================================
-                                                                                                                                                                                        
 Route::get('/', [TrangChuController::class, 'index'])->name('home');
 
-// API cho đặt vé nhanh
-Route::get('/api/chi-nhanhs', [TrangChuController::class, 'getChiNhanhs'])->name('api.chi-nhanhs');
-Route::get('/api/phims-by-chi-nhanh', [TrangChuController::class, 'getPhimsByChiNhanh'])->name('api.phims-by-chi-nhanh');
-Route::get('/api/ngay-chieu-by-phim', [TrangChuController::class, 'getNgayChieuByPhim'])->name('api.ngay-chieu-by-phim');
-Route::get('/api/suat-chieu-by-ngay', [TrangChuController::class, 'getSuatChieuByNgay'])->name('api.suat-chieu-by-ngay');
+Route::middleware('auth')->group(function () {
+    // Đặt vé client
+    Route::get('/dat-ve', [\App\Http\Controllers\Client\DatVeController::class, 'indexDatVe'])->name('client.dat-ve');
+    Route::post('/dat-ve', [\App\Http\Controllers\Client\DatVeController::class, 'store'])->name('client.dat-ve.store');
+    Route::get('/dat-ve/ket-qua/{ma_ve}', [\App\Http\Controllers\Client\DatVeController::class, 'ketQua'])->name('client.dat-ve.ket-qua');
+    Route::get('/chi-tiet-dat-ve/{id}', [ProfileController::class, 'chiTietVe'])->name('dat-ve.chi-tiet');
 
-// Đặt vé client
-Route::get('/dat-ve', [\App\Http\Controllers\Client\DatVeController::class, 'index'])->name('client.dat-ve');
-Route::post('/dat-ve', [\App\Http\Controllers\Client\DatVeController::class, 'store'])->name('client.dat-ve.store');
-Route::get('/dat-ve/ket-qua/{id}', [\App\Http\Controllers\Client\DatVeController::class, 'ketQua'])->name('client.dat-ve.ket-qua');
+    // Thanh toán
+    Route::get('/thanh-toan/{datVeId}', [ThanhToanController::class, 'index'])->name('client.thanh-toan.index');
+    Route::post('/thanh-toan/xu-ly', [ThanhToanController::class, 'xuLyThanhToan'])->name('client.thanh-toan.xu-ly');
+    Route::post('/thanh-toan/huy/{datVeId}', [ThanhToanController::class, 'huyThanhToan'])->name('client.thanh-toan.huy');
 
-// Chọn ghế
-Route::get('/ghe-ngoi', [ChonGheController::class, 'index'])->name('client.ghe-ngoi');
+
+    Route::get('/zalopay/ketqua', [ThanhToanController::class, 'ketQuaThanhToan'])->name('zalopay.ketqua');
+
+    // Profile
+    Route::get('profile', [ProfileController::class, 'index'])->name('profile');
+    Route::post('profile', [ProfileController::class, 'updatePassword'])->name('updatePassword');
+    Route::post('update-avatar', [ProfileController::class, 'updateAvatar'])->name('update.avatar');
+
+    // Ghế đang được chọn
+    Route::post('/chon-ghe', [\App\Http\Controllers\Client\DatVeController::class, 'chonGhe'])->name('client.ghe.chon');
+    Route::post('/huy-chon-ghe', [\App\Http\Controllers\Client\DatVeController::class, 'huyChonGhe'])->name('client.ghe.huy');
+});
 
 Route::get('/', [TrangChuController::class, 'index'])->name('home');
 Route::get('/rap/{uuid}', [TrangChuController::class, 'showrap'])->name('showrap');
@@ -72,19 +81,15 @@ Route::get('/bai-viet/{uuid}', [DanhSachBaiVietController::class, 'show'])->name
 Route::get('/lien-he', [ClientLienHeController::class, 'index'])->name('client.lien-he');
 Route::post('/lien-he', [ClientLienHeController::class, 'store'])->name('client.lien-he.store');
 
-// Profile
-Route::get('profile', [ProfileController::class, 'index'])->name('profile');
-Route::post('profile', [ProfileController::class, 'updatePassword'])->name('updatePassword');
-Route::post('update-avatar', [ProfileController::class, 'updateAvatar'])->name('update.avatar');
-
-
 Route::get('/client.khuyen-mai', [KhuyenMaiController::class, 'index'])->name('khuyen-mai.index');
 Route::get('/phim-dang-chieu', [PhimsController::class, 'phimDangChieu'])->name('phim.dang-chieu');
 
 //Phim
 Route::get('/phim-sap-chieu', [PhimsController::class, 'phimSapChieu'])->name('phim.sap-chieu');
+
 // Route load phim cho tab (AJAX)
 Route::get('/phim-tab', [TrangChuController::class, 'loadPhimTab'])->name('client.load-phim-tab');
+
 // routes/web.php (hoặc api.php nếu gọi bằng API)
 Route::get('/phim/{id}/lich-chieu', [PhimsController::class, 'loadLichChieu'])->name('phim.load-lich-chieu');
 
@@ -95,24 +100,14 @@ Route::get('phim/{ten_phim}', [PhimsController::class, 'show'])->name('phim.chi-
 //Thể loại
 Route::get('/the-loai/{id}', [App\Http\Controllers\Client\TheLoaiController::class, 'show'])
     ->name('theloai.show');
-// Route::prefix('client')->name('client.')->group(function () {
-//     // Trang chủ client
-//     Route::get('/', [HomeController::class, 'index'])->name('home');
-
-//     // Trang khuyến mãi
-//     Route::get('/khuyen-mai', [KhuyenMaiController::class, 'index'])->name('khuyen-mai');
-// // ====================================================================================================
-// });
 
 //Quen mk
 Route::get('forgot-pass', [AuthController::class, 'forgotPassForm'])->name('forgot-form');
 Route::post('forgot-pass', [AuthController::class, 'forgotPass'])->name('forgot-pass');
 
-
 // Đăng nhập (chung)
 Route::get('dang-nhap', [AuthController::class, 'showLoginForm'])->name('login.form');
 Route::post('dang-nhap', [AuthController::class, 'login'])->name('login');
-
 
 // Đăng ký (client)
 Route::post('dang-ky', [AuthController::class, 'register'])->name('register');
@@ -121,23 +116,10 @@ Route::get('xac-thuc-email', [AuthController::class, 'showVerifyForm'])->name('v
 
 Route::post('xac-thuc-email', [AuthController::class, 'verifyOtp'])->name('verify.submit');
 
-// GOOGLE
-Route::get('/auth/google', [SocialAuthController::class, 'redirectToGoogle'])->name('google.redirect');
-Route::get('/auth/google/callback', [SocialAuthController::class, 'handleGoogleCallback'])->name('google.callback');
-
-// FACEBOOK
-Route::get('/auth/facebook', [SocialAuthController::class, 'redirectToFacebook'])->name('facebook.redirect');
-Route::get('/auth/facebook/callback', [SocialAuthController::class, 'handleFacebookCallback'])->name('facebook.callback');
-
 // Đăng xuất
 Route::post('dang-xuat', [AuthController::class, 'logout'])->name('logout');
 
-
 // ========================================================================================================================================================
-
-
-
-
 
 
 // Route mời quản lý chi nhánh/ rạp
@@ -145,8 +127,8 @@ Route::post('/gui-loi-moi', [InviteController::class, 'sendInvite'])->name('invi
 Route::get('/nhap-thong-tin', [InviteController::class, 'showForm'])->name('invite.form');
 Route::post('/gui-thong-tin', [InviteController::class, 'submitForm'])->name('invite.submit');
 
-Route::get('/suat-chieu/theo-phong-ngay', [SuatChieuController::class, 'theoPhongVaNgay'])
-    ->name('admin.suat-chieu.theo-phong-ngay');
+Route::get('/admin/suat-chieu/theo-phong-va-ngay', [SuatChieuController::class, 'theoPhongVaNgay'])
+    ->name('admin.suat-chieu.theo-phong-va-ngay');
 
 // Group route cho admin
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access', 'permission.check'])->group(function () {
@@ -190,11 +172,11 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access', 'per
 
     // Quản lý khuyến mãi
     Route::prefix('khuyen-mai')->name('khuyen-mai.')->group(function () {
-        Route::get('thong-ke-su-dung', [KhuyenMaiController::class, 'thongKeSuDung'])->name('thong-ke-su-dung');
-        Route::post('{khuyenMai}/assign-chi-nhanh', [KhuyenMaiController::class, 'assignToChiNhanh'])->name('assign-chi-nhanh');
+        Route::get('thong-ke-su-dung', [AdminKhuyenMaiController::class, 'thongKeSuDung'])->name('thong-ke-su-dung');
+        Route::post('{khuyenMai}/assign-chi-nhanh', [AdminKhuyenMaiController::class, 'assignToChiNhanh'])->name('assign-chi-nhanh');
     });
 
-    Route::resource('khuyen-mai', KhuyenMaiController::class);
+    Route::resource('khuyen-mai', AdminKhuyenMaiController::class);
 
     // Quản lý rạp phim
     Route::resource('rap-phim', RapphimController::class);
@@ -245,9 +227,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access', 'per
     Route::resource('loai-phong', LoaiPhongController::class);
     Route::resource('rap-phim', RapphimController::class);
 
-    Route::get('cau-hinh', [CauHinhController::class, 'index'])->name('cau-hinh.index');
-    Route::get('cau-hinh/edit', [CauHinhController::class, 'edit'])->name('cau-hinh.edit');
-    Route::post('cau-hinh/update', [CauHinhController::class, 'update'])->name('cau-hinh.update');
+    Route::get('cau-hinh-settings', [CauHinhController::class, 'index'])->name('cau-hinh-settings.index');
+    Route::get('cau-hinh-settings/edit', [CauHinhController::class, 'edit'])->name('cau-hinh-settings.edit');
+    Route::post('cau-hinh-settings/update', [CauHinhController::class, 'update'])->name('cau-hinh-settings.update');
 
     Route::resource('phong-chieu', PhongChieuController::class);
     Route::resource('loai-ghe', LoaiGheController::class);
@@ -258,13 +240,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access', 'per
     Route::resource('cap-bac-the', CapBacTheController::class);
     Route::put('cap-bac-the/{capBacThe}/set-default', [CapBacTheController::class, 'setDefault'])->name('cap-bac-the.set-default');
 
-    Route::prefix('khuyen-mai')->name('khuyen-mai.')->group(function () {
-        Route::post('{khuyenMai}/assign-chi-nhanh', [KhuyenMaiController::class, 'assignToChiNhanh'])->name('assign-chi-nhanh');
-        Route::get('thong-ke-su-dung', [KhuyenMaiController::class, 'thongKeSuDung'])->name('thong-ke-su-dung');
-    });
-    Route::resource('khuyen-mai', KhuyenMaiController::class);
 
 
+
+    Route::post('suat-chieu/luu-suat-chieu', [SuatChieuController::class, 'luuSuatChieu'])->name('suat-chieu.luu-suat-chieu');
     Route::post('suat-chieu/bulk-delete', [SuatChieuController::class, 'bulkDelete'])->name('suat-chieu.bulk-delete');
     Route::post('suat-chieu/bulk-toggle-status', [SuatChieuController::class, 'bulkToggleStatus'])->name('suat-chieu.bulk-toggle-status');
     Route::post('suat-chieu/{suatChieu}/toggle-status', [SuatChieuController::class, 'toggleStatus']);

@@ -2,6 +2,9 @@
 
 @section('content')
     <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+
+    @vite(entrypoints: 'resources/js/trang-chu.js')
+
     <style>
         html {
             scroll-behavior: smooth;
@@ -559,13 +562,42 @@
             margin: 0 auto;
         }
 
+        .list-movie {
+            width: 100%;
+            margin-left: 1130px;
+        }
+
+        .btn-see-more {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 100px;
+        }
+
         @keyframes spin {
             to {
                 transform: rotate(360deg);
             }
         }
+
+        .swiper {
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .swiper-wrapper {
+            display: flex;
+        }
+
+        .swiper-slide {
+            flex-shrink: 0;
+            width: auto;
+        }
     </style>
-    <div class="container py-3">
+
+    <div class="container py-3" style="margin: 0px auto; padding:0px;">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+        <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
         <input type="hidden" id="phimIdInput" value="{{ $phim->id }}">
         <div class="movie-detail-wrapper"
             style="background:rgba(35,40,74,0.90); width:100%;  border-radius:16px; box-shadow:0 4px 22px #0d10205e; padding: 28px 22px;">
@@ -690,6 +722,7 @@
             </div>
 
             <div style="margin-top: 30px">
+
                 <h4 class="section-title">
                     CHI NHÁNH
                 </h4>
@@ -709,6 +742,7 @@
                     SUẤT CHIẾU
                 </h4>
 
+
                 <div id="lich-chieu-list">
 
                 </div>
@@ -716,9 +750,43 @@
 
         </div>
 
+        <div class="swiper list-movie">
+            <div class="swiper-wrapper">
+                @foreach ($allPhims as $phim)
+                    <div class="swiper-slide">
+                        <div class="movie clickable-movie" data-href="{{ route('phim.chi-tiet', $phim->id) }}">
+                            <div class="img-wrapper">
+                                <a href="{{ route('phim.chi-tiet', $phim->id) }}">
+                                    <img src="{{ asset('storage/' . $phim->poster) }}" alt="{{ $phim->ten_phim }}">
+                                </a>
+                                <div class="age-label">{{ $phim->do_tuoi }}</div>
+                                <div class="overlay">
+                                    <a href="{{ route('phim.chi-tiet', $phim->id) }}#lich-chieu">
+                                        <button class="btn buy">
+                                            <i class="fa-solid fa-ticket"></i> Mua vé
+                                        </button>
+                                    </a>
+                                    <button class="btn trailer" data-video="{{ $phim->trailer }}"
+                                        onclick="showTrailer(this)">
+                                        <i class="fa-solid fa-video"></i> Trailer
+                                    </button>
+                                </div>
+                            </div>
+                            <a href="{{ route('phim.chi-tiet', $phim->id) }}">
+                                <p>{{ $phim->ten_phim }}</p>
+                            </a>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+
+            <a href="{{ route('phim.dang-chieu') }}" class="btn-see-more">
+                <button class="btn-see">XEM THÊM</button>
+            </a>
+        </div>
     </div>
-    </div>
-    </div>
+
+
 
     <div id="trailerPopup"
         style="display:none; width:auto; height:auto; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%);
@@ -732,6 +800,38 @@
     <div id="overlayBg"
         style="display:none; position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:998;">
     </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            new Swiper(".list-movie", {
+                slidesPerView: 4,
+                spaceBetween: 20,
+                loop: true,
+                navigation: {
+                    nextEl: ".swiper-button-next",
+                    prevEl: ".swiper-button-prev",
+                },
+                autoplay: {
+                    delay: 4000,
+                    disableOnInteraction: false,
+                },
+                breakpoints: {
+                    1200: {
+                        slidesPerView: 4
+                    },
+                    992: {
+                        slidesPerView: 3
+                    },
+                    768: {
+                        slidesPerView: 2
+                    },
+                    576: {
+                        slidesPerView: 1
+                    }
+                }
+            });
+        });
+    </script>
 
     <script>
         function convertYoutubeUrl(url) {
@@ -781,7 +881,7 @@
         </div>
     `);
 
-                let url = `/phim/${phimId}/lich-chieu?ngay_chieu=${currentDate}&chi_nhanh_id=${currentChiNhanh}`;
+                let url = `/phim/${phimId}/lich-chieu?ngay_bat_dau=${currentDate}&chi_nhanh_id=${currentChiNhanh}`;
                 $.ajax({
                     url: url,
                     method: 'GET',
@@ -799,10 +899,12 @@
                                     /href="[^"]*"/g,
                                     function(match) {
                                         // Lấy suất chiếu ID từ URL gốc
-                                        let suatChieuId = match.match(/suat_chieu_id=(\d+)/);
+                                        let suatChieuId = match.match(
+                                            /suat_chieu_id=(\d+)/);
                                         if (suatChieuId) {
                                             // Tạo chuỗi tham số mới với phim ID và suất chiếu ID
-                                            let params = btoa(`${phimId}-${suatChieuId[1]}`);
+                                            let params = btoa(
+                                                `${phimId}-${suatChieuId[1]}`);
                                             return `href="/dat-ve?params=${params}"`;
                                         }
                                         return match;
@@ -836,6 +938,35 @@
             }
         });
     </script>
+    <!-- jQuery & Slick Carousel JS -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
 
+    <script>
+        $(document).ready(function() {
+            $('.list-movie').slick({
+                slidesToShow: 3,
+                slidesToScroll: 1,
+                autoplay: true,
+                autoplaySpeed: 4000,
+                arrows: true,
+                dots: false,
+                infinite: true,
+                responsive: [{
+                        breakpoint: 992,
+                        settings: {
+                            slidesToShow: 2
+                        }
+                    },
+                    {
+                        breakpoint: 576,
+                        settings: {
+                            slidesToShow: 1
+                        }
+                    }
+                ]
+            });
+        });
+    </script>
 
 @endsection

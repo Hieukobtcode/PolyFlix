@@ -11,143 +11,145 @@ use App\Models\KhuyenMai;
 use App\Models\ChiNhanh;
 use App\Models\BaiViet;
 use App\Models\Banner;
+use App\Models\DatVe;
+use App\Models\GheNgoi;
 use App\Models\User;
 use App\Models\SuatChieu;
 use App\Models\RapPhim;
 use App\Models\TheLoaiPhim;
 use App\Models\LichSuSuDungKhuyenMai;
+use App\Models\PhongChieu;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class ThongKeController extends Controller
 {
-    /**
-     * Hiển thị trang thống kê tổng quan
-     */
     public function index(Request $request)
     {
-        // Xử lý bộ lọc theo ngày
-        $tuNgay = $request->input('tu_ngay', Carbon::now()->subDays(30)->format('Y-m-d'));
-        $denNgay = $request->input('den_ngay', Carbon::now()->format('Y-m-d'));
+        $tongDoanhThuHeThong = DatVe::sum('tong_tien');
+        $soChiNhanhs = ChiNhanh::count();
+        $soRaps = RapPhim::count();
+        $soPhongChieus = PhongChieu::count();
+        $soNguoiDungs = User::count();
+        $phimDangChieus = Phim::where('trang_thai', 'đang chiếu')->count();
+        $phimSapChieus = Phim::where('trang_thai', 'sắp chiếu')->count();
+        $veDaBans = DatVe::count();
+        $soGheDaDat = GheNgoi::where('trang_thai', 'da_dat')->count();
+        $tongSoGhe = GheNgoi::count();
 
-        // Validate ngày
-        try {
-            $tuNgayCarbon = Carbon::createFromFormat('Y-m-d', $tuNgay);
-            $denNgayCarbon = Carbon::createFromFormat('Y-m-d', $denNgay);
-        } catch (\Exception $e) {
-            $tuNgayCarbon = Carbon::now()->subDays(30);
-            $denNgayCarbon = Carbon::now();
-            $tuNgay = $tuNgayCarbon->format('Y-m-d');
-            $denNgay = $denNgayCarbon->format('Y-m-d');
-        }
+        $tyLeLapDayGhe = $tongSoGhe > 0 ? round(($soGheDaDat / $tongSoGhe) * 100) : 0;
 
-        // Thống kê tổng quan
-        $tongQuan = [
-            'tong_phim' => Phim::count(),
-            'phim_dang_chieu' => Phim::where('trang_thai', 'dang_chieu')->count(),
-            'phim_sap_chieu' => Phim::where('trang_thai', 'sap_chieu')->count(),
-            'tong_combo' => Combo::count(),
-            'combo_hoat_dong' => Combo::where('trang_thai', 'hien')->count(),
-            'tong_do_an' => DoAn::count(),
-            'do_an_hoat_dong' => DoAn::where('trang_thai', 'hien')->count(),
-            'tong_lien_he' => LienHe::count(),
-            'lien_he_chua_xu_ly' => LienHe::where('trang_thai', 'chua_xu_ly')->count(),
-            'lien_he_da_xu_ly' => LienHe::where('trang_thai', 'da_xu_ly')->count(),
-            'tong_khuyen_mai' => KhuyenMai::count(),
-            'khuyen_mai_hoat_dong' => KhuyenMai::where('trang_thai', 'hoat_dong')->count(),
-            'tong_chi_nhanh' => ChiNhanh::count(),
-            'tong_bai_viet' => BaiViet::count(),
-            'tong_banner' => Banner::count(),
-            'tong_nguoi_dung' => User::count(),
-        ];
-
-        // Thêm thống kê rạp và doanh thu
-        $tongQuan['tong_rap'] = RapPhim::count();
-        $tongQuan['rap_hoat_dong'] = RapPhim::where('trang_thai', 'đang hoạt động')->count();
-
-        // Tính doanh thu giả lập dựa trên combo và số lượng sử dụng khuyến mãi
-        $doanhThuVe = $this->tinhDoanhThuVe($tuNgayCarbon, $denNgayCarbon);
-        $doanhThuCombo = $this->tinhDoanhThuCombo($tuNgayCarbon, $denNgayCarbon);
-        $tongQuan['doanh_thu_ve'] = $doanhThuVe;
-        $tongQuan['doanh_thu_combo'] = $doanhThuCombo;
-        $tongQuan['tong_doanh_thu'] = $doanhThuVe + $doanhThuCombo;
-
-        // Thống kê theo thời gian (theo khoảng ngày được chọn)
-        $thongKeTheoNgay = [];
-        $soNgay = $tuNgayCarbon->diffInDays($denNgayCarbon) + 1;
-
-        // Giới hạn tối đa 30 ngày để tránh quá tải
-        if ($soNgay > 30) {
-            $soNgay = 30;
-            $tuNgayCarbon = $denNgayCarbon->copy()->subDays(29);
-        }
-
-        for ($i = 0; $i < $soNgay; $i++) {
-            $ngay = $tuNgayCarbon->copy()->addDays($i);
-
-            // Tính doanh thu thực tế cho ngày này
-            $doanhThuNgay = $this->tinhDoanhThuTheoNgay($ngay);
-
-            $thongKeTheoNgay[] = [
-                'ngay' => $ngay->format('d/m'),
-                'ngay_day_du' => $ngay->format('Y-m-d'),
-                'lien_he_moi' => LienHe::whereDate('create_at', $ngay->format('Y-m-d'))->count(),
-                'khuyen_mai_su_dung' => LichSuSuDungKhuyenMai::whereDate('thoi_gian_su_dung', $ngay->format('Y-m-d'))->count(),
-                'doanh_thu' => $doanhThuNgay,
-                'doanh_thu_trieu' => round($doanhThuNgay / 1000000, 2), // Chuyển sang triệu đồng
-            ];
-        }
-
-        // Top phim được quan tâm (có nhiều suất chiếu)
-        $topPhim = Phim::withCount('suatChieus')
-            ->orderBy('suat_chieus_count', 'desc')
-            ->take(5)
+        $top5ChiNhanh = DatVe::join('suat_chieus', 'dat_ves.suat_chieu_id', '=', 'suat_chieus.id')
+            ->join('phong_chieus', 'suat_chieus.phong_chieu_id', '=', 'phong_chieus.id')
+            ->join('rap_phims', 'phong_chieus.rap_phim_id', '=', 'rap_phims.id')
+            ->join('chi_nhanhs', 'rap_phims.chi_nhanh_id', '=', 'chi_nhanhs.id')
+            ->select(
+                'chi_nhanhs.id',
+                'chi_nhanhs.ten_chi_nhanh',
+                DB::raw('SUM(dat_ves.tong_tien) as tong_doanh_thu')
+            )
+            ->groupBy('chi_nhanhs.id', 'chi_nhanhs.ten_chi_nhanh')
+            ->orderByDesc('tong_doanh_thu')
+            ->limit(5)
             ->get();
 
-        // Top khuyến mãi được sử dụng nhiều nhất
-        $topKhuyenMai = KhuyenMai::orderBy('so_lan_da_su_dung', 'desc')
-            ->take(5)
+        $top5ChiNhanh->transform(function ($item) use ($tongDoanhThuHeThong) {
+            $item->phan_tram = $tongDoanhThuHeThong > 0
+                ? round(($item->tong_doanh_thu / $tongDoanhThuHeThong) * 100, 2)
+                : 0;
+            return $item;
+        });
+
+        $topDoanhThuPhimHeThong = DatVe::join('suat_chieus', 'dat_ves.suat_chieu_id', '=', 'suat_chieus.id')
+            ->join('phims', 'suat_chieus.phim_id', '=', 'phims.id')
+            ->select(
+                'phims.id',
+                'phims.ten_phim',
+                DB::raw('SUM(dat_ves.tong_tien) as tong_doanh_thu')
+            )
+            ->groupBy('phims.id', 'phims.ten_phim')
+            ->orderByDesc('tong_doanh_thu')
+            ->limit(5)
             ->get();
 
-        // Thống kê liên hệ theo trạng thái
-        $thongKeLienHe = [
-            'chua_xu_ly' => LienHe::where('trang_thai', 'chua_xu_ly')->count(),
-            'da_xu_ly' => LienHe::where('trang_thai', 'da_xu_ly')->count(),
-        ];
+        $topDoanhThuPhimHeThong->transform(function ($item) use ($tongDoanhThuHeThong) {
+            $item->phan_tram = $tongDoanhThuHeThong > 0
+                ? round(($item->tong_doanh_thu / $tongDoanhThuHeThong) * 100, 2)
+                : 0;
+            return $item;
+        });
 
-        // Thống kê phim theo thể loại (đơn giản hóa để tránh lỗi)
-        $thongKePhimTheoTheLoai = collect([
-            ['ten' => 'Hành động', 'so_luong' => 5],
-            ['ten' => 'Tình cảm', 'so_luong' => 3],
-            ['ten' => 'Kinh dị', 'so_luong' => 2],
-            ['ten' => 'Hài hước', 'so_luong' => 4],
-            ['ten' => 'Khoa học viễn tưởng', 'so_luong' => 1],
-        ]);
-
-        // Thống kê doanh thu combo (giả lập)
-        $thongKeCombo = Combo::select('tieu_de', 'gia', 'gia_combo')
-            ->where('trang_thai', 'hien')
-            ->orderBy('gia_combo', 'desc')
-            ->take(5)
-            ->get();
+        $danhSachChiNhanh = ChiNhanh::all();
+        $danhSachRap = RapPhim::all();
 
         return view('admin.thong-ke.index', compact(
-            'tongQuan',
-            'thongKeTheoNgay',
-            'topPhim',
-            'topKhuyenMai',
-            'thongKeLienHe',
-            'thongKePhimTheoTheLoai',
-            'thongKeCombo',
-            'tuNgay',
-            'denNgay'
+            'soChiNhanhs',
+            'soRaps',
+            'soPhongChieus',
+            'soNguoiDungs',
+            'phimDangChieus',
+            'phimSapChieus',
+            'veDaBans',
+            'tyLeLapDayGhe',
+            'danhSachChiNhanh',
+            'danhSachRap',
+            'top5ChiNhanh',
+            'topDoanhThuPhimHeThong'
         ));
     }
 
-    /**
-     * Hiển thị dashboard thống kê
-     */
+    //Lấy doanh thu theo tuần
+    public function layDoanhThuTheoTuan()
+    {
+        $today = Carbon::today();
+        $startOfWeek = $today->copy()->startOfWeek(Carbon::MONDAY);
+        $endOfWeek = $today;
+
+        $dates = [];
+        $doanhThu = [];
+
+        for ($date = $startOfWeek; $date->lte($endOfWeek); $date->addDay()) {
+            $label = 'T' . $date->dayOfWeekIso; 
+            $dates[] = $label;
+
+            $tong = DatVe::whereDate('created_at', $date->toDateString())
+                ->sum('tong_tien');
+
+            $doanhThu[] = $tong;
+        }
+
+        return response()->json([
+            'labels' => $dates,
+            'values' => $doanhThu
+        ]);
+    }
+
+    public function layDoanhThuTheoThang()
+    {
+        $today = Carbon::today();
+        $startOfMonth = $today->copy()->startOfMonth();
+        $endOfMonth = $today;
+
+        $dates = [];
+        $doanhThu = [];
+
+        for ($date = $startOfMonth; $date->lte($endOfMonth); $date->addDay()) {
+            $label = $date->format('d'); 
+            $dates[] = $label;
+
+            $tong = DatVe::whereDate('created_at', $date->toDateString())
+                ->sum('tong_tien');
+
+            $doanhThu[] = $tong;
+        }
+
+        return response()->json([
+            'labels' => $dates,
+            'values' => $doanhThu
+        ]);
+    }
+
     public function dashboard(Request $request)
     {
         // Xử lý bộ lọc theo ngày

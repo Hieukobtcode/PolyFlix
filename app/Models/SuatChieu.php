@@ -16,7 +16,8 @@ class SuatChieu extends Model
         'phim_id',
         'phong_chieu_id',
         'phien_ban_phim',
-        'ngay_chieu',
+        'ngay_bat_dau',
+        'ngay_ket_thuc',
         'bat_dau',
         'ket_thuc',
         'trang_thai',
@@ -37,9 +38,9 @@ class SuatChieu extends Model
         return $this->belongsTo(ChiNhanh::class, 'chi_nhanh_id', 'id');
     }
 
-    public function rapPhims()
+    public function rapPhim()
     {
-        return $this->belongsTo(RapPhim::class, 'phong_chieu_id', 'id');
+        return $this->hasOneThrough(RapPhim::class, PhongChieu::class, 'id', 'id', 'phong_chieu_id', 'rap_phim_id');
     }
 
     public function datVes()

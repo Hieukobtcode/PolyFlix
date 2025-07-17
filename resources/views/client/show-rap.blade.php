@@ -542,7 +542,7 @@
                                 Hiện chưa có suất chiếu nào cho phim này.
                             </div>
                         @else
-                            @foreach ($suatChieuPhim->sortBy('ngay_chieu')->groupBy('ngay_chieu') as $ngay => $suatChieusTrongNgay)
+                            @foreach ($suatChieuPhim->sortBy('ngay_bat_dau')->groupBy('ngay_bat_dau') as $ngay => $suatChieusTrongNgay)
                                 @php
                                     $ngayFormatted = \Carbon\Carbon::parse($ngay)->translatedFormat('l, d/m/Y');
                                     $ngayFormatted = mb_convert_case($ngayFormatted, MB_CASE_TITLE, 'UTF-8');
@@ -560,7 +560,10 @@
                                         </div>
                                         <div class="hour">
                                             @foreach ($suatChieusTheoVersion as $suat)
-                                                <a href="{{ route('client.dat-ve', ['params' => encrypt($suat->phim_id . '-' . $suat->id)]) }}" class="time-btn">
+                                                @php
+                                                    $params = base64_encode($suat->phim_id . '-' . $suat->id);
+                                                @endphp
+                                                <a href="/dat-ve?params={{ $params }}" class="time-btn">
                                                     {{ \Carbon\Carbon::parse($suat->bat_dau)->format('H:i') }}
                                                 </a>
                                             @endforeach
@@ -631,7 +634,7 @@
                                 Hiện chưa có suất chiếu nào cho phim này.
                             </div>
                         @else
-                            @foreach ($suatChieuPhim->sortBy('ngay_chieu')->groupBy('ngay_chieu') as $ngay => $suatChieusTrongNgay)
+                            @foreach ($suatChieuPhim->sortBy('ngay_bat_dau')->groupBy('ngay_bat_dau') as $ngay => $suatChieusTrongNgay)
                                 @php
                                     $ngayFormatted = \Carbon\Carbon::parse($ngay)->translatedFormat('l, d/m/Y');
                                     $ngayFormatted = mb_convert_case($ngayFormatted, MB_CASE_TITLE, 'UTF-8');
@@ -649,7 +652,10 @@
                                         </div>
                                         <div class="hour">
                                             @foreach ($suatChieusTheoPhong as $suat)
-                                                <a href="{{ route('client.dat-ve', ['params' => encrypt($suat->phim_id . '-' . $suat->id)]) }}" class="time-btn">
+                                                @php
+                                                    $params = base64_encode($suat->phim_id . '-' . $suat->id);
+                                                @endphp
+                                                <a href="/dat-ve?params={{ $params }}" class="time-btn">
                                                     {{ \Carbon\Carbon::parse($suat->bat_dau)->format('H:i') }}
                                                 </a>
                                             @endforeach
@@ -721,7 +727,7 @@
                                 Hiện chưa có suất chiếu nào cho phim này.
                             </div>
                         @else
-                            @foreach ($suatChieuPhim->sortBy('ngay_chieu')->groupBy('ngay_chieu') as $ngay => $suatChieusTrongNgay)
+                            @foreach ($suatChieuPhim->sortBy('ngay_bat_dau')->groupBy('ngay_bat_dau') as $ngay => $suatChieusTrongNgay)
                                 @php
                                     $ngayFormatted = \Carbon\Carbon::parse($ngay)->translatedFormat('l, d/m/Y');
                                     $ngayFormatted = mb_convert_case($ngayFormatted, MB_CASE_TITLE, 'UTF-8');
@@ -745,7 +751,10 @@
                                         </div>
                                         <div class="hour">
                                             @foreach ($suatChieusTheoVersion as $suat)
-                                                <a href="{{ route('client.dat-ve', ['params' => encrypt($suat->phim_id . '-' . $suat->id)]) }}" class="time-btn">
+                                                @php
+                                                    $params = base64_encode($suat->phim_id . '-' . $suat->id);
+                                                @endphp
+                                                <a href="/dat-ve?params={{ $params }}" class="time-btn">
                                                     {{ \Carbon\Carbon::parse($suat->bat_dau)->format('H:i') }}
                                                 </a>
                                             @endforeach

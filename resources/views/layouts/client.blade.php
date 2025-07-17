@@ -12,13 +12,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PolyFlix - Hệ thống rạp số 1 thế giới</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="user-id" content="{{ auth()->id() }}">
     <link rel="icon" type="image/png" href="{{ asset('logo/polyflix_title.png') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <!-- Font Awesome 6 (miễn phí) -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    @vite('resources/js/client.js')
+    @vite(['resources/css/client.css', 'resources/js/client.js'])
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     {{-- CSS --}}
@@ -206,6 +207,7 @@
                 });
             </script>
         @endif
+
         {{-- Header --}}
         <div class="header">
             <div class="logo">
@@ -317,8 +319,10 @@
         </div>
         <div>
             <h3>XEM PHIM</h3>
-            <p><a href="{{ route('phim.dang-chieu') }}" style="color: inherit; text-decoration: none;">Phim đang chiếu</a></p>
-            <p><a href="{{ route('phim.sap-chieu') }}" style="color: inherit; text-decoration: none;">Phim sắp chiếu</a></p>
+            <p><a href="{{ route('phim.dang-chieu') }}" style="color: inherit; text-decoration: none;">Phim đang
+                    chiếu</a></p>
+            <p><a href="{{ route('phim.sap-chieu') }}" style="color: inherit; text-decoration: none;">Phim sắp
+                    chiếu</a></p>
             <p>Suất chiếu đặc biệt</p>
         </div>
         <div>
@@ -338,5 +342,3 @@
 </html>
 {{-- JS --}}
 @yield('scripts')
-
-
