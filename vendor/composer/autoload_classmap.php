@@ -7116,6 +7116,7 @@ return array(
     'Symfony\\Component\\Process\\ProcessUtils' => $vendorDir . '/symfony/process/ProcessUtils.php',
     'Symfony\\Component\\Routing\\Alias' => $vendorDir . '/symfony/routing/Alias.php',
     'Symfony\\Component\\Routing\\Annotation\\Route' => $vendorDir . '/symfony/routing/Annotation/Route.php',
+    'Symfony\\Component\\Routing\\Attribute\\DeprecatedAlias' => $vendorDir . '/symfony/routing/Attribute/DeprecatedAlias.php',
     'Symfony\\Component\\Routing\\Attribute\\Route' => $vendorDir . '/symfony/routing/Attribute/Route.php',
     'Symfony\\Component\\Routing\\CompiledRoute' => $vendorDir . '/symfony/routing/CompiledRoute.php',
     'Symfony\\Component\\Routing\\DependencyInjection\\AddExpressionLanguageProvidersPass' => $vendorDir . '/symfony/routing/DependencyInjection/AddExpressionLanguageProvidersPass.php',
