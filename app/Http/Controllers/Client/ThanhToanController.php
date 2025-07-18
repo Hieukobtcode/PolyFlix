@@ -107,47 +107,11 @@ class ThanhToanController extends Controller
             'nguoiDung',
             'suatChieu.phim',
             'suatChieu.phongChieu.rapPhim.chiNhanh',
-            'suatChieu.phongChieu.loaiPhong',
-            'gheNgois.loaiGhe',
-            'combos',
-            'doAns'
         ])
             ->where('id', $request->dat_ve_id)
             ->where('user_id', Auth::id())
             ->where('trang_thai', 'Chờ thanh toán')
             ->firstOrFail();
-
-        foreach ($datVe->gheNgois as $ghe) {
-            if ($ghe->trang_thai === 'da_dat') {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'Một hoặc nhiều ghế đã được đặt. Vui lòng chọn lại ghế khác.'
-                ]);
-            }
-        }
-
-        $giaVeCoBan = 0;
-        $phuThuRap = $datVe->suatChieu->phongChieu->rapPhim->phu_thu ?? 0;
-        $phuThuLoaiPhong = $datVe->suatChieu->phongChieu->loaiPhong->phu_thu ?? 0;
-
-        $tongTienGhe = 0;
-        foreach ($datVe->gheNgois as $ghe) {
-            $phuThuGhe = $ghe->loaiGhe->phu_thu ?? 0;
-            $giaMotGhe = $giaVeCoBan + $phuThuLoaiPhong + $phuThuGhe;
-            $tongTienGhe += $giaMotGhe;
-        }
-
-        $tongTienGhe += $phuThuRap;
-
-        $tongTienCombo = 0;
-        foreach ($datVe->combos as $combo) {
-            $tongTienCombo += $combo->gia * $combo->pivot->so_luong;
-        }
-
-        $tongTienDoAn = 0;
-        foreach ($datVe->doAns as $doAn) {
-            $tongTienDoAn += $doAn->gia * $doAn->pivot->so_luong;
-        }
 
         $tongThanhTien = $datVe->tong_tien;
 
@@ -169,11 +133,9 @@ class ThanhToanController extends Controller
             "endpoint" => "https://sb-openapi.zalopay.vn/v2/create"
         ];
 
-        // Tạo mã đơn hàng duy nhất
         $transID = rand(100000, 999999);
         $orderID = date("ymd") . "_" . $transID;
 
-        // Tạo mảng đơn hàng gửi sang ZaloPay
         $order = [
             "app_id" => $config["app_id"],
             "app_trans_id" => $orderID,
@@ -181,13 +143,12 @@ class ThanhToanController extends Controller
             "app_user" => $datVe->nguoiDung->id ?? 'guest',
             "item" => json_encode([]),
             "embed_data" => json_encode($embedData),
-            "amount" => $tongThanhTien,
+            "amount" => (int) $tongThanhTien,
             "description" => "Thanh toán vé xem phim - Đơn #$orderID",
             "bank_code" => "",
             "callback_url" => "https://poetic-adder-polite.ngrok-free.app/api/zalopay/callback",
         ];
 
-        // Tạo chuỗi dữ liệu để ký (MAC)
         $dataMac = implode("|", [
             $order["app_id"],
             $order["app_trans_id"],
@@ -199,7 +160,6 @@ class ThanhToanController extends Controller
         ]);
         $order["mac"] = hash_hmac("sha256", $dataMac, $config["key1"]);
 
-        // Gửi POST request sang ZaloPay để tạo đơn hàng
         $context = stream_context_create([
             "http" => [
                 "header" => "Content-type: application/x-www-form-urlencoded\r\n",
@@ -210,8 +170,8 @@ class ThanhToanController extends Controller
 
         $response = file_get_contents($config["endpoint"], false, $context);
         $result = json_decode($response, true);
+        Log::info('ZaloPay response: ' . $response);
 
-        // XỬ LÝ KẾT QUẢ PHẢN HỒI TỪ ZALOPAY
         if (isset($result['return_code']) && $result['return_code'] == 1) {
             return response()->json([
                 'status' => 'success',
@@ -224,6 +184,7 @@ class ThanhToanController extends Controller
             ]);
         }
     }
+
 
     public function callBack(Request $request)
     {
@@ -298,7 +259,7 @@ class ThanhToanController extends Controller
 
                                 if ($nguoiDung && $nguoiDung->cap_bac_id) {
                                     // Lấy cấp bậc theo ID từ người dùng
-                                    
+
                                     $capBac = CapBacThe::find($nguoiDung->cap_bac_id);
 
                                     if ($capBac) {
@@ -325,7 +286,7 @@ class ThanhToanController extends Controller
                                             // =========
 
                                             $tongTienChiTieu = DatVe::where('user_id', $nguoiDung->id)->sum('tong_tien');
-                                            Log::info('tong chi tieu:' .$tongTienChiTieu);
+                                            Log::info('tong chi tieu:' . $tongTienChiTieu);
                                             $capBacMoi = CapBacThe::where('tong_chi_tieu', '<=', $tongTienChiTieu)
                                                 ->orderByDesc('tong_chi_tieu')
                                                 ->first();
