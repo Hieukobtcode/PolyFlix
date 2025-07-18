@@ -13093,6 +13093,7 @@ namespace App\Models {
      * @property string|null $ngay_sinh
      * @property string $email
      * @property string $name
+     * @property int|null $cap_bac_id
      * @property int|null $vai_tro_id
      * @property int $id
      * @property-read \App\Models\VaiTro $vaiTro
@@ -13107,6 +13108,7 @@ namespace App\Models {
      * @property-read int|null $notifications_count
      * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereVaiTroId($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereCapBacId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereName($value)
      * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereEmail($value)
      * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereNgaySinh($value)
