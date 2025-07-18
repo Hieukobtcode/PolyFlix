@@ -490,11 +490,16 @@
                                     {{ ($lichSuDiem->currentPage() - 1) * $lichSuDiem->perPage() + $loop->iteration }}
                                 </td>
                                 <td style="padding: 10px;">
-                                    @if ($item->thay_doi >= 0)
-                                        <span style="color: green;">+{{ $item->thay_doi }}</span>
+                                    @php
+                                        $isTru = Str::contains($item->ly_do, 'Trừ');
+                                    @endphp
+
+                                    @if ($isTru)
+                                        <span style="color: red;">-{{ abs($item->thay_doi) }}</span>
                                     @else
-                                        <span style="color: red;">{{ $item->thay_doi }}</span>
+                                        <span style="color: green;">+{{ $item->thay_doi }}</span>
                                     @endif
+
                                 </td>
                                 <td style="padding: 10px;">{{ $item->ly_do ?? 'Không rõ' }}</td>
                                 <td style="padding: 10px;">{{ $item->thoi_gian }}</td>

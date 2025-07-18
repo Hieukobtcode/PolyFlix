@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Client;
 
+use App\Models\LichSuDiem;
 use Carbon\Carbon;
 use App\Models\DoAn;
 use App\Models\Combo;
@@ -333,9 +334,11 @@ class DatVeController extends Controller
 
         if ($user->diem >= $diemSuDung) {
             $user->diem -= $diemSuDung;
-            $user->save(); 
-        } 
-        
+            $user->save();
+        }
+
+
+
         try {
             $suatChieu = SuatChieu::with(['phongChieu.rapPhim', 'phongChieu.loaiPhong'])->findOrFail($request->suat_chieu_id);
 
@@ -365,6 +368,8 @@ class DatVeController extends Controller
                 'trang_thai' => 'Chờ thanh toán'
             ]);
             Log::info('Đã tạo đặt vé:', ['dat_ve_id' => $datVe->id]);
+
+            
 
             // Tạo chi tiết đặt vé (ghế)
             foreach ($request->ghe_ids as $gheId) {

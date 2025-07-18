@@ -298,6 +298,7 @@ class ThanhToanController extends Controller
 
                                 if ($nguoiDung && $nguoiDung->cap_bac_id) {
                                     // Lấy cấp bậc theo ID từ người dùng
+                                    
                                     $capBac = CapBacThe::find($nguoiDung->cap_bac_id);
 
                                     if ($capBac) {
