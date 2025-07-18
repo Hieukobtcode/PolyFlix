@@ -107,12 +107,14 @@
                                                     </li>
                                                 @endif
                                                 @if (Auth::user()->vai_tro_id !== 2)
-                                                    <li>
-                                                        <a class="dropdown-item d-flex align-items-center gap-2"
-                                                            href="{{ route('admin.suat-chieu.create', ['phimId' => $phim->id]) }}">
-                                                            <i class="ti ti-calendar-plus fs-5"></i> Thêm suất chiếu
-                                                        </a>
-                                                    </li>
+                                                    @if (in_array($phim->trang_thai, ['đang chiếu', 'sắp chiếu']))
+                                                        <li>
+                                                            <a class="dropdown-item d-flex align-items-center gap-2"
+                                                                href="{{ route('admin.suat-chieu.create', ['phimId' => $phim->id]) }}">
+                                                                <i class="ti ti-calendar-plus fs-5"></i> Thêm suất chiếu
+                                                            </a>
+                                                        </li>
+                                                    @endif
                                                 @endif
                                                 @if (Auth::user()->vai_tro_id == 1)
                                                     <li>
