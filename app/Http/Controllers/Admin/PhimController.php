@@ -16,8 +16,34 @@ use Illuminate\Support\Facades\Storage;
 
 class PhimController extends Controller
 {
+    protected function capNhatTrangThaiPhim()
+    {
+        $today = Carbon::today();
+
+        Phim::all()->each(function ($phim) use ($today) {
+            $ngayPhatHanh = $phim->ngay_phat_hanh ? Carbon::parse($phim->ngay_phat_hanh) : null;
+            $ngayKetThuc = $phim->ngay_ket_thuc ? Carbon::parse($phim->ngay_ket_thuc) : null;
+
+            $trangThaiMoi = $phim->trang_thai;
+
+            if ($ngayPhatHanh && $ngayPhatHanh->isFuture()) {
+                $trangThaiMoi = 'sắp chiếu';
+            } elseif ($ngayPhatHanh && $ngayKetThuc && $today->between($ngayPhatHanh, $ngayKetThuc)) {
+                $trangThaiMoi = 'đang chiếu';
+            } elseif ($ngayKetThuc && $today->gt($ngayKetThuc)) {
+                $trangThaiMoi = 'đã kết thúc';
+            }
+
+            if ($phim->trang_thai !== $trangThaiMoi) {
+                $phim->update(['trang_thai' => $trangThaiMoi]);
+            }
+        });
+    }
+
     public function index()
     {
+        $this->capNhatTrangThaiPhim(); // 👉 tự động cập nhật trạng thái phim
+
         // Super admin: lấy tất cả phim
         if (Auth::user()->vai_tro_id == 1) {
             $phims = Phim::orderBy('create_at', 'desc')->paginate(10);
@@ -168,8 +194,7 @@ class PhimController extends Controller
 
             $phim->update($data);
             $this->syncAllRelations($phim, $request);
-        }
-        elseif (Auth::user()->vai_tro_id == 2) {
+        } elseif (Auth::user()->vai_tro_id == 2) {
             //  Admin chi nhánh: chỉ được update rạp thuộc chi nhánh mình quản lý
             $request->validate([
                 'rap_phim_ids' => 'required|array',
@@ -197,8 +222,7 @@ class PhimController extends Controller
             $newRapPhimIds = array_merge($rapPhimsKhacQuyen, $request->rap_phim_ids);
 
             $phim->rapPhims()->sync($newRapPhimIds);
-        }
-        else {
+        } else {
             return redirect()->route('admin.phim.index')
                 ->with('error', 'Bạn không có quyền cập nhật phim này.');
         }
@@ -258,7 +282,7 @@ class PhimController extends Controller
         return redirect()->route('admin.phim.trash')
             ->with('success', 'Phim đã được xóa vĩnh viễn!');
     }
-        protected function validateAdmin(Request $request)
+    protected function validateAdmin(Request $request)
     {
         $request->validate([
             'ten_phim' => 'required|string|max:255',
@@ -323,5 +347,4 @@ class PhimController extends Controller
         $phim->chiNhanhs()->sync($request->chi_nhanh_ids);
         $phim->rapPhims()->sync($request->rap_phim_ids ?? []);
     }
-
 }
