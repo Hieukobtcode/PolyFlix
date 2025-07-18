@@ -24,7 +24,7 @@ $(document).ready(function () {
         const csrfToken = $('meta[name="csrf-token"]').attr("content");
 
         $.ajax({
-            url: "/thanh-toan/xu-ly", 
+            url: "/thanh-toan/xu-ly",
             method: "POST",
             data: {
                 phuong_thuc_tt: paymentMethod,
@@ -34,18 +34,18 @@ $(document).ready(function () {
                 "X-CSRF-TOKEN": csrfToken,
             },
             success: function (response) {
-                console.log(response);
-
-                Swal.fire({
-                    icon: "success",
-                    title: "Thành công",
-                    text: "Đã xử lý thanh toán!",
-                }).then(() => {
-                    if (response.redirect_url) {
-                        window.location.href = response.redirect_url;
-                    }
-                });
+                console.log("ZaloPay response:", response);
+                if (response.redirect_url) {
+                    window.location.href = response.redirect_url;
+                } else {
+                    Swal.fire({
+                        icon: "warning",
+                        title: "Không có URL chuyển hướng",
+                        text: "ZaloPay không trả về URL chuyển hướng",
+                    });
+                }
             },
+
             error: function (xhr) {
                 console.error(xhr.responseText);
 
