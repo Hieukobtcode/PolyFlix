@@ -191,6 +191,14 @@
                         <h4>Đồ ăn & nước uống:</h4>
                         <div id="selected-food-list">Chưa chọn</div>
                     </div>
+                    <div id="pointView" style="display: none" class="point">
+                        <input id="point" style="height: 35px; border-radius: 5px;" type="number">
+                        <button id="btnPoint" class="btn btn-warning">Đổi điểm</button>
+                        <p class="text-muted">
+                            Số điểm hiện có: <span id="diemHienCo"
+                                data-diem="{{ Auth::user()->diem }}">{{ number_format(Auth::user()->diem) }}</span>
+                        </p>
+                    </div>
                     <div class="total-price">
                         <h4>Tổng tiền: <span id="total-amount">0đ</span></h4>
                     </div>
