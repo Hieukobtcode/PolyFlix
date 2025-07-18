@@ -69,7 +69,7 @@
                     <div class="price-details">
                         <div class="price-row">
                             <span>Vé ({{ $datVe->gheNgois->count() }} ghế)</span>
-                            <span>{{ number_format($tongTienGhe) }}đ</span>
+                            <span>{{ number_format($tongThanhTien) }}đ</span>
                         </div>
 
                         @if ($tongTienCombo > 0)

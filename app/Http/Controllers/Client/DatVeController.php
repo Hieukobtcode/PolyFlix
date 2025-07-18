@@ -304,6 +304,7 @@ class DatVeController extends Controller
         Log::info('=== BẮT ĐẦU ĐẶT VÉ ===');
         Log::info('Request data:', $request->all());
 
+
         $request->validate([
             'suat_chieu_id' => 'required|exists:suat_chieus,id',
             'ghe_ids' => 'required|array|min:1',
@@ -320,9 +321,21 @@ class DatVeController extends Controller
             ], 401);
         }
 
+
+
         Log::info('User đã đăng nhập:', ['user_id' => Auth::id()]);
 
         DB::beginTransaction();
+
+        $diemSuDung = (int) $request->input('diem_su_dung');
+
+        $user = Auth::user();
+
+        if ($user->diem >= $diemSuDung) {
+            $user->diem -= $diemSuDung;
+            $user->save(); 
+        } 
+        
         try {
             $suatChieu = SuatChieu::with(['phongChieu.rapPhim', 'phongChieu.loaiPhong'])->findOrFail($request->suat_chieu_id);
 
@@ -339,7 +352,7 @@ class DatVeController extends Controller
             }
 
             // Tính tổng tiền
-            $tongTien = $this->tinhTongTien($request);
+            $tongTien = $request->input('tong_tien');
             Log::info('Tổng tiền tính được:', ['tong_tien' => $tongTien]);
 
             // Tạo đơn đặt vé
@@ -483,4 +496,21 @@ class DatVeController extends Controller
 
         return $tongTien;
     }
+
+    public function doiDiem(Request $request)
+    {
+        $soDiem = (int) $request->input('so_diem');
+        $soTien = (int) $request->input('so_tien');
+        $user = Auth::user();
+
+        if ($soDiem < 1000 || $soDiem > $user->diem) {
+            return response()->json(['message' => 'Số điểm không hợp lệ'], 400);
+        }
+
+        return response()->json(['message' => 'Đổi điểm thành công']);
+    }
+
+
+
+
 }

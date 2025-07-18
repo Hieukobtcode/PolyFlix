@@ -48,6 +48,10 @@ use App\Http\Controllers\Client\TheLoaiController;
 Route::get('/', [TrangChuController::class, 'index'])->name('home');
 
 Route::middleware('auth')->group(function () {
+
+    //Đổi điểm
+    Route::post('/doi-diem', [\App\Http\Controllers\Client\DatVeController::class, 'doiDiem'])->name('doi-diem');
+
     // Đặt vé client
     Route::get('/dat-ve', [\App\Http\Controllers\Client\DatVeController::class, 'indexDatVe'])->name('client.dat-ve');
     Route::post('/dat-ve', [\App\Http\Controllers\Client\DatVeController::class, 'store'])->name('client.dat-ve.store');

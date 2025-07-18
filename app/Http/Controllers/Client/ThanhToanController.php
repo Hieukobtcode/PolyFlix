@@ -84,7 +84,7 @@ class ThanhToanController extends Controller
         }
 
         // --- TỔNG THANH TOÁN ---
-        $tongThanhTien = $tongTienGhe + $tongTienCombo + $tongTienDoAn;
+        $tongThanhTien = $datVe->tong_tien;
 
         // Trả về view thanh toán với các dữ liệu cần thiết
         return view('client.thanh-toan.index', compact(
@@ -149,7 +149,7 @@ class ThanhToanController extends Controller
             $tongTienDoAn += $doAn->gia * $doAn->pivot->so_luong;
         }
 
-        $tongThanhTien = $tongTienGhe + $tongTienCombo + $tongTienDoAn;
+        $tongThanhTien = $datVe->tong_tien;
 
         $embedData = [
             'dat_ve_id' => $datVe->id,
