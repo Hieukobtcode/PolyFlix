@@ -49,7 +49,21 @@
                                     <td class="text-start">
                                         <ul class="mb-0 ps-3">
                                             @foreach ($combo->chiNhanhs as $chiNhanh)
-                                                <li>{{ $chiNhanh->ten_chi_nhanh }}</li>
+                                                <li>
+                                                    <strong>{{ $chiNhanh->ten_chi_nhanh }}</strong>
+                                                    @php
+                                                        $raps = $combo->rapPhims->where('chi_nhanh_id', $chiNhanh->id);
+                                                    @endphp
+                                                    @if ($raps->count())
+                                                        <ul class="mb-0 ps-3">
+                                                            @foreach ($raps as $rap)
+                                                                <li>{{ $rap->ten_rap }}</li>
+                                                            @endforeach
+                                                        </ul>
+                                                    @else
+                                                        <div class="small text-muted">(Chưa có rạp)</div>
+                                                    @endif
+                                                </li>
                                             @endforeach
                                         </ul>
                                     </td>

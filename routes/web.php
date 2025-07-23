@@ -244,9 +244,6 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access', 'per
     Route::resource('cap-bac-the', CapBacTheController::class);
     Route::put('cap-bac-the/{capBacThe}/set-default', [CapBacTheController::class, 'setDefault'])->name('cap-bac-the.set-default');
 
-
-
-
     Route::post('suat-chieu/luu-suat-chieu', [SuatChieuController::class, 'luuSuatChieu'])->name('suat-chieu.luu-suat-chieu');
     Route::post('suat-chieu/bulk-delete', [SuatChieuController::class, 'bulkDelete'])->name('suat-chieu.bulk-delete');
     Route::post('suat-chieu/bulk-toggle-status', [SuatChieuController::class, 'bulkToggleStatus'])->name('suat-chieu.bulk-toggle-status');
