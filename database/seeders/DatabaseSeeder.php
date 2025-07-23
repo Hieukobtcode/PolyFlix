@@ -35,10 +35,10 @@ class DatabaseSeeder extends Seeder
             // GheNgoiSeeder::class,
             PhuDePhimSeeder::class,
             DinhDangPhimSeeder::class,
-            CapBacTheSeeder::class,
+            // CapBacTheSeeder::class,
             TheLoaiPhimSeeder::class,
             PhimSeeder::class,
-            SuatChieuSeeder::class,
+            // SuatChieuSeeder::class,
             CommentSeeder::class,
             RatingSeeder::class,
             // php artisan db:seed --class=PhongChieuSeeder

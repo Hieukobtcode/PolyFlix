@@ -8,11 +8,12 @@
                 </div>
                 <div class="card-body p-3">
                     <div class="row mb-4 g-2 align-items-center">
-
-                        <!-- Tên Rạp -->
-                        <div class="col-md-3">
-                            <input type="text" id="searchTenRap" class="form-control" placeholder="Tìm theo tên rạp...">
-                        </div>
+                        @if (Auth::user()->vai_tro_id == 1 || (Auth::user()->vai_tro_id == 2 && $chiNhanh->quan_ly_id == Auth::id()))
+                            <!-- Tên Rạp -->
+                            <div class="col-md-3">
+                                <input type="text" id="searchTenRap" class="form-control" placeholder="Tìm theo tên rạp...">
+                            </div>
+                        @endif
 
                     </div>
                     @if ($chiNhanh->rapPhims->isEmpty())
@@ -20,14 +21,16 @@
                             nhánh này.</p>
                     @else
                         <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
-                            <div class="d-flex justify-content-between align-items-center mb-3">
+                            @if (Auth::user()->vai_tro_id == 1 || (Auth::user()->vai_tro_id == 2 && $chiNhanh->quan_ly_id == Auth::id()))
+                                <div class="d-flex justify-content-between align-items-center mb-3">
 
-                                <a href="{{ route('admin.rap-phim.create', ['chiNhanhId' => $chiNhanh->id]) }}"
-                                    class="btn btn-sm btn-primary d-inline-flex align-items-center gap-2 py-2 px-3">
-                                    <i class="ti ti-plus"></i> Thêm rạp chiếu
-                                </a>
+                                    <a href="{{ route('admin.rap-phim.create', ['chiNhanhId' => $chiNhanh->id]) }}"
+                                        class="btn btn-sm btn-primary d-inline-flex align-items-center gap-2 py-2 px-3">
+                                        <i class="ti ti-plus"></i> Thêm rạp chiếu
+                                    </a>
 
-                            </div>
+                                </div>
+                            @endif
                             <table class="table text-nowrap align-middle mb-0">
                                 <thead class="bg-gradient-dark text-white text-center small">
                                     <tr>
@@ -85,6 +88,9 @@
                                                         <span class="text-decoration-none fw-medium">
                                                             {{ $rap->quanLy->name ?? 'ID: ' . $rap->quan_ly_id }}
                                                         </span>
+                                                    @else
+                                                        <span class="badge bg-success-subtle text-success">Bạn quản
+                                                            lý</span>
                                                     @endif
                                                 @elseif (array_key_exists($rap->id, $pendingRapEmails))
                                                     <button type="button"
@@ -111,12 +117,14 @@
                                                                 <i class="ti ti-eye fs-5"></i> Xem rạp
                                                             </a>
                                                         </li>
-                                                        <li>
-                                                            <a class="dropdown-item d-flex align-items-center gap-2"
-                                                                href="{{ route('admin.rap-phim.edit', $rap->id) }}">
-                                                                <i class="ti ti-edit fs-5"></i> Chỉnh sửa
-                                                            </a>
-                                                        </li>
+                                                        @if (Auth::user()->vai_tro_id == 1 || (Auth::user()->vai_tro_id == 2 && $chiNhanh->quan_ly_id == Auth::id()))
+                                                            <li>
+                                                                <a class="dropdown-item d-flex align-items-center gap-2"
+                                                                    href="{{ route('admin.rap-phim.edit', $rap->id) }}">
+                                                                    <i class="ti ti-edit fs-5"></i> Chỉnh sửa
+                                                                </a>
+                                                            </li>
+                                                        @endif
                                                         @if (Auth::user()->vai_tro_id !== 2)
                                                             <li>
                                                                 <a class="dropdown-item d-flex align-items-center gap-2"
@@ -125,7 +133,10 @@
                                                                 </a>
                                                             </li>
                                                         @endif
-                                                        @if (!$rap->quan_ly_id && !in_array($rap->id, $pendingRapInvites))
+                                                        @if (
+                                                            !$rap->quan_ly_id &&
+                                                                !in_array($rap->id, $pendingRapInvites) &&
+                                                                (Auth::user()->vai_tro_id == 1 || (Auth::user()->vai_tro_id == 2 && $chiNhanh->quan_ly_id == Auth::id())))
                                                             <li>
                                                                 <button
                                                                     class="dropdown-item d-flex align-items-center gap-2"

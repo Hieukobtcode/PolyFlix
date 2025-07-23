@@ -21,6 +21,10 @@ namespace App\Models {
      * @property-read int|null $phongChieus_count
      * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Phim> $phims
      * @property-read int|null $phims_count
+     * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Combo> $combos
+     * @property-read int|null $combos_count
+     * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\DoAn> $doAns
+     * @property-read int|null $doAns_count
      * @method static \Illuminate\Database\Eloquent\Builder<RapPhim>|RapPhim whereId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<RapPhim>|RapPhim whereChiNhanhId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<RapPhim>|RapPhim whereQuanLyId($value)
@@ -2581,6 +2585,8 @@ namespace App\Models {
      * @property-read int|null $doAns_count
      * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ChiNhanh> $chiNhanhs
      * @property-read int|null $chiNhanhs_count
+     * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\RapPhim> $rapPhims
+     * @property-read int|null $rapPhims_count
      * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\DatVe> $datVes
      * @property-read int|null $datVes_count
      * @method static \Illuminate\Database\Eloquent\Builder<Combo>|Combo whereId($value)
@@ -4500,6 +4506,8 @@ namespace App\Models {
      * @property-read int|null $combos_count
      * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ChiNhanh> $chiNhanhs
      * @property-read int|null $chiNhanhs_count
+     * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\RapPhim> $rapPhims
+     * @property-read int|null $rapPhims_count
      * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\DatVe> $datVes
      * @property-read int|null $datVes_count
      * @method static \Illuminate\Database\Eloquent\Builder<DoAn>|DoAn whereId($value)
@@ -13100,7 +13108,6 @@ namespace App\Models {
      * @property-read int|null $ratings_count
      * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\LichSuDiem> $lichSuDiem
      * @property-read int|null $lichSuDiem_count
-     * @property-read \App\Models\ChiNhanh $chiNhanhDangQuanLy
      * @property-read \Illuminate\Database\Eloquent\Collection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
      * @property-read int|null $notifications_count
      * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereId($value)

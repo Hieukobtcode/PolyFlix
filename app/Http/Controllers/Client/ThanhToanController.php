@@ -134,7 +134,6 @@ class ThanhToanController extends Controller
             $giaMotGhe = $giaVeCoBan + $phuThuLoaiPhong + $phuThuGhe;
             $tongTienGhe += $giaMotGhe;
         }
-
         $tongTienGhe += $phuThuRap;
 
         $tongTienCombo = 0;
