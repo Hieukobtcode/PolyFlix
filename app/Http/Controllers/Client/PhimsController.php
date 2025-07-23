@@ -75,11 +75,11 @@ class PhimsController extends Controller
 
         $chiNhanhs = $phim->chiNhanhs;
 
-        $ngay_chieu = request('ngay_chieu');
+        $ngay_chieu = request('ngay_bat_dau');
         $ngayChieus = SuatChieu::where('phim_id', $phim->id)
-            ->select('ngay_chieu')
+            ->select('ngay_bat_dau')
             ->distinct()
-            ->pluck('ngay_chieu');
+            ->pluck('ngay_bat_dau');
 
         $days = [];
         $today = Carbon::today();
@@ -102,7 +102,7 @@ class PhimsController extends Controller
 
         $suatChieus = SuatChieu::where('phim_id', $phim->id)
             ->when($ngay_chieu, function ($q) use ($ngay_chieu, $now) {
-                $q->where('ngay_chieu', $ngay_chieu);
+                $q->where('ngay_bat_dau', $ngay_chieu);
                 if ($ngay_chieu == $now->toDateString()) {
                     $q->where('bat_dau', '>', $now->format('H:i:s'));
                 }
@@ -141,13 +141,13 @@ class PhimsController extends Controller
 
     public function loadLichChieu($id)
     {
-        $ngay_chieu = request('ngay_chieu');
+        $ngay_chieu = request('ngay_bat_dau');
         $chi_nhanh_id = request('chi_nhanh_id');
 
         $query = SuatChieu::where('phim_id', $id);
 
         if ($ngay_chieu) {
-            $query->where('ngay_chieu', $ngay_chieu);
+            $query->where('ngay_bat_dau', $ngay_chieu);
         }
 
         if ($chi_nhanh_id) {

@@ -2,22 +2,68 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
-use App\Models\ChiNhanh;
-use App\Models\DinhDangPhim;
-use App\Models\PhuDePhim;
+use Carbon\Carbon;
 use App\Models\Phim;
 use App\Models\RapPhim;
+use App\Models\ChiNhanh;
+use App\Models\PhuDePhim;
 use App\Models\TheLoaiPhim;
-use Carbon\Carbon;
+use App\Models\DinhDangPhim;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class PhimController extends Controller
 {
+    protected function capNhatTrangThaiPhim()
+    {
+        $today = Carbon::today();
+
+        Phim::all()->each(function ($phim) use ($today) {
+            $ngayPhatHanh = $phim->ngay_phat_hanh ? Carbon::parse($phim->ngay_phat_hanh) : null;
+            $ngayKetThuc = $phim->ngay_ket_thuc ? Carbon::parse($phim->ngay_ket_thuc) : null;
+
+            $trangThaiMoi = $phim->trang_thai;
+
+            if ($ngayPhatHanh && $ngayPhatHanh->isFuture()) {
+                $trangThaiMoi = 'sắp chiếu';
+            } elseif ($ngayPhatHanh && $ngayKetThuc && $today->between($ngayPhatHanh, $ngayKetThuc)) {
+                $trangThaiMoi = 'đang chiếu';
+            } elseif ($ngayKetThuc && $today->gt($ngayKetThuc)) {
+                $trangThaiMoi = 'đã kết thúc';
+            }
+
+            if ($phim->trang_thai !== $trangThaiMoi) {
+                $phim->update(['trang_thai' => $trangThaiMoi]);
+            }
+        });
+    }
+
     public function index()
     {
-        $phims = Phim::orderBy('create_at', 'desc')->paginate(10);
+        $this->capNhatTrangThaiPhim(); // 👉 tự động cập nhật trạng thái phim
+
+        // Super admin: lấy tất cả phim
+        if (Auth::user()->vai_tro_id == 1) {
+            $phims = Phim::orderBy('create_at', 'desc')->paginate(10);
+        }
+
+        // Quản lý chi nhánh: lấy phim thuộc các chi nhánh mà họ quản lý
+        elseif (Auth::user()->vai_tro_id == 2) {
+            $phims = Phim::whereHas('chiNhanhs', function ($query) {
+                $query->where('quan_ly_id', Auth::id());
+            })->orderBy('create_at', 'desc')->paginate(10);
+        }
+
+        // Quản lý rạp: lấy phim thuộc các rạp mà họ quản lý
+        elseif (Auth::user()->vai_tro_id == 3) {
+            $phims = Phim::whereHas('rapPhims', function ($query) {
+                $query->where('quan_ly_id', Auth::id());
+            })->orderBy('create_at', 'desc')->paginate(10);
+        }
+
+
         return view('admin.phim.index', compact('phims'));
     }
 
@@ -100,84 +146,91 @@ class PhimController extends Controller
     public function edit($id)
     {
         $phim = Phim::with('theLoais', 'dinhDangs', 'chiNhanhs', 'rapPhims', 'phuDes')->findOrFail($id);
-        $theLoaiPhims = TheLoaiPhim::where('trang_thai', 'hoạt động')->get();
+
         $selectedTheLoais = $phim->theLoais->pluck('id')->toArray();
-        $dinhDangPhims = DinhDangPhim::where('trang_thai', 'hoạt động')->get();
         $selectedDinhDangs = $phim->dinhDangs->pluck('id')->toArray();
-        $phuDePhims = PhuDePhim::where('trang_thai', 'hoạt động')->get();
         $selectedPhuDes = $phim->phuDes->pluck('id')->toArray();
-        $chiNhanhs = ChiNhanh::where('trang_thai', 'hoat_dong')->get();
         $selectedChiNhanhs = $phim->chiNhanhs->pluck('id')->toArray();
-        $rapPhims = RapPhim::where('trang_thai', 'đang hoạt động')->get();
         $selectedRapPhims = $phim->rapPhims->pluck('id')->toArray();
 
-        return view('admin.phim.edit', compact('phim', 'theLoaiPhims', 'selectedTheLoais', 'dinhDangPhims', 'selectedDinhDangs', 'phuDePhims', 'selectedPhuDes', 'chiNhanhs', 'selectedChiNhanhs', 'rapPhims', 'selectedRapPhims'));
+        //  Luôn lấy full dữ liệu cho tất cả
+        $theLoaiPhims = TheLoaiPhim::where('trang_thai', 'hoạt động')->get();
+        $dinhDangPhims = DinhDangPhim::where('trang_thai', 'hoạt động')->get();
+        $phuDePhims = PhuDePhim::where('trang_thai', 'hoạt động')->get();
+        $chiNhanhs = ChiNhanh::where('trang_thai', 'hoat_dong')->get();
+        $rapPhims = RapPhim::where('trang_thai', 'đang hoạt động')->get();
+
+        //  Nếu admin chi nhánh -> chỉ cho phép rạp thuộc quyền
+        if (Auth::user()->vai_tro_id == 2) {
+            $rapPhims = RapPhim::whereHas('chiNhanh', function ($query) {
+                $query->where('quan_ly_id', Auth::id());
+            })->where('trang_thai', 'đang hoạt động')->get();
+        }
+
+        return view('admin.phim.edit', compact(
+            'phim',
+            'theLoaiPhims',
+            'selectedTheLoais',
+            'dinhDangPhims',
+            'selectedDinhDangs',
+            'phuDePhims',
+            'selectedPhuDes',
+            'chiNhanhs',
+            'selectedChiNhanhs',
+            'rapPhims',
+            'selectedRapPhims'
+        ));
     }
+
 
     public function update(Request $request, $id)
     {
         $phim = Phim::findOrFail($id);
 
-        $request->validate([
-            'ten_phim' => 'required|string|max:255',
-            'mo_ta' => 'nullable|string',
-            'dao_dien' => 'nullable|string|max:255',
-            'dien_vien' => 'nullable|string',
-            'thoi_luong' => 'nullable|integer|min:1',
-            'ngay_phat_hanh' => 'nullable|date',
-            'ngay_ket_thuc' => 'nullable|date',
-            'trailer' => 'nullable|string|max:255',
-            'poster' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'ngon_ngu' => 'nullable|string|max:50',
-            'quoc_gia' => 'nullable|string|max:50',
-            'do_tuoi' => 'nullable|string|max:50',
-            // 'trang_thai' => 'required|in:đang chiếu,sắp chiếu,đã kết thúc,bị hủy',
-            'the_loai_ids' => 'required|array',
-            'the_loai_ids.*' => 'exists:the_loai_phims,id',
-            'dinh_dang_ids' => 'required|array',
-            'dinh_dang_ids.*' => 'exists:dinh_dang_phims,id',
-            'phu_de_ids' => 'required|array',
-            'phu_de_ids.*' => 'exists:phu_de_phims,id',
-            'chi_nhanh_ids' => 'required|array',
-            'chi_nhanh_ids.*' => 'exists:chi_nhanhs,id',
-            'rap_phim_ids' => 'array',
-            'rap_phim_ids.*' => 'exists:rap_phims,id',
-        ]);
+        if (Auth::user()->vai_tro_id == 1) {
+            //  Admin tổng: full quyền
+            $this->validateAdmin($request);
+            $data = $this->prepareData($request, $phim);
 
-        $data = $request->except(['poster', 'the_loai_ids', 'dinh_dang_ids', 'phu_de_ids', 'chi_nhanh_ids', 'rap_phim_ids']);
+            $phim->update($data);
+            $this->syncAllRelations($phim, $request);
+        } elseif (Auth::user()->vai_tro_id == 2) {
+            //  Admin chi nhánh: chỉ được update rạp thuộc chi nhánh mình quản lý
+            $request->validate([
+                'rap_phim_ids' => 'required|array',
+                'rap_phim_ids.*' => [
+                    'exists:rap_phims,id',
+                    function ($attribute, $value, $fail) {
+                        $rapPhim = RapPhim::find($value);
+                        if (!$rapPhim || $rapPhim->chiNhanh->quan_ly_id != Auth::id()) {
+                            $fail("Rạp ID {$value} không thuộc quyền quản lý.");
+                        }
+                    }
+                ],
+            ]);
 
-        // Tính trạng thái dựa trên ngày phát hành và ngày kết thúc
-        $today = Carbon::today();
-        $ngayPhatHanh = $request->ngay_phat_hanh ? Carbon::parse($request->ngay_phat_hanh) : null;
-        $ngayKetThuc = $request->ngay_ket_thuc ? Carbon::parse($request->ngay_ket_thuc) : null;
+            //  Lấy danh sách rạp thuộc chi nhánh admin quản lý
+            $rapPhimsThuocQuyen = RapPhim::whereHas('chiNhanh', function ($q) {
+                $q->where('quan_ly_id', Auth::id());
+            })->pluck('id')->toArray();
 
-        if ($ngayPhatHanh && $ngayPhatHanh->isFuture()) {
-            $data['trang_thai'] = 'sắp chiếu';
-        } elseif ($ngayPhatHanh && $ngayKetThuc && $today->between($ngayPhatHanh, $ngayKetThuc)) {
-            $data['trang_thai'] = 'đang chiếu';
-        } elseif ($ngayKetThuc && $today->gt($ngayKetThuc)) {
-            $data['trang_thai'] = 'đã kết thúc';
+            //  Giữ nguyên các rạp không thuộc quyền quản lý
+            $rapPhimsHienTai = $phim->rapPhims->pluck('id')->toArray();
+            $rapPhimsKhacQuyen = array_diff($rapPhimsHienTai, $rapPhimsThuocQuyen);
+
+            //  Merge lại rạp cũ ngoài quyền quản lý + rạp mới được gán
+            $newRapPhimIds = array_merge($rapPhimsKhacQuyen, $request->rap_phim_ids);
+
+            $phim->rapPhims()->sync($newRapPhimIds);
         } else {
-            $data['trang_thai'] = 'sắp chiếu'; // Mặc định nếu thiếu thông tin ngày
+            return redirect()->route('admin.phim.index')
+                ->with('error', 'Bạn không có quyền cập nhật phim này.');
         }
-
-        if ($request->hasFile('poster')) {
-            if ($phim->poster) {
-                Storage::disk('public')->delete($phim->poster);
-            }
-            $data['poster'] = $request->file('poster')->store('posters', 'public');
-        }
-
-        $phim->update($data);
-        $phim->theLoais()->sync($request->the_loai_ids);
-        $phim->dinhDangs()->sync($request->dinh_dang_ids);
-        $phim->phuDes()->sync($request->phu_de_ids);
-        $phim->chiNhanhs()->sync($request->chi_nhanh_ids);
-        $phim->rapPhims()->sync($request->chi_nhanh_ids);
 
         return redirect()->route('admin.phim.index')
             ->with('success', 'Phim đã được cập nhật thành công!');
     }
+
 
     public function destroy($id)
     {
@@ -228,5 +281,70 @@ class PhimController extends Controller
 
         return redirect()->route('admin.phim.trash')
             ->with('success', 'Phim đã được xóa vĩnh viễn!');
+    }
+    protected function validateAdmin(Request $request)
+    {
+        $request->validate([
+            'ten_phim' => 'required|string|max:255',
+            'mo_ta' => 'nullable|string',
+            'dao_dien' => 'nullable|string|max:255',
+            'dien_vien' => 'nullable|string',
+            'thoi_luong' => 'nullable|integer|min:1',
+            'ngay_phat_hanh' => 'nullable|date',
+            'ngay_ket_thuc' => 'nullable|date',
+            'trailer' => 'nullable|string|max:255',
+            'poster' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'ngon_ngu' => 'nullable|string|max:50',
+            'quoc_gia' => 'nullable|string|max:50',
+            'do_tuoi' => 'nullable|string|max:50',
+            'the_loai_ids' => 'required|array',
+            'the_loai_ids.*' => 'exists:the_loai_phims,id',
+            'dinh_dang_ids' => 'required|array',
+            'dinh_dang_ids.*' => 'exists:dinh_dang_phims,id',
+            'phu_de_ids' => 'required|array',
+            'phu_de_ids.*' => 'exists:phu_de_phims,id',
+            'chi_nhanh_ids' => 'required|array',
+            'chi_nhanh_ids.*' => 'exists:chi_nhanhs,id',
+            'rap_phim_ids' => 'array',
+            'rap_phim_ids.*' => 'exists:rap_phims,id',
+        ]);
+    }
+
+    protected function prepareData(Request $request, $phim)
+    {
+        $data = $request->except(['poster', 'the_loai_ids', 'dinh_dang_ids', 'phu_de_ids', 'chi_nhanh_ids', 'rap_phim_ids']);
+
+        // Tính trạng thái phim
+        $today = Carbon::today();
+        $ngayPhatHanh = $request->ngay_phat_hanh ? Carbon::parse($request->ngay_phat_hanh) : null;
+        $ngayKetThuc = $request->ngay_ket_thuc ? Carbon::parse($request->ngay_ket_thuc) : null;
+
+        if ($ngayPhatHanh && $ngayPhatHanh->isFuture()) {
+            $data['trang_thai'] = 'sắp chiếu';
+        } elseif ($ngayPhatHanh && $ngayKetThuc && $today->between($ngayPhatHanh, $ngayKetThuc)) {
+            $data['trang_thai'] = 'đang chiếu';
+        } elseif ($ngayKetThuc && $today->gt($ngayKetThuc)) {
+            $data['trang_thai'] = 'đã kết thúc';
+        } else {
+            $data['trang_thai'] = 'sắp chiếu';
+        }
+
+        if ($request->hasFile('poster')) {
+            if ($phim->poster) {
+                Storage::disk('public')->delete($phim->poster);
+            }
+            $data['poster'] = $request->file('poster')->store('posters', 'public');
+        }
+
+        return $data;
+    }
+
+    protected function syncAllRelations(Phim $phim, Request $request)
+    {
+        $phim->theLoais()->sync($request->the_loai_ids);
+        $phim->dinhDangs()->sync($request->dinh_dang_ids);
+        $phim->phuDes()->sync($request->phu_de_ids);
+        $phim->chiNhanhs()->sync($request->chi_nhanh_ids);
+        $phim->rapPhims()->sync($request->rap_phim_ids ?? []);
     }
 }

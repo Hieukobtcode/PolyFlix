@@ -44,15 +44,13 @@
                              </a>
                          </li>
 
-                         @if (Auth::check() && Auth::user()->vai_tro == 4)
-                             <!-- Nút mở modal chỉ hiển thị nếu user có vai trò là 4 -->
-                             <li class="nav-item nav-icon-hover-bg rounded-circle">
-                                 <a class="nav-link" href="#" data-bs-toggle="modal"
-                                     data-bs-target="#scannerModal" title="Quét mã vạch">
-                                     <i class="fa-solid fa-barcode fa-shake fa-lg"></i>
-                                 </a>
-                             </li>
-                         @endif
+                         <!-- Nút mở modal chỉ hiển thị nếu user có vai trò là 4 -->
+                         <li class="nav-item nav-icon-hover-bg rounded-circle">
+                             <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#scannerModal"
+                                 title="Quét mã vạch">
+                                 <i class="fa-solid fa-barcode fa-shake fa-lg"></i>
+                             </a>
+                         </li>
 
                          <!-- ------------------------------- -->
                          <!-- start Messages cart Dropdown -->

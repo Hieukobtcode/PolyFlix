@@ -12,28 +12,27 @@ use App\Http\Controllers\Controller;
 class LichChieuController extends Controller
 {
     //
-    public function index(){
+    public function index()
+    {
         // Lấy danh sách phim
-    // Lấy danh sách phim
-    $phims = Phim::orderBy('ten_phim')->get();
+        // Lấy danh sách phim
+        $phims = Phim::orderBy('ten_phim')->get();
 
-    // Lấy danh sách rạp
-    $raps = RapPhim::orderBy('ten_rap')->get();
+        // Lấy danh sách rạp
+        $raps = RapPhim::orderBy('ten_rap')->get();
 
-    // Lấy danh sách ngày DISTINCT trong bảng suat_chieus
-    $ngayChieus = SuatChieu::select('ngay_chieu')
-        ->distinct()
-        ->orderBy('ngay_chieu')
-        ->pluck('ngay_chieu');
+        // Lấy danh sách ngày DISTINCT trong bảng suat_chieus
+        $ngayChieus = SuatChieu::select('ngay_bat_dau')
+            ->distinct()
+            ->orderBy('ngay_bat_dau')
+            ->pluck('ngay_bat_dau');
 
-    // Lấy FULL tất cả suất chiếu (có thể eager load phim + phòng)
-    $suatChieus = SuatChieu::with(['phim', 'phongChieu'])
-        ->orderBy('ngay_chieu')
-        ->orderBy('bat_dau')
-        ->get();
+        // Lấy FULL tất cả suất chiếu (có thể eager load phim + phòng)
+        $suatChieus = SuatChieu::with(['phim', 'phongChieu'])
+            ->orderBy('ngay_bat_dau')
+            ->orderBy('bat_dau')
+            ->get();
 
-    return view('client.lich-chieu', compact('phims', 'raps', 'ngayChieus', 'suatChieus'));
-
+        return view('client.lich-chieu', compact('phims', 'raps', 'ngayChieus', 'suatChieus'));
     }
-    
 }

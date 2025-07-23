@@ -11,6 +11,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Support\Str;
 use DNS1D;
+
 class GuiVeXemPhim extends Mailable
 {
     use Queueable, SerializesModels;

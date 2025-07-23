@@ -306,18 +306,30 @@
                 </form>
                 <div>
                     <div class="user-name1">🏅 {{ Auth::user()->name }}</div>
-                    <div class="stars">🎁 Hạng</div>
+                    <div class="stars">{{ $tenCapBac }}</div>
                 </div>
             </div>
 
             <div class="spending-progress">
-                <p><strong style="color: #004d40;">Tổng số vé đã đặt:</strong> <span style="color: #f97316;">0 vé</span></p>
-                <div class="progress-bar">
-                    <div class="progress-fill" style="width: 0%"></div>
+                <p>
+                    <strong style="color: #004d40;">Tổng tiền chi tiêu:</strong>
+                    <span style="color: #f97316;">
+                        {{ number_format($tongChiTieu, 0, ',', '.') }}₫
+                    </span>
+                </p>
+
+                {{-- Thanh tiến độ --}}
+                <div class="progress-bar"
+                    style="height: 10px; background-color: #b2dfdb; border-radius: 10px; overflow: hidden;">
+                    <div class="progress-fill"
+                        style="height: 100%; width: {{ $phanTramChiTieu }}%; background-color: #ef4444; transition: width 0.5s;">
+                    </div>
                 </div>
-                <div class="milestone-labels">
+
+                {{-- Các mốc --}}
+                <div class="milestone-labels" style="display: flex; justify-content: space-between; margin-top: 5px;">
                     @foreach ($milestones as $moc)
-                        <span>{{ $moc }} đ</span>
+                        <span>{{ number_format($moc, 0, ',', '.') }} đ</span>
                     @endforeach
                 </div>
             </div>
@@ -332,7 +344,8 @@
         <div class="right-panel">
             <div class="tab-nav">
                 <a href="#" class="tab-link active" data-tab="profile-tab">Thông Tin Cá Nhân</a>
-                <a href="#" class="tab-link" data-tab="history-tab">Lịch Sử Giao Dịch</a>
+                <a href="#" class="tab-link" data-tab="history-tab">Lịch Sử Đặt Vé</a>
+                <a href="#" class="tab-link" data-tab="history-point-tab">Lịch Sử Điểm</a>
             </div>
 
             {{-- Tab Thông Tin Cá Nhân --}}
@@ -423,68 +436,96 @@
                             <th style="padding: 10px; text-align: left;">Phim</th>
                             <th style="padding: 10px; text-align: left;">Trạng thái</th>
                             <th style="padding: 10px; text-align: left;">Số tiền</th>
+                            <th style=" text-align: left;">Hành động</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr style="background: #f1f8f7; color: #004d40;">
-                            <td style="padding: 10px;">10/06/2025</td>
-                            <td style="padding: 10px;">GD123456</td>
-                            <td style="padding: 10px;">Đặt vé phim "Avengers: Endgame"</td>
-                            <td style="padding: 10px;">Thành công</td>
-                            <td style="padding: 10px; color: #f97316;">120.000 đ</td>
-                        </tr>
+                        @forelse ($donDatVeDaThanhToan as $ve)
+                            <tr style="background: #f1f8f7; color: #004d40;">
+                                <td style="padding: 10px;">{{ \Carbon\Carbon::parse($ve->thanh_toan)->format('d/m/Y') }}
+                                </td>
+                                <td style="padding: 10px;">{{ $ve->ma_dat_ve ?? '---' }}</td>
+                                <td style="padding: 10px;">
+                                    Đặt vé phim "{{ $ve->suatChieu->phim->ten_phim ?? 'N/A' }}"
+                                </td>
+                                <td style="padding: 10px;">Chưa xuất vé</td>
+                                <td style="padding: 10px; color: #f97316;">
+                                    {{ number_format($ve->tong_tien, 0, ',', '.') }}
+                                    đ
+                                </td>
+                                <td>
+                                    <a href="#" class="btn-xem-ve" data-id="{{ $ve->id }}"
+                                        style="background: #009688; color: white; padding: 6px 12px; border-radius: 4px; text-decoration: none;">
+                                        Xem
+                                    </a>
+
+                                </td>
+
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="5" style="padding: 10px; color:black; text-align: center;">Không có giao
+                                    dịch nào</td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
+
+            {{-- Tab Lịch Sử Điểm --}}
+            <div id="history-point-tab" class="tab-content" style="display: none;">
+                <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+                    <thead>
+                        <tr style="background: #009688; color: #fff;">
+                            <th style="padding: 10px; text-align: left;">#</th>
+                            <th style="padding: 10px; text-align: left;">Thay đổi</th>
+                            <th style="padding: 10px; text-align: left;">Lý do</th>
+                            <th style="padding: 10px; text-align: left;">Thời gian</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($lichSuDiem as $index => $item)
+                            <tr style="background: #f1f8f7; color: #004d40;">
+                                <td style="padding: 10px;">
+                                    {{ ($lichSuDiem->currentPage() - 1) * $lichSuDiem->perPage() + $loop->iteration }}
+                                </td>
+                                <td style="padding: 10px;">
+                                    @php
+                                        $isTru = Str::contains($item->ly_do, 'Trừ');
+                                    @endphp
+
+                                    @if ($isTru)
+                                        <span style="color: red;">-{{ abs($item->thay_doi) }}</span>
+                                    @else
+                                        <span style="color: green;">+{{ $item->thay_doi }}</span>
+                                    @endif
+
+                                </td>
+                                <td style="padding: 10px;">{{ $item->ly_do ?? 'Không rõ' }}</td>
+                                <td style="padding: 10px;">{{ $item->thoi_gian }}</td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="4" style="padding: 10px; text-align: center; color: gray;">
+                                    Bạn chưa có lịch sử điểm nào.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+
+                {{-- Phân trang --}}
+                @if ($lichSuDiem->hasPages())
+                    <div style="margin-top: 20px;">
+                        {{ $lichSuDiem->withQueryString()->links() }}
+                    </div>
+                @endif
+            </div>
         </div>
     </div>
-
-    @if (session('success'))
-        <script>
-            Swal.fire({
-                toast: true,
-                position: 'top-end',
-                icon: 'success',
-                title: '{{ session('success') }}',
-                background: '#10b981',
-                color: '#fff',
-                showCloseButton: true,
-                timer: 7000,
-                timerProgressBar: true,
-                showConfirmButton: false,
-                customClass: {
-                    popup: 'custom-toast'
-                }
-            });
-        </script>
-    @endif
-
-    @if ($errors->any())
-        <script>
-            let errorMessages = `{!! implode('<br>', $errors->all()) !!}`;
-            Swal.fire({
-                toast: true,
-                position: 'top-end',
-                iconHtml: '<i class="fa-solid fa-exclamation fa-bounce" style="color: #facc15; font-size: 18px;"></i>',
-                title: errorMessages,
-                background: '#7c3aed',
-                color: '#fff',
-                showCloseButton: true,
-                timer: 7000,
-                timerProgressBar: true,
-                showConfirmButton: false,
-                customClass: {
-                    popup: 'custom-toast',
-                    icon: 'no-icon-bg',
-                    title: 'text-start'
-                }
-            });
-        </script>
-    @endif
 @endsection
 
 @section('scripts')
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const avatarInput = document.getElementById('avatarUpload');

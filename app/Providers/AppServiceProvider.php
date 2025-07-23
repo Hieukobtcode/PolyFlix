@@ -22,7 +22,6 @@ class AppServiceProvider extends ServiceProvider
     {
         //
     }
-
     /**
      * Bootstrap any application services.
      */
@@ -34,6 +33,12 @@ class AppServiceProvider extends ServiceProvider
         Route::aliasMiddleware('permission.check', CheckPermission::class);
         Carbon::setLocale('vi');
 
+        Route::middleware('api')
+            ->prefix('api')
+            ->group(base_path('routes/api.php'));
+
+        Route::middleware('web')
+            ->group(base_path('routes/web.php'));
         try {
             // Only load data if table exists (not during migrations)
             if (Schema::hasTable('rap_phims')) {

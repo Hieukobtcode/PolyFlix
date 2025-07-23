@@ -59,7 +59,7 @@ class AuthController extends Controller
             'register_data' => [
                 'name'     => $validated['name'],
                 'email'    => $validated['email'],
-                'password' => bcrypt($validated['password']),
+                'password' => $validated['password'],
                 'dob'      => $validated['dob'] ?? null,
                 'phone'    => $validated['phone'] ?? null,
                 'username' => $validated['username'] ?? null,
@@ -124,6 +124,7 @@ class AuthController extends Controller
             $data = session('register_data');
 
             $user = User::create([
+                'cap_bac_id' => 1,
                 'vai_tro_id'         => 5,
                 'name'               => $data['name'],
                 'email'              => $data['email'],

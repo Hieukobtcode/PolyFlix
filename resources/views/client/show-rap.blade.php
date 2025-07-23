@@ -542,7 +542,7 @@
                                 Hiện chưa có suất chiếu nào cho phim này.
                             </div>
                         @else
-                            @foreach ($suatChieuPhim->sortBy('ngay_chieu')->groupBy('ngay_chieu') as $ngay => $suatChieusTrongNgay)
+                            @foreach ($suatChieuPhim->sortBy('ngay_bat_dau')->groupBy('ngay_bat_dau') as $ngay => $suatChieusTrongNgay)
                                 @php
                                     $ngayFormatted = \Carbon\Carbon::parse($ngay)->translatedFormat('l, d/m/Y');
                                     $ngayFormatted = mb_convert_case($ngayFormatted, MB_CASE_TITLE, 'UTF-8');
@@ -634,7 +634,7 @@
                                 Hiện chưa có suất chiếu nào cho phim này.
                             </div>
                         @else
-                            @foreach ($suatChieuPhim->sortBy('ngay_chieu')->groupBy('ngay_chieu') as $ngay => $suatChieusTrongNgay)
+                            @foreach ($suatChieuPhim->sortBy('ngay_bat_dau')->groupBy('ngay_bat_dau') as $ngay => $suatChieusTrongNgay)
                                 @php
                                     $ngayFormatted = \Carbon\Carbon::parse($ngay)->translatedFormat('l, d/m/Y');
                                     $ngayFormatted = mb_convert_case($ngayFormatted, MB_CASE_TITLE, 'UTF-8');
@@ -727,7 +727,7 @@
                                 Hiện chưa có suất chiếu nào cho phim này.
                             </div>
                         @else
-                            @foreach ($suatChieuPhim->sortBy('ngay_chieu')->groupBy('ngay_chieu') as $ngay => $suatChieusTrongNgay)
+                            @foreach ($suatChieuPhim->sortBy('ngay_bat_dau')->groupBy('ngay_bat_dau') as $ngay => $suatChieusTrongNgay)
                                 @php
                                     $ngayFormatted = \Carbon\Carbon::parse($ngay)->translatedFormat('l, d/m/Y');
                                     $ngayFormatted = mb_convert_case($ngayFormatted, MB_CASE_TITLE, 'UTF-8');

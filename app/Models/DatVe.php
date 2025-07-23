@@ -26,13 +26,12 @@ class DatVe extends Model
 
     protected $dates = ['thoi_gian_dat', 'ngay_cap_nhat'];
 
-    // // Quan hệ: Một đơn đặt vé có nhiều chi tiết đặt vé (ghế)
-    // public function chiTietDatVes()
-    // {
-    //     return $this->hasMany(ChiTietDatVe::class, 'dat_ve_id');
-    // }
+    // Quan hệ: Một đơn đặt vé có nhiều chi tiết đặt vé (ghế)
+    public function chiTietDatVes()
+    {
+        return $this->hasMany(ChiTietDatVe::class, 'dat_ve_id');
+    }
 
-    // Quan hệ: Đơn đặt vé thuộc về người dùng
     public function nguoiDung()
     {
         return $this->belongsTo(User::class, 'user_id');
@@ -74,5 +73,33 @@ class DatVe extends Model
     public function gheNgois()
     {
         return $this->belongsToMany(GheNgoi::class, 'chi_tiet_dat_ves', 'dat_ve_id', 'ghe_id');
+    }
+
+    /**
+     * Relationship với bảng transactions
+     */
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class, 'dat_ve_id');
+    }
+
+    /**
+     * Lấy transaction thành công cuối cùng
+     */
+    public function successTransaction()
+    {
+        return $this->hasOne(Transaction::class, 'dat_ve_id')
+            ->where('status', 'success')
+            ->latest();
+    }
+
+    /**
+     * Lấy transaction pending cuối cùng
+     */
+    public function pendingTransaction()
+    {
+        return $this->hasOne(Transaction::class, 'dat_ve_id')
+            ->where('status', 'pending')
+            ->latest();
     }
 }
