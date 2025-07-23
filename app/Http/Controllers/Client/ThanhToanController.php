@@ -113,7 +113,38 @@ class ThanhToanController extends Controller
             ->where('trang_thai', 'Chờ thanh toán')
             ->firstOrFail();
 
-        $tongThanhTien = $datVe->tong_tien;
+        foreach ($datVe->gheNgois as $ghe) {
+            if ($ghe->trang_thai === 'da_dat') {
+                return response()->json([
+                    'status'  => 'error',
+                    'message' => 'Một hoặc nhiều ghế đã được đặt. Vui lòng chọn lại ghế khác.'
+                ]);
+            }
+        }
+
+        $giaVeCoBan = 0;
+        $phuThuRap = $datVe->suatChieu->phongChieu->rapPhim->phu_thu ?? 0;
+        $phuThuLoaiPhong = $datVe->suatChieu->phongChieu->loaiPhong->phu_thu ?? 0;
+
+        $tongTienGhe = 0;
+        foreach ($datVe->gheNgois as $ghe) {
+            $phuThuGhe = $ghe->loaiGhe->phu_thu ?? 0;
+            $giaMotGhe = $giaVeCoBan + $phuThuLoaiPhong + $phuThuGhe;
+            $tongTienGhe += $giaMotGhe;
+        }
+        $tongTienGhe += $phuThuRap;
+
+        $tongTienCombo = 0;
+        foreach ($datVe->combos as $combo) {
+            $tongTienCombo += $combo->gia * $combo->pivot->so_luong;
+        }
+
+        $tongTienDoAn = 0;
+        foreach ($datVe->doAns as $doAn) {
+            $tongTienDoAn += $doAn->gia * $doAn->pivot->so_luong;
+        }
+
+        $tongThanhTien = $tongTienGhe + $tongTienCombo + $tongTienDoAn;
 
         $embedData = [
             'dat_ve_id' => $datVe->id,

@@ -1,6 +1,7 @@
 <?php
 namespace App\Models;
 
+use App\Models\RapPhim;
 use Illuminate\Database\Eloquent\Model;
 
 class Combo extends Model
@@ -26,6 +27,12 @@ class Combo extends Model
     {
         return $this->belongsToMany(ChiNhanh::class, 'chi_nhanh_combo');
     }
+
+    public function rapPhims()
+    {
+        return $this->belongsToMany(RapPhim::class, 'rap_combo');
+    }
+
     public function datVes()
     {
         return $this->belongsToMany(DatVe::class, 'dat_ve_combo')

@@ -1538,6 +1538,8 @@ return array(
     'Illuminate\\Container\\Attributes\\Give' => $vendorDir . '/laravel/framework/src/Illuminate/Container/Attributes/Give.php',
     'Illuminate\\Container\\Attributes\\Log' => $vendorDir . '/laravel/framework/src/Illuminate/Container/Attributes/Log.php',
     'Illuminate\\Container\\Attributes\\RouteParameter' => $vendorDir . '/laravel/framework/src/Illuminate/Container/Attributes/RouteParameter.php',
+    'Illuminate\\Container\\Attributes\\Scoped' => $vendorDir . '/laravel/framework/src/Illuminate/Container/Attributes/Scoped.php',
+    'Illuminate\\Container\\Attributes\\Singleton' => $vendorDir . '/laravel/framework/src/Illuminate/Container/Attributes/Singleton.php',
     'Illuminate\\Container\\Attributes\\Storage' => $vendorDir . '/laravel/framework/src/Illuminate/Container/Attributes/Storage.php',
     'Illuminate\\Container\\Attributes\\Tag' => $vendorDir . '/laravel/framework/src/Illuminate/Container/Attributes/Tag.php',
     'Illuminate\\Container\\BoundMethod' => $vendorDir . '/laravel/framework/src/Illuminate/Container/BoundMethod.php',
