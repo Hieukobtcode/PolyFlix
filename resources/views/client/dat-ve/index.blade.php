@@ -125,10 +125,9 @@
 
             <!-- Chọn đồ ăn -->
             <div class="food-selection">
-                <h3>Chọn đồ ăn & nước uống</h3>
                 <div class="food-tabs">
-                    <button class="tab-btn active" data-tab="do-an">Đồ ăn</button>
-                    <button class="tab-btn" data-tab="combo">Combo</button>
+                    <button style="color: white" class="tab-btn active" data-tab="do-an">Đồ ăn</button>
+                    <button style="color: white" class="tab-btn" data-tab="combo">Combo</button>
                 </div>
 
                 <div class="tab-content active" id="do-an">
@@ -194,8 +193,8 @@
                     <div id="pointView" style="display: none" class="point">
                         <input id="point" style="height: 35px; border-radius: 5px;" type="number">
                         <button id="btnPoint" class="btn btn-warning">Đổi điểm</button>
-                        <p class="text-muted">
-                            Số điểm hiện có: <span id="diemHienCo"
+                        <p style="color: yellow;" class="text-muted">
+                            Số điểm hiện có: <span style="color: yellow;" id="diemHienCo"
                                 data-diem="{{ Auth::user()->diem }}">{{ number_format(Auth::user()->diem) }}</span>
                         </p>
                     </div>
