@@ -75,11 +75,11 @@ class PhimsController extends Controller
 
         $chiNhanhs = $phim->chiNhanhs;
 
-        $ngay_chieu = request('ngay_chieu');
+        $ngay_chieu = request('ngay_bat_dau');
         $ngayChieus = SuatChieu::where('phim_id', $phim->id)
-            ->select('ngay_chieu')
+            ->select('ngay_bat_dau')
             ->distinct()
-            ->pluck('ngay_chieu');
+            ->pluck('ngay_bat_dau');
 
         $days = [];
         $today = Carbon::today();
