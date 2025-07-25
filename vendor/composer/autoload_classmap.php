@@ -45,6 +45,7 @@ return array(
     'App\\Http\\Controllers\\Admin\\UserController' => $baseDir . '/app/Http/Controllers/Admin/UserController.php',
     'App\\Http\\Controllers\\Admin\\VaiTroController' => $baseDir . '/app/Http/Controllers/Admin/VaiTroController.php',
     'App\\Http\\Controllers\\AuthController' => $baseDir . '/app/Http/Controllers/AuthController.php',
+    'App\\Http\\Controllers\\Client\\AIChatController' => $baseDir . '/app/Http/Controllers/Client/AIChatController.php',
     'App\\Http\\Controllers\\Client\\DanhSachBaiVietController' => $baseDir . '/app/Http/Controllers/Client/DanhSachBaiVietController.php',
     'App\\Http\\Controllers\\Client\\DatVeController' => $baseDir . '/app/Http/Controllers/Client/DatVeController.php',
     'App\\Http\\Controllers\\Client\\DiemController' => $baseDir . '/app/Http/Controllers/Client/DiemController.php',
