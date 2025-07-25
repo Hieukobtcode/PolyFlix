@@ -122,29 +122,29 @@ class ThanhToanController extends Controller
             }
         }
 
-        $giaVeCoBan = 0;
-        $phuThuRap = $datVe->suatChieu->phongChieu->rapPhim->phu_thu ?? 0;
-        $phuThuLoaiPhong = $datVe->suatChieu->phongChieu->loaiPhong->phu_thu ?? 0;
+        // $giaVeCoBan = 0;
+        // $phuThuRap = $datVe->suatChieu->phongChieu->rapPhim->phu_thu ?? 0;
+        // $phuThuLoaiPhong = $datVe->suatChieu->phongChieu->loaiPhong->phu_thu ?? 0;
 
-        $tongTienGhe = 0;
-        foreach ($datVe->gheNgois as $ghe) {
-            $phuThuGhe = $ghe->loaiGhe->phu_thu ?? 0;
-            $giaMotGhe = $giaVeCoBan + $phuThuLoaiPhong + $phuThuGhe;
-            $tongTienGhe += $giaMotGhe;
-        }
-        $tongTienGhe += $phuThuRap;
+        // $tongTienGhe = 0;
+        // foreach ($datVe->gheNgois as $ghe) {
+        //     $phuThuGhe = $ghe->loaiGhe->phu_thu ?? 0;
+        //     $giaMotGhe = $giaVeCoBan + $phuThuLoaiPhong + $phuThuGhe;
+        //     $tongTienGhe += $giaMotGhe;
+        // }
+        // $tongTienGhe += $phuThuRap;
 
-        $tongTienCombo = 0;
-        foreach ($datVe->combos as $combo) {
-            $tongTienCombo += $combo->gia * $combo->pivot->so_luong;
-        }
+        // $tongTienCombo = 0;
+        // foreach ($datVe->combos as $combo) {
+        //     $tongTienCombo += $combo->gia * $combo->pivot->so_luong;
+        // }
 
-        $tongTienDoAn = 0;
-        foreach ($datVe->doAns as $doAn) {
-            $tongTienDoAn += $doAn->gia * $doAn->pivot->so_luong;
-        }
+        // $tongTienDoAn = 0;
+        // foreach ($datVe->doAns as $doAn) {
+        //     $tongTienDoAn += $doAn->gia * $doAn->pivot->so_luong;
+        // }
 
-        $tongThanhTien = $tongTienGhe + $tongTienCombo + $tongTienDoAn;
+        $tongThanhTien = intval($datVe->tong_tien);
 
         $embedData = [
             'dat_ve_id' => $datVe->id,
@@ -328,7 +328,6 @@ class ThanhToanController extends Controller
 
                                                 Log::info("Đã cập nhật cấp bậc mới cho người dùng ID {$nguoiDung->id}: {$capBacMoi->ten}");
                                             }
-
                                         }
                                     } else {
                                         Log::warning('Không tìm thấy cấp bậc ID: ' . $nguoiDung->cap_bac_id);

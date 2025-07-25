@@ -3,10 +3,10 @@
 
 <head>
     @php
-    use Hashids\Hashids;
+        use Hashids\Hashids;
 
-    $config = config('hashids');
-    $hashids = new Hashids($config['salt'], $config['length'], $config['alphabet']);
+        $config = config('hashids');
+        $hashids = new Hashids($config['salt'], $config['length'], $config['alphabet']);
     @endphp
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,9 +19,10 @@
     <!-- Font Awesome 6 (miễn phí) -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    @vite(['resources/css/client.css', 'resources/js/client.js'])
+    @vite(['resources/css/client.css', 'resources/js/client.js' , 'resources/js/chat.js'])
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    {{-- <script src="https://cdn.tailwindcss.com"></script> --}}
     {{-- CSS --}}
     @yield('styles')
 
@@ -189,24 +190,23 @@
 <body>
     <div class="container">
         @if (session('success'))
-        <script>
-            Swal.fire({
-                toast: true,
-                position: 'top-end',
-                icon: 'success',
-                title: '{{ session('
-                success ') }}',
-                background: '#10b981',
-                color: '#fff',
-                showCloseButton: true,
-                timer: 7000,
-                timerProgressBar: true,
-                showConfirmButton: false,
-                customClass: {
-                    popup: 'custom-toast'
-                }
-            });
-        </script>
+            <script>
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'success',
+                    title: '{{ session('success') }}',
+                    background: '#10b981',
+                    color: '#fff',
+                    showCloseButton: true,
+                    timer: 7000,
+                    timerProgressBar: true,
+                    showConfirmButton: false,
+                    customClass: {
+                        popup: 'custom-toast'
+                    }
+                });
+            </script>
         @endif
 
         {{-- Header --}}
@@ -227,22 +227,22 @@
                     <i class="fa-solid fa-user"></i>
 
                     @auth
-                    <div class="user-toggle" onclick="toggleUserDropdown()">
-                        <span class="user-name">{{ Auth::user()->name }}</span>
-                        <i class="fa-solid fa-chevron-down"></i>
-                    </div>
-                    <div class="dropdown-menu" id="userDropdown">
-                        <a href="{{ route('profile') }}"><i class="fa-solid fa-user"></i> Thông tin cá nhân</a>
-                        <a href="{{ route('logout') }}"
-                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                            <i class="fa-solid fa-arrow-right-from-bracket"></i> Đăng xuất
-                        </a>
-                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                            @csrf
-                        </form>
-                    </div>
+                        <div class="user-toggle" onclick="toggleUserDropdown()">
+                            <span class="user-name">{{ Auth::user()->name }}</span>
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </div>
+                        <div class="dropdown-menu" id="userDropdown">
+                            <a href="{{ route('profile') }}"><i class="fa-solid fa-user"></i> Thông tin cá nhân</a>
+                            <a href="{{ route('logout') }}"
+                                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                <i class="fa-solid fa-arrow-right-from-bracket"></i> Đăng xuất
+                            </a>
+                            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                                @csrf
+                            </form>
+                        </div>
                     @else
-                    <a href="{{ route('login.form') }}"><span>Đăng nhập</span></a>
+                        <a href="{{ route('login.form') }}"><span>Đăng nhập</span></a>
                     @endauth
                 </div>
 
@@ -264,19 +264,19 @@
                         <div class="rap-dropdown">
                             <ul class="chi-nhanh-list">
                                 @foreach ($rapPhims as $chiNhanhId => $dsRap)
-                                <li class="has-submenu">
-                                    {{ $dsRap->first()->chiNhanh->ten_chi_nhanh }}
-                                    <ul class="rap-submenu">
-                                        @foreach ($dsRap as $rap)
-                                        <li>
-                                            <a
-                                                href="{{ route('showrap', \App\Helpers\IdFormatter::uuidify($rap->id)) }}">
-                                                {{ $rap->ten_rap }}
-                                            </a>
-                                        </li>
-                                        @endforeach
-                                    </ul>
-                                </li>
+                                    <li class="has-submenu">
+                                        {{ $dsRap->first()->chiNhanh->ten_chi_nhanh }}
+                                        <ul class="rap-submenu">
+                                            @foreach ($dsRap as $rap)
+                                                <li>
+                                                    <a
+                                                        href="{{ route('showrap', \App\Helpers\IdFormatter::uuidify($rap->id)) }}">
+                                                        {{ $rap->ten_rap }}
+                                                    </a>
+                                                </li>
+                                            @endforeach
+                                        </ul>
+                                    </li>
                                 @endforeach
                             </ul>
 
@@ -300,6 +300,22 @@
 
     {{-- Nội dung trang --}}
     @yield('content')
+
+    <div id="ai-toggle" onclick="toggleChat()">🤖</div>
+
+    <div id="chatbox-ai">
+        <header>
+            PolyFlix AI
+            <span class="close-btn-ai" onclick="toggleChat()"><i class="fa-solid fa-xmark fa-xl"
+                    style="color: #FFD43B;"></i></span>
+        </header>
+        <div id="chat-messages"></div>
+        <footer>
+            <input type="text" id="chat-input" placeholder="Nhập nội dung..." maxlength="200"
+                onkeydown="if(event.key==='Enter') sendChat()">
+            <button id="send-btn" onclick="sendChat()">Gửi</button>
+        </footer>
+    </div>
 
     {{-- Footer --}}
     <div class="footer">
@@ -338,6 +354,7 @@
             <p>PolyFlix Long Biên - Hà Nội</p>
         </div>
     </div>
+
 </body>
 
 </html>

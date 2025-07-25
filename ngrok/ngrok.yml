@@ -3,8 +3,8 @@ authtoken: 2zp7Gbc0ImSy6pWfhC9raHqkAhC_2p5SBi72CurXJrGgrijct
 
 tunnels:
   laravel:
+    proto: http
     addr: 8000
-    proto: http
   vite:
-    addr: 5173
     proto: http
+    addr: 5173
