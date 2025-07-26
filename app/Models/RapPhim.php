@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use App\Models\DoAn;
 use App\Models\User;
+use App\Models\Combo;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -47,4 +49,14 @@ class RapPhim extends Model
     {
         return $this->belongsToMany(Phim::class, 'phim_raps', 'rap_phim_id', 'phim_id');
     }
+    public function combos()
+    {
+        return $this->belongsToMany(Combo::class, 'rap_combo');
+    }
+    public function doAns()
+    {
+        return $this->belongsToMany(DoAn::class, 'rap_do_an');
+    }
+
+
 }

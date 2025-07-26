@@ -293,77 +293,7 @@
                         </a>
                     </li>
 
-                    <li class="sidebar-item">
-                        <a class="sidebar-link sidebar-link success-hover-bg"
-                            href="https://bootstrapdemos.wrappixel.com/spike/dist/main/index2.html"
-                            aria-expanded="false">
-                            <span class="aside-icon p-2 bg-success-subtle rounded-1">
-                                <iconify-icon icon="solar:chart-line-duotone" class="fs-6"></iconify-icon>
-                            </span>
-                            <span class="hide-menu ps-1">Dashboard 2</span>
-                        </a>
-                    </li>
-
-                    <li class="sidebar-item">
-                        <a class="sidebar-link has-arrow primary-hover-bg" href="javascript:void(0)"
-                            aria-expanded="false">
-                            <span class="aside-icon p-2 bg-primary-subtle rounded-1">
-                                <iconify-icon icon="solar:dropper-minimalistic-2-line-duotone"
-                                    class="fs-6"></iconify-icon>
-                            </span>
-                            <span class="hide-menu ps-1">Apex Charts</span>
-                        </a>
-                        <ul aria-expanded="false" class="collapse first-level">
-                            <li class="sidebar-item">
-                                <a href="https://bootstrapdemos.wrappixel.com/spike/dist/main/chart-apex-line.html"
-                                    class="sidebar-link">
-                                    <span class="sidebar-icon"></span>
-                                    <span class="hide-menu">Line Chart</span>
-                                </a>
-                            </li>
-
-                            <li class="sidebar-item">
-                                <a href="https://bootstrapdemos.wrappixel.com/spike/dist/main/chart-apex-area.html"
-                                    class="sidebar-link">
-                                    <span class="sidebar-icon"></span>
-                                    <span class="hide-menu">Area Chart</span>
-                                </a>
-                            </li>
-
-                            <li class="sidebar-item">
-                                <a href="https://bootstrapdemos.wrappixel.com/spike/dist/main/chart-apex-bar.html"
-                                    class="sidebar-link">
-                                    <span class="sidebar-icon"></span>
-                                    <span class="hide-menu">Bar Chart</span>
-                                </a>
-                            </li>
-
-                            <li class="sidebar-item">
-                                <a href="https://bootstrapdemos.wrappixel.com/spike/dist/main/chart-apex-pie.html"
-                                    class="sidebar-link">
-                                    <span class="sidebar-icon"></span>
-                                    <span class="hide-menu">Pie Chart</span>
-                                </a>
-                            </li>
-
-                            <li class="sidebar-item">
-                                <a href="https://bootstrapdemos.wrappixel.com/spike/dist/main/chart-apex-radial.html"
-                                    class="sidebar-link">
-                                    <span class="sidebar-icon"></span>
-                                    <span class="hide-menu">Radial Chart</span>
-                                </a>
-                            </li>
-
-                            <li class="sidebar-item">
-                                <a href="https://bootstrapdemos.wrappixel.com/spike/dist/main/chart-apex-radar.html"
-                                    class="sidebar-link">
-                                    <span class="sidebar-icon"></span>
-                                    <span class="hide-menu">Radar Chart</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                @elseif(Auth::user()->vai_tro_id == 2)
+                    @elseif(Auth::user()->vai_tro_id == 2)
                     <li class="sidebar-item">
                         <a class="sidebar-link has-arrow primary-hover-bg" href="javascript:void(0)"
                             aria-expanded="false">
@@ -379,7 +309,7 @@
                                     <span class="hide-menu">Mạng lưới rạp chiếu</span>
                                 </a>
                             </li>
-                            
+
                         </ul>
                     </li>
                     {{-- Quản lý phim --}}
@@ -406,6 +336,85 @@
                             </li>
                         </ul>
                     </li>
+
+                    {{-- Quản lý đồ ăn --}}
+                    <li class="sidebar-item">
+                        <a class="sidebar-link has-arrow danger-hover-bg" href="javascript:void(0)"
+                            aria-expanded="false">
+                            <span class="aside-icon p-2 bg-danger-subtle rounded-1">
+                                <i class="ti ti-cup fs-6"></i>
+                            </span>
+                            <span class="hide-menu ps-1">Quản lý đồ ăn</span>
+                        </a>
+                        <ul aria-expanded="false" class="collapse first-level">
+                            <li class="sidebar-item">
+                                <a href="{{ route('admin.do-an.index') }}" class="sidebar-link">
+                                    <span class="sidebar-icon"></span>
+                                    <span class="hide-menu">Đồ ăn</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-item">
+                                <a href="{{ route('admin.combos.index') }}" class="sidebar-link">
+                                    <span class="sidebar-icon"></span>
+                                    <span class="hide-menu">Combo</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-item">
+                                <a href="{{ route('admin.danh-muc-do-an.index') }}" class="sidebar-link">
+                                    <span class="sidebar-icon"></span>
+                                    <span class="hide-menu">Danh mục đồ ăn</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                @elseif(Auth::user()->vai_tro_id == 3)
+                    @php
+                        $chi_nhanh_id = \App\Models\RapPhim::where('quan_ly_id', Auth::id())->value('chi_nhanh_id');
+                    @endphp
+                    @if ($chi_nhanh_id)
+                        <li class="sidebar-item">
+                            <a class="sidebar-link has-arrow primary-hover-bg" href="javascript:void(0)"
+                                aria-expanded="false">
+                                <span class="aside-icon p-2 bg-primary-subtle rounded-1">
+                                    <i class="ti ti-theater fs-7"></i>
+                                </span>
+                                <span class="hide-menu ps-1">Hệ thống rạp</span>
+                            </a>
+                            <ul aria-expanded="false" class="collapse first-level">
+                                <li class="sidebar-item">
+                                    <a href="{{ route('admin.chi-nhanh.show', ['chi_nhanh' => $chi_nhanh_id]) }}"
+                                        class="sidebar-link">
+                                        <span class="sidebar-icon"></span>
+                                        <span class="hide-menu">Mạng lưới rạp chiếu</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    @endif
+                    {{-- Quản lý phim --}}
+                    <li class="sidebar-item">
+                        <a class="sidebar-link has-arrow success-hover-bg" href="javascript:void(0)"
+                            aria-expanded="false">
+                            <span class="aside-icon p-2 bg-success-subtle rounded-1">
+                                <i class="ti ti-movie fs-6"></i>
+                            </span>
+                            <span class="hide-menu ps-1">Quản lý phim</span>
+                        </a>
+                        <ul aria-expanded="false" class="collapse first-level">
+                            <li class="sidebar-item">
+                                <a href="{{ route('admin.phim.index') }}" class="sidebar-link">
+                                    <span class="sidebar-icon"></span>
+                                    <span class="hide-menu">Danh sách phim</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-item">
+                                <a href="{{ route('admin.suat-chieu.index') }}" class="sidebar-link">
+                                    <span class="sidebar-icon"></span>
+                                    <span class="hide-menu">Suất chiếu</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>   
                 @endif
 
             </ul>

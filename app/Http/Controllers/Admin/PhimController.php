@@ -42,30 +42,29 @@ class PhimController extends Controller
 
     public function index()
     {
-        $this->capNhatTrangThaiPhim(); // 👉 tự động cập nhật trạng thái phim
-
-        // Super admin: lấy tất cả phim
-        if (Auth::user()->vai_tro_id == 1) {
+        $user = Auth::user();
+    
+        if ($user->vai_tro_id == 1) {
+            // Admin tổng: tất cả phim
             $phims = Phim::orderBy('create_at', 'desc')->paginate(10);
-        }
-
-        // Quản lý chi nhánh: lấy phim thuộc các chi nhánh mà họ quản lý
-        elseif (Auth::user()->vai_tro_id == 2) {
-            $phims = Phim::whereHas('chiNhanhs', function ($query) {
-                $query->where('quan_ly_id', Auth::id());
+        } elseif ($user->vai_tro_id == 2) {
+            // Admin chi nhánh: chỉ phim thuộc chi nhánh họ quản lý
+            $phims = Phim::whereHas('chiNhanhs', function ($query) use ($user) {
+                $query->where('quan_ly_id', $user->id);
             })->orderBy('create_at', 'desc')->paginate(10);
-        }
-
-        // Quản lý rạp: lấy phim thuộc các rạp mà họ quản lý
-        elseif (Auth::user()->vai_tro_id == 3) {
-            $phims = Phim::whereHas('rapPhims', function ($query) {
-                $query->where('quan_ly_id', Auth::id());
+        } elseif ($user->vai_tro_id == 3) {
+            // Admin rạp: chỉ phim thuộc rạp họ quản lý
+            $phims = Phim::whereHas('rapPhims', function ($query) use ($user) {
+                $query->where('quan_ly_id', $user->id);
             })->orderBy('create_at', 'desc')->paginate(10);
+        } else {
+            // Vai trò khác: không thấy gì
+            $phims = collect();
         }
-
-
+    
         return view('admin.phim.index', compact('phims'));
     }
+    
 
     public function create()
     {

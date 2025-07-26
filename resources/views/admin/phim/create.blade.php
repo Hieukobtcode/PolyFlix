@@ -244,7 +244,7 @@
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
-
+{{-- 
                             <div class="mb-4">
                                 <label for="rap_phim_ids" class="form-label fw-semibold">Rạp <span
                                         class="text-danger">*</span></label>
@@ -260,7 +260,7 @@
                                 @error('rap_phim_ids')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
-                            </div>
+                            </div> --}}
 
                         </div>
                     </div>
