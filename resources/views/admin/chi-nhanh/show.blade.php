@@ -32,7 +32,7 @@
                                 </div>
                             @endif
                             <table class="table text-nowrap align-middle mb-0">
-                                <thead class="bg-gradient-dark text-white text-center small">
+                                <thead class="bg-gradient-dark text-white small">
                                     <tr>
                                         <th style="width: 5%">#</th>
                                         <th>
@@ -71,13 +71,13 @@
                                         @endphp
                                         @php $tenRapLower = strtolower(strip_tags($rap->ten_rap)); @endphp
                                         <tr class="data-row" data-ten-rap="{{ $tenRapLower }}">
-                                            <td class="text-center">{{ $index + 1 }}</td>
+                                            <td>{{ $index + 1 }}</td>
                                             <td>{{ $rap->ten_rap }}</td>
                                             <td>{{ $rap->dia_chi }}</td>
-                                            <td class="text-center">
+                                            <td>
                                                 <span class="badge {{ $statusClass }}">{{ $statusText }}</span>
                                             </td>
-                                            <td class="text-center">
+                                            <td>
                                                 @if ($rap->quan_ly_id)
                                                     @if (Auth::user()->vai_tro_id == 1)
                                                         <a href="{{ route('admin.users.show', $rap->quan_ly_id) }}"
@@ -104,7 +104,7 @@
                                                         công</span>
                                                 @endif
                                             </td>
-                                            <td class="text-center">
+                                            <td>
                                                 <div class="dropdown dropstart">
                                                     <a href="javascript:void(0)" class="text-muted"
                                                         data-bs-toggle="dropdown" aria-expanded="false">

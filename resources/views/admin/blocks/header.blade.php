@@ -55,68 +55,71 @@
                          <!-- ------------------------------- -->
                          <!-- start Messages cart Dropdown -->
                          <!-- ------------------------------- -->
-                         <li class="nav-item dropdown nav-icon-hover-bg rounded-circle">
-                             <a class="nav-link position-relative" href="javascript:void(0)" id="dropNotification"
-                                 aria-expanded="false">
-                                 <iconify-icon icon="solar:chat-dots-line-duotone" class="fs-6"></iconify-icon>
-                                 @if ($pendingCount > 0)
-                                     <div class="pulse">
-                                         <span class="heartbit border-warning"></span>
-                                         <span class="point text-bg-warning"></span>
-                                     </div>
-                                 @endif
-                             </a>
-
-                             <div class="dropdown-menu content-dd dropdown-menu-end dropdown-menu-animate-up"
-                                 aria-labelledby="dropNotification">
-                                 <div class="d-flex align-items-center py-3 px-7">
-                                     <h3 class="mb-0 fs-5">Thông báo</h3>
+                         @if (Auth::user()->vai_tro_id == 1)
+                             <li class="nav-item dropdown nav-icon-hover-bg rounded-circle">
+                                 <a class="nav-link position-relative" href="javascript:void(0)" id="dropNotification"
+                                     aria-expanded="false">
+                                     <iconify-icon icon="solar:chat-dots-line-duotone" class="fs-6"></iconify-icon>
                                      @if ($pendingCount > 0)
-                                         <span class="badge bg-info ms-3">{{ $pendingCount }}
-                                             mới</span>
+                                         <div class="pulse">
+                                             <span class="heartbit border-warning"></span>
+                                             <span class="point text-bg-warning"></span>
+                                         </div>
                                      @endif
-                                 </div>
+                                 </a>
 
-                                 <div class="message-body" data-simplebar>
-                                     @forelse ($pendingRequests as $request)
-                                         <a href="{{ route('admin.requests.index') }}"
-                                             class="dropdown-item px-7 d-flex align-items-center py-6">
-                                             <span class="flex-shrink-0">
-                                                 <div class="avatar bg-info text-white rounded-circle d-flex align-items-center justify-content-center"
-                                                     style="width: 45px; height: 45px;">
-                                                     <i class="fa-solid fa-user"></i>
-                                                 </div>
-                                             </span>
-                                             <div class="w-100 ps-3">
-                                                 <div class="d-flex align-items-center justify-content-between">
-                                                     <h5 class="mb-0 fs-3 fw-normal">
-                                                         Phê duyệt chi nhánh
-                                                     </h5>
-                                                     <span class="fs-2 text-nowrap d-block text-muted">
-                                                         {{ $request->created_at->format('H:i') }}
+                                 <div class="dropdown-menu content-dd dropdown-menu-end dropdown-menu-animate-up"
+                                     aria-labelledby="dropNotification">
+                                     <div class="d-flex align-items-center py-3 px-7">
+                                         <h3 class="mb-0 fs-5">Thông báo</h3>
+                                         @if ($pendingCount > 0)
+                                             <span class="badge bg-info ms-3">{{ $pendingCount }}
+                                                 mới</span>
+                                         @endif
+                                     </div>
+
+                                     <div class="message-body" data-simplebar>
+                                         @forelse ($pendingRequests as $request)
+                                             <a href="{{ route('admin.requests.index') }}"
+                                                 class="dropdown-item px-7 d-flex align-items-center py-6">
+                                                 <span class="flex-shrink-0">
+                                                     <div class="avatar bg-info text-white rounded-circle d-flex align-items-center justify-content-center"
+                                                         style="width: 45px; height: 45px;">
+                                                         <i class="fa-solid fa-user"></i>
+                                                     </div>
+                                                 </span>
+                                                 <div class="w-100 ps-3">
+                                                     <div class="d-flex align-items-center justify-content-between">
+                                                         <h5 class="mb-0 fs-3 fw-normal">
+                                                             Phê duyệt chi nhánh
+                                                         </h5>
+                                                         <span class="fs-2 text-nowrap d-block text-muted">
+                                                             {{ $request->created_at->format('H:i') }}
+                                                         </span>
+                                                     </div>
+                                                     <span class="fs-2 d-block mt-1 text-muted">
+                                                         {{ $request->chiNhanh->ten_chi_nhanh ?? 'Không rõ' }}<br>
+                                                         {{ $request->original_email }}
                                                      </span>
                                                  </div>
-                                                 <span class="fs-2 d-block mt-1 text-muted">
-                                                     {{ $request->chiNhanh->ten_chi_nhanh ?? 'Không rõ' }}<br>
-                                                     {{ $request->original_email }}
-                                                 </span>
-                                             </div>
-                                         </a>
-                                     @empty
-                                         <div class="dropdown-item text-muted text-center">Không có
-                                             thông báo nào mới</div>
-                                     @endforelse
-                                 </div>
-
-                                 @if (count($pendingRequests) > 0)
-                                     <div class="py-6 px-7 mb-1">
-                                         <a href="{{ route('admin.requests.index') }}" class="btn btn-primary w-100">
-                                             Xem tất cả yêu cầu
-                                         </a>
+                                             </a>
+                                         @empty
+                                             <div class="dropdown-item text-muted text-center">Không có
+                                                 thông báo nào mới</div>
+                                         @endforelse
                                      </div>
-                                 @endif
-                             </div>
-                         </li>
+
+                                     @if (count($pendingRequests) > 0)
+                                         <div class="py-6 px-7 mb-1">
+                                             <a href="{{ route('admin.requests.index') }}"
+                                                 class="btn btn-primary w-100">
+                                                 Xem tất cả yêu cầu
+                                             </a>
+                                         </div>
+                                     @endif
+                                 </div>
+                             </li>
+                         @endif
 
                          <!-- ------------------------------- -->
                          <!-- end Messages cart Dropdown -->
