@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class LichSuDiem extends Model
 {
+    public $timestamps = false;
+
     protected $table = 'lich_su_diem'; // chỉ định tên bảng
 
     protected $fillable = [

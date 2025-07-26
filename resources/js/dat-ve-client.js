@@ -632,8 +632,7 @@ $(document).ready(function () {
                 },
                 success: () => {
                     console.log(
-                        `Ghế ${seatId} ${
-                            isSelected ? "đã được hủy" : "đã được chọn"
+                        `Ghế ${seatId} ${isSelected ? "đã được hủy" : "đã được chọn"
                         }`
                     );
                 },
@@ -645,6 +644,85 @@ $(document).ready(function () {
                 },
             });
         }
+
+        const viewPoint = $('#pointView');
+        viewPoint.css('display', 'block');
+        $(document).ready(function () {
+            // Thiết lập CSRF token cho tất cả request Ajax
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+
+            // Lưu tổng tiền gốc ngay khi load trang
+            const tongTienGoc = parseInt($('#total-amount').text().replace(/[₫.]/g, ''));
+
+            $('#btnPoint').on("click", function () {
+                const diemMuonDoi = parseInt($('#point').val());
+                const diemHienCo = parseInt($('#diemHienCo').data('diem'));
+
+                if (isNaN(diemMuonDoi) || diemMuonDoi < 1000) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Cảnh báo',
+                        text: 'Vui lòng nhập số điểm hợp lệ (tối thiểu 1000 điểm).'
+                    });
+                    return;
+                }
+
+                if (diemMuonDoi > diemHienCo) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Không đủ điểm',
+                        text: 'Bạn không có đủ điểm để đổi.'
+                    });
+                    return;
+                }
+
+                const tienNhanDuoc = diemMuonDoi;
+
+                $.ajax({
+                    url: "/doi-diem",
+                    method: "POST",
+                    data: {
+                        so_diem: diemMuonDoi,
+                        so_tien: tienNhanDuoc
+                    },
+                    success: function (response) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Đổi điểm thành công!',
+                            html: 'Bạn đã nhận được <strong>' + tienNhanDuoc.toLocaleString('vi-VN') + '₫</strong>'
+                        });
+
+                        // Trừ điểm vào tổng tiền gốc duy nhất 1 lần
+                        const newAmount = tongTienGoc - tienNhanDuoc;
+                        $('#total-amount').text(newAmount.toLocaleString('vi-VN') + '₫');
+
+                        // Cập nhật số điểm còn lại
+                        const diemConLai = diemHienCo - diemMuonDoi;
+                        $('#diemHienCo').text(diemConLai.toLocaleString('vi-VN')).data('diem', diemConLai);
+                    },
+                    error: function (xhr) {
+                        if (xhr.status === 419) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Phiên đã hết hạn',
+                                text: 'Vui lòng tải lại trang và thử lại.'
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Lỗi',
+                                text: 'Có lỗi xảy ra khi đổi điểm.'
+                            });
+                        }
+                    }
+                });
+            });
+        });
+
 
         updateSummary();
     });
@@ -692,6 +770,12 @@ $(document).ready(function () {
                 formData.append(`combo[${comboId}]`, quantity);
             }
         });
+
+        const tongTien = parseInt($('#total-amount').text().replace(/[₫.]/g, '')) || 0;
+        formData.append("tong_tien", tongTien);
+
+        const diem = parseInt($('#point').val()) || 0;
+        formData.append("diem_su_dung", diem);
 
         // Gửi request đặt vé
         $.ajax({

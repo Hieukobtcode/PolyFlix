@@ -306,18 +306,30 @@
                 </form>
                 <div>
                     <div class="user-name1">🏅 {{ Auth::user()->name }}</div>
-                    <div class="stars">🎁 Hạng</div>
+                    <div class="stars">{{ $tenCapBac }}</div>
                 </div>
             </div>
 
             <div class="spending-progress">
-                <p><strong style="color: #004d40;">Tổng số vé đã đặt:</strong> <span style="color: #f97316;">0 vé</span></p>
-                <div class="progress-bar">
-                    <div class="progress-fill" style="width: 0%"></div>
+                <p>
+                    <strong style="color: #004d40;">Tổng tiền chi tiêu:</strong>
+                    <span style="color: #f97316;">
+                        {{ number_format($tongChiTieu, 0, ',', '.') }}₫
+                    </span>
+                </p>
+
+                {{-- Thanh tiến độ --}}
+                <div class="progress-bar"
+                    style="height: 10px; background-color: #b2dfdb; border-radius: 10px; overflow: hidden;">
+                    <div class="progress-fill"
+                        style="height: 100%; width: {{ $phanTramChiTieu }}%; background-color: #ef4444; transition: width 0.5s;">
+                    </div>
                 </div>
-                <div class="milestone-labels">
+
+                {{-- Các mốc --}}
+                <div class="milestone-labels" style="display: flex; justify-content: space-between; margin-top: 5px;">
                     @foreach ($milestones as $moc)
-                        <span>{{ $moc }} đ</span>
+                        <span>{{ number_format($moc, 0, ',', '.') }} đ</span>
                     @endforeach
                 </div>
             </div>
@@ -478,11 +490,16 @@
                                     {{ ($lichSuDiem->currentPage() - 1) * $lichSuDiem->perPage() + $loop->iteration }}
                                 </td>
                                 <td style="padding: 10px;">
-                                    @if ($item->thay_doi >= 0)
-                                        <span style="color: green;">+{{ $item->thay_doi }}</span>
+                                    @php
+                                        $isTru = Str::contains($item->ly_do, 'Trừ');
+                                    @endphp
+
+                                    @if ($isTru)
+                                        <span style="color: red;">-{{ abs($item->thay_doi) }}</span>
                                     @else
-                                        <span style="color: red;">{{ $item->thay_doi }}</span>
+                                        <span style="color: green;">+{{ $item->thay_doi }}</span>
                                     @endif
+
                                 </td>
                                 <td style="padding: 10px;">{{ $item->ly_do ?? 'Không rõ' }}</td>
                                 <td style="padding: 10px;">{{ $item->thoi_gian }}</td>

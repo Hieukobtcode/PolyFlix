@@ -37,21 +37,51 @@ class ProfileController extends Controller
             ->orderBy('ngay_thanh_toan', 'desc')
             ->get();
 
+        // Tính tổng chi tiêu
+        $tongChiTieu = DatVe::where('user_id', $user->id)
+            ->where('trang_thai', 'Đã thanh toán')
+            ->sum('tong_tien');
+
+        // Tìm cấp bậc phù hợp
+        $capBac = CapBacThe::where('tong_chi_tieu', '<=', $tongChiTieu)
+            ->orderByDesc('tong_chi_tieu')
+            ->first();
+
+        if ($capBac) {
+            if ($user->cap_bac_id != $capBac->id) {
+                $user->cap_bac_id = $capBac->id;
+                $user->save();
+
+                Log::info("Người dùng #{$user->id} được cập nhật cấp bậc: {$capBac->ten}");
+            }
+
+            $tenCapBac = $capBac->ten;
+        } else {
+            $tenCapBac = 'Chưa có cấp bậc';
+        }
+
+        // Tính % tiến độ chi tiêu
+        $maxMoc = $milestones->max() ?? 1; // tránh chia 0
+        $phanTramChiTieu = min(100, round(($tongChiTieu / $maxMoc) * 100));
 
         return view("client.profile", compact(
             'milestones',
             'lichSuDiem',
             'user',
-            'donDatVeDaThanhToan'
+            'donDatVeDaThanhToan',
+            'tongChiTieu',
+            'tenCapBac',
+            'phanTramChiTieu'
         ));
     }
+
 
     public function updatePassword(Request $request)
     {
         $request->validate([
-            'current_password'   => 'required',
-            'new_password'       => 'required|min:6',
-            'confirm_password'   => 'required|min:6|same:new_password',
+            'current_password' => 'required',
+            'new_password' => 'required|min:6',
+            'confirm_password' => 'required|min:6|same:new_password',
         ]);
 
         $user = Auth::user();
@@ -83,7 +113,7 @@ class ProfileController extends Controller
 
             return response()->json([
                 'avatar_url' => asset('storage/' . $path),
-                'message'    => 'Cập nhật ảnh đại diện thành công!'
+                'message' => 'Cập nhật ảnh đại diện thành công!'
             ]);
         }
 
