@@ -729,6 +729,7 @@ class ComposerStaticInitbd822e765c131fc8ed22c288f3d64b19
         'App\\Http\\Controllers\\Admin\\UserController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/UserController.php',
         'App\\Http\\Controllers\\Admin\\VaiTroController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/VaiTroController.php',
         'App\\Http\\Controllers\\AuthController' => __DIR__ . '/../..' . '/app/Http/Controllers/AuthController.php',
+        'App\\Http\\Controllers\\Client\\AIChatController' => __DIR__ . '/../..' . '/app/Http/Controllers/Client/AIChatController.php',
         'App\\Http\\Controllers\\Client\\DanhSachBaiVietController' => __DIR__ . '/../..' . '/app/Http/Controllers/Client/DanhSachBaiVietController.php',
         'App\\Http\\Controllers\\Client\\DatVeController' => __DIR__ . '/../..' . '/app/Http/Controllers/Client/DatVeController.php',
         'App\\Http\\Controllers\\Client\\DiemController' => __DIR__ . '/../..' . '/app/Http/Controllers/Client/DiemController.php',

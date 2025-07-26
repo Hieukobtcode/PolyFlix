@@ -38,6 +38,7 @@ use App\Http\Controllers\Admin\CommentController;
 use App\Http\Controllers\Admin\GiaVeController;
 use App\Http\Controllers\Admin\KhuyenMaiController as AdminKhuyenMaiController;
 use App\Http\Controllers\Admin\RequestController;
+use App\Http\Controllers\Client\AIChatController;
 use App\Http\Controllers\Client\LoginController;
 use App\Http\Controllers\Client\ProfileController;
 use App\Http\Controllers\Client\KhuyenMaiController;
@@ -74,6 +75,9 @@ Route::middleware('auth')->group(function () {
     // Ghế đang được chọn
     Route::post('/chon-ghe', [\App\Http\Controllers\Client\DatVeController::class, 'chonGhe'])->name('client.ghe.chon');
     Route::post('/huy-chon-ghe', [\App\Http\Controllers\Client\DatVeController::class, 'huyChonGhe'])->name('client.ghe.huy');
+
+    //Chat AI
+    Route::post('/ai-chat', [AIChatController::class, 'chat']);
 });
 
 Route::get('/', [TrangChuController::class, 'index'])->name('home');
