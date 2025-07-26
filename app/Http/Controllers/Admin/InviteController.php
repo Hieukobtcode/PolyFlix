@@ -115,34 +115,33 @@ class InviteController extends Controller
     public function submitForm(Request $request)
     {
 
-        $request->validate([
+         $request->validate([
             'token' => 'required',
-            'name' => 'required',
+            'name' => 'required|string|max:255',
             'dob' => 'required|date',
-            'address' => 'required',
             'phone' => 'required|string|max:20',
-            'avatar' => 'nullable|image|max:2048',
+        ], [
+            'token.required' => 'Thiếu mã xác thực lời mời.',
+            'name.required' => 'Vui lòng nhập họ và tên.',
+            'name.string' => 'Họ và tên không hợp lệ.',
+            'name.max' => 'Họ và tên không được vượt quá 255 ký tự.',
+            'dob.required' => 'Vui lòng chọn ngày sinh.',
+            'dob.date' => 'Ngày sinh không đúng định dạng.',
+            'phone.required' => 'Vui lòng nhập số điện thoại.',
+            'phone.string' => 'Số điện thoại không hợp lệ.',
+            'phone.max' => 'Số điện thoại không được vượt quá 20 ký tự.',
         ]);
-
         $invite = QuanLyInvite::where('token', $request->token)
             ->where('expires_at', '>', now())
             ->where('used', false)
             ->firstOrFail();
-
-        // Xử lý avatar (nếu có)
-        $avatarPath = null;
-        if ($request->hasFile('avatar')) {
-            $avatarPath = $request->file('avatar')->store('avatars', 'public');
-        }
 
         // Chuẩn bị dữ liệu lưu
         $data = [
             'name' => $request->name,
             'original_email' => $invite->email,
             'ngay_sinh' => $request->dob,
-            'dia_chi' => $request->address,
             'so_dien_thoai' => $request->phone,
-            'avatar' => $avatarPath,
         ];
 
         // Gán chi_nhanh_id hoặc rap_phim_id tùy theo loại quản lý
