@@ -34,6 +34,11 @@
                             <br>
                             <span class="fw-semibold text-muted">Thời lượng:</span>
                             <span>{{ $phim->thoi_luong }} phút</span>
+                            @if (Auth::user()->vai_tro_id == 3 && $rapQuanLy)
+                                <br>
+                                <span class="fw-semibold text-muted">Thông tin phòng chiếu:</span>
+                                <span>{{ $rapQuanLy->ten_rap }} – {{ $rapQuanLy->chiNhanh->ten_chi_nhanh ?? 'N/A' }}</span>
+                            @endif
                         </div>
 
                         <form id="suat-chieu-form">
@@ -49,7 +54,9 @@
                                     @foreach ($phongChieus as $phong)
                                         <option value="{{ $phong->id }}"
                                             {{ old('phong_chieu_id') == $phong->id ? 'selected' : '' }}>
-                                            {{ $phong->ten_phong }}
+                                            {{ $phong->ten_phong }} –
+                                            {{ $phong->rapPhim->ten_rap ?? 'N/A' }} –
+                                            {{ $phong->rapPhim->chiNhanh->ten_chi_nhanh ?? 'N/A' }}
                                         </option>
                                     @endforeach
                                 </select>
@@ -321,6 +328,24 @@
         function taoSuatChieu() {
             const form = document.getElementById('suat-chieu-form');
             const formData = new FormData(form);
+            formData.set('che_do', document.querySelector('input[name="che_do"]:checked')?.value || '');
+
+            const cheDo = formData.get('che_do');
+
+            if (cheDo === 'tu_dong') {
+                formData.set('tudong_bat_dau', document.getElementById('tudong_bat_dau')?.value || '');
+                formData.set('tudong_ket_thuc', document.getElementById('tudong_ket_thuc')?.value || '');
+            }
+            if (cheDo === 'thu_cong') {
+                const gioThuCong = Array.from(document.querySelectorAll('input[name="thucong_bat_dau[]"]'))
+                    .map(input => input.value)
+                    .filter(v => v !== '');
+
+                // Xóa các giá trị cũ và set lại
+                gioThuCong.forEach((gio, i) => {
+                    formData.append(`thucong_bat_dau[${i}]`, gio);
+                });
+            }
 
             fetch('{{ route('admin.suat-chieu.store') }}', {
                     method: 'POST',

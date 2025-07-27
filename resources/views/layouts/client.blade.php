@@ -324,19 +324,21 @@
 
     <div id="ai-toggle" onclick="toggleChat()">🤖</div>
 
-    <div id="chatbox-ai">
-        <header>
-            PolyFlix AI
-            <span class="close-btn-ai" onclick="toggleChat()"><i class="fa-solid fa-xmark fa-xl"
-                    style="color: #FFD43B;"></i></span>
-        </header>
-        <div id="chat-messages"></div>
-        <footer>
-            <input type="text" id="chat-input" placeholder="Nhập nội dung..." maxlength="200"
-                onkeydown="if(event.key==='Enter') sendChat()">
-            <button id="send-btn" onclick="sendChat()">Gửi</button>
-        </footer>
-    </div>
+    @auth
+        <div id="chatbox-ai">
+            <header>
+                PolyFlix AI
+                <span class="close-btn-ai" onclick="toggleChat()"><i class="fa-solid fa-xmark fa-xl"
+                        style="color: #FFD43B;"></i></span>
+            </header>
+            <div id="chat-messages"></div>
+            <footer>
+                <input type="text" id="chat-input" placeholder="Nhập nội dung..." maxlength="200"
+                    onkeydown="if(event.key==='Enter') sendChat()">
+                <button id="send-btn" onclick="sendChat()">Gửi</button>
+            </footer>
+        </div>
+    @endauth
 
     {{-- Footer --}}
     <div class="footer">

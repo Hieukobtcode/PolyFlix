@@ -78,6 +78,7 @@ Route::middleware('auth')->group(function () {
 
     //Chat AI
     Route::post('/ai-chat', [AIChatController::class, 'chat']);
+    Route::post('/ai-chat-reset', [AIChatController::class, 'reset']);
 });
 
 Route::get('/', [TrangChuController::class, 'index'])->name('home');

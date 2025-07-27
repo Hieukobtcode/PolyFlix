@@ -18,6 +18,7 @@ class ChiNhanhController extends Controller
     public function index(Request $request)
     {
         $query = ChiNhanh::with('rapPhims');
+        $query->orderBy('id', 'desc');
 
         //  Nếu user là quản lý chi nhánh (vai_tro_id == 2)
         if (Auth::user()->vai_tro_id == 2) {

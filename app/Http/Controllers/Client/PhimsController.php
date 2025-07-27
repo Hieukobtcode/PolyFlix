@@ -14,6 +14,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use App\Models\Rating;
 use App\Models\BaiViet;
+use Illuminate\Support\Facades\DB;
 
 
 class PhimsController extends Controller
@@ -63,7 +64,7 @@ class PhimsController extends Controller
         $phim = Phim::with(['theLoais', 'dinhDangs', 'phuDes', 'chiNhanhs', 'rapPhims', 'ratings'])
             ->where('ten_phim', urldecode($ten_phim))
             ->firstOrFail();
-
+        
         $raps = RapPhim::all();
 
         $dinhDangPhims = SuatChieu::where('phim_id', $phim->id)
@@ -94,17 +95,18 @@ class PhimsController extends Controller
                 'show' => $date->format('d/m'),
             ];
         }
-
+        
         $selectedDate = $ngay_chieu ?: $today->format('Y-m-d');
         $currentIndex = collect($days)->search(fn($item) => $item['date'] === $selectedDate);
 
         $now = Carbon::now();
-
+        
         $suatChieus = SuatChieu::where('phim_id', $phim->id)
             ->when($ngay_chieu, function ($q) use ($ngay_chieu, $now) {
                 $q->where('ngay_bat_dau', $ngay_chieu);
+
                 if ($ngay_chieu == $now->toDateString()) {
-                    $q->where('bat_dau', '>', $now->format('H:i:s'));
+                    $q->whereRaw("TIME(bat_dau) > ?", [$now->format('H:i:s')]);
                 }
             })
             ->with(['rapPhim', 'dinhDangPhim'])

@@ -96,17 +96,34 @@ class SuatChieuController extends Controller
 
         // ===== CHI NHÁNH / RẠP HIỂN THỊ TRONG VIEW =====
         if ($user->vai_tro_id == 1) {
+            // Admin tổng: lấy tất cả chi nhánh và rạp
             $chiNhanhs = ChiNhanh::with('rapPhims')->get();
-        } elseif ($user->vai_tro_id == 2 && $chiNhanh) {
-            $chiNhanhs = collect([$chiNhanh->load('rapPhims')]);
+
+        } elseif ($user->vai_tro_id == 2) {
+            // Admin chi nhánh: chỉ lấy chi nhánh do họ quản lý
+            $chiNhanh = ChiNhanh::where('quan_ly_id', $user->id)->with('rapPhims')->first();
+            $chiNhanhs = $chiNhanh ? collect([$chiNhanh]) : collect();
+
         } elseif ($user->vai_tro_id == 3) {
+            // Quản lý rạp: chỉ lấy chi nhánh chứa đúng rạp mà họ quản lý
             $rap = RapPhim::with('chiNhanh')->find($user->rap_phim_id);
-            $chiNhanhs = collect([$rap->chiNhanh->load(['rapPhims' => function ($q) use ($user) {
-                $q->where('id', $user->rap_phim_id);
-            }])]);
+
+            if ($rap && $rap->chiNhanh) {
+                $chiNhanh = $rap->chiNhanh;
+                // Chỉ nạp lại rạp cụ thể của người dùng
+                $chiNhanh->load(['rapPhims' => function ($q) use ($user) {
+                    $q->where('id', $user->rap_phim_id);
+                }]);
+                $chiNhanhs = collect([$chiNhanh]);
+            } else {
+                $chiNhanhs = collect(); // fallback tránh lỗi null
+            }
+
         } else {
+            // Người dùng không hợp lệ hoặc chưa phân quyền đúng
             $chiNhanhs = collect();
         }
+
 
         return view('admin.suat-chieu.index', compact('suatChieus', 'chiNhanhs', 'user'));
     }
@@ -121,19 +138,25 @@ class SuatChieuController extends Controller
         $rapPhimIds = $rapPhims->pluck('id');
 
         // Lấy danh sách phòng chiếu của các rạp
-        $phongChieus = PhongChieu::whereIn('rap_phim_id', $rapPhimIds)
+        $phongChieus = PhongChieu::with('rapPhim.chiNhanh') // eager load các quan hệ
+            ->whereIn('rap_phim_id', $rapPhimIds)
             ->where('status', 'hoat_dong')
             ->whereNotNull('so_ghe')
             ->get();
 
         $dinhDangs = $phim->dinhDangs;
         $phuDes = $phim->phuDes;
+        $rapQuanLy = null;
+        if (Auth::user()->vai_tro_id == 3) {
+            $rapQuanLy = \App\Models\RapPhim::where('quan_ly_id', Auth::id())->first();
+        }
 
         return view('admin.suat-chieu.create', compact(
             'phim',
             'phongChieus',
             'dinhDangs',
-            'phuDes'
+            'phuDes',
+            'rapQuanLy'
         ));
     }
 
