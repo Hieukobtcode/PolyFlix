@@ -98,12 +98,10 @@ class SuatChieuController extends Controller
         if ($user->vai_tro_id == 1) {
             // Admin tổng: lấy tất cả chi nhánh và rạp
             $chiNhanhs = ChiNhanh::with('rapPhims')->get();
-
         } elseif ($user->vai_tro_id == 2) {
             // Admin chi nhánh: chỉ lấy chi nhánh do họ quản lý
             $chiNhanh = ChiNhanh::where('quan_ly_id', $user->id)->with('rapPhims')->first();
             $chiNhanhs = $chiNhanh ? collect([$chiNhanh]) : collect();
-
         } elseif ($user->vai_tro_id == 3) {
             // Quản lý rạp: chỉ lấy chi nhánh chứa đúng rạp mà họ quản lý
             $rap = RapPhim::with('chiNhanh')->find($user->rap_phim_id);
@@ -118,7 +116,6 @@ class SuatChieuController extends Controller
             } else {
                 $chiNhanhs = collect(); // fallback tránh lỗi null
             }
-
         } else {
             // Người dùng không hợp lệ hoặc chưa phân quyền đúng
             $chiNhanhs = collect();
