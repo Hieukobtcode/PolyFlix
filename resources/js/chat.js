@@ -5,68 +5,116 @@ import $ from "jquery";
 window.$ = $;
 window.jQuery = $;
 
-// Cấu hình CSRF token cho Ajax Laravel
+let isWaiting = false;
+
 $.ajaxSetup({
     headers: {
-        "X-CSRF-TOKEN": document
-            .querySelector('meta[name="csrf-token"]')
-            .getAttribute("content"),
+        "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute("content"),
     },
 });
 
-// Hàm mở/đóng chatbox
 window.toggleChat = function () {
     const chatbox = document.getElementById("chatbox-ai");
     const chatMessages = document.getElementById("chat-messages");
 
     chatbox.classList.toggle("active");
 
-    if (
-        chatbox.classList.contains("active") &&
-        chatMessages.children.length === 0
-    ) {
-        appendAIMessage("🤖 Tôi có thể giúp gì cho bạn?");
+    if (chatbox.classList.contains("active") && chatMessages.children.length === 0) {
+        appendAIMessage("<em>Tôi có thể giúp gì cho bạn?</em>");
     }
 };
 
-// Hàm gửi tin nhắn
 window.sendChat = function () {
     const input = document.getElementById("chat-input");
     const text = input.value.trim();
-    if (!text) return;
+
+    if (!text || isWaiting) return;
 
     appendUserMessage(text);
     input.value = "";
 
-    // Gửi lên server Laravel
+    isWaiting = true;
+    input.disabled = true;
+
+    appendTypingIndicator();
+
     $.post("/ai-chat", { message: text }, function (res) {
-        console.log(res); 
+        removeTypingIndicator();
+
         if (res.reply) {
-            appendAIMessage("🤖 " + res.reply);
+            appendAIMessage(res.reply);
         } else {
-            appendAIMessage("❌ AI không trả lời được.");
+            appendAIMessage("❌ <em>AI không trả lời được.</em>");
         }
-    }).fail(() => {
-        appendAIMessage("❌ Đã xảy ra lỗi khi kết nối máy chủ.");
+    })
+    .fail(() => {
+        removeTypingIndicator();
+        appendAIMessage("❌ <em>Đã xảy ra lỗi khi kết nối máy chủ.</em>");
+    })
+    .always(() => {
+        isWaiting = false;
+        input.disabled = false;
+        input.focus();
     });
 };
 
-// Hiển thị tin nhắn người dùng
 function appendUserMessage(text) {
     const chat = document.getElementById("chat-messages");
+
     const div = document.createElement("div");
-    div.className = "message user-message";
-    div.textContent = text;
+    div.className = "chat-bubble user";
+
+    div.innerHTML = `
+        <div class="avatar">👤</div>
+        <div class="bubble-content">${escapeHTML(text)}</div>
+    `;
+
     chat.appendChild(div);
-    chat.scrollTop = chat.scrollHeight;
+    scrollToBottom(chat);
 }
 
-// Hiển thị tin nhắn AI
-function appendAIMessage(text) {
+function appendAIMessage(html) {
     const chat = document.getElementById("chat-messages");
+
     const div = document.createElement("div");
-    div.className = "message ai-message";
-    div.textContent = text;
+    div.className = "chat-bubble ai";
+
+    div.innerHTML = `
+        <div class="avatar">🤖</div>
+        <div class="bubble-content">${html}</div>
+    `;
+
     chat.appendChild(div);
-    chat.scrollTop = chat.scrollHeight;
+    scrollToBottom(chat);
+}
+
+function appendTypingIndicator() {
+    const chat = document.getElementById("chat-messages");
+
+    const div = document.createElement("div");
+    div.className = "chat-bubble ai typing-indicator";
+    div.innerHTML = `
+        <div class="avatar">🤖</div>
+        <div class="bubble-content">
+            <span class="dots"><span>.</span><span>.</span><span>.</span></span>
+        </div>
+    `;
+
+    chat.appendChild(div);
+    scrollToBottom(chat);
+}
+
+function removeTypingIndicator() {
+    const typing = document.querySelector(".typing-indicator");
+    if (typing) typing.remove();
+}
+
+function scrollToBottom(container) {
+    container.scrollTop = container.scrollHeight;
+}
+
+function escapeHTML(str) {
+    const div = document.createElement("div");
+    div.textContent = str;
+    return div.innerHTML;
 }
