@@ -473,9 +473,3 @@
     --max-width: 1200px;
 }
 
-.ghe-chieu.selected-by-other {
-    background-color: orange !important;
-}
-.ghe-chieu.selected-by-other.selected {
-    background-color: orange !important;
-}

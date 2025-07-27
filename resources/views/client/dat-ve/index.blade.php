@@ -2,12 +2,10 @@
 
 @section('styles')
     <style>
-        {
-            ! ! collect($loaiGhes)->map(function ($loai) {
-                    $class=\Illuminate\Support\Str::slug($loai->ten_loai_ghe);
-                    return ".ghe-chieu.{$class} { background-color: {$loai->chu_thich_mau_ghe}; }";
-                })->implode("\n") ! !
-        }
+        {!! collect($loaiGhes)->map(function ($loai) {
+                $class = \Illuminate\Support\Str::slug($loai->ten_loai_ghe);
+                return ".ghe-chieu.{$class} { background-color: {$loai->chu_thich_mau_ghe}; }";
+            })->implode("\n") !!}
     </style>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
