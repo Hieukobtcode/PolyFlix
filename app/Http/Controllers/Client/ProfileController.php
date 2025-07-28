@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Milon\Barcode\DNS1D;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ProfileController extends Controller
 {
@@ -123,56 +124,66 @@ class ProfileController extends Controller
     public function chiTietVe($id)
     {
         try {
+            // Kiểm tra quyền truy cập - chỉ chủ vé hoặc admin mới xem được
             $ve = DatVe::with([
                 'suatChieu.phim',
                 'suatChieu.phongChieu.rapPhim.chiNhanh',
                 'suatChieu.phongChieu.loaiPhong',
                 'gheNgois.loaiGhe',
                 'combos',
-                'doAns'
+                'doAns',
+                'nguoiDung',
+                'successTransaction',
+                'chiTietDatVes'
             ])->findOrFail($id);
 
+            // Kiểm tra quyền truy cập - chỉ admin (vai_tro_id = 1) hoặc chủ vé mới xem được
+            if (Auth::id() !== $ve->user_id && Auth::user()->vai_tro_id !== 1) {
+                abort(403, 'Bạn không có quyền xem vé này.');
+            }
+
+            // Tạo mã vạch
             $maVachHtml = (new DNS1D)->getBarcodeHTML($ve->ma_dat_ve, 'C128', 2, 60);
 
-            $data = [
-                'ma_dat_ve' => $ve->ma_dat_ve,
-                'ten_phim' => optional($ve->suatChieu->phim)->ten_phim,
-                'thoi_gian_chieu' => optional($ve->suatChieu)->bat_dau,
-                'phong' => optional($ve->suatChieu->phongChieu)->ten_phong,
-                'ma_vach_html' => $maVachHtml,
-                'rap' => optional(optional($ve->suatChieu->phongChieu)->rapPhim)->ten_rap,
-                'chi_nhanh' => optional(optional(optional($ve->suatChieu->phongChieu)->rapPhim)->chiNhanh)->dia_chi,
-                'danh_sach_ghe' => $ve->gheNgois->pluck('ma_ghe')->implode(', '),
-
-                'combo' => $ve->combos->map(function ($combo) {
-                    return [
-                        'ten' => $combo->ten_combo,
-                        'gia' => number_format($combo->gia, 0, ',', '.') . 'đ',
-                        'so_luong' => $combo->pivot->so_luong
-                    ];
-                }),
-
-                'do_an' => $ve->doAns->map(function ($doAn) {
-                    return [
-                        'ten' => $doAn->ten_do_an,
-                        'gia' => number_format($doAn->gia, 0, ',', '.') . 'đ',
-                        'so_luong' => $doAn->pivot->so_luong
-                    ];
-                }),
-
-                'tong_tien' => number_format($ve->tong_tien, 0, ',', '.') . ' đ',
-                'thanh_toan_luc' => optional($ve->thanh_toan) ? \Carbon\Carbon::parse($ve->thanh_toan)->format('H:i d/m/Y') : null,
-            ];
-            Log::info($data);
-            return response()->json($data);
+            return view('client.chi-tiet-ve', compact('ve', 'maVachHtml'));
         } catch (\Exception $e) {
-            // Ghi log lỗi để kiểm tra chi tiết
             Log::error('Lỗi lấy chi tiết vé: ' . $e->getMessage());
-            return response()->json([
-                'error' => true,
-                'message' => 'Không thể lấy chi tiết vé!',
-                'debug' => $e->getMessage(),
-            ], 500);
+            return redirect()->back()->with('error', 'Không thể lấy chi tiết vé!');
+        }
+    }
+
+    public function printVe($id)
+    {
+        try {
+            // Kiểm tra quyền truy cập - chỉ admin (vai_tro_id = 1) hoặc chủ vé mới in được
+            $ve = DatVe::with([
+                'suatChieu.phim',
+                'suatChieu.phongChieu.rapPhim.chiNhanh',
+                'suatChieu.phongChieu.loaiPhong',
+                'gheNgois.loaiGhe',
+                'combos',
+                'doAns',
+                'nguoiDung',
+                'successTransaction',
+                'chiTietDatVes'
+            ])->findOrFail($id);
+
+            // Kiểm tra quyền truy cập
+            if (Auth::id() !== $ve->user_id && Auth::user()->vai_tro_id !== 1) {
+                abort(403, 'Bạn không có quyền in vé này.');
+            }
+
+            // Tạo mã vạch
+            $maVachHtml = (new DNS1D)->getBarcodeHTML($ve->ma_dat_ve, 'C128', 2, 60);
+
+            $pdf = Pdf::loadView('client.print-ve', compact('ve', 'maVachHtml'))
+                ->setPaper('a4')
+                ->setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true]);
+
+            return $pdf->stream('ve_xem_phim_' . $ve->ma_dat_ve . '.pdf');
+        } catch (\Exception $e) {
+            Log::error('Lỗi in vé: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Không thể in vé!');
         }
     }
 }

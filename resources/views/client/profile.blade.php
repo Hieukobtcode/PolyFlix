@@ -454,9 +454,9 @@
                                     đ
                                 </td>
                                 <td>
-                                    <a href="#" class="btn-xem-ve" data-id="{{ $ve->id }}"
+                                    <a href="{{ route('dat-ve.chi-tiet', $ve->id) }}"
                                         style="background: #009688; color: white; padding: 6px 12px; border-radius: 4px; text-decoration: none;">
-                                        Xem
+                                        <i class="fas fa-eye me-1"></i>Xem chi tiết
                                     </a>
 
                                 </td>
