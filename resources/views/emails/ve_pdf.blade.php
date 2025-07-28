@@ -56,7 +56,7 @@
                                     <td align="left"><strong>Suất chiếu</strong></td>
                                     <td align="right">
                                         Ngày:
-                                        {{ \Carbon\Carbon::parse($datVe->suatChieu?->ngay_chieu)->format('d/m/Y') ?? '' }}<br>
+                                        {{ \Carbon\Carbon::parse($datVe->suatChieu?->ngay_bat_dau)->format('d/m/Y') ?? '' }}<br>
                                         @if ($datVe->suatChieu?->bat_dau && $datVe->suatChieu?->ket_thuc)
                                             Giờ: {{ \Carbon\Carbon::parse($datVe->suatChieu->bat_dau)->format('H:i') }}
                                             - {{ \Carbon\Carbon::parse($datVe->suatChieu->ket_thuc)->format('H:i') }}
