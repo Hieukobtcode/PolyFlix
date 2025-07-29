@@ -310,6 +310,81 @@
                 flex-direction: column;
             }
         }
+
+        @media print {
+            .action-buttons {
+                display: none !important;
+            }
+
+            body {
+                margin: 20px;
+            }
+        }
+
+        #ticket-invoice {
+            display: none;
+        }
+
+        @media print {
+            body * {
+                visibility: hidden !important;
+            }
+
+            #invoice-section,
+            #invoice-section * {
+                visibility: visible !important;
+            }
+
+            #invoice-section {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+            }
+        }
+
+        #invoice-section {
+            font-family: 'Arial', sans-serif;
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+            color: #333;
+        }
+
+        .invoice-box {
+            border: 1px solid #ccc;
+            padding: 20px;
+            margin-bottom: 40px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            page-break-after: always;
+        }
+
+        .invoice-box:last-child {
+            page-break-after: auto;
+        }
+
+        .invoice-title {
+            text-align: center;
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .invoice-section-title {
+            font-size: 18px;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            color: #555;
+        }
+
+        .invoice-line {
+            margin: 5px 0;
+        }
+
+        hr {
+            margin: 15px 0;
+            border-top: 1px dashed #aaa;
+        }
     </style>
     @php
         $phuThuRap = $datVe->suatChieu->phongChieu->rapPhim->phu_thu ?? 0;
@@ -376,7 +451,8 @@
                     <div class="seats-grid">
                         @foreach ($datVe->gheNgois as $ghe)
                             <span class="seat-item">{{ $ghe->ma_ghe }}
-                                ({{ $ghe->loaiGhe->ten_loai_ghe ?? 'Thường' }})</span>
+                                ({{ $ghe->loaiGhe->ten_loai_ghe ?? 'Thường' }})
+                            </span>
                         @endforeach
                     </div>
                 </div>
@@ -460,12 +536,11 @@
             </div>
         </div>
 
-        <!-- Nút hành động -->
+
         <div class="action-buttons">
 
-            <button onclick="window.print()" class="btn-modern btn-outline-modern">
-                <i class="fas fa-print"></i>
-                In vé
+            <button onclick="printInvoice()" class="btn-modern btn-outline-modern">
+                <i class="fas fa-print"></i> In hóa đơn
             </button>
             <a href="{{ route('admin.dat-ves.index') }}" class="btn-modern btn-outline-modern">
                 <i class="fas fa-list"></i>
@@ -474,4 +549,131 @@
         </div>
     </div>
 
+    <div id="invoice-section" style="display: none">
+        <!-- 🎟️ Vé xem phim -->
+        <div class="invoice-box">
+            <div class="invoice-title">🎟️ VÉ XEM PHIM</div>
+            <p class="invoice-line"><strong>Phim:</strong> {{ $datVe->suatChieu?->phim?->ten_phim ?? 'Không xác định' }}
+            </p>
+            <p class="invoice-line"><strong>Thời gian:</strong>
+                {{ \Carbon\Carbon::parse($datVe->suatChieu?->ngay_chieu)->format('d/m/Y') }}
+                - {{ $datVe->suatChieu?->bat_dau ?? '---' }}
+            </p>
+            <p class="invoice-line"><strong>Rạp:</strong>
+                {{ $datVe->suatChieu?->phongChieu?->rapPhim?->ten_rap ?? 'Không xác định' }}</p>
+            <p class="invoice-line"><strong>Chi nhánh:</strong>
+                {{ $datVe->suatChieu?->phongChieu?->rapPhim?->chiNhanh?->ten_chi_nhanh ?? '---' }}</p>
+            <p class="invoice-line"><strong>Phòng:</strong> {{ $datVe->suatChieu?->phongChieu?->ten_phong ?? '---' }}</p>
+            <p class="invoice-line"><strong>Ghế:</strong>
+                {{ $datVe->gheNgois->pluck('ma_ghe')->join(', ') ?? 'Không có ghế' }}</p>
+            <p class="invoice-line"><strong>Khách hàng (Email):</strong>
+                {{ $datVe->nguoiDung?->email ?? 'Không có email' }}</p>
+            <p class="invoice-line"><strong>Mã vé:</strong> {{ $datVe->ma_dat_ve }}</p>
+            <div style="margin-top: 20px; text-align: center;">
+                {!! DNS1D::getBarcodeHTML($datVe->ma_dat_ve, 'C128', 2, 60) !!}
+            </div>
+        </div>
+
+        <!-- 🧾 Hóa đơn tổng -->
+        <div class="invoice-box">
+            <div class="invoice-title">🧾 HÓA ĐƠN THANH TOÁN</div>
+            <p class="invoice-line"><strong>Mã đặt vé:</strong> {{ $datVe->ma_dat_ve }}</p>
+            <p class="invoice-line"><strong>Khách hàng:</strong> {{ $datVe->nguoiDung?->email ?? 'Không có email' }}
+            </p>
+
+            <hr>
+            <div class="invoice-section-title">🎟️ Vé xem phim</div>
+            <p class="invoice-line">Phim: {{ $datVe->suatChieu?->phim?->ten_phim ?? '---' }}</p>
+            <p class="invoice-line">Thời gian:
+                {{ optional($datVe->suatChieu)->ngay_chieu ? \Carbon\Carbon::parse($datVe->suatChieu->ngay_chieu)->format('d/m/Y') : '---' }}
+                - {{ $datVe->suatChieu?->bat_dau ?? '---' }}
+            </p>
+            <p class="invoice-line">Phòng: {{ $datVe->suatChieu?->phongChieu?->ten_phong ?? '---' }}</p>
+            <p class="invoice-line">Ghế: {{ $datVe->gheNgois->pluck('ma_ghe')->join(', ') ?? 'Không có ghế' }}</p>
+            <p class="invoice-line">Tiền vé: {{ number_format($tongTienGhe ?? 0, 0, ',', '.') }} VND</p>
+
+            @if ($tongTienCombo > 0)
+                <div class="invoice-section-title">🍿 Combo</div>
+                @foreach ($datVe->combos as $combo)
+                    <p class="invoice-line">{{ $combo->tieu_de }} (x{{ $combo->pivot->so_luong }}) -
+                        {{ number_format($combo->gia ?? 0, 0, ',', '.') }}đ</p>
+                @endforeach
+            @endif
+
+            @if ($tongTienDoAn > 0)
+                <div class="invoice-section-title">🥤 Đồ ăn & nước uống</div>
+                @foreach ($datVe->doAns as $doAn)
+                    <p class="invoice-line">{{ $doAn->tieu_de }} (x{{ $doAn->pivot->so_luong }}) -
+                        {{ number_format($doAn->gia ?? 0, 0, ',', '.') }}đ</p>
+                @endforeach
+            @endif
+
+            <hr>
+            <p class="invoice-line"><strong>Tổng tiền:</strong> {{ number_format($tongThanhTien ?? 0, 0, ',', '.') }} VND
+            </p>
+        </div>
+
+        <!-- 🍽️ Hóa đơn đồ ăn -->
+        <div class="invoice-box">
+            <div class="invoice-title">🍽️ HÓA ĐƠN ĐỒ ĂN</div>
+            <p class="invoice-line"><strong>Mã đặt vé:</strong> {{ $datVe->ma_dat_ve }}</p>
+            <p class="invoice-line"><strong>Khách hàng:</strong> {{ $datVe->nguoiDung?->email ?? 'Không có email' }}</p>
+
+            <hr>
+
+            @if ($tongTienCombo > 0)
+                <div class="invoice-section-title">🍿 Combo</div>
+                @foreach ($datVe->combos as $combo)
+                    <p class="invoice-line">{{ $combo->tieu_de }} (x{{ $combo->pivot->so_luong }}) -
+                        {{ number_format($combo->gia ?? 0, 0, ',', '.') }}đ</p>
+                @endforeach
+            @endif
+
+            @if ($tongTienDoAn > 0)
+                <div class="invoice-section-title">🥤 Đồ ăn & nước uống</div>
+                @foreach ($datVe->doAns as $doAn)
+                    <p class="invoice-line">{{ $doAn->tieu_de }} (x{{ $doAn->pivot->so_luong }}) -
+                        {{ number_format($doAn->gia ?? 0, 0, ',', '.') }}đ</p>
+                @endforeach
+            @endif
+
+            <hr>
+            <p class="invoice-line"><strong>Tổng tiền đồ ăn:</strong>
+                {{ number_format($tongTienCombo + $tongTienDoAn ?? 0, 0, ',', '.') }} VND
+            </p>
+        </div>
+    </div>
+
 @endsection
+<script>
+    function printInvoice() {
+        const invoice = document.getElementById("invoice-section");
+
+        // Hiện hóa đơn
+        invoice.style.display = "block";
+
+        // In sau 100ms
+        setTimeout(() => {
+            window.print();
+        }, 100);
+
+        // Dù onafterprint hoạt động hay không, sau 1.5s vẫn ẩn hóa đơn lại
+        const revertDisplay = () => {
+            invoice.style.display = "none";
+        };
+
+        // Trình duyệt hỗ trợ
+        if (window.matchMedia) {
+            const mediaQueryList = window.matchMedia('print');
+            mediaQueryList.addListener(function(mql) {
+                if (!mql.matches) revertDisplay();
+            });
+        }
+
+        // Fallback nếu onafterprint không hoạt động
+        window.onafterprint = revertDisplay;
+
+        // Thêm fallback bằng timeout sau 3s (nếu mọi thứ kia không chạy)
+        setTimeout(revertDisplay, 3000);
+    }
+</script>

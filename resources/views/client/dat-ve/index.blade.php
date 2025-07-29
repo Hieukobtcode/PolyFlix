@@ -2,11 +2,103 @@
 
 @section('styles')
     <style>
-        {
-            ! ! collect($loaiGhes)->map(function ($loai) {
-                    $class=\Illuminate\Support\Str::slug($loai->ten_loai_ghe);
-                    return ".ghe-chieu.{$class} { background-color: {$loai->chu_thich_mau_ghe}; }";
-                })->implode("\n") ! !
+        {!! collect($loaiGhes)->map(function ($loai) {
+                $class = \Illuminate\Support\Str::slug($loai->ten_loai_ghe);
+                return ".ghe-chieu.{$class} { background-color: {$loai->chu_thich_mau_ghe}; }";
+            })->implode("\n") !!} .food-grid {
+            display: grid;
+            grid-template-columns: repeat(1, 1fr);
+            /* Mặc định 1 cột */
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .food-grid {
+                grid-template-columns: repeat(2, 1fr);
+                /* Tablet: 2 cột */
+            }
+        }
+
+        @media (min-width: 992px) {
+            .food-grid {
+                grid-template-columns: repeat(3, 1fr);
+                /* Desktop: 3 cột */
+            }
+        }
+
+        .food-item {
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 10px;
+            transition: transform 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100%;
+        }
+
+        .food-item:hover {
+            transform: translateY(-4px);
+        }
+
+        .food-item img {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .food-info {
+            text-align: center;
+            flex-grow: 1;
+        }
+
+        .food-info h4 {
+            font-size: 1.1rem;
+            margin-bottom: 4px;
+        }
+
+        .price {
+            color: #ff9800;
+            font-weight: bold;
+            margin: 5px 0;
+        }
+
+        .description {
+            font-size: 0.9rem;
+            color: #777;
+            margin-bottom: 8px;
+        }
+
+        .quantity-control {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .qty-btn {
+            background-color: #ffc107;
+            border: none;
+            padding: 6px 12px;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .qty-btn:hover {
+            background-color: #ffb300;
+        }
+
+        input[type="number"] {
+            width: 45px;
+            text-align: center;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background: #f7f7f7;
         }
     </style>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -161,7 +253,10 @@
                                 <div class="food-info">
                                     <h4>{{ $combo->ten_combo }}</h4>
                                     <p class="description">{{ $combo->mo_ta }}</p>
-                                    <p class="price">{{ number_format($combo->gia) }}đ</p>
+                                    <p class="price" style="text-decoration: line-through; color: gray;">
+                                        {{ number_format($combo->gia) }}đ
+                                    </p>
+                                    <p class="price">{{ number_format($combo->gia_combo) }}đ</p>
                                     <div class="quantity-control">
                                         <button type="button" class="qty-btn minus"
                                             data-target="combo-{{ $combo->id }}">-</button>
