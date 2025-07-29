@@ -28,9 +28,14 @@
                                 {{ $datVe->ma_dat_ve }}
                             </div>
 
-                            <div style="font-size: 13px; color: #888;">
+                            <div style="font-size: 13px; color: #888; margin-bottom: 15px;">
                                 Đưa mã này đến quầy vé để nhận vé của bạn
                             </div>
+
+                            <a href="{{ route('dat-ve.chi-tiet', $datVe->id) }}"
+                               style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 10px 20px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 14px;">
+                                📱 Xem chi tiết vé
+                            </a>
                         </td>
                     </tr>
 
