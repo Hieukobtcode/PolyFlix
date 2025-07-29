@@ -58,6 +58,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/dat-ve', [\App\Http\Controllers\Client\DatVeController::class, 'store'])->name('client.dat-ve.store');
     Route::get('/dat-ve/ket-qua/{ma_ve}', [\App\Http\Controllers\Client\DatVeController::class, 'ketQua'])->name('client.dat-ve.ket-qua');
     Route::get('/chi-tiet-dat-ve/{id}', [ProfileController::class, 'chiTietVe'])->name('dat-ve.chi-tiet');
+    Route::get('/chi-tiet-dat-ve/{id}/print', [ProfileController::class, 'printVe'])->name('dat-ve.print');
 
     // Thanh toán
     Route::get('/thanh-toan/{datVeId}', [ThanhToanController::class, 'index'])->name('client.thanh-toan.index');

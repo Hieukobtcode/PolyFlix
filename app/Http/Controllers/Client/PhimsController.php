@@ -64,7 +64,7 @@ class PhimsController extends Controller
         $phim = Phim::with(['theLoais', 'dinhDangs', 'phuDes', 'chiNhanhs', 'rapPhims', 'ratings'])
             ->where('ten_phim', urldecode($ten_phim))
             ->firstOrFail();
-        
+
         $raps = RapPhim::all();
 
         $dinhDangPhims = SuatChieu::where('phim_id', $phim->id)
@@ -95,12 +95,12 @@ class PhimsController extends Controller
                 'show' => $date->format('d/m'),
             ];
         }
-        
+
         $selectedDate = $ngay_chieu ?: $today->format('Y-m-d');
         $currentIndex = collect($days)->search(fn($item) => $item['date'] === $selectedDate);
 
         $now = Carbon::now();
-        
+
         $suatChieus = SuatChieu::where('phim_id', $phim->id)
             ->when($ngay_chieu, function ($q) use ($ngay_chieu, $now) {
                 $q->where('ngay_bat_dau', $ngay_chieu);
@@ -113,7 +113,7 @@ class PhimsController extends Controller
             ->get();
 
         $groupedSuatChieus = $suatChieus->groupBy(function ($sc) {
-            return $sc->rapPhims && $sc->rapPhims->ten_rap ? $sc->rapPhims->ten_rap : 'Không xác định';
+            return $sc->rapPhim && $sc->rapPhim->ten_rap ? $sc->rapPhim->ten_rap : 'Không xác định';
         })->map(function ($items) {
             return $items->groupBy(function ($sc) {
                 return $sc->phien_ban_phim ?? 'Không xác định';

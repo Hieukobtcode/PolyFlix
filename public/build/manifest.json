@@ -1,13 +1,19 @@
 {
-  "_bootstrap-DNxiirP_.js": {
-    "file": "assets/bootstrap-DNxiirP_.js",
+  "_bootstrap-C0G0cght.js": {
+    "file": "assets/bootstrap-C0G0cght.js",
     "name": "bootstrap"
   },
-  "_jquery-81015df1.js": {
-    "file": "assets/jquery-81015df1.js"
+  "_jquery-BiZA6AzS.js": {
+    "file": "assets/jquery-BiZA6AzS.js",
+    "name": "jquery"
+  },
+  "_trang-chu-!~{00i}~.js": {
+    "file": "assets/trang-chu-DZeRVgpu.css",
+    "src": "resources/css/trang-chu.css",
+    "isEntry": true
   },
   "resources/css/app.css": {
-    "file": "assets/app-CiiJY4GP.css",
+    "file": "assets/app-NS0_ynA5.css",
     "src": "resources/css/app.css",
     "isEntry": true
   },
@@ -17,64 +23,57 @@
     "isEntry": true
   },
   "resources/css/dat-ve.css": {
-    "file": "assets/dat-ve-CKEJZg2b.css",
+    "file": "assets/dat-ve-CM1OyerA.css",
     "src": "resources/css/dat-ve.css",
     "isEntry": true
   },
   "resources/css/ghe-ngoi.css": {
-    "file": "assets/ghe-ngoi-8e0f3782.css",
-    "isEntry": true,
-    "src": "resources/css/ghe-ngoi.css"
+    "file": "assets/ghe-ngoi-k5nYWYdM.css",
+    "src": "resources/css/ghe-ngoi.css",
+    "isEntry": true
   },
   "resources/css/thanh-toan.css": {
-    "file": "assets/thanh-toan-b7ddc201.css",
-    "isEntry": true,
-    "src": "resources/css/thanh-toan.css"
-  },
-  "resources/css/thanh-toan.css": {
-    "file": "assets/thanh-toan-CAHCXIy6.css",
+    "file": "assets/thanh-toan-CXRs10Pt.css",
     "src": "resources/css/thanh-toan.css",
     "isEntry": true
   },
   "resources/css/trang-chu.css": {
-    "file": "assets/trang-chu-8ac1884a.css",
-    "src": "trang-chu.css"
-  },
-  "resources/js/app.css": {
-    "file": "assets/app-ee2ce9ad.css",
-    "src": "resources/js/app.css"
+    "file": "assets/trang-chu-DZeRVgpu.css",
+    "src": "resources/css/trang-chu.css",
+    "isEntry": true
   },
   "resources/js/app.js": {
-    "file": "assets/app-Bis-qGJC.js",
+    "file": "assets/app-TrXqQ6SA.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
     "imports": [
-      "_jquery-ARPk3Jhh.js",
-      "_bootstrap-DNxiirP_.js"
+      "_jquery-BiZA6AzS.js",
+      "_bootstrap-C0G0cght.js"
     ],
     "css": [
-      "assets/app-ee2ce9ad.css"
-    ],
-    "file": "assets/app-5ff9a0c6.js",
-    "imports": [
-      "_jquery-81015df1.js",
-      "_bootstrap-b0b3f613.js"
-    ],
-    "isEntry": true,
-    "src": "resources/js/app.js"
+      "assets/app-C621yXhz.css"
+    ]
   },
-  "resources/js/client.css": {
-    "file": "assets/client-01c665b0.css",
-    "src": "resources/js/client.css"
+  "resources/js/chat.js": {
+    "file": "assets/chat-DbkQZu_W.js",
+    "name": "chat",
+    "src": "resources/js/chat.js",
+    "isEntry": true,
+    "imports": [
+      "_jquery-BiZA6AzS.js"
+    ],
+    "css": [
+      "assets/chat-Nf9oXssr.css"
+    ]
   },
   "resources/js/client.js": {
-    "file": "assets/client-DnZCQ5Th.js",
+    "file": "assets/client-tK-6IhXz.js",
     "name": "client",
     "src": "resources/js/client.js",
     "isEntry": true,
     "imports": [
-      "_jquery-ARPk3Jhh.js"
+      "_jquery-BiZA6AzS.js"
     ],
     "dynamicImports": [
       "resources/js/trang-chu.js"
@@ -84,25 +83,25 @@
     ]
   },
   "resources/js/dat-ve-client.js": {
-    "file": "assets/dat-ve-client-Bw0tPq8Y.js",
+    "file": "assets/dat-ve-client-BQWXH9py.js",
     "name": "dat-ve-client",
     "src": "resources/js/dat-ve-client.js",
     "isEntry": true,
     "imports": [
-      "_jquery-ARPk3Jhh.js"
+      "_jquery-BiZA6AzS.js"
     ],
     "css": [
-      "assets/dat-ve-CKEJZg2b.css"
+      "assets/dat-ve-CM1OyerA.css"
     ]
   },
   "resources/js/dat-ve.js": {
-    "file": "assets/dat-ve-D82a0KYN.js",
+    "file": "assets/dat-ve-8Hr42DeS.js",
     "name": "dat-ve",
     "src": "resources/js/dat-ve.js",
     "isEntry": true,
     "imports": [
-      "_jquery-ARPk3Jhh.js",
-      "_bootstrap-DNxiirP_.js"
+      "_jquery-BiZA6AzS.js",
+      "_bootstrap-C0G0cght.js"
     ]
   },
   "resources/js/ghe-ngoi.js": {
@@ -112,38 +111,36 @@
     "isEntry": true
   },
   "resources/js/login.js": {
-    "file": "assets/login-DcaelkpG.js",
+    "file": "assets/login-B0TiDCya.js",
     "name": "login",
     "src": "resources/js/login.js",
     "isEntry": true,
     "imports": [
-      "_jquery-ARPk3Jhh.js"
+      "_jquery-BiZA6AzS.js"
     ],
     "css": [
       "assets/login-B1Ztfz35.css"
     ]
   },
-  "resources/js/page.js": {
-    "css": [
-      "assets/page-4f578f38.css"
-    ],
-    "file": "assets/page-3248ba92.js",
+  "resources/js/thanh-toan.js": {
+    "file": "assets/thanh-toan-KlHKv02j.js",
+    "name": "thanh-toan",
+    "src": "resources/js/thanh-toan.js",
     "isEntry": true,
-    "src": "resources/js/page.js"
+    "imports": [
+      "_jquery-BiZA6AzS.js"
+    ]
   },
   "resources/js/trang-chu.js": {
-    "css": [
-      "assets/trang-chu-8ac1884a.css"
-    ],
-    "file": "assets/trang-chu-ad67eaab.js",
+    "file": "assets/trang-chu-8yKV8lk_.js",
+    "name": "trang-chu",
+    "src": "resources/js/trang-chu.js",
+    "isDynamicEntry": true,
     "imports": [
-      "_jquery-81015df1.js"
+      "_jquery-BiZA6AzS.js"
     ],
-    "isEntry": true,
-    "src": "resources/js/trang-chu.js"
-  },
-  "trang-chu.css": {
-    "file": "assets/trang-chu-8ac1884a.css",
-    "src": "trang-chu.css"
+    "css": [
+      "assets/trang-chu-DZeRVgpu.css"
+    ]
   }
 }
