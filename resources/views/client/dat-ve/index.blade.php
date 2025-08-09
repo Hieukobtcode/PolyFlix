@@ -5,101 +5,7 @@
         {!! collect($loaiGhes)->map(function ($loai) {
                 $class = \Illuminate\Support\Str::slug($loai->ten_loai_ghe);
                 return ".ghe-chieu.{$class} { background-color: {$loai->chu_thich_mau_ghe}; }";
-            })->implode("\n") !!} .food-grid {
-            display: grid;
-            grid-template-columns: repeat(1, 1fr);
-            /* Mặc định 1 cột */
-            gap: 20px;
-            margin-top: 20px;
-        }
-
-        @media (min-width: 768px) {
-            .food-grid {
-                grid-template-columns: repeat(2, 1fr);
-                /* Tablet: 2 cột */
-            }
-        }
-
-        @media (min-width: 992px) {
-            .food-grid {
-                grid-template-columns: repeat(3, 1fr);
-                /* Desktop: 3 cột */
-            }
-        }
-
-        .food-item {
-            background-color: #fff;
-            border-radius: 12px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            padding: 10px;
-            transition: transform 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            height: 100%;
-        }
-
-        .food-item:hover {
-            transform: translateY(-4px);
-        }
-
-        .food-item img {
-            width: 100%;
-            height: 160px;
-            object-fit: cover;
-            border-radius: 8px;
-            margin-bottom: 10px;
-        }
-
-        .food-info {
-            text-align: center;
-            flex-grow: 1;
-        }
-
-        .food-info h4 {
-            font-size: 1.1rem;
-            margin-bottom: 4px;
-        }
-
-        .price {
-            color: #ff9800;
-            font-weight: bold;
-            margin: 5px 0;
-        }
-
-        .description {
-            font-size: 0.9rem;
-            color: #777;
-            margin-bottom: 8px;
-        }
-
-        .quantity-control {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .qty-btn {
-            background-color: #ffc107;
-            border: none;
-            padding: 6px 12px;
-            font-weight: bold;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .qty-btn:hover {
-            background-color: #ffb300;
-        }
-
-        input[type="number"] {
-            width: 45px;
-            text-align: center;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            background: #f7f7f7;
-        }
+            })->implode("\n") !!}
     </style>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
@@ -155,21 +61,26 @@
                             <div class="row-label">{{ $hangGhe }}</div>
                             <div class="seats">
                                 @foreach ($ghes as $ghe)
+                                    @php
+                                        // trạng thái helper
+                                        $isMaintenance = ($ghe->trang_thai_mac_dinh ?? $ghe->trang_thai) === 'bao_tri';
+                                        $suatStatus = $ghe->trang_thai_theo_suat ?? 'trong'; // 'trong'|'da_chon'|'da_dat'
+                                        $isSuatBooked = in_array($suatStatus, ['da_chon', 'da_dat']);
+                                        $isAvailable =
+                                            !$ghe->da_dat && !$ghe->dang_duoc_chon && !$isMaintenance && !$isSuatBooked;
+                                        $loaiClass = \Illuminate\Support\Str::slug(
+                                            $ghe->loaiGhe->ten_loai_ghe ?? 'thuong',
+                                        );
+
+                                    @endphp
+                                    {{-- Hiển thị ghế --}}
                                     <div class="ghe-chieu
                                     {{-- Nếu ghế đang bảo trì --}}
-                                    {{ $ghe->trang_thai == 'bao_tri' ? 'maintenance' : '' }}
-
-                                    {{-- Nếu ghế đang được chính người dùng này chọn --}}
-                                    {{ $ghe->trang_thai == 'dang_chon' ? 'selected' : '' }}
-
-                                    {{-- Nếu ghế đang được người khác chọn (giữ tạm thời trong Redis) --}}
-                                    {{ $ghe->dang_duoc_chon && $ghe->trang_thai != 'dang_chon' ? 'selected-by-other' : '' }}
-
-                                    {{-- Nếu không rơi vào các trạng thái đặc biệt → available --}}
-                                    {{ !$ghe->da_dat && !$ghe->dang_duoc_chon && $ghe->trang_thai !== 'bao_tri' && $ghe->trang_thai !== 'dang_chon' ? 'available' : '' }}
-
-                                    {{-- Loại ghế (VIP, thường...) --}}
-                                    {{ \Illuminate\Support\Str::slug($ghe->loaiGhe->ten_loai_ghe ?? 'thuong') }}
+                                    {{ $isMaintenance ? 'maintenance' : '' }}
+                                    {{ $suatStatus === 'da_chon' ? 'booked' : '' }}
+                                    {{ $suatStatus === 'da_dat' ? 'reserved' : '' }}
+                                    {{ $isAvailable ? 'available' : '' }}
+                                    {{ $loaiClass }}
 
                                     {{-- Ghế đôi --}}
                                     {{ $ghe->loaiGhe->id == 12 ? 'ghe-doi' : '' }}"
@@ -179,9 +90,9 @@
                                         data-phu-thu-loai-ghe="{{ $ghe->phu_thu_loai_ghe }}"
                                         data-phu-thu-rap-phim="{{ $ghe->phu_thu_rap_phim }}"
                                         data-seat-type-id="{{ $ghe->loaiGhe->id }}"
-                                        @if ($ghe->trang_thai == 'bao_tri' || $ghe->da_dat) disabled @endif>
-                                        {{-- Hiển thị x nếu ghế đang bảo trì --}}
-                                        {{ $ghe->trang_thai == 'bao_tri' ? 'x' : $ghe->ma_ghe }}
+                                        @if ($isMaintenance || $isSuatBooked) disabled @endif>
+                                        {{-- Hiển thị "x" nếu ghế bị bảo trì (mặc định) hoặc bị giữ/đặt theo suất --}}
+                                        {{ $isMaintenance || $isSuatBooked ? 'x' : $ghe->ma_ghe }}
                                     </div>
                                 @endforeach
                             </div>
@@ -194,13 +105,15 @@
                 <div class="seat-legend-wrapper">
                     <div class="legend-column">
                         <div class="legend-item">
-                            <div class="seat-demo bg-available"></div><span>Ghế trống</span>
+                            <div class="seat-demo bg-available"></div><span>Checked</span>
                         </div>
                         <div class="legend-item">
                             <div class="seat-demo bg-selected"></div><span>Đã chọn</span>
                         </div>
                         <div class="legend-item">
-                            <div class="seat-demo seat-disabled"><i class="fas fa-times text-danger"></i></div><span>Không
+                            <div class="seat-demo seat-disabled">
+                                {{-- <i class="fas fa-times text-danger"></i> --}}
+                            </div><span>Không
                                 thể chọn</span>
                         </div>
                     </div>
@@ -253,10 +166,7 @@
                                 <div class="food-info">
                                     <h4>{{ $combo->ten_combo }}</h4>
                                     <p class="description">{{ $combo->mo_ta }}</p>
-                                    <p class="price" style="text-decoration: line-through; color: gray;">
-                                        {{ number_format($combo->gia) }}đ
-                                    </p>
-                                    <p class="price">{{ number_format($combo->gia_combo) }}đ</p>
+                                    <p class="price">{{ number_format($combo->gia) }}đ</p>
                                     <div class="quantity-control">
                                         <button type="button" class="qty-btn minus"
                                             data-target="combo-{{ $combo->id }}">-</button>

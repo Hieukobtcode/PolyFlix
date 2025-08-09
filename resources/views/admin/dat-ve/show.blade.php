@@ -429,7 +429,7 @@
                         </div>
                         <div class="detail-item">
                             <i class="fas fa-calendar-alt"></i>
-                            <span>{{ \Carbon\Carbon::parse($datVe->suatChieu?->ngay_chieu)->format('d/m/Y') }}</span>
+                            <span>{{ \Carbon\Carbon::parse($datVe->suatChieu?->ngay_bat_dau)->format('d/m/Y') }}</span>
                         </div>
                         <div class="detail-item">
                             <i class="fas fa-clock"></i>
