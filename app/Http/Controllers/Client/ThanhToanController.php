@@ -268,9 +268,12 @@ public function index($datVeId)
                         foreach ($datVe->chiTietDatVes as $chiTiet) {
                             $ghe = $chiTiet->ghe;
                             if ($ghe) {
-                                Log::info("Đã cập nhật trạng thái ghế: " . $ghe->ma_ghe);
-                                $ghe->trang_thai = 'da_dat';
-                                $ghe->save();
+                                Log::info("Đã cập nhật trạng thái ghế (theo suất): " . $ghe->ma_ghe);
+
+                                // Cập nhật trạng thái trong bảng ghe_ngoi_suat_chieu
+                                GheNgoiSuatChieu::where('ghe_ngoi_id', $ghe->id)
+                                    ->where('suat_chieu_id', $datVe->suat_chieu_id)
+                                    ->update(['trang_thai' => 'da_dat']);
                             }
                         }
 
