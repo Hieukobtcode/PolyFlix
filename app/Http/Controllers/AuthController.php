@@ -59,7 +59,7 @@ class AuthController extends Controller
             'register_data' => [
                 'name'     => $validated['name'],
                 'email'    => $validated['email'],
-                'password' => bcrypt($validated['password']),
+                'password' => $validated['password'],
                 'dob'      => $validated['dob'] ?? null,
                 'phone'    => $validated['phone'] ?? null,
                 'username' => $validated['username'] ?? null,

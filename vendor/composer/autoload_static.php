@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit603cda8a0685f102b0fac5f6c0594535
+class ComposerStaticInitbd822e765c131fc8ed22c288f3d64b19
 {
     public static $files = array (
         '6e3fae29631ef280660b3cdad06f25a8' => __DIR__ . '/..' . '/symfony/deprecation-contracts/function.php',
@@ -234,9 +234,9 @@ class ComposerStaticInit603cda8a0685f102b0fac5f6c0594535
         ),
         'phpDocumentor\\Reflection\\' => 
         array (
-            0 => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src',
+            0 => __DIR__ . '/..' . '/phpdocumentor/reflection-common/src',
             1 => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src',
-            2 => __DIR__ . '/..' . '/phpdocumentor/reflection-common/src',
+            2 => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src',
         ),
         'Whoops\\' => 
         array (
@@ -412,8 +412,8 @@ class ComposerStaticInit603cda8a0685f102b0fac5f6c0594535
         ),
         'Psr\\Http\\Message\\' => 
         array (
-            0 => __DIR__ . '/..' . '/psr/http-factory/src',
-            1 => __DIR__ . '/..' . '/psr/http-message/src',
+            0 => __DIR__ . '/..' . '/psr/http-message/src',
+            1 => __DIR__ . '/..' . '/psr/http-factory/src',
         ),
         'Psr\\Http\\Client\\' => 
         array (
@@ -497,8 +497,8 @@ class ComposerStaticInit603cda8a0685f102b0fac5f6c0594535
         ),
         'League\\Uri\\' => 
         array (
-            0 => __DIR__ . '/..' . '/league/uri',
-            1 => __DIR__ . '/..' . '/league/uri-interfaces',
+            0 => __DIR__ . '/..' . '/league/uri-interfaces',
+            1 => __DIR__ . '/..' . '/league/uri',
         ),
         'League\\OAuth1\\Client\\' => 
         array (
@@ -7800,6 +7800,7 @@ class ComposerStaticInit603cda8a0685f102b0fac5f6c0594535
         'Symfony\\Component\\Process\\ProcessUtils' => __DIR__ . '/..' . '/symfony/process/ProcessUtils.php',
         'Symfony\\Component\\Routing\\Alias' => __DIR__ . '/..' . '/symfony/routing/Alias.php',
         'Symfony\\Component\\Routing\\Annotation\\Route' => __DIR__ . '/..' . '/symfony/routing/Annotation/Route.php',
+        'Symfony\\Component\\Routing\\Attribute\\DeprecatedAlias' => __DIR__ . '/..' . '/symfony/routing/Attribute/DeprecatedAlias.php',
         'Symfony\\Component\\Routing\\Attribute\\Route' => __DIR__ . '/..' . '/symfony/routing/Attribute/Route.php',
         'Symfony\\Component\\Routing\\CompiledRoute' => __DIR__ . '/..' . '/symfony/routing/CompiledRoute.php',
         'Symfony\\Component\\Routing\\DependencyInjection\\AddExpressionLanguageProvidersPass' => __DIR__ . '/..' . '/symfony/routing/DependencyInjection/AddExpressionLanguageProvidersPass.php',
@@ -8674,10 +8675,10 @@ class ComposerStaticInit603cda8a0685f102b0fac5f6c0594535
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit603cda8a0685f102b0fac5f6c0594535::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit603cda8a0685f102b0fac5f6c0594535::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit603cda8a0685f102b0fac5f6c0594535::$prefixesPsr0;
-            $loader->classMap = ComposerStaticInit603cda8a0685f102b0fac5f6c0594535::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInitbd822e765c131fc8ed22c288f3d64b19::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInitbd822e765c131fc8ed22c288f3d64b19::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInitbd822e765c131fc8ed22c288f3d64b19::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInitbd822e765c131fc8ed22c288f3d64b19::$classMap;
 
         }, null, ClassLoader::class);
     }
