@@ -347,22 +347,41 @@ class SuatChieuController extends Controller
 
             $cacSuatChieuDeXuat = $this->getDuKienSuatChieu($request, $phim, $validated);
 
+            $thoiGianNghi = 20; // phút nghỉ tối thiểu
+
             foreach ($cacSuatChieuDeXuat as $suat) {
                 $trung = SuatChieu::where('phong_chieu_id', $suat['phong_chieu'])
                     ->where('ngay_bat_dau', $suat['ngay_bat_dau'])
-                    ->where(function ($q) use ($suat) {
-                        $q->whereBetween('bat_dau', [$suat['bat_dau'], $suat['ket_thuc']])
-                            ->orWhereBetween('ket_thuc', [$suat['bat_dau'], $suat['ket_thuc']])
-                            ->orWhere(fn($qq) => $qq->where('bat_dau', '<=', $suat['bat_dau'])
-                                ->where('ket_thuc', '>=', $suat['ket_thuc']));
-                    })->exists();
+                    ->where(function ($q) use ($suat, $thoiGianNghi) { // thêm $thoiGianNghi ở đây
+                        $batDauMoi = Carbon::parse($suat['ngay_bat_dau'] . ' ' . $suat['bat_dau']);
+                        $ketThucMoi = Carbon::parse($suat['ngay_bat_dau'] . ' ' . $suat['ket_thuc']);
+
+                        $q->where(function ($qq) use ($batDauMoi, $ketThucMoi, $thoiGianNghi) {
+                            $qq->whereRaw('? < ADDTIME(bat_dau, SEC_TO_TIME(-?*60))', [$ketThucMoi, $thoiGianNghi])
+                                ->whereRaw('? > SUBTIME(ket_thuc, SEC_TO_TIME(-?*60))', [$batDauMoi, $thoiGianNghi]);
+                        });
+
+                        // Kiểm tra chồng lấn hoặc không đủ thời gian nghỉ
+                        $q->orWhere(function ($qq) use ($batDauMoi, $ketThucMoi, $thoiGianNghi) {
+                            $qq->whereBetween(DB::raw('TIME(bat_dau)'), [
+                                $batDauMoi->copy()->subMinutes($thoiGianNghi)->format('H:i'),
+                                $ketThucMoi->copy()->addMinutes($thoiGianNghi)->format('H:i')
+                            ])
+                                ->orWhereBetween(DB::raw('TIME(ket_thuc)'), [
+                                    $batDauMoi->copy()->subMinutes($thoiGianNghi)->format('H:i'),
+                                    $ketThucMoi->copy()->addMinutes($thoiGianNghi)->format('H:i')
+                                ]);
+                        });
+                    })
+                    ->exists();
 
                 if ($trung) {
                     DB::rollBack();
                     return response()->json([
                         'success' => false,
                         'message' => "Suất chiếu từ {$suat['bat_dau']} đến {$suat['ket_thuc']} ngày " .
-                            Carbon::parse($suat['ngay_bat_dau'])->format('d/m/Y') . " bị trùng.",
+                            Carbon::parse($suat['ngay_bat_dau'])->format('d/m/Y') .
+                            " bị trùng hoặc không đủ {$thoiGianNghi} phút nghỉ giữa các suất.",
                         'du_kien' => $cacSuatChieuDeXuat
                     ]);
                 }
@@ -402,8 +421,6 @@ class SuatChieuController extends Controller
                     'ket_thuc' => $suat['ket_thuc'],
                     'trang_thai' => 'hoat_dong'
                 ]);
-
-                
             }
 
             DB::commit();
