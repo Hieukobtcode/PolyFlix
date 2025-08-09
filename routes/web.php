@@ -50,6 +50,7 @@ Route::get('/', [TrangChuController::class, 'index'])->name('home');
 
 Route::middleware('auth')->group(function () {
 
+    Route::get('admin/dat-ve/{id}/print', [DatVeController::class, 'print'])->name('admin.dat-ve.print');
     //Đổi điểm
     Route::post('/doi-diem', [\App\Http\Controllers\Client\DatVeController::class, 'doiDiem'])->name('doi-diem');
 
