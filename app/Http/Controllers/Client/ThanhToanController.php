@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers\Client;
 
-use App\Http\Controllers\Controller;
-use App\Mail\GuiVeXemPhim;
-use App\Models\CapBacThe;
-use App\Models\DatVe;
-use App\Models\LichSuDiem;
 use Exception;
+use App\Models\DatVe;
+use App\Models\CapBacThe;
+use App\Mail\GuiVeXemPhim;
+use App\Models\LichSuDiem;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use App\Models\GheNgoiSuatChieu;
 use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 
 
@@ -19,82 +20,81 @@ class ThanhToanController extends Controller
     /**
      * Hiển thị trang thanh toán
      */
-    public function index($datVeId)
-    {
-        // Kiểm tra người dùng đã đăng nhập
-        if (!Auth::check()) {
-            return redirect()->route('login.form')->with('error', 'Vui lòng đăng nhập để thanh toán!');
-        }
 
-        // Lấy thông tin đặt vé, kèm các quan hệ cần thiết
-        $datVe = DatVe::with([
-            'nguoiDung',
-            'suatChieu.phim',
-            'suatChieu.phongChieu.rapPhim.chiNhanh',
-            'suatChieu.phongChieu.loaiPhong',
-            'gheNgois.loaiGhe',
-            'combos',
-            'doAns'
-        ])
-            ->where('id', $datVeId)
-            ->where('user_id', Auth::id())
-            ->where('trang_thai', 'Chờ thanh toán')
-            ->firstOrFail();
-
-        foreach ($datVe->gheNgois as $ghe) {
-            if ($ghe->trang_thai === 'da_dat') {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'Một hoặc nhiều ghế đã được đặt. Vui lòng chọn lại ghế khác.'
-                ]);
-            }
-        }
-
-        // --- TÍNH TIỀN GHẾ ---
-        $tongTienGhe = 0;
-        $giaVeCoBan = 0; // Tạm thời set 0, sau có thể cấu hình từ DB hoặc biến cấu hình
-
-        // Phụ thu theo rạp và loại phòng
-        $phuThuRap = $datVe->suatChieu->phongChieu->rapPhim->phu_thu ?? 0;
-        $phuThuLoaiPhong = $datVe->suatChieu->phongChieu->loaiPhong->phu_thu ?? 0;
-
-        // Duyệt qua từng ghế được chọn
-        foreach ($datVe->gheNgois as $ghe) {
-            $phuThuGhe = $ghe->loaiGhe->phu_thu ?? 0;
-
-            // Tính giá cho từng ghế
-            $giaMotGhe = $giaVeCoBan + $phuThuLoaiPhong + $phuThuGhe;
-
-            $tongTienGhe += $giaMotGhe;
-        }
-
-        // Phụ thu rạp chỉ tính một lần
-        $tongTienGhe += $phuThuRap;
-
-        // --- TÍNH TIỀN COMBO ---
-        $tongTienCombo = 0;
-        foreach ($datVe->combos as $combo) {
-            $tongTienCombo += $combo->gia * $combo->pivot->so_luong;
-        }
-
-        // --- TÍNH TIỀN ĐỒ ĂN ---
-        $tongTienDoAn = 0;
-        foreach ($datVe->doAns as $doAn) {
-            $tongTienDoAn += $doAn->gia * $doAn->pivot->so_luong;
-        }
-
-        // --- TỔNG THANH TOÁN ---
-        $tongThanhTien = $datVe->tong_tien;
-
-        // Trả về view thanh toán với các dữ liệu cần thiết
-        return view('client.thanh-toan.index', compact(
-            'datVe',
-            'tongTienGhe',
-            'tongTienCombo',
-            'tongTienDoAn',
-            'tongThanhTien'
-        ));
+public function index($datVeId)
+{
+    if (!Auth::check()) {
+        return redirect()->route('login.form')->with('error', 'Vui lòng đăng nhập để thanh toán!');
     }
+
+    $datVe = DatVe::with([
+        'nguoiDung',
+        'suatChieu.phim',
+        'suatChieu.phongChieu.rapPhim.chiNhanh',
+        'suatChieu.phongChieu.loaiPhong',
+        'gheNgois.loaiGhe',
+        'combos',
+        'doAns'
+    ])
+        ->where('id', $datVeId)
+        ->where('user_id', Auth::id())
+        ->where('trang_thai', 'Chờ thanh toán')
+        ->firstOrFail();
+
+    
+
+    /**
+     * Cập nhật trạng thái ghế trong bảng ghe_ngoi_suat_chieus
+     * Nếu đã tồn tại thì update, chưa có thì insert
+     */
+    foreach ($datVe->gheNgois as $ghe) {
+        GheNgoiSuatChieu::updateOrCreate(
+            [
+                'ghe_ngoi_id'   => $ghe->id,
+                'suat_chieu_id' => $datVe->suatChieu->id
+            ],
+            [
+                'trang_thai' => 'da_chon'
+            ]
+        );
+    }
+
+    // --- TÍNH TIỀN GHẾ ---
+    $tongTienGhe = 0;
+    $giaVeCoBan = 0;
+
+    $phuThuRap = $datVe->suatChieu->phongChieu->rapPhim->phu_thu ?? 0;
+    $phuThuLoaiPhong = $datVe->suatChieu->phongChieu->loaiPhong->phu_thu ?? 0;
+
+    foreach ($datVe->gheNgois as $ghe) {
+        $phuThuGhe = $ghe->loaiGhe->phu_thu ?? 0;
+        $giaMotGhe = $giaVeCoBan + $phuThuLoaiPhong + $phuThuGhe;
+        $tongTienGhe += $giaMotGhe;
+    }
+
+    $tongTienGhe += $phuThuRap;
+
+    $tongTienCombo = 0;
+    foreach ($datVe->combos as $combo) {
+        $tongTienCombo += $combo->gia * $combo->pivot->so_luong;
+    }
+
+    $tongTienDoAn = 0;
+    foreach ($datVe->doAns as $doAn) {
+        $tongTienDoAn += $doAn->gia * $doAn->pivot->so_luong;
+    }
+
+    $tongThanhTien = $datVe->tong_tien;
+
+    return view('client.thanh-toan.index', compact(
+        'datVe',
+        'tongTienGhe',
+        'tongTienCombo',
+        'tongTienDoAn',
+        'tongThanhTien'
+    ));
+}
+
 
     public function xuLyThanhToan(Request $request)
     {
@@ -268,9 +268,12 @@ class ThanhToanController extends Controller
                         foreach ($datVe->chiTietDatVes as $chiTiet) {
                             $ghe = $chiTiet->ghe;
                             if ($ghe) {
-                                Log::info("Đã cập nhật trạng thái ghế: " . $ghe->ma_ghe);
-                                $ghe->trang_thai = 'da_dat';
-                                $ghe->save();
+                                Log::info("Đã cập nhật trạng thái ghế (theo suất): " . $ghe->ma_ghe);
+
+                                // Cập nhật trạng thái trong bảng ghe_ngoi_suat_chieu
+                                GheNgoiSuatChieu::where('ghe_ngoi_id', $ghe->id)
+                                    ->where('suat_chieu_id', $datVe->suat_chieu_id)
+                                    ->update(['trang_thai' => 'da_dat']);
                             }
                         }
 

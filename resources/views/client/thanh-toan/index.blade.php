@@ -51,7 +51,7 @@
                                     <div><i class="fas fa-door-open"></i> {{ $datVe->suatChieu->phongChieu->ten_phong }}
                                     </div>
                                     <div><i class="fas fa-calendar"></i>
-                                        {{ \Carbon\Carbon::parse($datVe->suatChieu->ngay_chieu)->format('d/m/Y') }}</div>
+                                        {{ \Carbon\Carbon::parse($datVe->suatChieu->ngay_bat_dau)->format('d/m/Y') }}</div>
                                     <div><i class="fas fa-clock"></i>
                                         {{ \Carbon\Carbon::parse($datVe->suatChieu->bat_dau)->format('H:i') }}</div>
                                 </div>

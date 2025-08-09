@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInitbd822e765c131fc8ed22c288f3d64b19
+class ComposerStaticInitf6cea06a050210d0ad2a1780ecad525f
 {
     public static $files = array (
         '6e3fae29631ef280660b3cdad06f25a8' => __DIR__ . '/..' . '/symfony/deprecation-contracts/function.php',
@@ -235,8 +235,8 @@ class ComposerStaticInitbd822e765c131fc8ed22c288f3d64b19
         'phpDocumentor\\Reflection\\' => 
         array (
             0 => __DIR__ . '/..' . '/phpdocumentor/reflection-common/src',
-            1 => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src',
-            2 => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src',
+            1 => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src',
+            2 => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src',
         ),
         'Whoops\\' => 
         array (
@@ -412,8 +412,8 @@ class ComposerStaticInitbd822e765c131fc8ed22c288f3d64b19
         ),
         'Psr\\Http\\Message\\' => 
         array (
-            0 => __DIR__ . '/..' . '/psr/http-message/src',
-            1 => __DIR__ . '/..' . '/psr/http-factory/src',
+            0 => __DIR__ . '/..' . '/psr/http-factory/src',
+            1 => __DIR__ . '/..' . '/psr/http-message/src',
         ),
         'Psr\\Http\\Client\\' => 
         array (
@@ -497,8 +497,8 @@ class ComposerStaticInitbd822e765c131fc8ed22c288f3d64b19
         ),
         'League\\Uri\\' => 
         array (
-            0 => __DIR__ . '/..' . '/league/uri-interfaces',
-            1 => __DIR__ . '/..' . '/league/uri',
+            0 => __DIR__ . '/..' . '/league/uri',
+            1 => __DIR__ . '/..' . '/league/uri-interfaces',
         ),
         'League\\OAuth1\\Client\\' => 
         array (
@@ -934,6 +934,7 @@ class ComposerStaticInitbd822e765c131fc8ed22c288f3d64b19
         'Database\\Seeders\\ComboSeeder' => __DIR__ . '/../..' . '/database/seeders/ComboSeeder.php',
         'Database\\Seeders\\CommentSeeder' => __DIR__ . '/../..' . '/database/seeders/CommentSeeder.php',
         'Database\\Seeders\\DanhGiaSeeder' => __DIR__ . '/../..' . '/database/seeders/DanhGiaSeeder.php',
+        'Database\\Seeders\\DatVeSeeder' => __DIR__ . '/../..' . '/database/seeders/DatVeSeeder.php',
         'Database\\Seeders\\DatabaseSeeder' => __DIR__ . '/../..' . '/database/seeders/DatabaseSeeder.php',
         'Database\\Seeders\\DinhDangPhimSeeder' => __DIR__ . '/../..' . '/database/seeders/DinhDangPhimSeeder.php',
         'Database\\Seeders\\DoAnSeeder' => __DIR__ . '/../..' . '/database/seeders/DoAnSeeder.php',
@@ -942,6 +943,7 @@ class ComposerStaticInitbd822e765c131fc8ed22c288f3d64b19
         'Database\\Seeders\\LoaiGheSeeder' => __DIR__ . '/../..' . '/database/seeders/LoaiGheSeeder.php',
         'Database\\Seeders\\LoaiPhongSeeder' => __DIR__ . '/../..' . '/database/seeders/LoaiPhongSeeder.php',
         'Database\\Seeders\\PhanQuyenSeeder' => __DIR__ . '/../..' . '/database/seeders/PhanQuyenSeeder.php',
+        'Database\\Seeders\\PhimChiNhanhSeeder' => __DIR__ . '/../..' . '/database/seeders/PhimChiNhanhSeeder.php',
         'Database\\Seeders\\PhimSeeder' => __DIR__ . '/../..' . '/database/seeders/PhimSeeder.php',
         'Database\\Seeders\\PhongChieuSeeder' => __DIR__ . '/../..' . '/database/seeders/PhongChieuSeeder.php',
         'Database\\Seeders\\PhuDePhimSeeder' => __DIR__ . '/../..' . '/database/seeders/PhuDePhimSeeder.php',
@@ -8678,10 +8680,10 @@ class ComposerStaticInitbd822e765c131fc8ed22c288f3d64b19
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInitbd822e765c131fc8ed22c288f3d64b19::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInitbd822e765c131fc8ed22c288f3d64b19::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInitbd822e765c131fc8ed22c288f3d64b19::$prefixesPsr0;
-            $loader->classMap = ComposerStaticInitbd822e765c131fc8ed22c288f3d64b19::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInitf6cea06a050210d0ad2a1780ecad525f::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInitf6cea06a050210d0ad2a1780ecad525f::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInitf6cea06a050210d0ad2a1780ecad525f::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInitf6cea06a050210d0ad2a1780ecad525f::$classMap;
 
         }, null, ClassLoader::class);
     }
