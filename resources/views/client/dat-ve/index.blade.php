@@ -61,19 +61,26 @@
                             <div class="row-label">{{ $hangGhe }}</div>
                             <div class="seats">
                                 @foreach ($ghes as $ghe)
+                                    @php
+                                        // trạng thái helper
+                                        $isMaintenance = ($ghe->trang_thai_mac_dinh ?? $ghe->trang_thai) === 'bao_tri';
+                                        $suatStatus = $ghe->trang_thai_theo_suat ?? 'trong'; // 'trong'|'da_chon'|'da_dat'
+                                        $isSuatBooked = in_array($suatStatus, ['da_chon', 'da_dat']);
+                                        $isAvailable =
+                                            !$ghe->da_dat && !$ghe->dang_duoc_chon && !$isMaintenance && !$isSuatBooked;
+                                        $loaiClass = \Illuminate\Support\Str::slug(
+                                            $ghe->loaiGhe->ten_loai_ghe ?? 'thuong',
+                                        );
+
+                                    @endphp
+                                    {{-- Hiển thị ghế --}}
                                     <div class="ghe-chieu
                                     {{-- Nếu ghế đang bảo trì --}}
-                                    {{ $ghe->trang_thai == 'bao_tri' ? 'maintenance' : '' }}
-
-                                    {{-- Nếu ghế đang được người khác chọn (giữ tạm thời trong Redis) --}}
-                                    {{ $ghe->trang_thai == 'da_dat' ? 'booked' : '' }}
-                                     
-
-                                    {{-- Nếu không rơi vào các trạng thái đặc biệt → available --}}
-                                    {{ !$ghe->da_dat && !$ghe->dang_duoc_chon && $ghe->trang_thai !== 'bao_tri' && $ghe->trang_thai !== 'dang_chon' ? 'available' : '' }}
-
-                                    {{-- Loại ghế (VIP, thường...) --}}
-                                    {{ \Illuminate\Support\Str::slug($ghe->loaiGhe->ten_loai_ghe ?? 'thuong') }}
+                                    {{ $isMaintenance ? 'maintenance' : '' }}
+                                    {{ $suatStatus === 'da_chon' ? 'booked' : '' }}
+                                    {{ $suatStatus === 'da_dat' ? 'reserved' : '' }}
+                                    {{ $isAvailable ? 'available' : '' }}
+                                    {{ $loaiClass }}
 
                                     {{-- Ghế đôi --}}
                                     {{ $ghe->loaiGhe->id == 12 ? 'ghe-doi' : '' }}"
@@ -83,10 +90,9 @@
                                         data-phu-thu-loai-ghe="{{ $ghe->phu_thu_loai_ghe }}"
                                         data-phu-thu-rap-phim="{{ $ghe->phu_thu_rap_phim }}"
                                         data-seat-type-id="{{ $ghe->loaiGhe->id }}"
-                                        @if ($ghe->trang_thai == 'bao_tri' || $ghe->da_dat) disabled @endif>
-                                        {{-- Hiển thị x nếu ghế đang bảo trì --}}
-                                        {{-- Hiển thị "x" nếu ghế bảo trì hoặc đã chọn --}}
-                                        {{ in_array($ghe->trang_thai, ['bao_tri', 'da_dat']) ? 'x' : $ghe->ma_ghe }}
+                                        @if ($isMaintenance || $isSuatBooked) disabled @endif>
+                                        {{-- Hiển thị "x" nếu ghế bị bảo trì (mặc định) hoặc bị giữ/đặt theo suất --}}
+                                        {{ $isMaintenance || $isSuatBooked ? 'x' : $ghe->ma_ghe }}
                                     </div>
                                 @endforeach
                             </div>

@@ -405,6 +405,8 @@ class SuatChieuController extends Controller
                     'ket_thuc' => $suat['ket_thuc'],
                     'trang_thai' => 'hoat_dong'
                 ]);
+
+                
             }
 
             DB::commit();

@@ -465,6 +465,7 @@
     color: #ffffff;
 }
 
+
 :root {
     --primary-gradient: linear-gradient(135deg, #1a0933 0%, #3c1a7a 100%);
     --accent-yellow: #ffeb3b;
