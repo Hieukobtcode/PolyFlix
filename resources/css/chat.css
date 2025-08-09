@@ -1,0 +1,296 @@
+#ai-toggle {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 64px;
+    height: 64px;
+    background: linear-gradient(to right, #ff7e2a, #ff3d00);
+    color: white;
+    font-size: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 1000;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease;
+}
+
+#ai-toggle:hover {
+    transform: scale(1.1);
+}
+
+#chatbox-ai {
+    position: fixed;
+    bottom: 100px;
+    right: 24px;
+    width: 380px;
+    max-width: 90%;
+    max-height: 90vh;
+    height: 500px;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    z-index: 999;
+    transform: scale(0.8);
+    opacity: 0;
+}
+
+#chatbox-ai.active {
+    display: flex;
+    transform: scale(1);
+    opacity: 1;
+}
+
+#chatbox-ai header {
+    background: linear-gradient(to right, #ff7e2a, #ff3d00);
+    color: white;
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+}
+
+#chatbox-ai header span.close-btn {
+    cursor: pointer;
+    font-size: 18px;
+    color: yellow;
+}
+
+#chat-messages {
+    flex: 1;
+    padding: 12px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    background: #f5f5f5;
+}
+
+#chat-messages::-webkit-scrollbar {
+    width: 6px;
+}
+
+#chat-messages::-webkit-scrollbar-thumb {
+    background: #ff6b35;
+    border-radius: 10px;
+}
+
+.message {
+    display: inline-block;
+    padding: 8px 12px;
+    margin: 6px 0;
+    border-radius: 12px;
+    max-width: 100%;
+    word-break: break-word;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.user-message {
+    background-color: #ffefd5;
+    color: #000;
+    align-self: flex-end;
+    text-align: right;
+    margin-left: auto;
+    border-radius: 16px 16px 0 16px;
+}
+
+.ai-message {
+    background-color: #e0e0e0;
+    color: #333;
+    align-self: flex-start;
+    text-align: left;
+    margin-right: auto;
+    border-radius: 16px 16px 16px 0;
+}
+
+footer {
+    padding: 12px;
+    border-top: 1px solid #ddd;
+    display: flex;
+    gap: 8px;
+    background-color: #fff;
+}
+
+input#chat-input {
+    flex: 1;
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    outline: none;
+    color: #000;
+}
+
+input#chat-input::placeholder {
+    color: #999;
+}
+
+button#send-btn {
+    background-color: #ff6b35;
+    color: white;
+    padding: 8px 16px;
+    font-size: 14px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+button#send-btn:hover {
+    background-color: #ff5722;
+}
+
+/* loading */
+.typing-indicator .dots span {
+    animation: blink 1.2s infinite;
+    opacity: 0.3;
+    font-size: 18px;
+    padding: 0 1px;
+}
+
+.typing-indicator .dots span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+.typing-indicator .dots span:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes blink {
+    0%, 100% {
+        opacity: 0.3;
+    }
+    50% {
+        opacity: 1;
+    }
+}
+
+/* Ép riêng bubble đang gõ về dạng hàng ngang */
+.chat-bubble.ai.typing-indicator {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Cho phần dấu chấm co theo nội dung và căn giữa theo trục dọc */
+.chat-bubble.ai.typing-indicator .bubble-content {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+}
+
+/* Khối chat tổng thể */
+.chat-bubble {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 12px;
+    max-width: 90%;
+}
+
+/* Tin nhắn từ người dùng */
+.chat-bubble.user {
+    flex-direction: row-reverse;
+    align-self: flex-end;
+}
+
+/* Tin nhắn từ AI */
+.chat-bubble.ai {
+    align-self: flex-start;
+}
+
+/* Avatar */
+.chat-bubble .avatar {
+    font-size: 20px;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 0; /* bỏ margin-top để không lệch */
+}
+
+/* Bubble content chung */
+.bubble-content {
+    background: #f1f5f9;
+    padding: 12px 16px;
+    border-radius: 18px;
+    font-size: 15px;
+    line-height: 1.6;
+    color: #111827; /* màu chữ đậm hơn chút */
+    white-space: pre-line;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05); /* nhẹ nhàng */
+    max-width: 100%;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    font-family: "Segoe UI", "Roboto", sans-serif;
+}
+
+/* Bubble từ AI */
+.chat-bubble.ai .bubble-content {
+    background: #f3f4f6; /* màu sáng hơn tí */
+}
+
+/* Bubble từ người dùng */
+.chat-bubble.user .bubble-content {
+    background: #dbeafe;
+    color: #1e3a8a;
+    font-weight: 500;
+}
+
+/* Tùy chọn thêm: Markdown styling nếu có */
+.bubble-content p {
+    margin: 0 0 8px;
+}
+
+.bubble-content code {
+    background: #e2e8f0;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 14px;
+    color: #334155;
+}
+
+.bubble-content pre {
+    background: #e2e8f0;
+    padding: 12px;
+    border-radius: 10px;
+    overflow-x: auto;
+    font-family: monospace;
+    font-size: 14px;
+    margin: 8px 0;
+}
+
+/* Dấu chấm loading ... */
+.dots {
+    display: flex;
+    gap: 6px;
+}
+
+.dots span {
+    animation: blink 1.2s infinite;
+    font-weight: bold;
+    font-size: 18px;
+    opacity: 0.3;
+}
+
+.dots span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+.dots span:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 0.3; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.4); }
+}
+
+
+

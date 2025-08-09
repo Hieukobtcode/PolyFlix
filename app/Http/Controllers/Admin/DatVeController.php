@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Mail;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 
 class DatVeController extends Controller
 {
@@ -111,17 +112,66 @@ class DatVeController extends Controller
         return back()->with('success', 'Đã gửi vé về email người dùng!');
     }
     
-    public function print($id)
+   public function print($id)
     {
         $datVe = DatVe::with([
             'nguoiDung',
             'suatChieu.phim',
-            'suatChieu.phongChieu.rapPhim',
+            'suatChieu.phongChieu.rapPhim.chiNhanh',
             'gheNgois.loaiGhe',
-            'combos.doAns'
+            'combos.doAns',
+            'doAns'
         ])->findOrFail($id);
 
-        $pdf = Pdf::loadView('admin.dat-ve.print', compact('datVe'))->setPaper('a4');
+        // Tính tổng tiền
+        $phuThuRap = $datVe->suatChieu->phongChieu->rapPhim->phu_thu ?? 0;
+        $tongTienGhe = $datVe->gheNgois->sum(function ($ghe) use ($phuThuRap) {
+            return ($ghe->loaiGhe->phu_thu ?? 0) + $phuThuRap;
+        });
+
+        $tongTienCombo = $datVe->combos->sum(function ($combo) {
+            return ($combo->gia ?? 0) * ($combo->pivot->so_luong ?? 1);
+        });
+
+        $tongTienDoAn = $datVe->doAns->sum(function ($doAn) {
+            return ($doAn->gia ?? 0) * ($doAn->pivot->so_luong ?? 1);
+        });
+
+        $tongThanhTien = $tongTienGhe + $tongTienCombo + $tongTienDoAn;
+
+        // Tạo mã vạch và lưu thành file PNG
+        $barcodeData = DNS1D::getBarcodePNG($datVe->ma_dat_ve, 'C128', 2, 60);
+        $barcodeFileName = 'barcode_' . $datVe->ma_dat_ve . '.png';
+        $barcodePath = public_path('temp/' . $barcodeFileName);
+
+        // Đảm bảo thư mục temp tồn tại
+        if (!Storage::exists('public/temp')) {
+            Storage::makeDirectory('public/temp');
+        }
+
+        // Lưu mã vạch vào file
+        file_put_contents($barcodePath, base64_decode($barcodeData));
+
+        // Tải view
+        $pdf = Pdf::loadView('admin.dat-ve.print', compact('datVe', 'tongTienGhe', 'tongTienCombo', 'tongTienDoAn', 'tongThanhTien', 'barcodeFileName'))
+            ->setPaper('a4')
+            ->setOption('enable-local-file-access', true)
+            ->setOption('isHtml5ParserEnabled', true)
+            ->setOption('isRemoteEnabled', true)
+            ->setOption('default_font', 'DejaVu Sans')
+            ->setOption('dpi', 150)
+            ->setOption('isPhpEnabled', true)
+            ->setOption('isFontSubsettingEnabled', true)
+            ->setOption('enable_html5_parser', true);
+
+        // Xóa file mã vạch sau khi tạo PDF
+        register_shutdown_function(function () use ($barcodePath) {
+            if (file_exists($barcodePath)) {
+                unlink($barcodePath);
+            }
+        });
+
         return $pdf->stream('ve_xem_phim_' . $datVe->ma_dat_ve . '.pdf');
     }
+
 }

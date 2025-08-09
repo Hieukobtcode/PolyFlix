@@ -38,6 +38,7 @@ use App\Http\Controllers\Admin\CommentController;
 use App\Http\Controllers\Admin\GiaVeController;
 use App\Http\Controllers\Admin\KhuyenMaiController as AdminKhuyenMaiController;
 use App\Http\Controllers\Admin\RequestController;
+use App\Http\Controllers\Client\AIChatController;
 use App\Http\Controllers\Client\LoginController;
 use App\Http\Controllers\Client\ProfileController;
 use App\Http\Controllers\Client\KhuyenMaiController;
@@ -49,6 +50,7 @@ Route::get('/', [TrangChuController::class, 'index'])->name('home');
 
 Route::middleware('auth')->group(function () {
 
+    Route::get('admin/dat-ve/{id}/print', [DatVeController::class, 'print'])->name('admin.dat-ve.print');
     //Đổi điểm
     Route::post('/doi-diem', [\App\Http\Controllers\Client\DatVeController::class, 'doiDiem'])->name('doi-diem');
 
@@ -57,6 +59,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/dat-ve', [\App\Http\Controllers\Client\DatVeController::class, 'store'])->name('client.dat-ve.store');
     Route::get('/dat-ve/ket-qua/{ma_ve}', [\App\Http\Controllers\Client\DatVeController::class, 'ketQua'])->name('client.dat-ve.ket-qua');
     Route::get('/chi-tiet-dat-ve/{id}', [ProfileController::class, 'chiTietVe'])->name('dat-ve.chi-tiet');
+    Route::get('/chi-tiet-dat-ve/{id}/print', [ProfileController::class, 'printVe'])->name('dat-ve.print');
 
     // Thanh toán
     Route::get('/thanh-toan/{datVeId}', [ThanhToanController::class, 'index'])->name('client.thanh-toan.index');
@@ -74,6 +77,15 @@ Route::middleware('auth')->group(function () {
     // Ghế đang được chọn
     Route::post('/chon-ghe', [\App\Http\Controllers\Client\DatVeController::class, 'chonGhe'])->name('client.ghe.chon');
     Route::post('/huy-chon-ghe', [\App\Http\Controllers\Client\DatVeController::class, 'huyChonGhe'])->name('client.ghe.huy');
+
+    //Chat AI
+    Route::post('/ai-chat', [AIChatController::class, 'chat']);
+    Route::post('/ai-chat-reset', [AIChatController::class, 'reset']);
+
+    // giữ ghế
+    Route::post('/seat/lock', [SeatLockController::class,'lock'])->name('seat.lock');
+    Route::post('/seat/unlock', [SeatLockController::class,'unlock'])->name('seat.unlock');
+    Route::post('/seat/heartbeat', [SeatLockController::class,'heartbeat'])->name('seat.heartbeat');
 });
 
 Route::get('/', [TrangChuController::class, 'index'])->name('home');
@@ -243,9 +255,6 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access', 'per
 
     Route::resource('cap-bac-the', CapBacTheController::class);
     Route::put('cap-bac-the/{capBacThe}/set-default', [CapBacTheController::class, 'setDefault'])->name('cap-bac-the.set-default');
-
-
-
 
     Route::post('suat-chieu/luu-suat-chieu', [SuatChieuController::class, 'luuSuatChieu'])->name('suat-chieu.luu-suat-chieu');
     Route::post('suat-chieu/bulk-delete', [SuatChieuController::class, 'bulkDelete'])->name('suat-chieu.bulk-delete');

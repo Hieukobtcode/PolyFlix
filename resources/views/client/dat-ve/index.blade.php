@@ -2,12 +2,10 @@
 
 @section('styles')
     <style>
-        {
-            ! ! collect($loaiGhes)->map(function ($loai) {
-                    $class=\Illuminate\Support\Str::slug($loai->ten_loai_ghe);
-                    return ".ghe-chieu.{$class} { background-color: {$loai->chu_thich_mau_ghe}; }";
-                })->implode("\n") ! !
-        }
+        {!! collect($loaiGhes)->map(function ($loai) {
+                $class = \Illuminate\Support\Str::slug($loai->ten_loai_ghe);
+                return ".ghe-chieu.{$class} { background-color: {$loai->chu_thich_mau_ghe}; }";
+            })->implode("\n") !!}
     </style>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
@@ -63,21 +61,26 @@
                             <div class="row-label">{{ $hangGhe }}</div>
                             <div class="seats">
                                 @foreach ($ghes as $ghe)
+                                    @php
+                                        // trạng thái helper
+                                        $isMaintenance = ($ghe->trang_thai_mac_dinh ?? $ghe->trang_thai) === 'bao_tri';
+                                        $suatStatus = $ghe->trang_thai_theo_suat ?? 'trong'; // 'trong'|'da_chon'|'da_dat'
+                                        $isSuatBooked = in_array($suatStatus, ['da_chon', 'da_dat']);
+                                        $isAvailable =
+                                            !$ghe->da_dat && !$ghe->dang_duoc_chon && !$isMaintenance && !$isSuatBooked;
+                                        $loaiClass = \Illuminate\Support\Str::slug(
+                                            $ghe->loaiGhe->ten_loai_ghe ?? 'thuong',
+                                        );
+
+                                    @endphp
+                                    {{-- Hiển thị ghế --}}
                                     <div class="ghe-chieu
                                     {{-- Nếu ghế đang bảo trì --}}
-                                    {{ $ghe->trang_thai == 'bao_tri' ? 'maintenance' : '' }}
-
-                                    {{-- Nếu ghế đang được chính người dùng này chọn --}}
-                                    {{ $ghe->trang_thai == 'dang_chon' ? 'selected' : '' }}
-
-                                    {{-- Nếu ghế đang được người khác chọn (giữ tạm thời trong Redis) --}}
-                                    {{ $ghe->dang_duoc_chon && $ghe->trang_thai != 'dang_chon' ? 'selected-by-other' : '' }}
-
-                                    {{-- Nếu không rơi vào các trạng thái đặc biệt → available --}}
-                                    {{ !$ghe->da_dat && !$ghe->dang_duoc_chon && $ghe->trang_thai !== 'bao_tri' && $ghe->trang_thai !== 'dang_chon' ? 'available' : '' }}
-
-                                    {{-- Loại ghế (VIP, thường...) --}}
-                                    {{ \Illuminate\Support\Str::slug($ghe->loaiGhe->ten_loai_ghe ?? 'thuong') }}
+                                    {{ $isMaintenance ? 'maintenance' : '' }}
+                                    {{ $suatStatus === 'da_chon' ? 'booked' : '' }}
+                                    {{ $suatStatus === 'da_dat' ? 'reserved' : '' }}
+                                    {{ $isAvailable ? 'available' : '' }}
+                                    {{ $loaiClass }}
 
                                     {{-- Ghế đôi --}}
                                     {{ $ghe->loaiGhe->id == 12 ? 'ghe-doi' : '' }}"
@@ -87,9 +90,9 @@
                                         data-phu-thu-loai-ghe="{{ $ghe->phu_thu_loai_ghe }}"
                                         data-phu-thu-rap-phim="{{ $ghe->phu_thu_rap_phim }}"
                                         data-seat-type-id="{{ $ghe->loaiGhe->id }}"
-                                        @if ($ghe->trang_thai == 'bao_tri' || $ghe->da_dat) disabled @endif>
-                                        {{-- Hiển thị x nếu ghế đang bảo trì --}}
-                                        {{ $ghe->trang_thai == 'bao_tri' ? 'x' : $ghe->ma_ghe }}
+                                        @if ($isMaintenance || $isSuatBooked) disabled @endif>
+                                        {{-- Hiển thị "x" nếu ghế bị bảo trì (mặc định) hoặc bị giữ/đặt theo suất --}}
+                                        {{ $isMaintenance || $isSuatBooked ? 'x' : $ghe->ma_ghe }}
                                     </div>
                                 @endforeach
                             </div>
@@ -102,13 +105,15 @@
                 <div class="seat-legend-wrapper">
                     <div class="legend-column">
                         <div class="legend-item">
-                            <div class="seat-demo bg-available"></div><span>Ghế trống</span>
+                            <div class="seat-demo bg-available"></div><span>Checked</span>
                         </div>
                         <div class="legend-item">
                             <div class="seat-demo bg-selected"></div><span>Đã chọn</span>
                         </div>
                         <div class="legend-item">
-                            <div class="seat-demo seat-disabled"><i class="fas fa-times text-danger"></i></div><span>Không
+                            <div class="seat-demo seat-disabled">
+                                {{-- <i class="fas fa-times text-danger"></i> --}}
+                            </div><span>Không
                                 thể chọn</span>
                         </div>
                     </div>
@@ -125,10 +130,9 @@
 
             <!-- Chọn đồ ăn -->
             <div class="food-selection">
-                <h3>Chọn đồ ăn & nước uống</h3>
                 <div class="food-tabs">
-                    <button class="tab-btn active" data-tab="do-an">Đồ ăn</button>
-                    <button class="tab-btn" data-tab="combo">Combo</button>
+                    <button style="color: white" class="tab-btn active" data-tab="do-an">Đồ ăn</button>
+                    <button style="color: white" class="tab-btn" data-tab="combo">Combo</button>
                 </div>
 
                 <div class="tab-content active" id="do-an">
@@ -194,8 +198,8 @@
                     <div id="pointView" style="display: none" class="point">
                         <input id="point" style="height: 35px; border-radius: 5px;" type="number">
                         <button id="btnPoint" class="btn btn-warning">Đổi điểm</button>
-                        <p class="text-muted">
-                            Số điểm hiện có: <span id="diemHienCo"
+                        <p style="color: yellow;" class="text-muted">
+                            Số điểm hiện có: <span style="color: yellow;" id="diemHienCo"
                                 data-diem="{{ Auth::user()->diem }}">{{ number_format(Auth::user()->diem) }}</span>
                         </p>
                     </div>

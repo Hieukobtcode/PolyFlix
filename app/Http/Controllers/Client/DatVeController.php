@@ -2,17 +2,19 @@
 
 namespace App\Http\Controllers\Client;
 
-use App\Models\LichSuDiem;
+use Exception;
 use Carbon\Carbon;
 use App\Models\DoAn;
 use App\Models\Combo;
 use App\Models\DatVe;
 use App\Models\GheNgoi;
 use App\Models\SuatChieu;
+use App\Models\LichSuDiem;
 use App\Events\GheBiHuyChon;
 use App\Models\ChiTietDatVe;
 use Illuminate\Http\Request;
 use App\Events\GheDangDuocChon;
+use App\Models\GheNgoiSuatChieu;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
@@ -22,188 +24,85 @@ use Illuminate\Support\Facades\Cache;
 class DatVeController extends Controller
 {
 
-    public function index(Request $request)
-    {
-        $suatChieuId = $request->input('suat_chieu_id');
 
-        if (!$suatChieuId) {
-            return redirect()->route('home')->with('error', 'Vui lòng chọn suất chiếu!');
-        }
-
-        $suatChieu = SuatChieu::with([
-            'phim',
-            'phongChieu.rapPhim.chiNhanh',
-            'phongChieu.loaiPhong',
-            'phongChieu.gheNgois.loaiGhe'
-        ])->findOrFail($suatChieuId);
-
-        // Kiểm tra suất chiếu còn hiệu lực
-        $now = Carbon::now();
-        $ngayGioChieu = Carbon::parse($suatChieu->ngay_bat_dau . ' ' . $suatChieu->bat_dau);
-
-        if ($ngayGioChieu->isPast()) {
-            return redirect()->route('home')->with('error', 'Suất chiếu đã qua. Vui lòng chọn suất chiếu khác!');
-        }
-
-        // Lấy danh sách ghế đã đặt
-        $gheDaDat = DB::table('chi_tiet_dat_ves')
-            ->join('dat_ves', 'chi_tiet_dat_ves.dat_ve_id', '=', 'dat_ves.id')
-            ->where('dat_ves.suat_chieu_id', $suatChieuId)
-            ->whereIn('dat_ves.trang_thai', ['Đã thanh toán', 'Chờ thanh toán'])
-            ->pluck('chi_tiet_dat_ves.ghe_id')
-            ->toArray();
-
-        // Lấy danh sách ghế theo phòng chiếu
-        $gheNgois = $suatChieu->phongChieu->gheNgois()
-            ->with(['loaiGhe'])
-            ->orderBy('hang')
-            ->orderBy('cot')
-            ->get()
-            ->map(function ($ghe) use ($gheDaDat, $suatChieu) {
-                $ghe->da_dat = in_array($ghe->id, $gheDaDat);
-                $ghe->phu_thu_loai_phong = optional($suatChieu->phongChieu->loaiPhong)->phu_thu ?? 0;
-                $ghe->phu_thu_loai_ghe = optional($ghe->loaiGhe)->phu_thu ?? 0;
-                $ghe->phu_thu_rap_phim = optional($suatChieu->phongChieu->rapPhim)->phu_thu ?? 0;
-
-                $userIdDangChon = Cache::get("ghe_dang_chon_{$ghe->id}");
-                $ghe->dang_duoc_chon = $userIdDangChon && $userIdDangChon != Auth::id();
-
-                return $ghe;
-            });
-
-        //  Hủy ghế tạm thời mà user hiện tại đang giữ khi F5
-        foreach ($gheNgois as $ghe) {
-            if ($ghe->trang_thai === 'da_chon' && $ghe->dang_chon_user_id === Auth::id()) {
-                $ghe->trang_thai = 'trong';
-                $ghe->dang_chon_user_id = null;
-
-                //  Bỏ những attribute không có trong DB
-                unset(
-                    $ghe->da_dat,
-                    $ghe->phu_thu_loai_phong,
-                    $ghe->phu_thu_loai_ghe,
-                    $ghe->phu_thu_rap_phim,
-                    $ghe->dang_duoc_chon
-                );
-
-                $ghe->save();
-
-                // Broadcast realtime
-                event(new GheBiHuyChon($ghe->id, Auth::id()));
-            }
-        }
-
-        // Lấy danh sách loại ghế
-        // Hủy ghế tạm thời do user hiện tại giữ nhưng F5 lại
-        foreach ($gheNgois as $ghe) {
-            $userIdDangChon = Cache::get("ghe_dang_chon_{$ghe->id}");
-            if ($userIdDangChon == Auth::id()) {
-                Cache::forget("ghe_dang_chon_{$ghe->id}");
-                event(new GheBiHuyChon($ghe->id, $userIdDangChon));
-            }
-        }
-
-        // Lấy danh sách loại ghế để lấy màu
-        $loaiGhes = \App\Models\LoaiGhe::all();
-
-        // Lấy danh sách đồ ăn và combo
-        $doAns = DoAn::whereHas('chiNhanhs', function ($query) use ($suatChieu) {
-            $query->where('chi_nhanh_id', $suatChieu->phongChieu->rapPhim->chi_nhanh_id);
-        })
-            ->where('trang_thai', 1)
-            ->with('danhMuc')
-            ->get();
-
-        $combos = Combo::where('trang_thai', 1)
-            ->with('doAns')
-            ->get();
-
-        return view('client.dat-ve.index', compact(
-            'suatChieu',
-            'gheNgois',
-            'loaiGhes',
-            'doAns',
-            'combos'
-        ));
-    }
 
     // xử lý chọn ghế
     public function chonGhe(Request $request)
     {
-        $request->validate([
-            'ghe_id' => 'required|exists:ghe_ngois,id',
-        ]);
+        // $request->validate([
+        //     'ghe_id' => 'required|exists:ghe_ngois,id',
+        // ]);
 
-        $gheId = $request->ghe_id;
-        $userId = Auth::id();
+        // $gheId = $request->ghe_id;
+        // $userId = Auth::id();
 
-        try {
-            DB::beginTransaction();
+        // try {
+        //     DB::beginTransaction();
 
-            // Lock hàng ghế lại để tránh race condition
-            $ghe = GheNgoi::lockForUpdate()->find($gheId);
+        //     // Lock hàng ghế lại để tránh race condition
+        //     $ghe = GheNgoi::lockForUpdate()->find($gheId);
 
-            if (!$ghe) {
-                DB::rollBack();
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Ghế không tồn tại!',
-                ], 404);
-            }
+        //     if (!$ghe) {
+        //         DB::rollBack();
+        //         return response()->json([
+        //             'success' => false,
+        //             'message' => 'Ghế không tồn tại!',
+        //         ], 404);
+        //     }
 
-            // Nếu ghế đã được chọn bởi người khác
-            if ($ghe->trang_thai === 'da_chon' && $ghe->dang_chon_user_id !== $userId) {
-                DB::rollBack();
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Ghế này đã có người khác chọn!',
-                ], 409);
-            }
+        //     // Nếu ghế đã được chọn bởi người khác
+        //     if ($ghe->trang_thai === 'da_chon' && $ghe->dang_chon_user_id !== $userId) {
+        //         DB::rollBack();
+        //         return response()->json([
+        //             'success' => false,
+        //             'message' => 'Ghế này đã có người khác chọn!',
+        //         ], 409);
+        //     }
 
-            // Cập nhật trạng thái ghế
-            $ghe->trang_thai = 'da_chon';
-            $ghe->dang_chon_user_id = $userId;
-            $ghe->save();
+        //     // Cập nhật trạng thái ghế
+        //     $ghe->trang_thai = 'da_chon';
+        //     $ghe->dang_chon_user_id = $userId;
+        //     $ghe->save();
 
-            // Gửi event realtime
-            event(new GheDangDuocChon($gheId, $userId));
+        //     // Gửi event realtime
+        //     event(new GheDangDuocChon($gheId, $userId));
 
-            DB::commit();
+        //     DB::commit();
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Đã chọn ghế thành công!',
-            ]);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json([
-                'success' => false,
-                'message' => 'Lỗi server: ' . $e->getMessage(),
-            ], 500);
-        }
+        //     return response()->json([
+        //         'success' => true,
+        //         'message' => 'Đã chọn ghế thành công!',
+        //     ]);
+        // } catch (\Exception $e) {
+        //     DB::rollBack();
+        //     return response()->json([
+        //         'success' => false,
+        //         'message' => 'Lỗi server: ' . $e->getMessage(),
+        //     ], 500);
+        // }
     }
 
     // xử lý hủy chọn ghế
     public function huyChonGhe(Request $request)
     {
-        $request->validate([
-            'ghe_id' => 'required|exists:ghe_ngois,id',
-        ]);
+        // $request->validate([
+        //     'ghe_id' => 'required|exists:ghe_ngois,id',
+        // ]);
 
-        $gheId = $request->ghe_id;
-        $userId = Auth::id();
+        // $gheId = $request->ghe_id;
+        // $userId = Auth::id();
 
-        $ghe = GheNgoi::lockForUpdate()->find($gheId);
+        // $ghe = GheNgoi::lockForUpdate()->find($gheId);
 
-        if ($ghe->trang_thai === 'da_chon' && $ghe->dang_chon_user_id === $userId) {
-            $ghe->trang_thai = 'trong';
-            $ghe->dang_chon_user_id = null;
-            $ghe->save();
+        // if ($ghe->trang_thai === 'da_chon' && $ghe->dang_chon_user_id === $userId) {
+        //     $ghe->trang_thai = 'trong';
+        //     $ghe->dang_chon_user_id = null;
+        //     $ghe->save();
 
-            event(new GheBiHuyChon($gheId, $userId));
-        }
+        //     event(new GheBiHuyChon($gheId, $userId));
+        // }
 
-        return response()->json(['success' => true]);
+        // return response()->json(['success' => true]);
     }
 
     /**
@@ -239,10 +138,14 @@ class DatVeController extends Controller
 
             // Kiểm tra suất chiếu còn hiệu lực
             $now = Carbon::now();
-            $ngayGioChieu = Carbon::parse($suatChieu->ngay_bat_dau . ' ' . $suatChieu->bat_dau);
 
-            if ($ngayGioChieu->isPast()) {
-                return redirect()->route('home')->with('error', 'Suất chiếu đã qua. Vui lòng chọn suất chiếu khác!');
+            if ($suatChieu->ngay_bat_dau && $suatChieu->bat_dau) {
+                $ngayGioChieu = Carbon::parse($suatChieu->ngay_bat_dau . ' ' . $suatChieu->bat_dau);
+                if ($ngayGioChieu->isPast()) {
+                    return redirect()->back()->with('error', 'Suất chiếu đã qua. Vui lòng chọn suất chiếu khác!');
+                }
+            } else {
+                return redirect()->back()->with('error', 'Suất chiếu không hợp lệ!');
             }
 
             // Lấy danh sách ghế đã đặt
@@ -255,23 +158,39 @@ class DatVeController extends Controller
 
             // Lấy danh sách ghế theo phòng chiếu
             $gheNgois = $suatChieu->phongChieu->gheNgois()
-                ->with(['loaiGhe'])
-                ->orderBy('hang')
-                ->orderBy('cot')
-                ->get()
-                ->map(function ($ghe) use ($gheDaDat, $suatChieu) {
-                    $ghe->da_dat = in_array($ghe->id, $gheDaDat);
-                    $ghe->phu_thu_loai_phong = optional($suatChieu->phongChieu->loaiPhong)->phu_thu ?? 0;
-                    $ghe->phu_thu_loai_ghe = optional($ghe->loaiGhe)->phu_thu ?? 0;
-                    $ghe->phu_thu_rap_phim = optional($suatChieu->phongChieu->rapPhim)->phu_thu ?? 0;
+    ->with(['loaiGhe'])
+    ->orderBy('hang')
+    ->orderBy('cot')
+    ->get()
+    ->map(function ($ghe) use ($gheDaDat, $suatChieu) {
+        // Lưu trạng thái gốc của ghế
+        $ghe->trang_thai_mac_dinh = $ghe->trang_thai;
 
-                    Log::info('Ghe ID: ' . $ghe->id . ', LoaiGhe: ' . ($ghe->loaiGhe ? $ghe->loaiGhe->ten_loai_ghe : 'null') .
-                        ', PhuThuLoaiPhong: ' . $ghe->phu_thu_loai_phong .
-                        ', PhuThuLoaiGhe: ' . $ghe->phu_thu_loai_ghe .
-                        ', PhuThuRapPhim: ' . $ghe->phu_thu_rap_phim);
+        // Lấy trạng thái ghế theo suất chiếu
+        $pivot = \App\Models\GheNgoiSuatChieu::where('ghe_ngoi_id', $ghe->id)
+            ->where('suat_chieu_id', $suatChieu->id)
+            ->first();
 
-                    return $ghe;
-                });
+        $ghe->trang_thai_theo_suat = $pivot?->trang_thai ?? 'trong';
+
+        // Đã đặt hay chưa (theo vé đã bán)
+        $ghe->da_dat = in_array($ghe->id, $gheDaDat);
+
+        // Phụ thu
+        $ghe->phu_thu_loai_phong = optional($suatChieu->phongChieu->loaiPhong)->phu_thu ?? 0;
+        $ghe->phu_thu_loai_ghe = optional($ghe->loaiGhe)->phu_thu ?? 0;
+        $ghe->phu_thu_rap_phim = optional($suatChieu->phongChieu->rapPhim)->phu_thu ?? 0;
+
+        // Debug log để xem dữ liệu
+        Log::info('Ghế ID: ' . $ghe->id .
+            ', Mặc định: ' . $ghe->trang_thai_mac_dinh .
+            ', Theo suất: ' . $ghe->trang_thai_theo_suat .
+            ', Đã đặt: ' . ($ghe->da_dat ? 'Yes' : 'No')
+        );
+
+        return $ghe;
+    });
+
 
             // Lấy danh sách loại ghế để lấy màu
             $loaiGhes = \App\Models\LoaiGhe::all();
@@ -340,18 +259,27 @@ class DatVeController extends Controller
 
 
         try {
-            $suatChieu = SuatChieu::with(['phongChieu.rapPhim', 'phongChieu.loaiPhong'])->findOrFail($request->suat_chieu_id);
+            $suatChieu = SuatChieu::with(['phongChieu.rapPhim', 'phongChieu.loaiPhong'])
+                ->findOrFail($request->suat_chieu_id);
 
-            // Kiểm tra ghế còn trống
-            $gheDaDat = DB::table('chi_tiet_dat_ves')
-                ->join('dat_ves', 'chi_tiet_dat_ves.dat_ve_id', '=', 'dat_ves.id')
-                ->where('dat_ves.suat_chieu_id', $request->suat_chieu_id)
-                ->whereIn('dat_ves.trang_thai', ['Đã thanh toán', 'Chờ thanh toán'])
-                ->whereIn('chi_tiet_dat_ves.ghe_id', $request->ghe_ids)
-                ->exists();
+            // Lấy thông tin trạng thái các ghế theo suất chiếu
+            $trangThaiGhe = GheNgoiSuatChieu::whereIn('ghe_ngoi_id', $request->ghe_ids)
+                ->where('suat_chieu_id', $request->suat_chieu_id)
+                ->pluck('trang_thai', 'ghe_ngoi_id');
 
-            if ($gheDaDat) {
-                throw new \Exception('Một số ghế đã được đặt. Vui lòng chọn ghế khác!');
+            // Lấy tên ghế để báo lỗi
+            $tenGheMap = DB::table('ghe_ngois')
+                ->whereIn('id', $request->ghe_ids)
+                ->pluck('ma_ghe', 'id');
+
+            // Kiểm tra từng ghế
+            foreach ($trangThaiGhe as $gheId => $trangThai) {
+                if ($trangThai === 'da_chon') {
+                    throw new Exception("Ghế {$tenGheMap[$gheId]} đã được người khác chọn, vui lòng chọn ghế khác!");
+                }
+                if ($trangThai === 'da_dat') {
+                    throw new \Exception("Ghế {$tenGheMap[$gheId]} đã được đặt, vui lòng chọn ghế khác!");
+                }
             }
 
             // Tính tổng tiền
@@ -369,7 +297,7 @@ class DatVeController extends Controller
             ]);
             Log::info('Đã tạo đặt vé:', ['dat_ve_id' => $datVe->id]);
 
-            
+
 
             // Tạo chi tiết đặt vé (ghế)
             foreach ($request->ghe_ids as $gheId) {

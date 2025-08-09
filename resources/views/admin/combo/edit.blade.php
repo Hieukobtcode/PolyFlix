@@ -78,6 +78,7 @@
 
                         <!-- Cột phải -->
                         <div class="col-md-6">
+
                             @php
                                 $chiNhanhSelected = old(
                                     'chi_nhanh_ids',
@@ -85,36 +86,70 @@
                                 );
                             @endphp
 
-                            <div class="mb-3">
-                                <label class="form-label">Chọn chi nhánh</label>
-                                <select id="select-chi-nhanh" class="form-select">
-                                    <option value="">-- Chọn chi nhánh --</option>
-                                    @foreach ($chiNhanhs as $cn)
-                                        <option value="{{ $cn->id }}" data-ten="{{ $cn->ten_chi_nhanh }}">
-                                            {{ $cn->ten_chi_nhanh }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
+                            @if (Auth::user()->vai_tro_id == 1)
+                                <div class="mb-3">
+                                    <label class="form-label">Chọn chi nhánh</label>
+                                    <select id="select-chi-nhanh" class="form-select">
+                                        <option value="">-- Chọn chi nhánh --</option>
+                                        @foreach ($chiNhanhs as $cn)
+                                            <option value="{{ $cn->id }}" data-ten="{{ $cn->ten_chi_nhanh }}">
+                                                {{ $cn->ten_chi_nhanh }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
 
-                            <div class="mb-3">
-                                <label class="form-label">Chi nhánh đã chọn</label>
-                                <ul id="selected-branches" class="list-group">
-                                    @foreach ($chiNhanhSelected as $id)
-                                        @php
-                                            $cn = $chiNhanhs->where('id', $id)->first();
-                                        @endphp
-                                        <li class="list-group-item d-flex justify-content-between align-items-center"
-                                            data-id="{{ $id }}">
-                                            <span>{{ $cn->ten_chi_nhanh }}</span>
-                                            <button type="button" class="btn btn-sm btn-danger btn-xoa-cn"
-                                                data-id="{{ $id }}">Xoá</button>
-                                        </li>
-                                        <input type="hidden" name="chi_nhanh_ids[]" value="{{ $id }}"
-                                            id="input-chi_nhanh-{{ $id }}">
-                                    @endforeach
-                                </ul>
-                            </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Chi nhánh đã chọn</label>
+                                    <ul id="selected-branches" class="list-group">
+                                        @foreach ($chiNhanhSelected as $id)
+                                            @php $cn = $chiNhanhs->where('id', $id)->first(); @endphp
+                                            <li class="list-group-item d-flex justify-content-between align-items-center"
+                                                data-id="{{ $id }}">
+                                                <span>{{ $cn->ten_chi_nhanh }}</span>
+                                                <button type="button" class="btn btn-sm btn-danger btn-xoa-cn"
+                                                    data-id="{{ $id }}">Xoá</button>
+                                            </li>
+                                            <input type="hidden" name="chi_nhanh_ids[]" value="{{ $id }}"
+                                                id="input-chi_nhanh-{{ $id }}">
+                                        @endforeach
+                                    </ul>
+                                    <div id="hidden-branch-inputs"></div> {{-- để JS append input mới --}}
+                                </div>
+                            @elseif(Auth::user()->vai_tro_id == 2)
+                                <div class="mb-3">
+                                    <label class="form-label">Chọn rạp</label>
+                                    <select id="select-rap" class="form-select">
+                                        <option value="">-- Chọn rạp --</option>
+                                        @foreach ($rapPhims as $rap)
+                                            <option value="{{ $rap->id }}" data-ten="{{ $rap->ten_rap }}">
+                                                {{ $rap->ten_rap }} ({{ $rap->chiNhanh->ten_chi_nhanh }})
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Rạp đã chọn</label>
+                                    <ul id="selected-raps" class="list-group">
+                                        @foreach ($rapPhimSelected as $id)
+                                            @php $rap = $rapPhims->where('id', $id)->first(); @endphp
+                                            @if ($rap)
+                                                <li class="list-group-item d-flex justify-content-between align-items-center"
+                                                    data-id="{{ $id }}">
+                                                    <span>{{ $rap->ten_rap }} ({{ $rap->chiNhanh->ten_chi_nhanh }})</span>
+                                                    <button type="button" class="btn btn-sm btn-danger btn-xoa-rap"
+                                                        data-id="{{ $id }}">Xoá</button>
+                                                </li>
+                                                <input type="hidden" name="rap_phim_ids[]" value="{{ $id }}"
+                                                    id="input-rap-{{ $id }}">
+                                            @endif
+                                        @endforeach
+                                    </ul>
+                                    <div id="hidden-rap-inputs"></div>
+                                </div>
+                            @endif
+
 
                             <div class="mb-3">
                                 <label class="form-label">Chọn món ăn</label>
@@ -178,153 +213,131 @@
 @section('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // ======== MÓN ĂN =========
-            const selectDoAn = document.getElementById('chon-do-an');
-            const list = document.getElementById('danh-sach-do-an');
-            const inputs = document.getElementById('inputs-hidden');
-            const giaInput = document.getElementById('gia');
+            const vaiTroId = {{ Auth::user()->vai_tro_id }};
+            const chiNhanhs = @json($chiNhanhs); // Pass từ controller
+            const selectedChiNhanhIds = new Set();
+            const selectedRapIds = new Set();
 
-            let selected = new Set();
+            // ===== Admin Tổng: Chỉnh sửa Chi nhánh =====
+            if (vaiTroId === 1) {
+                const selectChiNhanh = document.getElementById('select-chi-nhanh');
+                const selectedBranches = document.getElementById('selected-branches');
+                const hiddenBranchInputs = document.getElementById('hidden-branch-inputs');
 
-            // Đọc sẵn các món đã chọn (trường hợp edit)
-            document.querySelectorAll('input[id^="input-selected-"]').forEach(input => {
-                const id = input.id.replace('input-selected-', '');
-                selected.add(id);
-            });
-
-            function capNhatTongGia() {
-                let tongGia = 0;
-                list.querySelectorAll('li').forEach(li => {
-                    const gia = parseFloat(li.dataset.gia);
-                    const soLuong = parseInt(li.querySelector('.so-luong').value);
-                    tongGia += gia * soLuong;
+                selectedBranches.querySelectorAll('li').forEach(li => {
+                    selectedChiNhanhIds.add(li.dataset.id);
                 });
-                giaInput.value = tongGia.toFixed(0);
+
+                function attachRemoveChiNhanh(btn) {
+                    btn.addEventListener('click', function() {
+                        const id = this.dataset.id;
+
+                        // Xoá khỏi Set đang lưu
+                        selectedChiNhanhIds.delete(id);
+
+                        // Xoá input hidden để form không gửi về
+                        const hiddenInput = document.getElementById(`input-chi_nhanh-${id}`);
+                        if (hiddenInput) hiddenInput.remove();
+
+                        // Xoá li hiển thị
+                        btn.closest('li').remove();
+
+                        // Xoá tất cả rạp thuộc chi nhánh này
+                        selectedRaps.querySelectorAll(`li[data-cn-id="${id}"]`).forEach(rLi => {
+                            const rapId = rLi.dataset.id;
+                            selectedRapIds.delete(rapId);
+                            document.getElementById(`input-rap-${rapId}`)?.remove();
+                            rLi.remove();
+                        });
+
+                        // Render lại dropdown rạp
+                        renderRapsDropdown();
+                    });
+                }
+
+
+                selectedBranches.querySelectorAll('.btn-xoa-cn').forEach(attachRemoveChiNhanh);
+
+                selectChiNhanh.addEventListener('change', function() {
+                    const id = this.value;
+                    const ten = this.options[this.selectedIndex].dataset.ten;
+                    if (!id || selectedChiNhanhIds.has(id)) return;
+
+                    selectedChiNhanhIds.add(id);
+
+                    const li = document.createElement('li');
+                    li.className = 'list-group-item d-flex justify-content-between align-items-center';
+                    li.dataset.id = id;
+                    li.innerHTML = `
+                    <span>${ten}</span>
+                    <button type="button" class="btn btn-sm btn-danger btn-xoa-cn" data-id="${id}">Xoá</button>
+                `;
+                    selectedBranches.appendChild(li);
+
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = 'chi_nhanh_ids[]';
+                    input.value = id;
+                    input.id = `input-chi_nhanh-${id}`;
+                    hiddenBranchInputs.appendChild(input);
+
+                    attachRemoveChiNhanh(li.querySelector('.btn-xoa-cn'));
+
+                    selectChiNhanh.selectedIndex = 0;
+                });
             }
 
-            selectDoAn.addEventListener('change', function() {
-                const option = this.options[this.selectedIndex];
-                const id = option.value;
-                const ten = option.dataset.ten;
-                const gia = parseFloat(option.dataset.gia);
+            // ===== Admin Chi nhánh: Chỉnh sửa Rạp =====
+            if (vaiTroId === 2) {
+                const selectRap = document.getElementById('select-rap');
+                const selectedRaps = document.getElementById('selected-raps');
+                const hiddenRapInputs = document.getElementById('hidden-rap-inputs');
 
-                if (!id || selected.has(id)) return;
-
-                selected.add(id);
-
-                const li = document.createElement('li');
-                li.className = 'list-group-item d-flex justify-content-between align-items-center';
-                li.dataset.id = id;
-                li.dataset.gia = gia;
-
-                li.innerHTML = `
-                <div><strong>${ten}</strong><div class="text-muted small">${gia.toLocaleString()} đ</div></div>
-                <div class="d-flex align-items-center gap-2">
-                    <div class="input-group input-group-sm">
-                        <button type="button" class="btn btn-outline-secondary btn-giam" data-id="${id}">-</button>
-                        <input type="number" name="do_ans[${id}][so_luong]" class="form-control text-center so-luong" value="1" min="1" style="width:60px;">
-                        <button type="button" class="btn btn-outline-secondary btn-tang" data-id="${id}">+</button>
-                    </div>
-                    <button type="button" class="btn btn-sm btn-danger xoa-mon" data-id="${id}">
-                        <i class="ti ti-trash"></i>
-                    </button>
-                </div>
-            `;
-
-                list.appendChild(li);
-
-                const input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = `do_ans[${id}][selected]`;
-                input.value = 1;
-                input.id = `input-selected-${id}`;
-                inputs.appendChild(input);
-
-                capNhatTongGia();
-                this.value = '';
-            });
-
-            list.addEventListener('click', function(e) {
-                const btn = e.target.closest('button');
-                if (!btn) return;
-
-                const id = btn.dataset.id;
-                const input = list.querySelector(`li[data-id="${id}"] input.so-luong`);
-                let sl = parseInt(input.value);
-
-                if (btn.classList.contains('btn-giam')) {
-                    if (sl > 1) sl--;
-                }
-
-                if (btn.classList.contains('btn-tang')) {
-                    sl++;
-                }
-
-                if (btn.classList.contains('xoa-mon')) {
-                    list.querySelector(`li[data-id="${id}"]`)?.remove();
-                    document.getElementById(`input-selected-${id}`)?.remove();
-                    selected.delete(id);
-                    capNhatTongGia();
-                    return;
-                }
-
-                input.value = sl;
-                capNhatTongGia();
-            });
-
-            list.addEventListener('input', function(e) {
-                if (e.target.classList.contains('so-luong')) {
-                    capNhatTongGia();
-                }
-            });
-
-            // ======== CHI NHÁNH =========
-            const selectChiNhanh = document.getElementById('select-chi-nhanh');
-            const listCN = document.getElementById('selected-branches');
-            const inputsCN = document.getElementById('hidden-branch-inputs');
-            const selectedCN = new Set();
-
-            document.querySelectorAll('input[name="chi_nhanh_ids[]"]').forEach(input => {
-                selectedCN.add(input.value);
-            });
-
-            selectChiNhanh.addEventListener('change', function() {
-                const selectedOption = this.options[this.selectedIndex];
-                const id = selectedOption.value;
-                const ten = selectedOption.dataset.ten;
-
-                if (!id || selectedCN.has(id)) return;
-
-                selectedCN.add(id);
-
-                const li = document.createElement('li');
-                li.className = 'list-group-item d-flex justify-content-between align-items-center';
-                li.dataset.id = id;
-                li.innerHTML = `
-                <span>${ten}</span>
-                <button type="button" class="btn btn-sm btn-danger btn-xoa-cn" data-id="${id}">Xoá</button>
-            `;
-
-                li.querySelector('.btn-xoa-cn').addEventListener('click', function() {
-                    selectedCN.delete(id);
-                    li.remove();
-                    document.getElementById('input-chi_nhanh-' + id)?.remove();
+                selectedRaps.querySelectorAll('li').forEach(li => {
+                    selectedRapIds.add(li.dataset.id);
                 });
 
-                listCN.appendChild(li);
+                function attachRemoveRap(btn) {
+                    btn.addEventListener('click', function() {
+                        const id = this.dataset.id;
+                        selectedRapIds.delete(id);
+                        document.getElementById(`input-rap-${id}`)?.remove();
+                        btn.closest('li').remove();
+                    });
+                }
 
-                const input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = 'chi_nhanh_ids[]';
-                input.value = id;
-                input.id = 'input-chi_nhanh-' + id;
-                inputsCN.appendChild(input);
+                selectedRaps.querySelectorAll('.btn-xoa-rap').forEach(attachRemoveRap);
 
-                selectChiNhanh.selectedIndex = 0;
-            });
+                selectRap.disabled = false; // Enable dropdown
 
-            // Tính giá lần đầu (trường hợp edit có sẵn món)
-            capNhatTongGia();
+                selectRap.addEventListener('change', function() {
+                    const rapId = this.value;
+                    const rapText = this.options[this.selectedIndex].textContent;
+                    if (!rapId || selectedRapIds.has(rapId)) return;
+
+                    selectedRapIds.add(rapId);
+
+                    const li = document.createElement('li');
+                    li.className = 'list-group-item d-flex justify-content-between align-items-center';
+                    li.dataset.id = rapId;
+                    li.innerHTML = `
+                    <span>${rapText}</span>
+                    <button type="button" class="btn btn-sm btn-danger btn-xoa-rap" data-id="${rapId}">Xoá</button>
+                `;
+                    selectedRaps.appendChild(li);
+
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = 'rap_phim_ids[]';
+                    input.value = rapId;
+                    input.id = `input-rap-${rapId}`;
+                    hiddenRapInputs.appendChild(input);
+
+                    attachRemoveRap(li.querySelector('.btn-xoa-rap'));
+
+                    selectRap.selectedIndex = 0;
+                });
+            }
         });
     </script>
 @endsection

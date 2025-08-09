@@ -6,58 +6,6 @@
 
 @section('content')
     <style>
-        .success-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        .success-header {
-            text-align: center;
-            margin-bottom: 40px;
-            padding: 30px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 20px;
-            color: white;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        }
-
-        .success-icon {
-            font-size: 4rem;
-            margin-bottom: 20px;
-            animation: bounce 2s infinite;
-        }
-
-        @keyframes bounce {
-
-            0%,
-            20%,
-            50%,
-            80%,
-            100% {
-                transform: translateY(0);
-            }
-
-            40% {
-                transform: translateY(-10px);
-            }
-
-            60% {
-                transform: translateY(-5px);
-            }
-        }
-
-        .success-title {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 10px;
-        }
-
-        .success-subtitle {
-            font-size: 1.2rem;
-            opacity: 0.9;
-        }
-
         .ticket-container {
             display: grid;
             grid-template-columns: 2fr 1fr;
@@ -310,6 +258,117 @@
                 flex-direction: column;
             }
         }
+
+        @media print {
+            .action-buttons {
+                display: none !important;
+            }
+
+            body {
+                margin: 20px;
+            }
+        }
+
+        #ticket-invoice {
+            display: none;
+        }
+
+        @media print {
+            body * {
+                visibility: hidden !important;
+            }
+
+            #invoice-section,
+            #invoice-section * {
+                visibility: visible !important;
+            }
+
+            #invoice-section {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+            }
+        }
+
+        #invoice-section {
+            font-family: 'Arial', sans-serif;
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+            color: #333;
+        }
+
+        .invoice-box {
+            border: 1px solid #ccc;
+            padding: 20px;
+            margin-bottom: 40px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            page-break-after: always;
+        }
+
+        .invoice-box:last-child {
+            page-break-after: auto;
+        }
+
+        .invoice-title {
+            text-align: center;
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .invoice-section-title {
+            font-size: 18px;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            color: #555;
+        }
+
+        .invoice-line {
+            margin: 5px 0;
+        }
+
+        hr {
+            margin: 15px 0;
+            border-top: 1px dashed #aaa;
+        }
+    </style>
+    <style>
+        .ticket { 
+            background-color: linear-gradient(to bottom right, #fff0f0, #ffffff); 
+            border: 2px dashed #e0e0e0; 
+            border-radius: 12px; 
+            margin-bottom: 1.5rem; 
+            padding: 1.5rem; 
+        }
+        .ticket-title { 
+            font-size: 1.5rem; 
+            font-weight: bold; 
+            color: #1f2937; 
+            text-align: center; 
+            margin-bottom: 1rem; 
+        }
+        .ticket-line { 
+            font-size: 1rem; 
+            color: #374151; 
+            margin: 0.5rem 0; 
+        }
+        .barcode { 
+            text-align: center; 
+            margin-top: 1rem; 
+        }
+        .divider { 
+            border-top: 1px dashed #9ca3af; 
+            margin: 1rem 0; 
+        }
+        @media print {
+            .no-print { display: none; }
+            .ticket { 
+                page-break-inside: avoid; 
+                margin-bottom: 0.5in; 
+            }
+        }
     </style>
     @php
         $phuThuRap = $datVe->suatChieu->phongChieu->rapPhim->phu_thu ?? 0;
@@ -354,7 +413,7 @@
                         </div>
                         <div class="detail-item">
                             <i class="fas fa-calendar-alt"></i>
-                            <span>{{ \Carbon\Carbon::parse($datVe->suatChieu?->ngay_chieu)->format('d/m/Y') }}</span>
+                            <span>{{ \Carbon\Carbon::parse($datVe->suatChieu?->ngay_bat_dau)->format('d/m/Y') }}</span>
                         </div>
                         <div class="detail-item">
                             <i class="fas fa-clock"></i>
@@ -376,7 +435,8 @@
                     <div class="seats-grid">
                         @foreach ($datVe->gheNgois as $ghe)
                             <span class="seat-item">{{ $ghe->ma_ghe }}
-                                ({{ $ghe->loaiGhe->ten_loai_ghe ?? 'Thường' }})</span>
+                                ({{ $ghe->loaiGhe->ten_loai_ghe ?? 'Thường' }})
+                            </span>
                         @endforeach
                     </div>
                 </div>
@@ -460,12 +520,11 @@
             </div>
         </div>
 
-        <!-- Nút hành động -->
+
         <div class="action-buttons">
 
-            <button onclick="window.print()" class="btn-modern btn-outline-modern">
-                <i class="fas fa-print"></i>
-                In vé
+            <button onclick="printInvoice()" class="btn-modern btn-outline-modern">
+                <i class="fas fa-print"></i> In hóa đơn
             </button>
             <a href="{{ route('admin.dat-ves.index') }}" class="btn-modern btn-outline-modern">
                 <i class="fas fa-list"></i>
@@ -473,5 +532,131 @@
             </a>
         </div>
     </div>
+
+    {{-- <div id="invoice-section" class="p-4">
+        <!-- Vé xem phim (mỗi ghế một vé) -->
+        @foreach ($datVe->gheNgois as $ghe)
+            <div class="ticket">
+                <div class="ticket-title">🎟️ VÉ XEM PHIM</div>
+                <p class="ticket-line"><strong>Phim:</strong> {{ $datVe->suatChieu?->phim?->ten_phim ?? 'Không xác định' }}</p>
+                <p class="ticket-line"><strong>Thời gian:</strong> 
+                    {{ optional($datVe->suatChieu)->ngay_chieu ? \Carbon\Carbon::parse($datVe->suatChieu->ngay_chieu)->format('d/m/Y') : '---' }} 
+                    - {{ $datVe->suatChieu?->bat_dau ?? '---' }}
+                </p>
+                <p class="ticket-line"><strong>Rạp:</strong> {{ $datVe->suatChieu?->phongChieu?->rapPhim?->ten_rap ?? 'Không xác định' }}</p>
+                <p class="ticket-line"><strong>Chi nhánh:</strong> {{ $datVe->suatChieu?->phongChieu?->rapPhim?->chiNhanh?->ten_chi_nhanh ?? '---' }}</p>
+                <p class="ticket-line"><strong>Phòng:</strong> {{ $datVe->suatChieu?->phongChieu?->ten_phong ?? '---' }}</p>
+                <p class="ticket-line"><strong>Ghế:</strong> {{ $ghe->ma_ghe }}</p>
+                <p class="ticket-line"><strong>Loại ghế:</strong> {{ $ghe->loaiGhe?->ten_loai_ghe ?? 'Không xác định' }}</p>
+                <p class="ticket-line"><strong>Giá vé:</strong> {{ number_format($ghe->loaiGhe?->gia_ve ?? 0, 0, ',', '.') }} VND</p>
+                <p class="ticket-line"><strong>Khách hàng:</strong> {{ $datVe->nguoiDung?->email ?? 'Không có email' }}</p>
+                <p class="ticket-line"><strong>Mã vé:</strong> {{ $datVe->ma_dat_ve }}-{{ $ghe->ma_ghe }}</p>
+                <div class="barcode">
+                    {!! DNS1D::getBarcodeHTML($datVe->ma_dat_ve, 'C128', 2, 60) !!}
+                </div>
+            </div>
+        @endforeach
+
+        <!-- Hóa đơn combo và đồ ăn -->
+        @if ($tongTienCombo > 0 || $tongTienDoAn > 0)
+            <div class="ticket">
+                <div class="ticket-title">🍽️ HÓA ĐƠN ĐỒ ĂN</div>
+                <p class="ticket-line"><strong>Mã đặt vé:</strong> {{ $datVe->ma_dat_ve }}</p>
+                <p class="ticket-line"><strong>Khách hàng:</strong> {{ $datVe->nguoiDung?->email ?? 'Không có email' }}</p>
+                <div class="divider"></div>
+
+                @if ($tongTienCombo > 0)
+                    <div class="ticket-line font-bold">🍿 Combo</div>
+                    @foreach ($datVe->combos as $combo)
+                        <p class="ticket-line">{{ $combo->tieu_de }} (x{{ $combo->pivot->so_luong }}) - 
+                            {{ number_format($combo->gia * $combo->pivot->so_luong, 0, ',', '.') }} VND</p>
+                    @endforeach
+                @endif
+
+                @if ($tongTienDoAn > 0)
+                    <div class="ticket-line font-bold">🥤 Đồ ăn & nước uống</div>
+                    @foreach ($datVe->doAns as $doAn)
+                        <p class="ticket-line">{{ $doAn->tieu_de }} (x{{ $doAn->pivot->so_luong }}) - 
+                            {{ number_format($doAn->gia * $doAn->pivot->so_luong, 0, ',', '.') }} VND</p>
+                    @endforeach
+                @endif
+
+                <div class="divider"></div>
+                <p class="ticket-line font-bold"><strong>Tổng tiền đồ ăn:</strong> 
+                    {{ number_format($tongTienCombo + $tongTienDoAn, 0, ',', '.') }} VND</p>
+                <div class="barcode">
+                    {!! DNS1D::getBarcodeHTML($datVe->ma_dat_ve . '-FOOD', 'C128', 2, 60) !!}
+                </div>
+            </div>
+        @endif
+
+        <!-- Hóa đơn tổng -->
+        <div class="ticket">
+            <div class="ticket-title">🧾 HÓA ĐƠN TỔNG</div>
+            <p class="ticket-line"><strong>Mã đặt vé:</strong> {{ $datVe->ma_dat_ve }}</p>
+            <p class="ticket-line"><strong>Khách hàng:</strong> {{ $datVe->nguoiDung?->email ?? 'Không có email' }}</p>
+            <div class="divider"></div>
+
+            <div class="ticket-line font-bold">🎟️ Vé xem phim</div>
+            <p class="ticket-line">Phim: {{ $datVe->suatChieu?->phim?->ten_phim ?? '---' }}</p>
+            <p class="ticket-line">Thời gian: 
+                {{ optional($datVe->suatChieu)->ngay_chieu ? \Carbon\Carbon::parse($datVe->suatChieu->ngay_chieu)->format('d/m/Y') : '---' }} 
+                - {{ $datVe->suatChieu?->bat_dau ?? '---' }}
+            </p>
+            <p class="ticket-line">Phòng: {{ $datVe->suatChieu?->phongChieu?->ten_phong ?? '---' }}</p>
+            <p class="ticket-line">Ghế: {{ $datVe->gheNgois->pluck('ma_ghe')->join(', ') ?? 'Không có ghế' }}</p>
+            <p class="ticket-line">Tiền vé: {{ number_format($tongTienGhe, 0, ',', '.') }} VND</p>
+
+            @if ($tongTienCombo > 0)
+                <div class="ticket-line font-bold">🍿 Combo</div>
+                @foreach ($datVe->combos as $combo)
+                    <p class="ticket-line">{{ $combo->tieu_de }} (x{{ $combo->pivot->so_luong }}) - 
+                        {{ number_format($combo->gia * $combo->pivot->so_luong, 0, ',', '.') }} VND</p>
+                @endforeach
+            @endif
+
+            @if ($tongTienDoAn > 0)
+                <div class="ticket-line font-bold">🥤 Đồ ăn & nước uống</div>
+                @foreach ($datVe->doAns as $doAn)
+                    <p class="ticket-line">{{ $doAn->tieu_de }} (x{{ $doAn->pivot->so_luong }}) - 
+                        {{ number_format($doAn->gia * $doAn->pivot->so_luong, 0, ',', '.') }} VND</p>
+                @endforeach
+            @endif
+
+            <div class="divider"></div>
+            <p class="ticket-line font-bold"><strong>Tổng thanh toán:</strong> 
+                {{ number_format($tongThanhTien, 0, ',', '.') }} VND</p>
+        </div>
+    </div> --}}
+
+    <script>
+        function printInvoice() {
+    // Lấy ID của đặt vé từ biến hoặc DOM
+    const datVeId = "{{ $datVe->id }}"; // Giả sử $datVe->id có sẵn trong Blade
+    const url = "{{ route('admin.dat-ve.print', ':id') }}".replace(':id', datVeId);
+
+    // Gửi yêu cầu AJAX để lấy PDF
+    fetch(url, {
+        method: 'GET',
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'Accept': 'application/pdf'
+        }
+    })
+    .then(response => response.blob())
+    .then(blob => {
+        // Tạo URL tạm thời cho PDF
+        const pdfUrl = window.URL.createObjectURL(blob);
+        // Mở PDF trong tab mới hoặc iframe
+        window.open(pdfUrl, '_blank');
+        // Giải phóng URL sau khi sử dụng
+        setTimeout(() => window.URL.revokeObjectURL(pdfUrl), 100);
+    })
+    .catch(error => {
+        console.error('Lỗi khi tải PDF:', error);
+        alert('Không thể tải hóa đơn. Vui lòng thử lại.');
+    });
+}
+    </script>
 
 @endsection

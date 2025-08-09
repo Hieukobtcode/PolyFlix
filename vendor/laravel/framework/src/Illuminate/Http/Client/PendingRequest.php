@@ -472,6 +472,20 @@ class PendingRequest
     }
 
     /**
+     * Specify the NTLM authentication username and password for the request.
+     *
+     * @param  string  $username
+     * @param  string  $password
+     * @return $this
+     */
+    public function withNtlmAuth($username, $password)
+    {
+        return tap($this, function () use ($username, $password) {
+            $this->options['auth'] = [$username, $password, 'ntlm'];
+        });
+    }
+
+    /**
      * Specify an authorization token for the request.
      *
      * @param  string  $token
@@ -1021,7 +1035,21 @@ class PendingRequest
     protected function parseMultipartBodyFormat(array $data)
     {
         return (new Collection($data))
-            ->map(fn ($value, $key) => is_array($value) ? $value : ['name' => $key, 'contents' => $value])
+            ->flatMap(function ($value, $key) {
+                if (is_array($value)) {
+                    // If the array has 'name' and 'contents' keys, it's already formatted for multipart...
+                    if (isset($value['name']) && isset($value['contents'])) {
+                        return [$value];
+                    }
+
+                    // Otherwise, treat it as multiple values for the same field name...
+                    return (new Collection($value))->map(function ($item) use ($key) {
+                        return ['name' => $key.'[]', 'contents' => $item];
+                    });
+                }
+
+                return [['name' => $key, 'contents' => $value]];
+            })
             ->values()
             ->all();
     }
@@ -1572,8 +1600,10 @@ class PendingRequest
     {
         $exception = new ConnectionException($e->getMessage(), 0, $e);
 
+        $request = new Request($e->getRequest());
+
         $this->factory?->recordRequestResponsePair(
-            $request = new Request($e->getRequest()), null
+            $request, null
         );
 
         $this->dispatchConnectionFailedEvent($request, $exception);
@@ -1591,8 +1621,10 @@ class PendingRequest
     {
         $exception = new ConnectionException($e->getMessage(), 0, $e);
 
+        $request = new Request($e->getRequest());
+
         $this->factory?->recordRequestResponsePair(
-            $request = new Request($e->getRequest()), null
+            $request, null
         );
 
         $this->dispatchConnectionFailedEvent($request, $exception);
@@ -1608,9 +1640,11 @@ class PendingRequest
      */
     protected function marshalRequestExceptionWithResponse(RequestException $e)
     {
+        $response = $this->populateResponse($this->newResponse($e->getResponse()));
+
         $this->factory?->recordRequestResponsePair(
             new Request($e->getRequest()),
-            $response = $this->populateResponse($this->newResponse($e->getResponse()))
+            $response
         );
 
         throw $response->toException() ?? new ConnectionException($e->getMessage(), 0, $e);

@@ -14,6 +14,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use App\Models\Rating;
 use App\Models\BaiViet;
+use Illuminate\Support\Facades\DB;
 
 
 class PhimsController extends Controller
@@ -103,15 +104,16 @@ class PhimsController extends Controller
         $suatChieus = SuatChieu::where('phim_id', $phim->id)
             ->when($ngay_chieu, function ($q) use ($ngay_chieu, $now) {
                 $q->where('ngay_bat_dau', $ngay_chieu);
+
                 if ($ngay_chieu == $now->toDateString()) {
-                    $q->where('bat_dau', '>', $now->format('H:i:s'));
+                    $q->whereRaw("TIME(bat_dau) > ?", [$now->format('H:i:s')]);
                 }
             })
             ->with(['rapPhim', 'dinhDangPhim'])
             ->get();
 
         $groupedSuatChieus = $suatChieus->groupBy(function ($sc) {
-            return $sc->rapPhims && $sc->rapPhims->ten_rap ? $sc->rapPhims->ten_rap : 'Không xác định';
+            return $sc->rapPhim && $sc->rapPhim->ten_rap ? $sc->rapPhim->ten_rap : 'Không xác định';
         })->map(function ($items) {
             return $items->groupBy(function ($sc) {
                 return $sc->phien_ban_phim ?? 'Không xác định';

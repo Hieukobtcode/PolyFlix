@@ -13,6 +13,8 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Fluent;
 use Illuminate\Support\Traits\Macroable;
 
+use function Illuminate\Support\enum_value;
+
 class Blueprint
 {
     use Macroable;
@@ -179,9 +181,8 @@ class Blueprint
      */
     protected function commandsNamed(array $names)
     {
-        return (new Collection($this->commands))->filter(function ($command) use ($names) {
-            return in_array($command->name, $names);
-        });
+        return (new Collection($this->commands))
+            ->filter(fn ($command) => in_array($command->name, $names));
     }
 
     /**
@@ -316,9 +317,8 @@ class Blueprint
      */
     public function creating()
     {
-        return (new Collection($this->commands))->contains(function ($command) {
-            return ! $command instanceof ColumnDefinition && $command->name === 'create';
-        });
+        return (new Collection($this->commands))
+            ->contains(fn ($command) => ! $command instanceof ColumnDefinition && $command->name === 'create');
     }
 
     /**
@@ -686,11 +686,12 @@ class Blueprint
      *
      * @param  string|array  $columns
      * @param  string|null  $name
+     * @param  string|null  $operatorClass
      * @return \Illuminate\Database\Schema\IndexDefinition
      */
-    public function spatialIndex($columns, $name = null)
+    public function spatialIndex($columns, $name = null, $operatorClass = null)
     {
-        return $this->indexCommand('spatialIndex', $columns, $name);
+        return $this->indexCommand('spatialIndex', $columns, $name, null, $operatorClass);
     }
 
     /**
@@ -1103,6 +1104,8 @@ class Blueprint
      */
     public function enum($column, array $allowed)
     {
+        $allowed = array_map(fn ($value) => enum_value($value), $allowed);
+
         return $this->addColumn('enum', $column, compact('allowed'));
     }
 
@@ -1643,15 +1646,16 @@ class Blueprint
     }
 
     /**
-     * Add a new index command to the blueprint.
+     * Create a new index command on the blueprint.
      *
      * @param  string  $type
      * @param  string|array  $columns
      * @param  string  $index
      * @param  string|null  $algorithm
+     * @param  string|null  $operatorClass
      * @return \Illuminate\Support\Fluent
      */
-    protected function indexCommand($type, $columns, $index, $algorithm = null)
+    protected function indexCommand($type, $columns, $index, $algorithm = null, $operatorClass = null)
     {
         $columns = (array) $columns;
 
@@ -1661,7 +1665,7 @@ class Blueprint
         $index = $index ?: $this->createIndexName($type, $columns);
 
         return $this->addCommand(
-            $type, compact('index', 'columns', 'algorithm')
+            $type, compact('index', 'columns', 'algorithm', 'operatorClass')
         );
     }
 

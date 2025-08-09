@@ -92,6 +92,13 @@ abstract class Factory
     protected $expandRelationships = true;
 
     /**
+     * The relationships that should not be automatically created.
+     *
+     * @var array
+     */
+    protected $excludeRelationships = [];
+
+    /**
      * The name of the database connection that will be used to create the models.
      *
      * @var string|null
@@ -134,6 +141,13 @@ abstract class Factory
     protected static $factoryNameResolver;
 
     /**
+     * Whether to expand relationships by default.
+     *
+     * @var bool
+     */
+    protected static $expandRelationshipsByDefault = true;
+
+    /**
      * Create a new factory instance.
      *
      * @param  int|null  $count
@@ -144,7 +158,8 @@ abstract class Factory
      * @param  \Illuminate\Support\Collection|null  $afterCreating
      * @param  string|null  $connection
      * @param  \Illuminate\Support\Collection|null  $recycle
-     * @param  bool  $expandRelationships
+     * @param  bool|null  $expandRelationships
+     * @param  array  $excludeRelationships
      */
     public function __construct(
         $count = null,
@@ -155,7 +170,8 @@ abstract class Factory
         ?Collection $afterCreating = null,
         $connection = null,
         ?Collection $recycle = null,
-        bool $expandRelationships = true
+        ?bool $expandRelationships = null,
+        array $excludeRelationships = [],
     ) {
         $this->count = $count;
         $this->states = $states ?? new Collection;
@@ -166,7 +182,8 @@ abstract class Factory
         $this->connection = $connection;
         $this->recycle = $recycle ?? new Collection;
         $this->faker = $this->withFaker();
-        $this->expandRelationships = $expandRelationships;
+        $this->expandRelationships = $expandRelationships ?? self::$expandRelationshipsByDefault;
+        $this->excludeRelationships = $excludeRelationships;
     }
 
     /**
@@ -498,8 +515,11 @@ abstract class Factory
     protected function expandAttributes(array $definition)
     {
         return (new Collection($definition))
-            ->map($evaluateRelations = function ($attribute) {
+            ->map($evaluateRelations = function ($attribute, $key) {
                 if (! $this->expandRelationships && $attribute instanceof self) {
+                    $attribute = null;
+                } elseif ($attribute instanceof self &&
+                    array_intersect([$attribute->modelName(), $key], $this->excludeRelationships)) {
                     $attribute = null;
                 } elseif ($attribute instanceof self) {
                     $attribute = $this->getRandomRecycledModel($attribute->modelName())?->getKey()
@@ -515,7 +535,7 @@ abstract class Factory
                     $attribute = $attribute($definition);
                 }
 
-                $attribute = $evaluateRelations($attribute);
+                $attribute = $evaluateRelations($attribute, $key);
 
                 $definition[$key] = $attribute;
 
@@ -767,11 +787,12 @@ abstract class Factory
     /**
      * Indicate that related parent models should not be created.
      *
+     * @param  array<string|class-string<Model>>  $parents
      * @return static
      */
-    public function withoutParents()
+    public function withoutParents($parents = [])
     {
-        return $this->newInstance(['expandRelationships' => false]);
+        return $this->newInstance(! $parents ? ['expandRelationships' => false] : ['excludeRelationships' => $parents]);
     }
 
     /**
@@ -813,6 +834,7 @@ abstract class Factory
             'connection' => $this->connection,
             'recycle' => $this->recycle,
             'expandRelationships' => $this->expandRelationships,
+            'excludeRelationships' => $this->excludeRelationships,
         ], $arguments)));
     }
 
@@ -906,6 +928,26 @@ abstract class Factory
     }
 
     /**
+     * Specify that relationships should create parent relationships by default.
+     *
+     * @return void
+     */
+    public static function expandRelationshipsByDefault()
+    {
+        static::$expandRelationshipsByDefault = true;
+    }
+
+    /**
+     * Specify that relationships should not create parent relationships by default.
+     *
+     * @return void
+     */
+    public static function dontExpandRelationshipsByDefault()
+    {
+        static::$expandRelationshipsByDefault = false;
+    }
+
+    /**
      * Get a new Faker instance.
      *
      * @return \Faker\Generator
@@ -965,6 +1007,7 @@ abstract class Factory
         static::$modelNameResolvers = [];
         static::$factoryNameResolver = null;
         static::$namespace = 'Database\\Factories\\';
+        static::$expandRelationshipsByDefault = true;
     }
 
     /**

@@ -27,6 +27,8 @@ use Illuminate\Support\Uri;
 use League\Uri\Contracts\UriInterface;
 use Symfony\Component\HttpFoundation\Response;
 
+use function Illuminate\Support\enum_value;
+
 if (! function_exists('abort')) {
     /**
      * Throw an HttpException with the given data.
@@ -622,12 +624,12 @@ if (! function_exists('now')) {
     /**
      * Create a new Carbon instance for the current time.
      *
-     * @param  \DateTimeZone|string|null  $tz
+     * @param  \DateTimeZone|\UnitEnum|string|null  $tz
      * @return \Illuminate\Support\Carbon
      */
     function now($tz = null)
     {
-        return Date::now($tz);
+        return Date::now(enum_value($tz));
     }
 }
 
@@ -948,6 +950,22 @@ if (! function_exists('storage_path')) {
     }
 }
 
+if (! function_exists('to_action')) {
+    /**
+     * Create a new redirect response to a controller action.
+     *
+     * @param  string|array  $action
+     * @param  mixed  $parameters
+     * @param  int  $status
+     * @param  array  $headers
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    function to_action($action, $parameters = [], $status = 302, $headers = [])
+    {
+        return redirect()->action($action, $parameters, $status, $headers);
+    }
+}
+
 if (! function_exists('to_route')) {
     /**
      * Create a new redirect response to a named route.
@@ -968,12 +986,12 @@ if (! function_exists('today')) {
     /**
      * Create a new Carbon instance for the current date.
      *
-     * @param  \DateTimeZone|string|null  $tz
+     * @param  \DateTimeZone|\UnitEnum|string|null  $tz
      * @return \Illuminate\Support\Carbon
      */
     function today($tz = null)
     {
-        return Date::today($tz);
+        return Date::today(enum_value($tz));
     }
 }
 

@@ -15,7 +15,6 @@ class LichChieuController extends Controller
     public function index()
     {
         // Lấy danh sách phim
-        // Lấy danh sách phim
         $phims = Phim::orderBy('ten_phim')->get();
 
         // Lấy danh sách rạp

@@ -5,6 +5,9 @@ namespace Illuminate\Container;
 use ArrayAccess;
 use Closure;
 use Exception;
+use Illuminate\Container\Attributes\Bind;
+use Illuminate\Container\Attributes\Scoped;
+use Illuminate\Container\Attributes\Singleton;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Container\CircularDependencyException;
 use Illuminate\Contracts\Container\Container as ContainerContract;
@@ -121,6 +124,13 @@ class Container implements ArrayAccess, ContainerContract
     public $contextualAttributes = [];
 
     /**
+     * Whether an abstract class has already had its attributes checked for bindings.
+     *
+     * @var array<class-string, true>
+     */
+    protected $checkedForAttributeBindings = [];
+
+    /**
      * All of the registered rebound callbacks.
      *
      * @var array[]
@@ -175,6 +185,13 @@ class Container implements ArrayAccess, ContainerContract
      * @var array[]
      */
     protected $afterResolvingAttributeCallbacks = [];
+
+    /**
+     * The callback used to determine the container's environment.
+     *
+     * @var (callable(array<int, string>|string): bool|string)|null
+     */
+    protected $environmentResolver = null;
 
     /**
      * Define a contextual binding.
@@ -252,9 +269,33 @@ class Container implements ArrayAccess, ContainerContract
      */
     public function isShared($abstract)
     {
-        return isset($this->instances[$abstract]) ||
-               (isset($this->bindings[$abstract]['shared']) &&
-               $this->bindings[$abstract]['shared'] === true);
+        if (isset($this->instances[$abstract])) {
+            return true;
+        }
+
+        if (isset($this->bindings[$abstract]['shared']) && $this->bindings[$abstract]['shared'] === true) {
+            return true;
+        }
+
+        if (! class_exists($abstract)) {
+            return false;
+        }
+
+        $reflection = new ReflectionClass($abstract);
+
+        if (! empty($reflection->getAttributes(Singleton::class))) {
+            return true;
+        }
+
+        if (! empty($reflection->getAttributes(Scoped::class))) {
+            if (! in_array($abstract, $this->scopedInstances, true)) {
+                $this->scopedInstances[] = $abstract;
+            }
+
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -649,6 +690,8 @@ class Container implements ArrayAccess, ContainerContract
             throw new LogicException("[{$abstract}] is aliased to itself.");
         }
 
+        $this->removeAbstractAlias($alias);
+
         $this->aliases[$alias] = $abstract;
 
         $this->abstractAliases[$abstract][] = $alias;
@@ -935,7 +978,65 @@ class Container implements ArrayAccess, ContainerContract
             return $this->bindings[$abstract]['concrete'];
         }
 
-        return $abstract;
+        if ($this->environmentResolver === null ||
+            ($this->checkedForAttributeBindings[$abstract] ?? false) || ! is_string($abstract)) {
+            return $abstract;
+        }
+
+        $attributes = [];
+
+        try {
+            $attributes = (new ReflectionClass($abstract))->getAttributes(Bind::class);
+        } catch (ReflectionException) {
+        }
+
+        $this->checkedForAttributeBindings[$abstract] = true;
+
+        if ($attributes === []) {
+            return $abstract;
+        }
+
+        return $this->getConcreteBindingFromAttributes($abstract, $attributes);
+    }
+
+    /**
+     * Get the concrete binding for an abstract from the Bind attribute.
+     *
+     * @param  string  $abstract
+     * @param  array<int, \ReflectionAttribute<Bind>>  $reflectedAttributes
+     * @return mixed
+     */
+    protected function getConcreteBindingFromAttributes($abstract, $reflectedAttributes)
+    {
+        $concrete = $maybeConcrete = null;
+
+        foreach ($reflectedAttributes as $reflectedAttribute) {
+            $instance = $reflectedAttribute->newInstance();
+
+            if ($instance->environments === ['*']) {
+                $maybeConcrete = $instance->concrete;
+
+                continue;
+            }
+
+            if ($this->currentEnvironmentIs($instance->environments)) {
+                $concrete = $instance->concrete;
+
+                break;
+            }
+        }
+
+        if ($maybeConcrete !== null && $concrete === null) {
+            $concrete = $maybeConcrete;
+        }
+
+        if ($concrete === null) {
+            return $abstract;
+        }
+
+        $this->bind($abstract, $concrete);
+
+        return $this->bindings[$abstract]['concrete'];
     }
 
     /**
@@ -1596,6 +1697,30 @@ class Container implements ArrayAccess, ContainerContract
     }
 
     /**
+     * Set the callback which determines the current container environment.
+     *
+     * @param  (callable(array<int, string>|string): bool|string)|null  $callback
+     * @return void
+     */
+    public function resolveEnvironmentUsing(?callable $callback)
+    {
+        $this->environmentResolver = $callback;
+    }
+
+    /**
+     * Determine the environment for the container.
+     *
+     * @param  array<int, string>|string  $environments
+     * @return bool
+     */
+    public function currentEnvironmentIs($environments)
+    {
+        return $this->environmentResolver === null
+            ? false
+            : call_user_func($this->environmentResolver, $environments);
+    }
+
+    /**
      * Flush the container of all bindings and resolved instances.
      *
      * @return void
@@ -1608,6 +1733,7 @@ class Container implements ArrayAccess, ContainerContract
         $this->instances = [];
         $this->abstractAliases = [];
         $this->scopedInstances = [];
+        $this->checkedForAttributeBindings = [];
     }
 
     /**

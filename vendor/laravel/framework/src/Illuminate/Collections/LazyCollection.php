@@ -288,6 +288,19 @@ class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
     }
 
     /**
+     * Determine if an item is not contained in the enumerable, using strict comparison.
+     *
+     * @param  mixed  $key
+     * @param  mixed  $operator
+     * @param  mixed  $value
+     * @return bool
+     */
+    public function doesntContainStrict($key, $operator = null, $value = null)
+    {
+        return ! $this->containsStrict(...func_get_args());
+    }
+
+    /**
      * Cross join the given iterables, returning all possible permutations.
      *
      * @template TCrossJoinKey
@@ -1766,9 +1779,9 @@ class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
         $iterables = func_get_args();
 
         return new static(function () use ($iterables) {
-            $iterators = (new Collection($iterables))->map(function ($iterable) {
-                return $this->makeIterator($iterable);
-            })->prepend($this->getIterator());
+            $iterators = (new Collection($iterables))
+                ->map(fn ($iterable) => $this->makeIterator($iterable))
+                ->prepend($this->getIterator());
 
             while ($iterators->contains->valid()) {
                 yield new static($iterators->map->current());
