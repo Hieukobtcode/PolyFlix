@@ -159,11 +159,9 @@
                                     {{-- Nếu ghế đang bảo trì --}}
                                     {{ $ghe->trang_thai == 'bao_tri' ? 'maintenance' : '' }}
 
-                                    {{-- Nếu ghế đang được chính người dùng này chọn --}}
-                                    {{ $ghe->trang_thai == 'dang_chon' ? 'selected' : '' }}
-
                                     {{-- Nếu ghế đang được người khác chọn (giữ tạm thời trong Redis) --}}
-                                    {{ $ghe->dang_duoc_chon && $ghe->trang_thai != 'dang_chon' ? 'selected-by-other' : '' }}
+                                    {{ $ghe->trang_thai == 'da_dat' ? 'booked' : '' }}
+                                     
 
                                     {{-- Nếu không rơi vào các trạng thái đặc biệt → available --}}
                                     {{ !$ghe->da_dat && !$ghe->dang_duoc_chon && $ghe->trang_thai !== 'bao_tri' && $ghe->trang_thai !== 'dang_chon' ? 'available' : '' }}
@@ -181,7 +179,8 @@
                                         data-seat-type-id="{{ $ghe->loaiGhe->id }}"
                                         @if ($ghe->trang_thai == 'bao_tri' || $ghe->da_dat) disabled @endif>
                                         {{-- Hiển thị x nếu ghế đang bảo trì --}}
-                                        {{ $ghe->trang_thai == 'bao_tri' ? 'x' : $ghe->ma_ghe }}
+                                        {{-- Hiển thị "x" nếu ghế bảo trì hoặc đã chọn --}}
+                                        {{ in_array($ghe->trang_thai, ['bao_tri', 'da_dat']) ? 'x' : $ghe->ma_ghe }}
                                     </div>
                                 @endforeach
                             </div>
@@ -194,13 +193,15 @@
                 <div class="seat-legend-wrapper">
                     <div class="legend-column">
                         <div class="legend-item">
-                            <div class="seat-demo bg-available"></div><span>Ghế trống</span>
+                            <div class="seat-demo bg-available"></div><span>Checked</span>
                         </div>
                         <div class="legend-item">
                             <div class="seat-demo bg-selected"></div><span>Đã chọn</span>
                         </div>
                         <div class="legend-item">
-                            <div class="seat-demo seat-disabled"><i class="fas fa-times text-danger"></i></div><span>Không
+                            <div class="seat-demo seat-disabled">
+                                {{-- <i class="fas fa-times text-danger"></i> --}}
+                            </div><span>Không
                                 thể chọn</span>
                         </div>
                     </div>
