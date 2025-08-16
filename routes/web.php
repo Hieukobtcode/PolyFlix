@@ -83,9 +83,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/ai-chat-reset', [AIChatController::class, 'reset']);
 
     // giữ ghế
-    Route::post('/seat/lock', [SeatLockController::class,'lock'])->name('seat.lock');
-    Route::post('/seat/unlock', [SeatLockController::class,'unlock'])->name('seat.unlock');
-    Route::post('/seat/heartbeat', [SeatLockController::class,'heartbeat'])->name('seat.heartbeat');
+    Route::post('/seat/lock', [SeatLockController::class, 'lock'])->name('seat.lock');
+    Route::post('/seat/unlock', [SeatLockController::class, 'unlock'])->name('seat.unlock');
+    Route::post('/seat/heartbeat', [SeatLockController::class, 'heartbeat'])->name('seat.heartbeat');
 });
 
 Route::get('/', [TrangChuController::class, 'index'])->name('home');
