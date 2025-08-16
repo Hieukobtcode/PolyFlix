@@ -158,38 +158,39 @@ class DatVeController extends Controller
 
             // Lấy danh sách ghế theo phòng chiếu
             $gheNgois = $suatChieu->phongChieu->gheNgois()
-    ->with(['loaiGhe'])
-    ->orderBy('hang')
-    ->orderBy('cot')
-    ->get()
-    ->map(function ($ghe) use ($gheDaDat, $suatChieu) {
-        // Lưu trạng thái gốc của ghế
-        $ghe->trang_thai_mac_dinh = $ghe->trang_thai;
+                ->with(['loaiGhe'])
+                ->orderBy('hang')
+                ->orderBy('cot')
+                ->get()
+                ->map(function ($ghe) use ($gheDaDat, $suatChieu) {
+                    // Lưu trạng thái gốc của ghế
+                    $ghe->trang_thai_mac_dinh = $ghe->trang_thai;
 
-        // Lấy trạng thái ghế theo suất chiếu
-        $pivot = \App\Models\GheNgoiSuatChieu::where('ghe_ngoi_id', $ghe->id)
-            ->where('suat_chieu_id', $suatChieu->id)
-            ->first();
+                    // Lấy trạng thái ghế theo suất chiếu
+                    $pivot = \App\Models\GheNgoiSuatChieu::where('ghe_ngoi_id', $ghe->id)
+                        ->where('suat_chieu_id', $suatChieu->id)
+                        ->first();
 
-        $ghe->trang_thai_theo_suat = $pivot?->trang_thai ?? 'trong';
+                    $ghe->trang_thai_theo_suat = $pivot?->trang_thai ?? 'trong';
 
-        // Đã đặt hay chưa (theo vé đã bán)
-        $ghe->da_dat = in_array($ghe->id, $gheDaDat);
+                    // Đã đặt hay chưa (theo vé đã bán)
+                    $ghe->da_dat = in_array($ghe->id, $gheDaDat);
 
-        // Phụ thu
-        $ghe->phu_thu_loai_phong = optional($suatChieu->phongChieu->loaiPhong)->phu_thu ?? 0;
-        $ghe->phu_thu_loai_ghe = optional($ghe->loaiGhe)->phu_thu ?? 0;
-        $ghe->phu_thu_rap_phim = optional($suatChieu->phongChieu->rapPhim)->phu_thu ?? 0;
+                    // Phụ thu
+                    $ghe->phu_thu_loai_phong = optional($suatChieu->phongChieu->loaiPhong)->phu_thu ?? 0;
+                    $ghe->phu_thu_loai_ghe = optional($ghe->loaiGhe)->phu_thu ?? 0;
+                    $ghe->phu_thu_rap_phim = optional($suatChieu->phongChieu->rapPhim)->phu_thu ?? 0;
 
-        // Debug log để xem dữ liệu
-        Log::info('Ghế ID: ' . $ghe->id .
-            ', Mặc định: ' . $ghe->trang_thai_mac_dinh .
-            ', Theo suất: ' . $ghe->trang_thai_theo_suat .
-            ', Đã đặt: ' . ($ghe->da_dat ? 'Yes' : 'No')
-        );
+                    // Debug log để xem dữ liệu
+                    Log::info(
+                        'Ghế ID: ' . $ghe->id .
+                            ', Mặc định: ' . $ghe->trang_thai_mac_dinh .
+                            ', Theo suất: ' . $ghe->trang_thai_theo_suat .
+                            ', Đã đặt: ' . ($ghe->da_dat ? 'Yes' : 'No')
+                    );
 
-        return $ghe;
-    });
+                    return $ghe;
+                });
 
 
             // Lấy danh sách loại ghế để lấy màu
@@ -442,8 +443,4 @@ class DatVeController extends Controller
 
         return response()->json(['message' => 'Đổi điểm thành công']);
     }
-
-
-
-
 }
