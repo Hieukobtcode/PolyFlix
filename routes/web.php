@@ -50,6 +50,7 @@ Route::get('/', [TrangChuController::class, 'index'])->name('home');
 
 Route::middleware('auth')->group(function () {
 
+    Route::get('admin/dat-ve/{id}/print', [DatVeController::class, 'print'])->name('admin.dat-ve.print');
     //Đổi điểm
     Route::post('/doi-diem', [\App\Http\Controllers\Client\DatVeController::class, 'doiDiem'])->name('doi-diem');
 
@@ -80,6 +81,11 @@ Route::middleware('auth')->group(function () {
     //Chat AI
     Route::post('/ai-chat', [AIChatController::class, 'chat']);
     Route::post('/ai-chat-reset', [AIChatController::class, 'reset']);
+
+    // giữ ghế
+    Route::post('/seat/lock', [SeatLockController::class,'lock'])->name('seat.lock');
+    Route::post('/seat/unlock', [SeatLockController::class,'unlock'])->name('seat.unlock');
+    Route::post('/seat/heartbeat', [SeatLockController::class,'heartbeat'])->name('seat.heartbeat');
 });
 
 Route::get('/', [TrangChuController::class, 'index'])->name('home');
