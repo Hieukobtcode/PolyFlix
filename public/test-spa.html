@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test SPA Functions</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background: #0056b3;
+        }
+        .result {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+            white-space: pre-wrap;
+            font-family: monospace;
+        }
+        .success { border-color: #28a745; background: #d4edda; }
+        .error { border-color: #dc3545; background: #f8d7da; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Test SPA Functions</h1>
+        
+        <div>
+            <button class="btn" onclick="testAPI()">Test API Call</button>
+            <button class="btn" onclick="testFilterVe()">Test Filter Vé</button>
+            <button class="btn" onclick="testFilterDoAn()">Test Filter Đồ Ăn</button>
+            <button class="btn" onclick="testSearch()">Test Search</button>
+            <button class="btn" onclick="clearResults()">Clear Results</button>
+        </div>
+        
+        <div id="results"></div>
+    </div>
+
+    <script>
+        function addResult(message, type = 'info') {
+            const results = document.getElementById('results');
+            const div = document.createElement('div');
+            div.className = `result ${type}`;
+            div.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            results.appendChild(div);
+        }
+
+        async function testAPI() {
+            addResult('Testing basic API call...');
+            
+            try {
+                const response = await fetch('/api/promotions', {
+                    method: 'GET',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    addResult(`✅ API Success: Found ${data.data.promotions.length} promotions`, 'success');
+                    addResult(`Response: ${JSON.stringify(data, null, 2)}`);
+                } else {
+                    addResult(`❌ API Error: ${response.status} ${response.statusText}`, 'error');
+                }
+            } catch (error) {
+                addResult(`❌ Network Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function testFilterVe() {
+            addResult('Testing filter for "ve"...');
+            
+            try {
+                const response = await fetch('/api/promotions?ap_dung_cho=ve', {
+                    method: 'GET',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    addResult(`✅ Filter Ve Success: Found ${data.data.promotions.length} promotions`, 'success');
+                    
+                    // Check if all promotions are for "ve"
+                    const allVe = data.data.promotions.every(p => p.ap_dung_cho === 've');
+                    addResult(`Filter working correctly: ${allVe ? 'YES' : 'NO'}`, allVe ? 'success' : 'error');
+                } else {
+                    addResult(`❌ Filter Ve Error: ${response.status}`, 'error');
+                }
+            } catch (error) {
+                addResult(`❌ Filter Ve Network Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function testFilterDoAn() {
+            addResult('Testing filter for "do_an"...');
+            
+            try {
+                const response = await fetch('/api/promotions?ap_dung_cho=do_an', {
+                    method: 'GET',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    addResult(`✅ Filter Do An Success: Found ${data.data.promotions.length} promotions`, 'success');
+                    
+                    // Check if all promotions are for "do_an"
+                    const allDoAn = data.data.promotions.every(p => p.ap_dung_cho === 'do_an');
+                    addResult(`Filter working correctly: ${allDoAn ? 'YES' : 'NO'}`, allDoAn ? 'success' : 'error');
+                } else {
+                    addResult(`❌ Filter Do An Error: ${response.status}`, 'error');
+                }
+            } catch (error) {
+                addResult(`❌ Filter Do An Network Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function testSearch() {
+            addResult('Testing search for "giảm"...');
+            
+            try {
+                const response = await fetch('/api/promotions?search=giảm', {
+                    method: 'GET',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    addResult(`✅ Search Success: Found ${data.data.promotions.length} promotions`, 'success');
+                    
+                    // Show promotion names
+                    data.data.promotions.forEach(p => {
+                        addResult(`- ${p.ten} (${p.ma_khuyen_mai})`);
+                    });
+                } else {
+                    addResult(`❌ Search Error: ${response.status}`, 'error');
+                }
+            } catch (error) {
+                addResult(`❌ Search Network Error: ${error.message}`, 'error');
+            }
+        }
+
+        function clearResults() {
+            document.getElementById('results').innerHTML = '';
+        }
+
+        // Test on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            addResult('🚀 Test page loaded successfully', 'success');
+        });
+    </script>
+</body>
+</html>

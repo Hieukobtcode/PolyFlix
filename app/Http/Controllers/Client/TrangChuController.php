@@ -11,6 +11,7 @@ use App\Models\RapPhim;
 use App\Models\Rating;
 use App\Models\ChiNhanh;
 use App\Models\SuatChieu;
+use App\Models\KhuyenMai;
 use Illuminate\Http\Request;
 use Hashids\Hashids;
 use Carbon\Carbon;
@@ -58,7 +59,13 @@ class TrangChuController extends Controller
                 ->get();
         }
 
-        return view('client.trang-chu', compact('phims', 'ratings', 'baiViet', 'banners', 'allPhims', 'tab'));
+        // Lấy khuyến mãi nổi bật
+        $khuyenMaisNoiBat = KhuyenMai::conHieuLuc()
+            ->orderBy('gia_tri_giam', 'desc')
+            ->limit(4)
+            ->get();
+
+        return view('client.trang-chu', compact('phims', 'ratings', 'baiViet', 'banners', 'allPhims', 'tab', 'khuyenMaisNoiBat'));
     }
 
     public function getChiNhanhs()
