@@ -46,7 +46,6 @@
             <form method="GET" action="{{ route('admin.khuyen-mai.index') }}" class="row mb-4">
                 <div class="col-md-3 mb-2">
                     <div class="search-box">
-                        <i class="fas fa-search"></i>
                         <input type="text" name="search" class="form-control search-input"
                             value="{{ request('search') }}" placeholder="Tìm theo tên hoặc mã...">
                     </div>

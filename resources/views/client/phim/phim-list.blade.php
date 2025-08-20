@@ -78,7 +78,7 @@
                     <img src="{{ asset('storage/' . $phim->poster) }}" alt="{{ $phim->ten_phim }}">
                     <div class="age-label">{{ $phim->do_tuoi }}</div>
                     <div class="overlay">
-                        <a href="{{ route('phim.chi-tiet', urlencode($phim->ten_phim)) }}">
+                        <a href="{{ route('phim.chi-tiet', urlencode($phim->ten_phim)) }}#lich-chieu">
                         <button class="btn buy"><i class="fa-solid fa-ticket"></i> Mua vé</button>
                         </a>
                         <button class="btn trailer" data-video="{{ $phim->trailer }}">

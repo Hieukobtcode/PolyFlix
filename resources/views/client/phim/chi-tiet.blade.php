@@ -805,7 +805,7 @@
                                 </a>
                                 <div class="age-label">{{ $phim->do_tuoi }}</div>
                                 <div class="overlay">
-                                    <a href="{{ route('phim.chi-tiet', $phim->id) }}#lich-chieu">
+                                    <a href="{{ route('phim.chi-tiet', urlencode($phim->ten_phim)) }}#lich-chieu">
                                         <button class="btn buy">
                                             <i class="fa-solid fa-ticket"></i> Mua vé
                                         </button>
@@ -828,46 +828,6 @@
                 <button class="btn-see">XEM THÊM</button>
             </a>
         </div>
-    </div>
-
-    <div class="swiper list-movie">
-        <div class="swiper-wrapper">
-            @foreach ($allPhims as $phim)
-                <div class="swiper-slide">
-                    <div class="movie clickable-movie" style="display: flex; gap:4"
-                        data-href="{{ route('phim.chi-tiet', $phim->id) }}">
-                        <div class="img-wrapper">
-                            <a href="{{ route('phim.chi-tiet', $phim->id) }}">
-                                <img src="{{ asset('storage/' . $phim->poster) }}" alt="{{ $phim->ten_phim }}">
-                            </a>
-                            <div class="age-label">{{ $phim->do_tuoi }}</div>
-                            <div class="overlay">
-                                <a href="{{ route('phim.chi-tiet', $phim->id) }}#lich-chieu">
-                                    <button class="btn buy">
-                                        <i class="fa-solid fa-ticket"></i> Mua vé
-                                    </button>
-                                </a>
-                                <button class="btn trailer" data-video="{{ $phim->trailer }}" onclick="showTrailer(this)">
-                                    <i class="fa-solid fa-video"></i> Trailer
-                                </button>
-                            </div>
-                        </div>
-                        <a href="{{ route('phim.chi-tiet', $phim->id) }}">
-                            <p>{{ $phim->ten_phim }}</p>
-                        </a>
-                    </div>
-                </div>
-            @endforeach
-        </div>
-
-        <div class="swiper-navigation">
-            <div class="swiper-button-prev custom-nav"></div>
-            <div class="swiper-button-next custom-nav"></div>
-        </div>
-
-        <a href="{{ route('phim.dang-chieu') }}" class="btn-see-more">
-            <button class="btn-see">XEM THÊM</button>
-        </a>
     </div>
 
     <div id="trailerPopup"
