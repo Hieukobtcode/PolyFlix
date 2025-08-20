@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\DB;
 
 
 class ThanhToanController extends Controller
@@ -21,79 +22,79 @@ class ThanhToanController extends Controller
      * Hiển thị trang thanh toán
      */
 
-public function index($datVeId)
-{
-    if (!Auth::check()) {
-        return redirect()->route('login.form')->with('error', 'Vui lòng đăng nhập để thanh toán!');
+    public function index($datVeId)
+    {
+        if (!Auth::check()) {
+            return redirect()->route('login.form')->with('error', 'Vui lòng đăng nhập để thanh toán!');
+        }
+
+        $datVe = DatVe::with([
+            'nguoiDung',
+            'suatChieu.phim',
+            'suatChieu.phongChieu.rapPhim.chiNhanh',
+            'suatChieu.phongChieu.loaiPhong',
+            'gheNgois.loaiGhe',
+            'combos',
+            'doAns'
+        ])
+            ->where('id', $datVeId)
+            ->where('user_id', Auth::id())
+            ->where('trang_thai', 'Chờ thanh toán')
+            ->firstOrFail();
+
+
+
+        /**
+         * Cập nhật trạng thái ghế trong bảng ghe_ngoi_suat_chieus
+         * Nếu đã tồn tại thì update, chưa có thì insert
+         */
+        foreach ($datVe->gheNgois as $ghe) {
+            GheNgoiSuatChieu::updateOrCreate(
+                [
+                    'ghe_ngoi_id'   => $ghe->id,
+                    'suat_chieu_id' => $datVe->suatChieu->id
+                ],
+                [
+                    'trang_thai' => 'da_chon'
+                ]
+            );
+        }
+
+        // --- TÍNH TIỀN GHẾ ---
+        $tongTienGhe = 0;
+        $giaVeCoBan = 0;
+
+        $phuThuRap = $datVe->suatChieu->phongChieu->rapPhim->phu_thu ?? 0;
+        $phuThuLoaiPhong = $datVe->suatChieu->phongChieu->loaiPhong->phu_thu ?? 0;
+
+        foreach ($datVe->gheNgois as $ghe) {
+            $phuThuGhe = $ghe->loaiGhe->phu_thu ?? 0;
+            $giaMotGhe = $giaVeCoBan + $phuThuLoaiPhong + $phuThuGhe;
+            $tongTienGhe += $giaMotGhe;
+        }
+
+        $tongTienGhe += $phuThuRap;
+
+        $tongTienCombo = 0;
+        foreach ($datVe->combos as $combo) {
+            $tongTienCombo += $combo->gia * $combo->pivot->so_luong;
+        }
+
+        $tongTienDoAn = 0;
+        foreach ($datVe->doAns as $doAn) {
+            $tongTienDoAn += $doAn->gia * $doAn->pivot->so_luong;
+        }
+
+        $tongThanhTien = $datVe->tong_tien;
+
+        return view('client.thanh-toan.index', compact(
+            'datVe',
+            'tongTienGhe',
+            'tongTienCombo',
+            'tongTienDoAn',
+            'tongThanhTien'
+        ));
     }
-
-    $datVe = DatVe::with([
-        'nguoiDung',
-        'suatChieu.phim',
-        'suatChieu.phongChieu.rapPhim.chiNhanh',
-        'suatChieu.phongChieu.loaiPhong',
-        'gheNgois.loaiGhe',
-        'combos',
-        'doAns'
-    ])
-        ->where('id', $datVeId)
-        ->where('user_id', Auth::id())
-        ->where('trang_thai', 'Chờ thanh toán')
-        ->firstOrFail();
-
-    
-
-    /**
-     * Cập nhật trạng thái ghế trong bảng ghe_ngoi_suat_chieus
-     * Nếu đã tồn tại thì update, chưa có thì insert
-     */
-    foreach ($datVe->gheNgois as $ghe) {
-        GheNgoiSuatChieu::updateOrCreate(
-            [
-                'ghe_ngoi_id'   => $ghe->id,
-                'suat_chieu_id' => $datVe->suatChieu->id
-            ],
-            [
-                'trang_thai' => 'da_chon'
-            ]
-        );
-    }
-
-    // --- TÍNH TIỀN GHẾ ---
-    $tongTienGhe = 0;
-    $giaVeCoBan = 0;
-
-    $phuThuRap = $datVe->suatChieu->phongChieu->rapPhim->phu_thu ?? 0;
-    $phuThuLoaiPhong = $datVe->suatChieu->phongChieu->loaiPhong->phu_thu ?? 0;
-
-    foreach ($datVe->gheNgois as $ghe) {
-        $phuThuGhe = $ghe->loaiGhe->phu_thu ?? 0;
-        $giaMotGhe = $giaVeCoBan + $phuThuLoaiPhong + $phuThuGhe;
-        $tongTienGhe += $giaMotGhe;
-    }
-
-    $tongTienGhe += $phuThuRap;
-
-    $tongTienCombo = 0;
-    foreach ($datVe->combos as $combo) {
-        $tongTienCombo += $combo->gia * $combo->pivot->so_luong;
-    }
-
-    $tongTienDoAn = 0;
-    foreach ($datVe->doAns as $doAn) {
-        $tongTienDoAn += $doAn->gia * $doAn->pivot->so_luong;
-    }
-
-    $tongThanhTien = $datVe->tong_tien;
-
-    return view('client.thanh-toan.index', compact(
-        'datVe',
-        'tongTienGhe',
-        'tongTienCombo',
-        'tongTienDoAn',
-        'tongThanhTien'
-    ));
-}
 
 
     public function xuLyThanhToan(Request $request)
@@ -375,5 +376,57 @@ public function index($datVeId)
     public function ketQuaThanhToan(Request $request)
     {
         return redirect()->route('home')->with('success', 'Đặt vé thành công! Vé sẽ được gửi qua email.');
+    }
+
+    /**
+     * Hủy thanh toán và mở khóa ghế
+     */
+    public function huyThanhToan($datVeId)
+    {
+        if (!Auth::check()) {
+            return redirect()->route('login.form')->with('error', 'Vui lòng đăng nhập!');
+        }
+
+        $datVe = DatVe::with([
+            'gheNgois',
+            'suatChieu'
+        ])
+            ->where('id', $datVeId)
+            ->where('user_id', Auth::id())
+            ->where('trang_thai', 'Chờ thanh toán')
+            ->first();
+
+        if (!$datVe) {
+            return redirect()->route('home')->with('error', 'Không tìm thấy đơn đặt vé hoặc đơn đã được xử lý.');
+        }
+
+        try {
+            // Cập nhật trạng thái đơn đặt vé thành "Đã hủy" trước
+            $datVe->update([
+                'trang_thai' => 'Đã hủy',
+                'ngay_huy' => now()
+            ]);
+
+            // Mở khóa tất cả ghế trong đơn đặt vé
+            foreach ($datVe->gheNgois as $ghe) {
+                try {
+                    // Sử dụng raw query để tránh lỗi LostConnectionDetector
+                    DB::statement("UPDATE ghe_ngoi_suat_chieu SET trang_thai = 'trong', user_id = NULL, expires_at = NULL WHERE ghe_ngoi_id = ? AND suat_chieu_id = ? AND user_id = ?", [
+                        $ghe->id,
+                        $datVe->suat_chieu_id,
+                        Auth::id()
+                    ]);
+                } catch (\Exception $e) {
+                    Log::warning('Không thể mở khóa ghế ID: ' . $ghe->id . ' - ' . $e->getMessage());
+                    // Tiếp tục với ghế khác
+                }
+            }
+
+            return redirect()->route('home')->with('success', 'Đã hủy đơn đặt vé thành công. Ghế đã được mở khóa.');
+        } catch (Exception $e) {
+            Log::error('Lỗi khi hủy thanh toán: ' . $e->getMessage());
+            Log::error('Stack trace: ' . $e->getTraceAsString());
+            return redirect()->back()->with('error', 'Có lỗi xảy ra khi hủy đơn đặt vé. Vui lòng thử lại.');
+        }
     }
 }

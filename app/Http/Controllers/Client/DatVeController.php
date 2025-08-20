@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use App\Models\DoAn;
 use App\Models\Combo;
 use App\Models\DatVe;
+use App\Models\KhuyenMai;
 use App\Models\GheNgoi;
 use App\Models\SuatChieu;
 use App\Models\LichSuDiem;
@@ -232,6 +233,7 @@ class DatVeController extends Controller
             'ghe_ids.*' => 'exists:ghe_ngois,id',
             'do_an' => 'nullable|array',
             'combo' => 'nullable|array',
+            'ma_khuyen_mai' => 'nullable|string',
         ]);
 
         if (!Auth::check()) {
@@ -283,15 +285,33 @@ class DatVeController extends Controller
                 }
             }
 
-            // Tính tổng tiền
-            $tongTien = $request->input('tong_tien');
-            Log::info('Tổng tiền tính được:', ['tong_tien' => $tongTien]);
+            // Tính tổng tiền với khuyến mãi
+            $tinhToan = $this->tinhTongTien($request);
+            $tongTien = $tinhToan['tong_tien'];
+            $giaTriGiam = $tinhToan['giam_gia'];
+            Log::info('Tổng tiền tính được:', [
+                'tong_tien_goc' => $tinhToan['tong_tien_goc'],
+                'giam_gia' => $giaTriGiam,
+                'tong_tien' => $tongTien
+            ]);
+
+            // Lấy thông tin khuyến mãi nếu có
+            $khuyenMaiId = null;
+            if ($request->filled('ma_khuyen_mai')) {
+                $khuyenMai = KhuyenMai::where('ma_khuyen_mai', $request->ma_khuyen_mai)
+                    ->conHieuLuc()
+                    ->first();
+                if ($khuyenMai && $giaTriGiam > 0) {
+                    $khuyenMaiId = $khuyenMai->id;
+                }
+            }
 
             // Tạo đơn đặt vé
             $datVe = DatVe::create([
                 'ma_dat_ve' => time() . rand(100, 999),
                 'user_id' => Auth::id(),
                 'suat_chieu_id' => $request->suat_chieu_id,
+                'khuyen_mai_id' => $khuyenMaiId,
                 'tong_tien' => $tongTien,
                 'phuong_thuc_tt' => 'Chưa chọn',
                 'trang_thai' => 'Chờ thanh toán'
@@ -428,7 +448,37 @@ class DatVeController extends Controller
             }
         }
 
-        return $tongTien;
+        // Áp dụng khuyến mãi nếu có
+        $giaTriGiam = 0;
+        if ($request->filled('ma_khuyen_mai')) {
+            $khuyenMai = KhuyenMai::where('ma_khuyen_mai', $request->ma_khuyen_mai)
+                ->conHieuLuc()
+                ->first();
+
+            if ($khuyenMai) {
+                // Kiểm tra đơn tối thiểu
+                if ($tongTien >= ($khuyenMai->don_toi_thieu ?? 0)) {
+                    // Kiểm tra số lần sử dụng
+                    if (!$khuyenMai->so_lan_su_dung_toi_da || $khuyenMai->so_lan_da_su_dung < $khuyenMai->so_lan_su_dung_toi_da) {
+                        // Tính giảm giá
+                        if ($khuyenMai->loai_giam_gia === 'phan_tram') {
+                            $giaTriGiam = ($tongTien * $khuyenMai->gia_tri_giam) / 100;
+                            if ($khuyenMai->giam_toi_da > 0 && $giaTriGiam > $khuyenMai->giam_toi_da) {
+                                $giaTriGiam = $khuyenMai->giam_toi_da;
+                            }
+                        } else {
+                            $giaTriGiam = $khuyenMai->gia_tri_giam;
+                        }
+                    }
+                }
+            }
+        }
+
+        return [
+            'tong_tien_goc' => $tongTien,
+            'giam_gia' => $giaTriGiam,
+            'tong_tien' => $tongTien - $giaTriGiam
+        ];
     }
 
     public function doiDiem(Request $request)
@@ -443,4 +493,7 @@ class DatVeController extends Controller
 
         return response()->json(['message' => 'Đổi điểm thành công']);
     }
+
 }
+
+

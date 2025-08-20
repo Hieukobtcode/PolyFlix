@@ -779,7 +779,7 @@
         </div>
     </div>
 
-    <a href="{{ route('khuyen-mai.index') }}">
+    <a href="{{ route('client.khuyen-mai.index') }}">
         <button class="btn-km">TẤT CẢ ƯU ĐÃI</button>
     </a>
 

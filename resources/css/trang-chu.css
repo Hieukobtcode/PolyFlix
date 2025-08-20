@@ -2,7 +2,6 @@
 .booking-fast,
 .menu,
 .list-movie,
-.khuyen-mai,
 .new {
     width: 100%;
     max-width: 1200px;
@@ -330,63 +329,249 @@
     left: 0;
 }
 
-.khuyen-mai {
-    width: 80%;
-    margin: 0px auto;
-}
-
-.khuyen-mai p {
-    margin-top: 70px;
-    font-family: "Anton", sans-serif;
-    color: #ffffff;
-    font-size: 30px;
-    font-weight: normal;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-.khuyen-mai .img {
-    margin-top: 30px;
-    display: flex;
-    gap: 70px;
-    justify-content: center;
-}
-
-.khuyen-mai .img img {
-    width: 330px;
-    border-radius: 10px;
-}
-
-.btn-km {
-    display: block;
-    margin: 43px auto 0px auto;
-    width: 250px;
-    height: 44px;
-    border: 1px solid yellow;
-    border-radius: 5px;
-    background-color: #414184;
-    color: white;
-    font-size: 18px;
-    font-weight: bold;
+/* Modern Promotion Section Styles */
+.promotions-modern {
     position: relative;
     overflow: hidden;
-    z-index: 1;
 }
 
-.btn-km::before {
+.promotion-card-modern {
+    min-height: 320px;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    cursor: pointer;
+}
+
+.promotion-card-modern:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+    background: rgba(255, 255, 255, 0.2) !important;
+}
+
+.promotion-card-modern:hover .modern-btn {
+    transform: translateY(-2px);
+}
+
+.modern-btn {
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.modern-btn:hover {
+    transform: translateY(-2px);
+}
+
+.btn-outline-light.modern-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.5);
+    color: white;
+}
+
+.btn-warning.modern-btn:hover {
+    background: linear-gradient(135deg, #ffed4e, #ffd700);
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4);
+}
+
+.btn-modern-cta {
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-modern-cta::before {
     content: "";
     position: absolute;
     top: 0;
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(to right, #ff6600, #ffcc00);
-    z-index: -1;
-    transition: left 0.4s ease;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.2),
+        transparent
+    );
+    transition: left 0.5s;
 }
 
-.btn-km:hover::before {
+.btn-modern-cta:hover::before {
+    left: 100%;
+}
+
+/* Animations */
+@keyframes shimmer {
+    0% {
+        left: -100%;
+    }
+    100% {
+        left: 100%;
+    }
+}
+
+@keyframes pulse {
+    0%,
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.1);
+        opacity: 0.8;
+    }
+}
+
+@keyframes glow {
+    0%,
+    100% {
+        box-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+    }
+}
+
+@keyframes float {
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Add floating animation to promotion cards */
+.promotion-card-modern {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.promotion-card-modern:nth-child(1) {
+    animation-delay: 0.1s;
+}
+.promotion-card-modern:nth-child(2) {
+    animation-delay: 0.2s;
+}
+.promotion-card-modern:nth-child(3) {
+    animation-delay: 0.3s;
+}
+.promotion-card-modern:nth-child(4) {
+    animation-delay: 0.4s;
+}
+
+/* Enhance the section background */
+.promotions-modern::before {
+    content: "";
+    position: absolute;
+    top: 0;
     left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(
+            circle at 20% 80%,
+            rgba(255, 107, 53, 0.1) 0%,
+            transparent 50%
+        ),
+        radial-gradient(
+            circle at 80% 20%,
+            rgba(255, 215, 0, 0.1) 0%,
+            transparent 50%
+        );
+    pointer-events: none;
+}
+
+/* Add subtle border animation to cards */
+.promotion-card-modern::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 20px;
+    padding: 1px;
+    background: linear-gradient(
+        45deg,
+        rgba(255, 215, 0, 0.3),
+        rgba(255, 107, 53, 0.3),
+        rgba(255, 215, 0, 0.3)
+    );
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.promotion-card-modern:hover::before {
+    opacity: 1;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+    .promotion-card-modern {
+        min-height: 340px;
+    }
+}
+
+@media (max-width: 768px) {
+    .promotions-modern {
+        padding: 30px 0 !important;
+        margin: 30px 0 !important;
+    }
+
+    .promotion-card-modern {
+        min-height: 300px;
+        padding: 18px !important;
+    }
+
+    .promotion-card-modern h5 {
+        font-size: 1rem !important;
+    }
+
+    .promotion-card-modern p {
+        font-size: 0.8rem !important;
+    }
+
+    .promotion-card-modern .btn {
+        font-size: 0.75rem !important;
+        padding: 8px 6px !important;
+    }
+}
+
+@media (max-width: 576px) {
+    .promotions-modern {
+        padding: 25px 0 !important;
+        margin: 25px 0 !important;
+    }
+
+    .promotion-card-modern {
+        min-height: 280px;
+        padding: 15px !important;
+    }
+
+    .d-flex.gap-2 {
+        flex-direction: column;
+        gap: 10px !important;
+    }
+
+    .d-flex.gap-2 .btn {
+        width: 100%;
+    }
+
+    .btn-modern-cta {
+        padding: 12px 25px !important;
+        font-size: 0.9rem !important;
+    }
 }
 
 .new {
@@ -424,7 +609,6 @@
     color: #b5b5b5;
 }
 .list-movie,
-.khuyen-mai .img,
 .booking-fast .select {
     flex-wrap: wrap;
 }
@@ -794,16 +978,6 @@
         height: auto;
     }
 
-    .khuyen-mai .img {
-        justify-content: center;
-        gap: 30px;
-        flex-wrap: wrap;
-    }
-
-    .khuyen-mai .img img {
-        width: 80%;
-    }
-
     .booking-fast {
         flex-direction: column;
         height: auto;
@@ -844,15 +1018,7 @@
         width: 100%;
     }
 
-    .khuyen-mai .img img {
-        width: 100%;
-    }
-
-    .btn-see,
-    .btn-km {
+    .btn-see {
         width: 90%;
     }
-
 }
-
-

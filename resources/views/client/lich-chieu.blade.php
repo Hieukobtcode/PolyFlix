@@ -243,6 +243,43 @@
             letter-spacing: 1px;
         }
 
+        /* CSS cho hiển thị suất chiếu */
+        .schedule-content {
+            color: #fff;
+        }
+
+        .date-group {
+            margin-bottom: 30px;
+        }
+
+        .movie-showtimes {
+            transition: all 0.3s ease;
+        }
+
+        .movie-showtimes:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(255, 235, 59, 0.2);
+        }
+
+        .showtime-btn {
+            min-width: 80px;
+            padding: 8px 12px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .showtime-btn:hover {
+            background-color: #ffeb3b;
+            color: #000;
+            transform: translateY(-1px);
+        }
+
+        .showtime-btn small {
+            font-size: 0.7em;
+            opacity: 0.8;
+        }
+
     </style>
     <div class="container py-4" style="width:73.5%">
         <div class="filter-bar d-flex align-items-center gap-3 my-4">
@@ -316,9 +353,54 @@
         <div class="swiper-button-prev"></div>
     </div>
 
-    <div class="no-schedule">
-        <i class="fa-solid fa-calendar-xmark"></i>
-        <span>HIỆN CHƯA CÓ LỊCH CHIẾU</span>
+    <!-- Hiển thị suất chiếu -->
+    <div id="suat-chieu-container" style="width: 73.5%; margin: 20px auto;">
+        @if($suatChieus->count() > 0)
+            <div class="schedule-content">
+                @php
+                    $groupedByDate = $suatChieus->groupBy('ngay_bat_dau');
+                @endphp
+
+                @foreach($groupedByDate as $date => $suatChieusInDate)
+                    <div class="date-group mb-4" data-date="{{ $date }}">
+                        <h3 class="text-warning mb-3">
+                            <i class="fa-solid fa-calendar-days me-2"></i>
+                            {{ \Carbon\Carbon::parse($date)->format('d/m/Y') }} - {{ \Carbon\Carbon::parse($date)->locale('vi')->dayName }}
+                        </h3>
+
+                        @php
+                            $groupedByMovie = $suatChieusInDate->groupBy('phim_id');
+                        @endphp
+
+                        @foreach($groupedByMovie as $movieId => $movieShowtimes)
+                            @php
+                                $movie = $movieShowtimes->first()->phim;
+                            @endphp
+                            <div class="movie-showtimes mb-3 p-3" style="background: #1a1a2e; border-radius: 8px; border-left: 4px solid #ffeb3b;">
+                                <h5 class="text-white mb-2">{{ $movie->ten_phim }}</h5>
+                                <div class="showtimes-list d-flex flex-wrap gap-2">
+                                    @foreach($movieShowtimes as $showtime)
+                                        <button class="btn btn-outline-warning btn-sm showtime-btn"
+                                                data-showtime-id="{{ $showtime->id }}"
+                                                data-movie-id="{{ $showtime->phim_id }}"
+                                                data-date="{{ $showtime->ngay_bat_dau }}"
+                                                data-time="{{ $showtime->bat_dau }}">
+                                            {{ \Carbon\Carbon::parse($showtime->bat_dau)->format('H:i') }}
+                                            <small class="d-block">{{ $showtime->phongChieu->rapPhim->ten_rap ?? 'N/A' }}</small>
+                                        </button>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                @endforeach
+            </div>
+        @else
+            <div class="no-schedule">
+                <i class="fa-solid fa-calendar-xmark"></i>
+                <span>HIỆN CHƯA CÓ LỊCH CHIẾU</span>
+            </div>
+        @endif
     </div>
 
 
@@ -363,6 +445,107 @@
                     disableOnInteraction: false,
                 },
                 speed: 600,
+            });
+
+            // Xử lý filter
+            const selectNgay = document.getElementById('select-ngay');
+            const selectPhim = document.getElementById('select-phim');
+            const selectRap = document.getElementById('select-rap');
+            const scheduleContainer = document.getElementById('suat-chieu-container');
+
+            function filterShowtimes() {
+                const selectedDate = selectNgay.value;
+                const selectedMovie = selectPhim.value;
+                const selectedRap = selectRap.value;
+
+                const dateGroups = scheduleContainer.querySelectorAll('.date-group');
+                let hasVisibleContent = false;
+
+                dateGroups.forEach(dateGroup => {
+                    const groupDate = dateGroup.getAttribute('data-date');
+                    let showDateGroup = true;
+
+                    // Filter theo ngày
+                    if (selectedDate && groupDate !== selectedDate) {
+                        showDateGroup = false;
+                    }
+
+                    if (showDateGroup) {
+                        const movieShowtimes = dateGroup.querySelectorAll('.movie-showtimes');
+                        let hasVisibleMovies = false;
+
+                        movieShowtimes.forEach(movieShowtime => {
+                            const showtimeBtns = movieShowtime.querySelectorAll('.showtime-btn');
+                            let hasVisibleShowtimes = false;
+
+                            showtimeBtns.forEach(btn => {
+                                const movieId = btn.getAttribute('data-movie-id');
+                                const rapText = btn.querySelector('small').textContent;
+                                let showBtn = true;
+
+                                // Filter theo phim
+                                if (selectedMovie && movieId !== selectedMovie) {
+                                    showBtn = false;
+                                }
+
+                                // Filter theo rạp (tìm kiếm trong text)
+                                if (selectedRap && !rapText.toLowerCase().includes(selectedRap.toLowerCase())) {
+                                    showBtn = false;
+                                }
+
+                                btn.style.display = showBtn ? 'inline-block' : 'none';
+                                if (showBtn) hasVisibleShowtimes = true;
+                            });
+
+                            movieShowtime.style.display = hasVisibleShowtimes ? 'block' : 'none';
+                            if (hasVisibleShowtimes) hasVisibleMovies = true;
+                        });
+
+                        dateGroup.style.display = hasVisibleMovies ? 'block' : 'none';
+                        if (hasVisibleMovies) hasVisibleContent = true;
+                    } else {
+                        dateGroup.style.display = 'none';
+                    }
+                });
+
+                // Hiển thị thông báo nếu không có kết quả
+                const noScheduleDiv = scheduleContainer.querySelector('.no-schedule');
+                const scheduleContent = scheduleContainer.querySelector('.schedule-content');
+
+                if (hasVisibleContent) {
+                    if (noScheduleDiv) noScheduleDiv.style.display = 'none';
+                    if (scheduleContent) scheduleContent.style.display = 'block';
+                } else {
+                    if (scheduleContent) scheduleContent.style.display = 'none';
+                    if (noScheduleDiv) {
+                        noScheduleDiv.style.display = 'flex';
+                    } else {
+                        // Tạo thông báo mới nếu chưa có
+                        const newNoSchedule = document.createElement('div');
+                        newNoSchedule.className = 'no-schedule';
+                        newNoSchedule.innerHTML = '<i class="fa-solid fa-calendar-xmark"></i><span>KHÔNG TÌM THẤY SUẤT CHIẾU PHÙ HỢP</span>';
+                        scheduleContainer.appendChild(newNoSchedule);
+                    }
+                }
+            }
+
+            // Gắn sự kiện cho các select
+            selectNgay.addEventListener('change', filterShowtimes);
+            selectPhim.addEventListener('change', filterShowtimes);
+            selectRap.addEventListener('change', filterShowtimes);
+
+            // Xử lý click vào nút suất chiếu
+            scheduleContainer.addEventListener('click', function(e) {
+                if (e.target.classList.contains('showtime-btn') || e.target.closest('.showtime-btn')) {
+                    const btn = e.target.classList.contains('showtime-btn') ? e.target : e.target.closest('.showtime-btn');
+                    const showtimeId = btn.getAttribute('data-showtime-id');
+                    const movieId = btn.getAttribute('data-movie-id');
+                    const date = btn.getAttribute('data-date');
+                    const time = btn.getAttribute('data-time');
+
+                    // Redirect đến trang đặt vé
+                    window.location.href = `/dat-ve?suat_chieu_id=${showtimeId}`;
+                }
             });
         });
     </script>

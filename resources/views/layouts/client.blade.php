@@ -307,8 +307,8 @@
                 <div class="nav2">
                     <ul>
                         <li>
-                            <a href="{{ route('khuyen-mai.index') }}" style="text-decoration: none; color: inherit;">
-                                Khuyến mãi
+                            <a href="{{ url('/promotions') }}" style="text-decoration: none; color: inherit;">
+                                <i class="fas fa-tags"></i> Khuyến mãi
                             </a>
                         </li>
                         <li><a href="{{ route('client.bai-viet') }}">Góc điện ảnh</a></li>
@@ -381,5 +381,49 @@
 </body>
 
 </html>
+{{-- Global Navigation Script --}}
+<script>
+// Global function to clear all notifications and popups
+window.clearAllNotifications = function() {
+    // Remove custom notifications
+    document.querySelectorAll('.custom-notification').forEach(n => n.remove());
+
+    // Remove debug notifications
+    document.querySelectorAll('[style*="position: fixed"][style*="z-index: 99999"]').forEach(n => n.remove());
+
+    // Close SweetAlert toasts
+    if (typeof Swal !== 'undefined') {
+        Swal.close();
+    }
+
+    console.log('🧹 Global notifications cleared');
+};
+
+// Clear notifications on page navigation
+window.addEventListener('beforeunload', function() {
+    if (typeof window.clearAllNotifications === 'function') {
+        window.clearAllNotifications();
+    }
+});
+
+// Clear notifications when clicking navigation links
+document.addEventListener('DOMContentLoaded', function() {
+    // Clear notifications when clicking any navigation link
+    document.querySelectorAll('a[href]').forEach(link => {
+        link.addEventListener('click', function(e) {
+            // Don't clear for same-page anchors
+            if (!this.getAttribute('href').startsWith('#')) {
+                setTimeout(() => {
+                    if (typeof window.clearAllNotifications === 'function') {
+                        window.clearAllNotifications();
+                    }
+                }, 10);
+            }
+        });
+    });
+});
+</script>
+
 {{-- JS --}}
 @yield('scripts')
+@stack('scripts')
