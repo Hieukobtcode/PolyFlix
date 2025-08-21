@@ -333,7 +333,6 @@ class InstalledVersions
         }
 
         $installed = array();
-        $copiedLocalDir = false;
 
         if (self::$canGetVendors) {
             $selfDir = strtr(__DIR__, '\\', '/');
@@ -369,7 +368,7 @@ class InstalledVersions
             }
         }
 
-        if (self::$installed !== array() && !$copiedLocalDir) {
+        if (self::$installed !== array()) {
             $installed[] = self::$installed;
         }
 

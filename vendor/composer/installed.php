@@ -475,6 +475,21 @@
                 0 => '*',
             ),
         ),
+        'jean85/pretty-package-versions' => array(
+            'pretty_version' => '2.1.1',
+            'version' => '2.1.1.0',
+            'reference' => '4d7aa5dab42e2a76d99559706022885de0e18e1a',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../jean85/pretty-package-versions',
+            'aliases' => array(),
+            'dev_requirement' => true,
+        ),
+        'kodova/hamcrest-php' => array(
+            'dev_requirement' => true,
+            'replaced' => array(
+                0 => '*',
+            ),
+        ),
         'laravel/framework' => array(
             'pretty_version' => 'v12.23.1',
             'version' => '12.23.1.0',

@@ -498,4 +498,7 @@ class DatVeController extends Controller
 
         return response()->json(['message' => 'Đổi điểm thành công']);
     }
+
 }
+
+
