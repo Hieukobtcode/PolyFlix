@@ -477,7 +477,7 @@ body {
                     <button type="button" class="tab-btn {{ request('ap_dung_cho') == 'tat_ca' ? 'active' : '' }}"
                             onclick="setFilter('tat_ca')">
                         <i class="fas fa-gift"></i>
-                        Combo
+                        Tất cả
                     </button>
                 </div>
                 <input type="hidden" name="ap_dung_cho" id="ap_dung_cho" value="{{ request('ap_dung_cho') }}">
