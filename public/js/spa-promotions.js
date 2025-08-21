@@ -335,19 +335,145 @@ function showNotification(message, type = "info") {
     }, 3000);
 }
 
-// Placeholder functions (to be implemented)
+// Helper function to create a single promotion card
+function createPromotionCard(promotion) {
+    const discountValue =
+        promotion.loai_giam_gia === "phan_tram"
+            ? `${promotion.gia_tri_giam}%`
+            : `${(promotion.gia_tri_giam / 1000).toFixed(0)}K`;
+
+    const iconClass =
+        promotion.ap_dung_cho === "ve"
+            ? "fa-ticket-alt"
+            : promotion.ap_dung_cho === "do_an"
+            ? "fa-utensils"
+            : "fa-gift";
+
+    const typeText =
+        promotion.ap_dung_cho === "ve"
+            ? "VÉ PHIM"
+            : promotion.ap_dung_cho === "do_an"
+            ? "ĐỒ ĂN"
+            : "COMBO";
+
+    const donToiThieuHtml =
+        promotion.don_toi_thieu > 0
+            ? `
+        <div class="detail-item">
+            <i class="fas fa-money-bill-wave"></i>
+            <span>Đơn tối thiểu ${new Intl.NumberFormat("vi-VN").format(
+                promotion.don_toi_thieu
+            )}đ</span>
+        </div>`
+            : "";
+
+    const detailUrl = `/promotions/${promotion.id}`;
+
+    return `
+        <div class="promotion-card-wrapper">
+            <div class="promotion-card">
+                <div class="discount-badge">
+                    <span class="discount-value">${discountValue}</span>
+                    <span class="discount-label">GIẢM</span>
+                </div>
+                <div class="card-header">
+                    <div class="promotion-icon">
+                        <i class="fas ${iconClass}"></i>
+                    </div>
+                    <div class="promotion-type">${typeText}</div>
+                </div>
+                <div class="card-content">
+                    <h3 class="promotion-title">${promotion.ten}</h3>
+                    <p class="promotion-description">${
+                        promotion.mo_ta.length > 100
+                            ? promotion.mo_ta.substring(0, 100) + "..."
+                            : promotion.mo_ta
+                    }</p>
+                    <div class="promotion-details">
+                        <div class="detail-item">
+                            <i class="fas fa-tag"></i>
+                            <span>${promotion.ma_khuyen_mai}</span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>${new Date(
+                                promotion.ngay_ket_thuc
+                            ).toLocaleDateString("vi-VN")}</span>
+                        </div>
+                        ${donToiThieuHtml}
+                    </div>
+                </div>
+                <div class="card-actions">
+                    <button class="copy-btn" data-code="${
+                        promotion.ma_khuyen_mai
+                    }">
+                        <i class="fas fa-copy"></i>
+                        <span>Sao chép mã</span>
+                    </button>
+                    <a href="${detailUrl}" class="detail-btn">
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// Function to update the promotions grid
 function updatePromotionsGrid(promotions) {
     console.log(
         "🔄 updatePromotionsGrid called with",
         promotions.length,
         "promotions"
     );
-    // TODO: Implement grid update
+    const gridContainer = document.querySelector(".grid-container");
+    if (!gridContainer) {
+        console.error("❌ Grid container not found!");
+        return;
+    }
+
+    // Clear existing content
+    gridContainer.innerHTML = "";
+
+    if (promotions.length > 0) {
+        promotions.forEach((promotion) => {
+            const cardHtml = createPromotionCard(promotion);
+            gridContainer.insertAdjacentHTML("beforeend", cardHtml);
+        });
+    } else {
+        // Show empty state
+        gridContainer.innerHTML = `
+            <div class="empty-state" style="grid-column: 1 / -1; text-align: center; padding: 40px;">
+                <div class="empty-icon" style="font-size: 4rem; color: #a0aec0; margin-bottom: 20px;">
+                    <i class="fas fa-search"></i>
+                </div>
+                <h3 class="empty-title" style="font-size: 1.5rem; font-weight: 600; margin-bottom: 10px;">Không tìm thấy khuyến mãi</h3>
+                <p class="empty-description" style="color: #718096; margin-bottom: 20px;">Hãy thử tìm kiếm với từ khóa khác hoặc thay đổi bộ lọc.</p>
+                <a href="/promotions" class="empty-action" style="display: inline-flex; align-items: center; gap: 8px; padding: 12px 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 8px; text-decoration: none; font-weight: 600;">
+                    <i class="fas fa-sync-alt"></i>
+                    Xem tất cả khuyến mãi
+                </a>
+            </div>
+        `;
+    }
 }
 
+// Function to update pagination
 function updatePagination(pagination) {
     console.log("📄 updatePagination called with", pagination);
-    // TODO: Implement pagination update
+    const paginationWrapper = document.querySelector(".pagination-wrapper");
+    if (!paginationWrapper) {
+        console.warn("⚠️ Pagination wrapper not found!");
+        return;
+    }
+
+    if (pagination && pagination.links) {
+        paginationWrapper.innerHTML = pagination.links;
+        paginationWrapper.style.display = "flex";
+    } else {
+        paginationWrapper.innerHTML = "";
+        paginationWrapper.style.display = "none";
+    }
 }
 
 // Initialize when DOM is ready
