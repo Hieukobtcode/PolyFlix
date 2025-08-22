@@ -138,6 +138,13 @@ Route::get('/khuyen-mai', function () {
 });
 Route::get('/promotions/{id}', [KhuyenMaiController::class, 'show'])->name('client.khuyen-mai.show');
 Route::post('/promotions/check-code', [KhuyenMaiController::class, 'checkCode'])->name('client.khuyen-mai.check-code');
+Route::post('/khuyen-mai/check-code', [KhuyenMaiController::class, 'checkCode'])->name('client.khuyen-mai.check-code-alt');
+Route::get('/api/khuyen-mai/by-type', [KhuyenMaiController::class, 'getByType'])->name('api.khuyen-mai.by-type');
+
+// Test khuyến mãi
+Route::get('/test-khuyen-mai', function () {
+    return view('test-khuyen-mai');
+})->name('test.khuyen-mai');
 
 // Demo tính năng khuyến mãi
 Route::get('/promotion-demo', function () {

@@ -456,18 +456,23 @@ class DatVeController extends Controller
                 ->first();
 
             if ($khuyenMai) {
-                // Kiểm tra đơn tối thiểu
-                if ($tongTien >= ($khuyenMai->don_toi_thieu ?? 0)) {
-                    // Kiểm tra số lần sử dụng
-                    if (!$khuyenMai->so_lan_su_dung_toi_da || $khuyenMai->so_lan_da_su_dung < $khuyenMai->so_lan_su_dung_toi_da) {
-                        // Tính giảm giá
-                        if ($khuyenMai->loai_giam_gia === 'phan_tram') {
-                            $giaTriGiam = ($tongTien * $khuyenMai->gia_tri_giam) / 100;
-                            if ($khuyenMai->giam_toi_da > 0 && $giaTriGiam > $khuyenMai->giam_toi_da) {
-                                $giaTriGiam = $khuyenMai->giam_toi_da;
+                // Kiểm tra loại áp dụng khuyến mãi - chỉ cho phép vé phim hoặc tất cả
+                $coTheApDung = $khuyenMai->ap_dung_cho === 've' || $khuyenMai->ap_dung_cho === 'tat_ca';
+
+                if ($coTheApDung) {
+                    // Kiểm tra đơn tối thiểu
+                    if ($tongTien >= ($khuyenMai->don_toi_thieu ?? 0)) {
+                        // Kiểm tra số lần sử dụng
+                        if (!$khuyenMai->so_lan_su_dung_toi_da || $khuyenMai->so_lan_da_su_dung < $khuyenMai->so_lan_su_dung_toi_da) {
+                            // Tính giảm giá
+                            if ($khuyenMai->loai_giam_gia === 'phan_tram') {
+                                $giaTriGiam = ($tongTien * $khuyenMai->gia_tri_giam) / 100;
+                                if ($khuyenMai->giam_toi_da > 0 && $giaTriGiam > $khuyenMai->giam_toi_da) {
+                                    $giaTriGiam = $khuyenMai->giam_toi_da;
+                                }
+                            } else {
+                                $giaTriGiam = $khuyenMai->gia_tri_giam;
                             }
-                        } else {
-                            $giaTriGiam = $khuyenMai->gia_tri_giam;
                         }
                     }
                 }

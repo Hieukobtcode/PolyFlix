@@ -92,7 +92,8 @@ class KhuyenMaiController extends Controller
     {
         $request->validate([
             'ma_khuyen_mai' => 'required|string',
-            'tong_tien' => 'required|numeric|min:0'
+            'tong_tien' => 'required|numeric|min:0',
+            'loai_san_pham' => 'nullable|string|in:ve,do_an,tat_ca' // Thêm validation cho loại sản phẩm
         ]);
 
         $khuyenMai = KhuyenMai::where('ma_khuyen_mai', $request->ma_khuyen_mai)
@@ -106,6 +107,20 @@ class KhuyenMaiController extends Controller
             ]);
         }
 
+        // Kiểm tra loại áp dụng khuyến mãi
+        $loaiSanPham = $request->get('loai_san_pham', 've'); // Mặc định là vé phim
+
+        // Nếu khuyến mãi không áp dụng cho loại sản phẩm này
+        if ($khuyenMai->ap_dung_cho !== 'tat_ca' && $khuyenMai->ap_dung_cho !== $loaiSanPham) {
+            $tenLoai = $loaiSanPham === 've' ? 'vé phim' : 'đồ ăn/combo';
+            $tenKhuyenMai = $khuyenMai->ap_dung_cho === 've' ? 'vé phim' : ($khuyenMai->ap_dung_cho === 'do_an' ? 'đồ ăn/combo' : 'tất cả sản phẩm');
+
+            return response()->json([
+                'success' => false,
+                'message' => "Mã khuyến mãi này chỉ áp dụng cho {$tenKhuyenMai}, không áp dụng cho {$tenLoai}"
+            ]);
+        }
+
         // Kiểm tra đơn tối thiểu
         if ($request->tong_tien < $khuyenMai->don_toi_thieu) {
             return response()->json([
@@ -115,7 +130,7 @@ class KhuyenMaiController extends Controller
         }
 
         // Kiểm tra số lần sử dụng
-        if ($khuyenMai->so_lan_da_su_dung >= $khuyenMai->so_lan_su_dung_toi_da) {
+        if ($khuyenMai->so_lan_su_dung_toi_da && $khuyenMai->so_lan_da_su_dung >= $khuyenMai->so_lan_su_dung_toi_da) {
             return response()->json([
                 'success' => false,
                 'message' => 'Mã khuyến mãi đã hết lượt sử dụng'
@@ -157,5 +172,26 @@ class KhuyenMaiController extends Controller
             ->get();
 
         return $khuyenMais;
+    }
+
+    /**
+     * Lấy danh sách khuyến mãi theo loại (API)
+     */
+    public function getByType(Request $request)
+    {
+        $loai = $request->get('loai', 've'); // Mặc định là vé phim
+
+        $khuyenMais = KhuyenMai::conHieuLuc()
+            ->where(function ($query) use ($loai) {
+                $query->where('ap_dung_cho', $loai)
+                    ->orWhere('ap_dung_cho', 'tat_ca');
+            })
+            ->orderBy('gia_tri_giam', 'desc')
+            ->get(['id', 'ma_khuyen_mai', 'ten', 'mo_ta', 'loai_giam_gia', 'gia_tri_giam', 'giam_toi_da', 'don_toi_thieu', 'ap_dung_cho']);
+
+        return response()->json([
+            'success' => true,
+            'data' => $khuyenMais
+        ]);
     }
 }

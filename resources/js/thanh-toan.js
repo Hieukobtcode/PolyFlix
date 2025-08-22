@@ -93,6 +93,7 @@ $(document).ready(function () {
             data: {
                 ma_khuyen_mai: promotionCode,
                 tong_tien: originalTotal,
+                loai_san_pham: "ve", // Chỉ định đây là thanh toán vé phim
                 _token: $('meta[name="csrf-token"]').attr("content"),
             },
             success: function (response) {

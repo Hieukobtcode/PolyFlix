@@ -141,109 +141,127 @@
 
 
 
+    <style>
+        .promotions-section {
+            padding: 50px 0;
+            background-color: #4a3f78; /* Darker purple from the palette */
+            color: white;
+        }
+        .promotions-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); /* 2 cards per row on desktop */
+            gap: 25px;
+            margin-top: 30px;
+        }
+        .promotion-card {
+            background-color: #5e509e; /* Slightly lighter purple for contrast */
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .promotion-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+        }
+        .promotion-title {
+            font-size: 1.5rem; /* Increased font size */
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .promotion-description {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-bottom: 15px;
+        }
+        .promo-code-wrapper {
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            padding: 10px;
+            margin: 20px 0;
+        }
+        .promo-code {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #f1c40f;
+            letter-spacing: 2px;
+        }
+        .promo-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        .btn-promo {
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-weight: 600;
+            text-transform: uppercase;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-details {
+            background-color: transparent;
+            border: 2px solid #f1c40f;
+            color: #f1c40f;
+        }
+        .btn-details:hover {
+            background-color: #f1c40f;
+            color: #4a3f78;
+        }
+        .btn-copy {
+            background-color: #f1c40f;
+            color: #4a3f78;
+        }
+        .btn-copy:hover {
+            background-color: #e1b30a;
+        }
+
+        /* Responsive: 1 card per row on mobile */
+        @media (max-width: 768px) {
+            .promotions-grid {
+                grid-template-columns: 1fr;
+            }
+            .promotion-title {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+
     <!-- Khuyến mãi nổi bật -->
     @if(isset($khuyenMaisNoiBat) && $khuyenMaisNoiBat->count() > 0)
-    <section class="promotions-modern" style="padding: 40px 0; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); margin: 40px 0; position: relative; overflow: hidden;">
-        <!-- Background decoration -->
-        <div style="position: absolute; top: -50%; right: -10%; width: 300px; height: 300px; background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%); border-radius: 50%;"></div>
-        <div style="position: absolute; bottom: -30%; left: -5%; width: 200px; height: 200px; background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%); border-radius: 50%;"></div>
-
+    <section class="promotions-section">
         <div class="container">
-            <div class="text-center mb-4">
-                <div style="display: inline-block; background: rgba(255,255,255,0.1); padding: 12px 24px; border-radius: 50px; margin-bottom: 15px; backdrop-filter: blur(10px);">
-                    <h2 style="color: white; font-family: 'Poppins', sans-serif; font-size: 1.8rem; margin: 0; font-weight: 700; letter-spacing: 1px;">
-                        <i class="fas fa-fire" style="color: #ff6b35; margin-right: 8px; animation: pulse 2s infinite;"></i>KHUYẾN MÃI HOT
-                    </h2>
-                </div>
-                <p style="color: rgba(255,255,255,0.9); font-size: 0.95rem; font-weight: 400; margin: 0; max-width: 500px; margin: 0 auto;">Những ưu đãi siêu hấp dẫn chỉ có tại PolyFlix!</p>
+            <div class="text-center">
+                <h2 class="section-title">KHUYẾN MÃI HOT</h2>
+                <p class="section-subtitle">Những ưu đãi siêu hấp dẫn chỉ có tại PolyFlix!</p>
             </div>
 
-            <div class="row g-3">
+            <div class="promotions-grid">
                 @foreach($khuyenMaisNoiBat as $km)
-                <div class="col-xl-3 col-lg-4 col-md-6">
-                    <div class="promotion-card-modern" style="background: rgba(255,255,255,0.15); backdrop-filter: blur(15px);
-                         border-radius: 20px; padding: 20px; text-align: center; color: white;
-                         transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-                         border: 1px solid rgba(255,255,255,0.25);
-                         position: relative; overflow: hidden;
-                         box-shadow: 0 8px 32px rgba(0,0,0,0.1);">
+                <div class="promotion-card">
+                    <h3 class="promotion-title">{{ $km->ten }}</h3>
+                    <p class="promotion-description">{{ $km->mo_ta }}</p>
 
-                        <!-- Card glow effect -->
-                        <div style="position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, #ff6b35, #ffd700, #ff6b35); opacity: 0.8;"></div>
+                    <div class="promo-code-wrapper">
+                        <span>MÃ KHUYẾN MÃI</span>
+                        <div class="promo-code">{{ $km->ma_khuyen_mai }}</div>
+                    </div>
 
-                        <!-- Discount badge -->
-                        <div style="background: linear-gradient(135deg, #ff6b35, #ff8c42); color: white;
-                             padding: 8px 16px; border-radius: 25px; display: inline-block; margin-bottom: 15px;
-                             font-weight: 700; font-size: 1rem; box-shadow: 0 4px 15px rgba(255,107,53,0.3);
-                             position: relative; overflow: hidden;">
-                            <div style="position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
-                                 background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-                                 animation: shimmer 2s infinite;"></div>
-                            @if($km->loai_giam_gia == 'phan_tram')
-                                -{{ $km->gia_tri_giam }}%
-                            @else
-                                -{{ number_format($km->gia_tri_giam) }}K
-                            @endif
-                        </div>
-
-                        <!-- Title -->
-                        <h5 style="margin-bottom: 12px; font-weight: 600; font-size: 1.1rem; line-height: 1.4;
-                           font-family: 'Poppins', sans-serif;">{{ Str::limit($km->ten, 30) }}</h5>
-
-                        <!-- Description -->
-                        <p style="opacity: 0.85; margin-bottom: 15px; font-size: 0.85rem; line-height: 1.5;
-                           color: rgba(255,255,255,0.9);">
-                            {{ Str::limit($km->mo_ta, 50) }}
-                        </p>
-
-                        <!-- Code box -->
-                        <div style="background: linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.1));
-                             padding: 12px; border-radius: 15px; margin-bottom: 18px; border: 1px solid rgba(255,255,255,0.3);
-                             position: relative;">
-                            <div style="font-size: 0.7rem; color: rgba(255,255,255,0.7); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 1px;">Mã khuyến mãi</div>
-                            <strong style="font-family: 'Courier New', monospace; letter-spacing: 2px; font-size: 1rem; color: #ffd700;">
-                                {{ $km->ma_khuyen_mai }}
-                            </strong>
-                        </div>
-
-                        <!-- Action buttons -->
-                        <div class="d-flex gap-2">
-                            <a href="{{ route('client.khuyen-mai.show', $km->id) }}"
-                               class="btn btn-outline-light btn-sm flex-fill modern-btn"
-                               style="border-radius: 15px; font-weight: 600; font-size: 0.8rem; padding: 10px 8px;
-                                      border: 2px solid rgba(255,255,255,0.3); transition: all 0.3s ease;">
-                                <i class="fas fa-info-circle"></i> Chi tiết
-                            </a>
-                            <button class="btn btn-warning btn-sm copy-code-home flex-fill modern-btn"
-                                    data-code="{{ $km->ma_khuyen_mai }}"
-                                    style="border-radius: 15px; font-weight: 600; font-size: 0.8rem; padding: 10px 8px;
-                                           background: linear-gradient(135deg, #ffd700, #ffed4e); border: none; color: #333;
-                                           transition: all 0.3s ease;">
-                                <i class="fas fa-copy"></i> Sao chép
-                            </button>
-                        </div>
+                    <div class="promo-buttons">
+                        <a href="{{ route('client.khuyen-mai.show', $km->id) }}" class="btn-promo btn-details">Chi tiết</a>
+                        <button class="btn-promo btn-copy copy-code-home" data-code="{{ $km->ma_khuyen_mai }}">Sao chép</button>
                     </div>
                 </div>
                 @endforeach
             </div>
 
-            <div class="text-center mt-4">
-                <a href="{{ route('client.khuyen-mai.index') }}"
-                   class="btn btn-modern-cta"
-                   style="border-radius: 30px; padding: 14px 35px; font-weight: 700; font-size: 1rem;
-                          background: linear-gradient(135deg, #ffd700, #ffed4e, #ffd700);
-                          border: none; color: #333; text-decoration: none;
-                          box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
-                          transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-                          position: relative; overflow: hidden;
-                          text-transform: uppercase; letter-spacing: 1px;"
-                   onmouseover="this.style.transform='translateY(-3px) scale(1.05)'; this.style.boxShadow='0 8px 25px rgba(255, 215, 0, 0.5)'"
-                   onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 6px 20px rgba(255, 215, 0, 0.4)'">
-                    <div style="position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
-                         background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-                         animation: shimmer 3s infinite;"></div>
-                    <i class="fas fa-star" style="color: #ff6b35; margin-right: 8px; animation: pulse 2s infinite;"></i>
-                    Xem tất cả ưu đãi
+             <div class="text-center mt-4">
+                <a href="{{ route('client.khuyen-mai.index') }}" class="btn-see-more">
+                    <button class="btn-see">XEM TẤT CẢ ƯU ĐÃI</button>
                 </a>
             </div>
         </div>
