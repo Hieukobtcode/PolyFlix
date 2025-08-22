@@ -42,15 +42,13 @@ class KhuyenMai extends Model
         'deleted_at' => 'datetime',
     ];
 
-    // Định nghĩa tên cột created_at và updated_at tùy chỉnh
-    const CREATED_AT = 'create_at';
-    const UPDATED_AT = 'update_at';
+    // Sử dụng timestamps mặc định của Laravel
 
     // Quan hệ với chi nhánh thông qua bảng trung gian
     public function chiNhanhs()
     {
         return $this->belongsToMany(ChiNhanh::class, 'khuyen_mai_chi_nhanhs', 'khuyen_mai_id', 'chi_nhanh_id')
-            ->withTimestamps('created_at', 'updated_at');
+            ->withTimestamps();
     }
 
     // Quan hệ với lịch sử sử dụng khuyến mãi

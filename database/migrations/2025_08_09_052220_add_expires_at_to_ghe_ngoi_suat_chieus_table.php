@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('ghe_ngoi_suat_chieu', function (Blueprint $table) {
-            //
+            $table->timestamp('expires_at')->nullable()->after('user_id');
         });
     }
 
@@ -22,7 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('ghe_ngoi_suat_chieu', function (Blueprint $table) {
-            //
+            $table->dropColumn('expires_at');
         });
     }
 };

@@ -184,9 +184,7 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
     {
         if (func_num_args() === 1) {
             if ($this->useAsCallable($key)) {
-                $placeholder = new stdClass;
-
-                return $this->first($key, $placeholder) !== $placeholder;
+                return array_any($this->items, $key);
             }
 
             return in_array($key, $this->items);
@@ -458,8 +456,7 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
     /**
      * Remove an item from the collection by key.
      *
-     * \Illuminate\Contracts\Support\Arrayable<array-key, TValue>|iterable<array-key, TKey>|TKey  $keys
-     *
+     * @param  \Illuminate\Contracts\Support\Arrayable<array-key, TValue>|iterable<array-key, TKey>|TKey  $keys
      * @return $this
      */
     public function forget($keys)
@@ -599,13 +596,7 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
     {
         $keys = is_array($key) ? $key : func_get_args();
 
-        foreach ($keys as $value) {
-            if (! array_key_exists($value, $this->items)) {
-                return false;
-            }
-        }
-
-        return true;
+        return array_all($keys, fn ($key) => array_key_exists($key, $this->items));
     }
 
     /**
@@ -622,13 +613,7 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
 
         $keys = is_array($key) ? $key : func_get_args();
 
-        foreach ($keys as $value) {
-            if (array_key_exists($value, $this->items)) {
-                return true;
-            }
-        }
-
-        return false;
+        return array_any($keys, fn ($key) => array_key_exists($key, $this->items));
     }
 
     /**
@@ -1005,7 +990,7 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
      * Get and remove the last N items from the collection.
      *
      * @param  int  $count
-     * @return static<int, TValue>|TValue|null
+     * @return ($count is 1 ? TValue|null : static<int, TValue>)
      */
     public function pop($count = 1)
     {
@@ -1127,7 +1112,7 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
      *
      * @param  (callable(self<TKey, TValue>): int)|int|null  $number
      * @param  bool  $preserveKeys
-     * @return static<int, TValue>|TValue
+     * @return ($number is null ? TValue : static<int, TValue>)
      *
      * @throws \InvalidArgumentException
      */
@@ -1189,13 +1174,7 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
             return array_search($value, $this->items, $strict);
         }
 
-        foreach ($this->items as $key => $item) {
-            if ($value($item, $key)) {
-                return $key;
-            }
-        }
-
-        return false;
+        return array_find_key($this->items, $value) ?? false;
     }
 
     /**
@@ -1250,7 +1229,7 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
      * Get and remove the first N items from the collection.
      *
      * @param  int<0, max>  $count
-     * @return static<int, TValue>|TValue|null
+     * @return ($count is 1 ? TValue|null : static<int, TValue>)
      *
      * @throws \InvalidArgumentException
      */

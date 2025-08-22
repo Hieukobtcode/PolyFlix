@@ -51,16 +51,6 @@ class KhuyenMaiController extends Controller
         // Sắp xếp và phân trang
         $khuyenMais = $query->orderBy('ngay_bat_dau', 'desc')->paginate(10);
 
-        // Chuyển đổi các trường ngày tháng thành đối tượng Carbon
-        foreach ($khuyenMais as $khuyenMai) {
-            if (!($khuyenMai->ngay_bat_dau instanceof \DateTime)) {
-                $khuyenMai->ngay_bat_dau = \Carbon\Carbon::parse($khuyenMai->ngay_bat_dau);
-            }
-            if (!($khuyenMai->ngay_ket_thuc instanceof \DateTime)) {
-                $khuyenMai->ngay_ket_thuc = \Carbon\Carbon::parse($khuyenMai->ngay_ket_thuc);
-            }
-        }
-
         return view('admin.khuyen-mai.index', compact('khuyenMais'));
     }
 
@@ -143,14 +133,6 @@ class KhuyenMaiController extends Controller
     {
         $khuyenMai = KhuyenMai::with(['chiNhanhs', 'lichSuSuDung.nguoiDung'])->findOrFail($id);
 
-        // Chuyển đổi các trường ngày tháng thành đối tượng Carbon
-        if (!($khuyenMai->ngay_bat_dau instanceof \DateTime)) {
-            $khuyenMai->ngay_bat_dau = \Carbon\Carbon::parse($khuyenMai->ngay_bat_dau);
-        }
-        if (!($khuyenMai->ngay_ket_thuc instanceof \DateTime)) {
-            $khuyenMai->ngay_ket_thuc = \Carbon\Carbon::parse($khuyenMai->ngay_ket_thuc);
-        }
-
         // Thống kê sử dụng
         $thongKe = [
             'tong_luot_su_dung' => $khuyenMai->so_lan_da_su_dung,
@@ -170,14 +152,6 @@ class KhuyenMaiController extends Controller
     public function edit(string $id)
     {
         $khuyenMai = KhuyenMai::findOrFail($id);
-
-        // Chuyển đổi các trường ngày tháng thành đối tượng Carbon
-        if (!($khuyenMai->ngay_bat_dau instanceof \DateTime)) {
-            $khuyenMai->ngay_bat_dau = \Carbon\Carbon::parse($khuyenMai->ngay_bat_dau);
-        }
-        if (!($khuyenMai->ngay_ket_thuc instanceof \DateTime)) {
-            $khuyenMai->ngay_ket_thuc = \Carbon\Carbon::parse($khuyenMai->ngay_ket_thuc);
-        }
 
         $chiNhanhs = ChiNhanh::where('trang_thai', 'hoat_dong')->get();
 
@@ -335,13 +309,6 @@ class KhuyenMaiController extends Controller
 
         // Sắp xếp và phân trang
         $lichSuSuDung = $query->orderBy('thoi_gian_su_dung', 'desc')->paginate(10);
-
-        // Chuyển đổi các trường ngày tháng thành đối tượng Carbon
-        foreach ($lichSuSuDung as $lichSu) {
-            if (!($lichSu->thoi_gian_su_dung instanceof \DateTime)) {
-                $lichSu->thoi_gian_su_dung = \Carbon\Carbon::parse($lichSu->thoi_gian_su_dung);
-            }
-        }
 
         // Lấy danh sách khuyến mãi để hiển thị trong dropdown lọc
         $khuyenMais = KhuyenMai::all();

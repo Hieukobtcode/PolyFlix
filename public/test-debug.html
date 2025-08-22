@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug SPA</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background: #0056b3;
+        }
+        .result {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+            white-space: pre-wrap;
+            font-family: monospace;
+        }
+        .success { border-color: #28a745; background: #d4edda; }
+        .error { border-color: #dc3545; background: #f8d7da; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Debug SPA Functions</h1>
+        
+        <div>
+            <button class="btn" onclick="testBasicJS()">Test Basic JS</button>
+            <button class="btn" onclick="testSetFilter()">Test setFilter Function</button>
+            <button class="btn" onclick="testFileLoad()">Test File Load</button>
+            <button class="btn" onclick="checkConsole()">Check Console</button>
+        </div>
+        
+        <div id="results"></div>
+    </div>
+
+    <!-- Load the SPA script -->
+    <script src="/js/spa-promotions.js"></script>
+    
+    <script>
+        function addResult(message, type = 'info') {
+            const results = document.getElementById('results');
+            const div = document.createElement('div');
+            div.className = `result ${type}`;
+            div.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            results.appendChild(div);
+        }
+
+        function testBasicJS() {
+            addResult('Testing basic JavaScript...', 'info');
+            try {
+                const test = 'JavaScript is working!';
+                addResult(`✅ ${test}`, 'success');
+            } catch (error) {
+                addResult(`❌ JavaScript Error: ${error.message}`, 'error');
+            }
+        }
+
+        function testSetFilter() {
+            addResult('Testing setFilter function...', 'info');
+            try {
+                if (typeof window.setFilter === 'function') {
+                    addResult('✅ setFilter function exists', 'success');
+                    // Test calling it
+                    window.setFilter('test');
+                } else {
+                    addResult('❌ setFilter function not found', 'error');
+                    addResult(`Available functions: ${Object.keys(window).filter(key => typeof window[key] === 'function').slice(0, 10).join(', ')}`, 'info');
+                }
+            } catch (error) {
+                addResult(`❌ setFilter Error: ${error.message}`, 'error');
+            }
+        }
+
+        function testFileLoad() {
+            addResult('Testing file load...', 'info');
+            
+            // Check if script tag exists
+            const scriptTags = document.querySelectorAll('script[src*="spa-promotions"]');
+            if (scriptTags.length > 0) {
+                addResult(`✅ Found ${scriptTags.length} spa-promotions script tag(s)`, 'success');
+                scriptTags.forEach((script, index) => {
+                    addResult(`Script ${index + 1}: ${script.src}`, 'info');
+                });
+            } else {
+                addResult('❌ No spa-promotions script tags found', 'error');
+            }
+            
+            // Test fetch to the file
+            fetch('/js/spa-promotions.js')
+                .then(response => {
+                    if (response.ok) {
+                        addResult('✅ spa-promotions.js file is accessible', 'success');
+                        return response.text();
+                    } else {
+                        throw new Error(`HTTP ${response.status}`);
+                    }
+                })
+                .then(content => {
+                    addResult(`✅ File size: ${content.length} characters`, 'success');
+                    if (content.includes('setFilter')) {
+                        addResult('✅ setFilter function found in file', 'success');
+                    } else {
+                        addResult('❌ setFilter function not found in file', 'error');
+                    }
+                })
+                .catch(error => {
+                    addResult(`❌ Cannot load spa-promotions.js: ${error.message}`, 'error');
+                });
+        }
+
+        function checkConsole() {
+            addResult('Checking console logs...', 'info');
+            addResult('Open Developer Tools (F12) and check the Console tab for any errors or logs', 'info');
+            addResult('Look for messages starting with 🚀, 🎯, or ❌', 'info');
+        }
+
+        // Test on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            addResult('🚀 Debug page loaded successfully', 'success');
+            
+            // Auto-run basic tests
+            setTimeout(() => {
+                testBasicJS();
+                testFileLoad();
+                testSetFilter();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

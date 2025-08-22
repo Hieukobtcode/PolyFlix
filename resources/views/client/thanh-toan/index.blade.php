@@ -85,6 +85,32 @@
                                 <span>{{ number_format($tongTienDoAn) }}đ</span>
                             </div>
                         @endif
+
+                        <!-- Khuyến mãi -->
+                        <div class="promotion-section" style="margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 10px;">
+                            <h5 style="margin-bottom: 15px; color: #333;"><i class="fas fa-tags"></i> Mã khuyến mãi</h5>
+                            <div class="input-group">
+                                <input type="text" id="promotion-code" class="form-control"
+                                       placeholder="Nhập mã khuyến mãi..." style="border-radius: 8px 0 0 8px;">
+                                <button type="button" id="apply-promotion" class="btn btn-primary"
+                                        style="border-radius: 0 8px 8px 0;">
+                                    <i class="fas fa-check"></i> Áp dụng
+                                </button>
+                            </div>
+                            <div id="promotion-message" class="mt-2" style="display: none;"></div>
+                            <div id="promotion-discount" class="price-row" style="display: none; color: #28a745; font-weight: bold;">
+                                <span>Giảm giá</span>
+                                <span id="discount-amount">0đ</span>
+                            </div>
+                        </div>
+
+                        <!-- Tổng tiền -->
+                        <div class="total-section" style="border-top: 2px solid #dee2e6; padding-top: 15px; margin-top: 15px;">
+                            <div class="price-row total" style="font-size: 1.2rem; font-weight: bold; color: #ff5757;">
+                                <span>Tổng cộng</span>
+                                <span id="final-total">{{ number_format($tongThanhTien + $tongTienCombo + $tongTienDoAn) }}đ</span>
+                            </div>
+                        </div>
                     </div>
 
                     <form method="POST" action="{{ route('client.thanh-toan.huy', $datVe->id) }}"
