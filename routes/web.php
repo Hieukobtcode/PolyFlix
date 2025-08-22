@@ -50,6 +50,7 @@ Route::get('/', [TrangChuController::class, 'index'])->name('home');
 
 Route::middleware('auth')->group(function () {
 
+    Route::get('admin/dat-ve/{id}/print', [DatVeController::class, 'print'])->name('admin.dat-ve.print');
     //Đổi điểm
     Route::post('/doi-diem', [\App\Http\Controllers\Client\DatVeController::class, 'doiDiem'])->name('doi-diem');
 
@@ -63,6 +64,8 @@ Route::middleware('auth')->group(function () {
     // Thanh toán
     Route::get('/thanh-toan/{datVeId}', [ThanhToanController::class, 'index'])->name('client.thanh-toan.index');
     Route::post('/thanh-toan/xu-ly', [ThanhToanController::class, 'xuLyThanhToan'])->name('client.thanh-toan.xu-ly');
+    Route::post('/thanh-toan/tien-mat', [ThanhToanController::class, 'xuLyThanhToanTienMat'])->name('thanh-toan.tien-mat');
+
     Route::post('/thanh-toan/huy/{datVeId}', [ThanhToanController::class, 'huyThanhToan'])->name('client.thanh-toan.huy');
 
 
@@ -82,9 +85,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/ai-chat-reset', [AIChatController::class, 'reset']);
 
     // giữ ghế
-    Route::post('/seat/lock', [SeatLockController::class,'lock'])->name('seat.lock');
-    Route::post('/seat/unlock', [SeatLockController::class,'unlock'])->name('seat.unlock');
-    Route::post('/seat/heartbeat', [SeatLockController::class,'heartbeat'])->name('seat.heartbeat');
+    Route::post('/seat/lock', [SeatLockController::class, 'lock'])->name('seat.lock');
+    Route::post('/seat/unlock', [SeatLockController::class, 'unlock'])->name('seat.unlock');
+    Route::post('/seat/heartbeat', [SeatLockController::class, 'heartbeat'])->name('seat.heartbeat');
 });
 
 Route::get('/', [TrangChuController::class, 'index'])->name('home');
@@ -144,6 +147,14 @@ Route::post('/gui-thong-tin', [InviteController::class, 'submitForm'])->name('in
 
 Route::get('/admin/suat-chieu/theo-phong-va-ngay', [SuatChieuController::class, 'theoPhongVaNgay'])
     ->name('admin.suat-chieu.theo-phong-va-ngay');
+
+//======================API DOANH THU=======================================
+Route::get('/api/doanh-thu-{loai}', [ThongKeController::class, 'getDoanhThu'])->name('api.doanh-thu');
+Route::get('/api/ty-le-lap-day-ghe', [ThongKeController::class, 'getTyLeLapDayGhe'])->name('api.ty-le-lap-day-ghe');
+Route::get('/api/ty-le-doanh-thu-phim', [ThongKeController::class, 'getTyLeDoanhThuPhim'])->name('api.ty-le-doanh-thu-phim');
+Route::get('/api/ty-le-suat-chieu', [ThongKeController::class, 'getTyLeSuatChieu'])->name('api.ty-le-suat-chieu');
+Route::get('/api/ty-le-doanh-thu-phim', [ThongKeController::class, 'getTyLeDoanhThuPhim'])->name('api.ty-le-doanh-thu-phim');
+//======================API DOANH THU=======================================
 
 // Group route cho admin
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access', 'permission.check'])->group(function () {
@@ -228,13 +239,13 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access', 'per
 
     // Thống kê
     Route::prefix('thong-ke')->name('thong-ke.')->group(function () {
-        Route::get('/', [ThongKeController::class, 'index'])->name('index');
-        Route::get('doanh-thu', [ThongKeController::class, 'doanhThu'])->name('doanh-thu');
+        Route::get('/', [ThongKeController::class, 'thongKeTongQuan'])->name('index');
+        Route::get('doanh-thu', [ThongKeController::class, 'thongKeDoanhThu'])->name('doanh-thu');
         Route::get('ve', [ThongKeController::class, 've'])->name('ve');
-        Route::get('suat-chieu', [ThongKeController::class, 'suatChieu'])->name('suat-chieu');
+        Route::get('suat-chieu', [ThongKeController::class, 'thongKeSuatChieu'])->name('suat-chieu');
         Route::get('do-an-combo', [ThongKeController::class, 'doAnCombo'])->name('do-an-combo');
         Route::get('dashboard', [ThongKeController::class, 'dashboard'])->name('dashboard');
-        Route::get('phim', [ThongKeController::class, 'phim'])->name('phim');
+        Route::get('phim', [ThongKeController::class, 'thongKePhim'])->name('phim');
         Route::get('lien-he', [ThongKeController::class, 'lienHe'])->name('lien-he');
         Route::get('xuat-bao-cao', [ThongKeController::class, 'xuatBaoCao'])->name('xuat-bao-cao');
     });

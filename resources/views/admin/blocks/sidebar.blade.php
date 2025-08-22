@@ -37,30 +37,30 @@
                                     <span class="hide-menu">Doanh thu</span>
                                 </a>
                             </li>
-                            <li class="sidebar-item">
+                            {{-- <li class="sidebar-item">
                                 <a href="{{ route('admin.thong-ke.ve') }}" class="sidebar-link">
                                     <span class="sidebar-icon"></span>
                                     <span class="hide-menu">Vé</span>
                                 </a>
-                            </li>
+                            </li> --}}
                             <li class="sidebar-item">
                                 <a href="{{ route('admin.thong-ke.suat-chieu') }}" class="sidebar-link">
                                     <span class="sidebar-icon"></span>
                                     <span class="hide-menu">Suất chiếu</span>
                                 </a>
                             </li>
-                            <li class="sidebar-item">
+                            {{-- <li class="sidebar-item">
                                 <a href="{{ route('admin.thong-ke.suat-chieu') }}" class="sidebar-link">
                                     <span class="sidebar-icon"></span>
                                     <span class="hide-menu">Đồ ăn, combo</span>
                                 </a>
-                            </li>
-                            <li class="sidebar-item">
+                            </li> --}}
+                            {{-- <li class="sidebar-item">
                                 <a href="{{ route('admin.thong-ke.phim') }}" class="sidebar-link">
                                     <span class="sidebar-icon"></span>
                                     <span class="hide-menu">Phim</span>
                                 </a>
-                            </li>
+                            </li> --}}
                         </ul>
                     </li>
 

@@ -78,9 +78,17 @@
                     <img src="{{ asset('storage/' . $phim->poster) }}" alt="{{ $phim->ten_phim }}">
                     <div class="age-label">{{ $phim->do_tuoi }}</div>
                     <div class="overlay">
-                        <a href="{{ route('phim.chi-tiet', urlencode($phim->ten_phim)) }}">
-                        <button class="btn buy"><i class="fa-solid fa-ticket"></i> Mua vé</button>
-                        </a>
+                        @php
+                            $user = Auth::user();
+                        @endphp
+
+                        @if (!$user || $user->vai_tro_id != 4)
+                            <a href="{{ route('phim.chi-tiet', urlencode($phim->ten_phim)) }}#lich-chieu">
+                                <button class="btn buy">
+                                    <i class="fa-solid fa-ticket"></i> Mua vé
+                                </button>
+                            </a>
+                        @endif
                         <button class="btn trailer" data-video="{{ $phim->trailer }}">
                             <i class="fa-solid fa-video"></i> Trailer
                         </button>
@@ -91,6 +99,11 @@
         @endforeach
     </div>
 
+@php
+    $user = Auth::user();
+@endphp
+
+@if(!$user || $user->vai_tro_id != 4)
     @include('client.partials.goc-dien-anh', [
         'phims' => $phims,
         'ratings' => $ratings,
@@ -109,6 +122,8 @@
         style="display:none; position:fixed;top:0;left:0;width:100%;height:100%;
         background:rgba(0,0,0,0.7);z-index:998;">
     </div>
+@endif
+
 
     <script>
         function convertYoutubeUrl(url) {

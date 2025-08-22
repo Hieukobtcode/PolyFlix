@@ -2,19 +2,20 @@
 
 namespace App\Http\Controllers\Client;
 
-use App\Models\ChiNhanh;
+use Carbon\Carbon;
 use App\Models\Phim;
 use App\Models\Banner;
-use App\Models\RapPhim;
-use App\Models\SuatChieu;
-use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
-use App\Helpers\IdFormatter;
-use Carbon\Carbon;
-use Illuminate\Support\Collection;
 use App\Models\Rating;
 use App\Models\BaiViet;
+use App\Models\RapPhim;
+use App\Models\ChiNhanh;
+use App\Models\SuatChieu;
+use App\Helpers\IdFormatter;
+use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 
 class PhimsController extends Controller
@@ -61,6 +62,11 @@ class PhimsController extends Controller
 
     public function show($ten_phim)
     {
+        $user = Auth::user();
+        if ($user && $user->vai_tro_id == 4) {
+            return redirect()->route('home')->with('error', 'Bạn không có quyền truy cập trang này');
+            // hoặc return redirect()->route('home')->with('error', 'Bạn không có quyền vào trang này');
+        }
         $phim = Phim::with(['theLoais', 'dinhDangs', 'phuDes', 'chiNhanhs', 'rapPhims', 'ratings'])
             ->where('ten_phim', urldecode($ten_phim))
             ->firstOrFail();

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Client;
 use Exception;
 use Carbon\Carbon;
 use App\Models\DoAn;
+use App\Models\User;
 use App\Models\Combo;
 use App\Models\DatVe;
 use App\Models\GheNgoi;
@@ -158,38 +159,39 @@ class DatVeController extends Controller
 
             // Lấy danh sách ghế theo phòng chiếu
             $gheNgois = $suatChieu->phongChieu->gheNgois()
-    ->with(['loaiGhe'])
-    ->orderBy('hang')
-    ->orderBy('cot')
-    ->get()
-    ->map(function ($ghe) use ($gheDaDat, $suatChieu) {
-        // Lưu trạng thái gốc của ghế
-        $ghe->trang_thai_mac_dinh = $ghe->trang_thai;
+                ->with(['loaiGhe'])
+                ->orderBy('hang')
+                ->orderBy('cot')
+                ->get()
+                ->map(function ($ghe) use ($gheDaDat, $suatChieu) {
+                    // Lưu trạng thái gốc của ghế
+                    $ghe->trang_thai_mac_dinh = $ghe->trang_thai;
 
-        // Lấy trạng thái ghế theo suất chiếu
-        $pivot = \App\Models\GheNgoiSuatChieu::where('ghe_ngoi_id', $ghe->id)
-            ->where('suat_chieu_id', $suatChieu->id)
-            ->first();
+                    // Lấy trạng thái ghế theo suất chiếu
+                    $pivot = \App\Models\GheNgoiSuatChieu::where('ghe_ngoi_id', $ghe->id)
+                        ->where('suat_chieu_id', $suatChieu->id)
+                        ->first();
 
-        $ghe->trang_thai_theo_suat = $pivot?->trang_thai ?? 'trong';
+                    $ghe->trang_thai_theo_suat = $pivot?->trang_thai ?? 'trong';
 
-        // Đã đặt hay chưa (theo vé đã bán)
-        $ghe->da_dat = in_array($ghe->id, $gheDaDat);
+                    // Đã đặt hay chưa (theo vé đã bán)
+                    $ghe->da_dat = in_array($ghe->id, $gheDaDat);
 
-        // Phụ thu
-        $ghe->phu_thu_loai_phong = optional($suatChieu->phongChieu->loaiPhong)->phu_thu ?? 0;
-        $ghe->phu_thu_loai_ghe = optional($ghe->loaiGhe)->phu_thu ?? 0;
-        $ghe->phu_thu_rap_phim = optional($suatChieu->phongChieu->rapPhim)->phu_thu ?? 0;
+                    // Phụ thu
+                    $ghe->phu_thu_loai_phong = optional($suatChieu->phongChieu->loaiPhong)->phu_thu ?? 0;
+                    $ghe->phu_thu_loai_ghe = optional($ghe->loaiGhe)->phu_thu ?? 0;
+                    $ghe->phu_thu_rap_phim = optional($suatChieu->phongChieu->rapPhim)->phu_thu ?? 0;
 
-        // Debug log để xem dữ liệu
-        Log::info('Ghế ID: ' . $ghe->id .
-            ', Mặc định: ' . $ghe->trang_thai_mac_dinh .
-            ', Theo suất: ' . $ghe->trang_thai_theo_suat .
-            ', Đã đặt: ' . ($ghe->da_dat ? 'Yes' : 'No')
-        );
+                    // Debug log để xem dữ liệu
+                    Log::info(
+                        'Ghế ID: ' . $ghe->id .
+                            ', Mặc định: ' . $ghe->trang_thai_mac_dinh .
+                            ', Theo suất: ' . $ghe->trang_thai_theo_suat .
+                            ', Đã đặt: ' . ($ghe->da_dat ? 'Yes' : 'No')
+                    );
 
-        return $ghe;
-    });
+                    return $ghe;
+                });
 
 
             // Lấy danh sách loại ghế để lấy màu
@@ -231,6 +233,7 @@ class DatVeController extends Controller
             'ghe_ids.*' => 'exists:ghe_ngois,id',
             'do_an' => 'nullable|array',
             'combo' => 'nullable|array',
+            'email' => 'nullable|email'
         ]);
 
         if (!Auth::check()) {
@@ -243,13 +246,43 @@ class DatVeController extends Controller
 
 
 
-        Log::info('User đã đăng nhập:', ['user_id' => Auth::id()]);
+        $user = Auth::user();
+        Log::info('User đã đăng nhập:', ['user_id' => $user->id]);
+
+        // ✅ Xử lý user đặt hộ (vai trò 4)
+        $userIdForBooking = $user->id; // mặc định là user đăng nhập
+        if ($user->vai_tro_id == 4) {
+            $emailNhap = trim($request->input('email'));
+
+            if ($emailNhap) {
+                $userByEmail = User::where('email', $emailNhap)->first();
+
+                if ($userByEmail) {
+                    $userIdForBooking = $userByEmail->id;
+                    Log::info('Dùng user theo email nhập vào:', [
+                        'email' => $emailNhap,
+                        'user_id' => $userIdForBooking
+                    ]);
+                } else {
+                    Log::error('Không tìm thấy user với email: ' . $emailNhap);
+                    // return redirect()->back()->withErrors([
+                    //     'email' => 'Email không tồn tại trong hệ thống!'
+                    // ]);
+                    // Hoặc nếu API thì return JSON
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Email không tồn tại trong hệ thống!'
+                    ], 400);
+                }
+            } else {
+                Log::info('Không nhập email, dùng user hiện tại:', ['user_id' => $user->id]);
+            }
+        }
 
         DB::beginTransaction();
 
         $diemSuDung = (int) $request->input('diem_su_dung');
 
-        $user = Auth::user();
 
         if ($user->diem >= $diemSuDung) {
             $user->diem -= $diemSuDung;
@@ -289,7 +322,7 @@ class DatVeController extends Controller
             // Tạo đơn đặt vé
             $datVe = DatVe::create([
                 'ma_dat_ve' => time() . rand(100, 999),
-                'user_id' => Auth::id(),
+                'user_id' => $userIdForBooking,
                 'suat_chieu_id' => $request->suat_chieu_id,
                 'tong_tien' => $tongTien,
                 'phuong_thuc_tt' => 'Chưa chọn',
@@ -442,8 +475,4 @@ class DatVeController extends Controller
 
         return response()->json(['message' => 'Đổi điểm thành công']);
     }
-
-
-
-
 }

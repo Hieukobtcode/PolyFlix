@@ -1,227 +1,352 @@
 @extends('layouts.admin')
-
-@section('page-title', 'Thống kê doanh thu')
-
 @section('content')
-<div class="container-fluid">
     <div class="row">
-        <div class="col-12">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0">
-                        <i class="fas fa-chart-line me-2"></i>
-                        Thống kê doanh thu
-                    </h5>
-                </div>
+        <!-- Tổng doanh thu -->
+        <div class="col-lg-12 d-flex align-items-stretch">
+            <div class="card w-100">
                 <div class="card-body">
-                    <!-- Bộ lọc -->
-                    <form method="GET" class="row g-3 mb-4">
-                        <div class="col-md-3">
-                            <label class="form-label">Từ ngày</label>
-                            <input type="date" name="tu_ngay" class="form-control" value="{{ $tuNgay }}">
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label">Đến ngày</label>
-                            <input type="date" name="den_ngay" class="form-control" value="{{ $denNgay }}">
-                        </div>
-                        <div class="col-md-2">
-                            <label class="form-label">Loại thống kê</label>
-                            <select name="loai_thong_ke" class="form-select">
-                                <option value="ngay" {{ $loaiThongKe == 'ngay' ? 'selected' : '' }}>Theo ngày</option>
-                                <option value="tuan" {{ $loaiThongKe == 'tuan' ? 'selected' : '' }}>Theo tuần</option>
-                                <option value="thang" {{ $loaiThongKe == 'thang' ? 'selected' : '' }}>Theo tháng</option>
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <label class="form-label">Chi nhánh</label>
-                            <select name="chi_nhanh_id" class="form-select">
-                                <option value="">Tất cả</option>
-                                @foreach($chiNhanhs as $chiNhanh)
-                                    <option value="{{ $chiNhanh->id }}" {{ $chiNhanhId == $chiNhanh->id ? 'selected' : '' }}>
-                                        {{ $chiNhanh->ten_chi_nhanh }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <label class="form-label">&nbsp;</label>
-                            <button type="submit" class="btn btn-primary d-block w-100">
-                                <i class="fas fa-search me-1"></i>Lọc
-                            </button>
-                        </div>
-                    </form>
+                    <h4 class="card-title mb-4">Tổng doanh thu</h4>
+                    <h5 class="text-primary fw-bold">{{ number_format($tongDoanhThu, 0, ',', '.') }} VNĐ</h5>
+                    @if ($tuNgay && $denNgay)
+                        <p class="text-muted">Từ {{ $tuNgay }} đến {{ $denNgay }}</p>
+                    @endif
+                </div>
+            </div>
+        </div>
 
-                    <!-- Thống kê tổng quan -->
-                    <div class="row mb-4">
-                        <div class="col-xl-3 col-md-6 mb-3">
-                            <div class="card border-0 shadow-sm text-center bg-primary bg-opacity-10">
-                                <div class="card-body">
-                                    <div class="h2 mb-0 fw-bold text-primary">
-                                        {{ number_format($doanhThuTongQuan['tong_doanh_thu']) }}đ
-                                    </div>
-                                    <div class="text-muted">Tổng doanh thu</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xl-3 col-md-6 mb-3">
-                            <div class="card border-0 shadow-sm text-center bg-success bg-opacity-10">
-                                <div class="card-body">
-                                    <div class="h2 mb-0 fw-bold text-success">
-                                        {{ number_format($doanhThuTongQuan['doanh_thu_ve']) }}đ
-                                    </div>
-                                    <div class="text-muted">Doanh thu vé</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xl-3 col-md-6 mb-3">
-                            <div class="card border-0 shadow-sm text-center bg-warning bg-opacity-10">
-                                <div class="card-body">
-                                    <div class="h2 mb-0 fw-bold text-warning">
-                                        {{ number_format($doanhThuTongQuan['doanh_thu_combo']) }}đ
-                                    </div>
-                                    <div class="text-muted">Doanh thu combo</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xl-3 col-md-6 mb-3">
-                            <div class="card border-0 shadow-sm text-center bg-info bg-opacity-10">
-                                <div class="card-body">
-                                    <div class="h2 mb-0 fw-bold text-info">
-                                        {{ number_format($doanhThuTongQuan['so_ve_ban']) }}
-                                    </div>
-                                    <div class="text-muted">Số vé đã bán</div>
-                                </div>
-                            </div>
-                        </div>
+        <!-- Bộ lọc -->
+        <div class="d-flex col-12 mb-4 gap-3">
+            <div class="d-flex gap-2 w-100">
+                <select name="branch_id" id="branch-select" class="form-select w-100">
+                    <option value="">Tất cả chi nhánh</option>
+                    @foreach ($danhSachChiNhanh as $chiNhanh)
+                        <option value="{{ $chiNhanh->id }}" {{ request('branch_id') == $chiNhanh->id ? 'selected' : '' }}>
+                            {{ $chiNhanh->ten_chi_nhanh }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+            <select name="rap_id" id="rap-select" class="form-select w-100">
+                <option value="">Tất cả rạp chiếu</option>
+                @foreach ($danhSachRap as $rap)
+                    <option value="{{ $rap->id }}" {{ request('rap_id') == $rap->id ? 'selected' : '' }}>
+                        {{ $rap->ten_rap }}
+                    </option>
+                @endforeach
+            </select>
+            <input type="date" id="tu-ngay" class="form-control" value="{{ $tuNgay ?? '' }}">
+            <input type="date" id="den-ngay" class="form-control" value="{{ $denNgay ?? '' }}">
+        </div>
+
+        <!-- Biểu đồ doanh thu -->
+        <div class="col-lg-6 d-flex align-items-stretch">
+            <div class="card w-100">
+                <div class="card-body pb-2">
+                    <div class="d-flex align-items-baseline justify-content-between">
+                        <h4 class="card-title mb-1">Doanh thu theo thời gian</h4>
+                        <select id="chon-thoi-gian" class="form-select fw-bold w-auto shadow-none">
+                            <option value="week">Tuần</option>
+                            <option value="month">Tháng</option>
+                            <option value="custom">Tùy chỉnh</option>
+                        </select>
                     </div>
+                    <canvas id="doanhThuChart" class="mx-n6" height="300"></canvas>
+                </div>
+            </div>
+        </div>
 
-                    <!-- Biểu đồ doanh thu theo thời gian -->
-                    <div class="row mb-4">
-                        <div class="col-12">
-                            <div class="card border-0 shadow-sm">
-                                <div class="card-header">
-                                    <h6 class="mb-0">Biểu đồ doanh thu theo {{ $loaiThongKe }}</h6>
-                                </div>
-                                <div class="card-body">
-                                    <canvas id="doanhThuChart" height="100"></canvas>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+        <!-- Biểu đồ tỷ lệ doanh thu phim -->
+        <div class="col-lg-6 d-flex align-items-stretch">
+            <div class="card w-100">
+                <div class="card-body">
+                    <h4 class="card-title mb-1">Tỷ lệ doanh thu theo phim</h4>
+                    <canvas id="tyLePhimChart" class="my-8" style="height: 300px;"></canvas>
+                </div>
+            </div>
+        </div>
 
-                    <!-- Doanh thu theo chi nhánh -->
-                    <div class="row mb-4">
-                        <div class="col-md-6">
-                            <div class="card border-0 shadow-sm">
-                                <div class="card-header">
-                                    <h6 class="mb-0">Doanh thu theo chi nhánh</h6>
+        <!-- Top 5 phim -->
+        <div class="col-lg-12 d-flex align-items-stretch">
+            <div class="card w-100">
+                <div class="card-body">
+                    <h4 class="card-title mb-1">Top 5 phim có doanh thu cao nhất</h4>
+                    @if ($top5Phim->isEmpty())
+                        <p class="text-muted">Không có dữ liệu doanh thu phim.</p>
+                    @else
+                        @foreach ($top5Phim as $item)
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <div class="d-flex align-items-center">
+                                    <i class="ti ti-circle text-primary fs-4 me-2"></i>
+                                    <p class="mb-0">{{ Str::limit($item->ten_phim, 30, '...') }}</p>
                                 </div>
-                                <div class="card-body">
-                                    <div class="table-responsive">
-                                        <table class="table table-hover">
-                                            <thead>
-                                                <tr>
-                                                    <th>Chi nhánh</th>
-                                                    <th class="text-end">Doanh thu</th>
-                                                    <th class="text-end">Số vé</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @foreach($doanhThuTheoChiNhanh as $item)
-                                                <tr>
-                                                    <td>{{ $item['ten_chi_nhanh'] }}</td>
-                                                    <td class="text-end">{{ number_format($item['doanh_thu']) }}đ</td>
-                                                    <td class="text-end">{{ number_format($item['so_ve_ban']) }}</td>
-                                                </tr>
-                                                @endforeach
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
+                                <p class="mb-0">{{ number_format($item->tong_doanh_thu, 0, ',', '.') }} VNĐ
+                                    ({{ $item->phan_tram }}%)</p>
                             </div>
-                        </div>
-
-                        <!-- Doanh thu theo phim -->
-                        <div class="col-md-6">
-                            <div class="card border-0 shadow-sm">
-                                <div class="card-header">
-                                    <h6 class="mb-0">Top 10 phim có doanh thu cao nhất</h6>
-                                </div>
-                                <div class="card-body">
-                                    <div class="table-responsive">
-                                        <table class="table table-hover">
-                                            <thead>
-                                                <tr>
-                                                    <th>Phim</th>
-                                                    <th class="text-end">Doanh thu</th>
-                                                    <th class="text-end">Suất chiếu</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @foreach($doanhThuTheoPhim as $item)
-                                                <tr>
-                                                    <td>{{ Str::limit($item['ten_phim'], 30) }}</td>
-                                                    <td class="text-end">{{ number_format($item['doanh_thu']) }}đ</td>
-                                                    <td class="text-end">{{ number_format($item['so_suat_chieu']) }}</td>
-                                                </tr>
-                                                @endforeach
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                        @endforeach
+                    @endif
                 </div>
             </div>
         </div>
     </div>
-</div>
+@endsection
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Biểu đồ doanh thu theo thời gian
-    const ctx = document.getElementById('doanhThuChart').getContext('2d');
-    const doanhThuData = @json($doanhThuTheoThoiGian);
-    
-    new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: doanhThuData.map(item => item.label),
-            datasets: [{
-                label: 'Doanh thu (VNĐ)',
-                data: doanhThuData.map(item => item.doanh_thu),
-                borderColor: 'rgb(75, 192, 192)',
-                backgroundColor: 'rgba(75, 192, 192, 0.1)',
-                tension: 0.1,
-                fill: true
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        callback: function(value) {
-                            return new Intl.NumberFormat('vi-VN').format(value) + 'đ';
-                        }
-                    }
+@section('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const branchSelect = document.getElementById('branch-select');
+            const rapSelect = document.getElementById('rap-select');
+            const chonThoiGian = document.getElementById('chon-thoi-gian');
+            const tuNgay = document.getElementById('tu-ngay');
+            const denNgay = document.getElementById('den-ngay');
+            let doanhThuChart = null;
+            let tyLePhimChart = null;
+
+            function updateCharts() {
+                const branchId = branchSelect ? branchSelect.value : '';
+                const rapId = rapSelect ? rapSelect.value : '';
+                const loai = chonThoiGian ? chonThoiGian.value : 'week';
+                const tuNgayVal = tuNgay ? tuNgay.value : '';
+                const denNgayVal = denNgay ? denNgay.value : '';
+
+                // Cập nhật biểu đồ doanh thu
+                let url = `/api/doanh-thu-${loai}?branch_id=${branchId}&rap_id=${rapId}`;
+                if (loai === 'custom' && tuNgayVal && denNgayVal) {
+                    url += `&tu_ngay=${tuNgayVal}&den_ngay=${denNgayVal}`;
                 }
-            },
-            plugins: {
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            return 'Doanh thu: ' + new Intl.NumberFormat('vi-VN').format(context.parsed.y) + 'đ';
+
+                fetch(url)
+                    .then(res => {
+                        if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+                        return res.json();
+                    })
+                    .then(data => {
+                        if (doanhThuChart) doanhThuChart.destroy();
+
+                        const ctxBar = document.getElementById('doanhThuChart');
+                        if (!ctxBar) {
+                            console.error('Canvas doanhThuChart không tồn tại!');
+                            return;
                         }
-                    }
-                }
+
+                        if (!data.labels || data.labels.length === 0) {
+                            ctxBar.parentElement.innerHTML =
+                                '<p class="text-muted text-center">Không có dữ liệu doanh thu.</p>';
+                            return;
+                        }
+
+                        doanhThuChart = new Chart(ctxBar, {
+                            type: 'bar',
+                            data: {
+                                labels: data.labels,
+                                datasets: [{
+                                    label: 'Doanh thu',
+                                    data: data.values,
+                                    backgroundColor: '#4F46E5',
+                                    borderColor: '#4F46E5',
+                                    borderWidth: 1
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                plugins: {
+                                    tooltip: {
+                                        callbacks: {
+                                            label: function(context) {
+                                                return new Intl.NumberFormat('vi-VN', {
+                                                    style: 'currency',
+                                                    currency: 'VND'
+                                                }).format(context.parsed.y);
+                                            }
+                                        }
+                                    },
+                                    legend: {
+                                        display: false
+                                    },
+                                    title: {
+                                        display: true,
+                                        text: loai === 'week' ? 'Doanh thu theo tuần' : loai ===
+                                            'month' ? 'Doanh thu theo tháng' : 'Doanh thu theo ngày',
+                                        font: {
+                                            size: 16
+                                        }
+                                    }
+                                },
+                                scales: {
+                                    x: {
+                                        title: {
+                                            display: true,
+                                            text: loai === 'week' ? 'Tuần' : loai === 'month' ?
+                                                'Tháng' : 'Ngày'
+                                        },
+                                        ticks: {
+                                            maxRotation: 45,
+                                            minRotation: 45
+                                        }
+                                    },
+                                    y: {
+                                        title: {
+                                            display: true,
+                                            text: 'Doanh thu (VND)'
+                                        },
+                                        ticks: {
+                                            callback: function(val) {
+                                                return new Intl.NumberFormat('vi-VN', {
+                                                    style: 'currency',
+                                                    currency: 'VND'
+                                                }).format(val);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Lỗi khi tải dữ liệu doanh thu:', error);
+                        const ctxBar = document.getElementById('doanhThuChart');
+                        if (ctxBar) {
+                            ctxBar.parentElement.innerHTML =
+                                '<p class="text-muted text-center">Lỗi tải dữ liệu doanh thu.</p>';
+                        }
+                    });
+
+                // Cập nhật biểu đồ tỷ lệ doanh thu phim
+                fetch(
+                        `/api/ty-le-doanh-thu-phim?branch_id=${branchId}&rap_id=${rapId}&tu_ngay=${tuNgayVal}&den_ngay=${denNgayVal}`)
+                    .then(res => {
+                        if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+                        return res.json();
+                    })
+                    .then(data => {
+                        if (tyLePhimChart) tyLePhimChart.destroy();
+
+                        const ctxPie = document.getElementById('tyLePhimChart');
+                        if (!ctxPie) {
+                            console.error('Canvas tyLePhimChart không tồn tại!');
+                            return;
+                        }
+
+                        if (!data.labels || data.labels.length === 0) {
+                            ctxPie.parentElement.innerHTML =
+                                '<p class="text-muted text-center">Không có dữ liệu doanh thu phim.</p>';
+                            return;
+                        }
+
+                        tyLePhimChart = new Chart(ctxPie, {
+                            type: 'pie',
+                            data: {
+                                labels: data.labels,
+                                datasets: [{
+                                    label: 'Doanh thu phim',
+                                    data: data.values,
+                                    backgroundColor: ['#4F46E5', '#10B981', '#F59E0B',
+                                        '#EF4444', '#6B7280'
+                                    ],
+                                    borderWidth: 1
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                plugins: {
+                                    legend: {
+                                        position: 'bottom'
+                                    },
+                                    tooltip: {
+                                        callbacks: {
+                                            label: function(context) {
+                                                return `${context.label}: ${new Intl.NumberFormat('vi-VN', {
+                                                    style: 'currency',
+                                                    currency: 'VND'
+                                                }).format(context.parsed)}`;
+                                            }
+                                        }
+                                    },
+                                    title: {
+                                        display: true,
+                                        text: 'Tỷ lệ doanh thu theo phim',
+                                        font: {
+                                            size: 16
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Lỗi khi tải dữ liệu tỷ lệ doanh thu phim:', error);
+                        const ctxPie = document.getElementById('tyLePhimChart');
+                        if (ctxPie) {
+                            ctxPie.parentElement.innerHTML =
+                                '<p class="text-muted text-center">Lỗi tải dữ liệu tỷ lệ doanh thu phim.</p>';
+                        }
+                    });
             }
-        }
-    });
-});
-</script>
+
+            // Xử lý thay đổi chi nhánh
+            if (branchSelect) {
+                branchSelect.addEventListener('change', function() {
+                    const branchId = this.value;
+                    const currentUrl = new URL(window.location.href);
+                    if (branchId) {
+                        currentUrl.searchParams.set('branch_id', branchId);
+                    } else {
+                        currentUrl.searchParams.delete('branch_id');
+                    }
+                    currentUrl.searchParams.delete('rap_id');
+                    window.location.href = currentUrl.toString();
+                });
+            }
+
+            // Xử lý thay đổi rạp
+            if (rapSelect) {
+                rapSelect.addEventListener('change', function() {
+                    const rapId = this.value;
+                    const currentUrl = new URL(window.location.href);
+                    if (rapId) {
+                        currentUrl.searchParams.set('rap_id', rapId);
+                    } else {
+                        currentUrl.searchParams.delete('rap_id');
+                    }
+                    window.location.href = currentUrl.toString();
+                });
+            }
+
+            // Xử lý thay đổi thời gian
+            if (chonThoiGian) {
+                chonThoiGian.addEventListener('change', function() {
+                    const tuNgayVal = tuNgay ? tuNgay.value : '';
+                    const denNgayVal = denNgay ? denNgay.value : '';
+                    if (this.value === 'custom' && (!tuNgayVal || !denNgayVal)) {
+                        alert('Vui lòng chọn khoảng thời gian!');
+                        this.value = 'week';
+                        return;
+                    }
+                    updateCharts();
+                });
+            }
+
+            // Xử lý thay đổi ngày
+            if (tuNgay && denNgay) {
+                const updateOnDateChange = () => {
+                    if (chonThoiGian.value === 'custom') {
+                        const currentUrl = new URL(window.location.href);
+                        if (tuNgay.value && denNgay.value) {
+                            currentUrl.searchParams.set('tu_ngay', tuNgay.value);
+                            currentUrl.searchParams.set('den_ngay', denNgay.value);
+                        } else {
+                            currentUrl.searchParams.delete('tu_ngay');
+                            currentUrl.searchParams.delete('den_ngay');
+                        }
+                        window.location.href = currentUrl.toString();
+                    }
+                };
+                tuNgay.addEventListener('change', updateOnDateChange);
+                denNgay.addEventListener('change', updateOnDateChange);
+            }
+
+            // Tải dữ liệu ban đầu
+            updateCharts();
+        });
+    </script>
 @endsection

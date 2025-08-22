@@ -456,7 +456,7 @@
                                 <td>
                                     <a href="{{ route('dat-ve.chi-tiet', $ve->id) }}"
                                         style="background: #009688; color: white; padding: 6px 12px; border-radius: 4px; text-decoration: none;">
-                                        <i class="fas fa-eye me-1"></i>Xem chi tiết
+                                        Xem
                                     </a>
 
                                 </td>

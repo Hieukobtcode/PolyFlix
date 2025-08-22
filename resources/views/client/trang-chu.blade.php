@@ -121,11 +121,17 @@
                     <img src="{{ asset('storage/' . $phim->poster) }}" alt="{{ $phim->ten_phim }}">
                     <div class="age-label">{{ $phim->do_tuoi }}</div>
                     <div class="overlay">
-                        <a href="{{ route('phim.chi-tiet', urlencode($phim->ten_phim)) }}#lich-chieu">
-                            <button class="btn buy">
-                                <i class="fa-solid fa-ticket"></i> Mua vé
-                            </button>
-                        </a>
+                        @php
+                            $user = Auth::user();
+                        @endphp
+
+                        @if (!$user || $user->vai_tro_id != 4)
+                            <a href="{{ route('phim.chi-tiet', urlencode($phim->ten_phim)) }}#lich-chieu">
+                                <button class="btn buy">
+                                    <i class="fa-solid fa-ticket"></i> Mua vé
+                                </button>
+                            </a>
+                        @endif
                         <button class="btn trailer" data-video="{{ $phim->trailer }}"><i class="fa-solid fa-video"></i>
                             Trailer</button>
                     </div>
@@ -139,26 +145,35 @@
         <button class="btn-see">XEM THÊM</button>
     </a>
 
-    <div class="khuyen-mai">
-        <p>KHUYẾN MÃI</p>
-        <div class="img">
-            <img width="350px" src="{{ asset('khuyen-mai/c_student.png') }}" alt="">
-            <img width="350px" src="{{ asset('khuyen-mai/C_TEN.png') }}" alt="">
-            <img width="350px" src="{{ asset('khuyen-mai/monday_1_.jpg') }}" alt="">
+    @php
+        $user = Auth::user();
+    @endphp
+
+    {{-- Chỉ hiển thị nếu chưa đăng nhập hoặc user không có vai_tro_id = 4 --}}
+    @if (!$user || $user->vai_tro_id != 4)
+        <div class="khuyen-mai">
+            <p>KHUYẾN MÃI</p>
+            <div class="img">
+                <img width="350px" src="{{ asset('khuyen-mai/c_student.png') }}" alt="">
+                <img width="350px" src="{{ asset('khuyen-mai/C_TEN.png') }}" alt="">
+                <img width="350px" src="{{ asset('khuyen-mai/monday_1_.jpg') }}" alt="">
+            </div>
         </div>
-    </div>
 
-    <a href="{{ route('khuyen-mai.index') }}">
-        <button class="btn-km">TẤT CẢ ƯU ĐÃI</button>
-    </a>
+        <a href="{{ route('khuyen-mai.index') }}">
+            <button class="btn-km">TẤT CẢ ƯU ĐÃI</button>
+        </a>
 
-    <div class="goc-dien-anh-wrapper">
-        @include('client.partials.goc-dien-anh', [
-            'phims' => $phims,
-            'ratings' => $ratings,
-            'baiViet' => $baiViet ?? [],
-        ])
-    </div>
+        <div class="goc-dien-anh-wrapper">
+            @include('client.partials.goc-dien-anh', [
+                'phims' => $phims,
+                'ratings' => $ratings,
+                'baiViet' => $baiViet ?? [],
+            ])
+        </div>
+    @else
+    <br>
+    @endif
 
     <!-- Popup trailer -->
     <div id="trailerPopup"

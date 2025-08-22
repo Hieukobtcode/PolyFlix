@@ -5,57 +5,22 @@
 @section('content')
 <div class="ticket-page-wrapper">
     <div class="container">
-        <!-- Status Alert -->
-        @if($ve->trang_thai == 'Chờ thanh toán')
-            <div class="status-alert status-pending">
-                <i class="fas fa-clock"></i>
-                <div>
-                    <strong>Chờ thanh toán</strong>
-                    <p>Vui lòng hoàn tất thanh toán để sử dụng vé</p>
-                </div>
-            </div>
-        @elseif($ve->trang_thai == 'Đã hủy')
-            <div class="status-alert status-cancelled">
-                <i class="fas fa-times-circle"></i>
-                <div>
-                    <strong>Vé đã bị hủy</strong>
-                    <p>Vé này không còn hiệu lực</p>
-                </div>
-            </div>
-        @elseif($ve->trang_thai == 'Đã thanh toán')
-            <div class="status-alert status-success">
-                <i class="fas fa-check-circle"></i>
-                <div>
-                    <strong>Thanh toán thành công</strong>
-                    <p>Vé đã sẵn sàng sử dụng</p>
-                </div>
-            </div>
-        @endif
-
-        <!-- Page Header -->
-        <div class="page-header">
-            <div class="header-content">
-                <h1><i class="fas fa-ticket-alt"></i> Chi tiết vé xem phim</h1>
-                <div class="ticket-code">{{ $ve->ma_dat_ve }}</div>
-            </div>
-        </div>
-
         <!-- Main Ticket Card -->
         <div class="modern-ticket-container">
             <div class="ticket-wrapper">
                 <!-- Movie Hero Section -->
                 <div class="movie-hero">
                     <div class="movie-backdrop">
-                        @if($ve->suatChieu->phim->hinh_anh)
-                            <img src="{{ asset('storage/' . $ve->suatChieu->phim->hinh_anh) }}"
+                        @if($ve->suatChieu->phim->poster)
+                            <img src="{{ asset('storage/' . $ve->suatChieu->phim->poster) }}"
                                  alt="{{ $ve->suatChieu->phim->ten_phim }}" class="backdrop-image">
                         @endif
                         <div class="backdrop-overlay"></div>
                     </div>
                     <div class="movie-info">
                         <div class="movie-poster">
-                            @if($ve->suatChieu->phim->hinh_anh)
-                                <img src="{{ asset('storage/' . $ve->suatChieu->phim->hinh_anh) }}"
+                            @if($ve->suatChieu->phim->poster)
+                                <img src="{{ asset('storage/' . $ve->suatChieu->phim->poster) }}"
                                      alt="{{ $ve->suatChieu->phim->ten_phim }}">
                             @else
                                 <div class="poster-placeholder">
@@ -139,7 +104,6 @@
                                     <span class="seat-type {{ strtolower($ghe->loaiGhe->ten_loai_ghe) }}">
                                         {{ $ghe->loaiGhe->ten_loai_ghe }}
                                     </span>
-                                    <span class="seat-price">{{ number_format($ghe->pivot->gia_ve ?? 0, 0, ',', '.') }}đ</span>
                                 </div>
                             </div>
                         @endforeach
@@ -197,114 +161,6 @@
                 </div>
                 @endif
 
-                <!-- Payment & Summary Section -->
-                <div class="payment-summary-section">
-                    <div class="row g-4">
-                        <!-- Payment Info -->
-                        <div class="col-lg-8">
-                            <div class="section-card">
-                                <div class="section-header">
-                                    <i class="fas fa-credit-card"></i>
-                                    <h3>Thông tin thanh toán</h3>
-                                </div>
-                                <div class="payment-content">
-                                    <div class="payment-grid">
-                                        <div class="payment-item">
-                                            <span class="payment-label">Phương thức thanh toán</span>
-                                            <span class="payment-value">{{ $ve->phuong_thuc_tt }}</span>
-                                        </div>
-                                        <div class="payment-item">
-                                            <span class="payment-label">Trạng thái</span>
-                                            <span class="payment-status {{ strtolower(str_replace(' ', '-', $ve->trang_thai)) }}">
-                                                {{ $ve->trang_thai }}
-                                            </span>
-                                        </div>
-                                    </div>
-
-                                    @if($ve->successTransaction)
-                                        <div class="transaction-details">
-                                            <h4>Chi tiết giao dịch</h4>
-                                            <div class="transaction-grid">
-                                                <div class="transaction-item">
-                                                    <span class="transaction-label">Mã giao dịch</span>
-                                                    <span class="transaction-value">{{ $ve->successTransaction->transaction_code }}</span>
-                                                </div>
-                                                <div class="transaction-item">
-                                                    <span class="transaction-label">Thời gian thanh toán</span>
-                                                    <span class="transaction-value">{{ $ve->successTransaction->paid_at ? $ve->successTransaction->paid_at->format('H:i d/m/Y') : 'N/A' }}</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    @endif
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- QR Code & Actions -->
-                        <div class="col-lg-4">
-                            <div class="qr-actions-card">
-                                <!-- QR Code Section -->
-                                <div class="qr-section">
-                                    <h3>Mã vé điện tử</h3>
-                                    <div class="barcode-container">
-                                        {!! $maVachHtml !!}
-                                    </div>
-                                    <div class="qr-code-text">{{ $ve->ma_dat_ve }}</div>
-                                    <p class="qr-note">Vui lòng xuất trình mã này tại quầy để nhận vé</p>
-                                </div>
-
-                                <!-- Booking Info -->
-                                <div class="booking-details">
-                                    <h4>Thông tin đặt vé</h4>
-                                    <div class="booking-item">
-                                        <span class="booking-label">Người đặt</span>
-                                        <span class="booking-value">{{ $ve->nguoiDung->name }}</span>
-                                    </div>
-                                    <div class="booking-item">
-                                        <span class="booking-label">Email</span>
-                                        <span class="booking-value">{{ $ve->nguoiDung->email }}</span>
-                                    </div>
-                                    <div class="booking-item">
-                                        <span class="booking-label">Ngày đặt</span>
-                                        <span class="booking-value">{{ $ve->created_at->format('d/m/Y H:i') }}</span>
-                                    </div>
-                                </div>
-
-                                <!-- Action Buttons -->
-                                <div class="action-buttons">
-                                    <a href="{{ route('dat-ve.print', $ve->id) }}" target="_blank" class="action-btn primary">
-                                        <i class="fas fa-download"></i>
-                                        <span>Tải PDF</span>
-                                    </a>
-                                    <button onclick="window.print()" class="action-btn secondary">
-                                        <i class="fas fa-print"></i>
-                                        <span>In trang này</span>
-                                    </button>
-                                    @if($ve->trang_thai == 'Đã thanh toán')
-                                        <button onclick="shareTicket()" class="action-btn info">
-                                            <i class="fas fa-share-alt"></i>
-                                            <span>Chia sẻ</span>
-                                        </button>
-                                    @endif
-                                    <a href="{{ route('profile') }}" class="action-btn outline">
-                                        <i class="fas fa-arrow-left"></i>
-                                        <span>Quay lại</span>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Total Amount -->
-                <div class="total-section">
-                    <div class="total-card">
-                        <div class="total-content">
-                            <span class="total-label">Tổng tiền thanh toán</span>
-                            <span class="total-amount">{{ number_format($ve->tong_tien, 0, ',', '.') }}đ</span>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
@@ -313,7 +169,7 @@
 <style>
 /* Modern Ticket Page Styles */
 .ticket-page-wrapper {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    /* background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); */
     min-height: 100vh;
     padding: 2rem 0;
 }
@@ -646,6 +502,7 @@
 .seat-type {
     padding: 0.25rem 0.75rem;
     border-radius: 20px;
+    color: black;
     font-size: 0.75rem;
     font-weight: 600;
     text-transform: uppercase;

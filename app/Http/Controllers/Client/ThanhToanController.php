@@ -27,7 +27,7 @@ public function index($datVeId)
         return redirect()->route('login.form')->with('error', 'Vui lòng đăng nhập để thanh toán!');
     }
 
-    $datVe = DatVe::with([
+    $query = DatVe::with([
         'nguoiDung',
         'suatChieu.phim',
         'suatChieu.phongChieu.rapPhim.chiNhanh',
@@ -37,9 +37,13 @@ public function index($datVeId)
         'doAns'
     ])
         ->where('id', $datVeId)
-        ->where('user_id', Auth::id())
-        ->where('trang_thai', 'Chờ thanh toán')
-        ->firstOrFail();
+        ->where('trang_thai', 'Chờ thanh toán');
+
+    if (Auth::user()->vai_tro_id != 4) { 
+        $query->where('user_id', Auth::id());
+    }
+
+    $datVe = $query->firstOrFail();
 
     
 
@@ -94,6 +98,127 @@ public function index($datVeId)
         'tongThanhTien'
     ));
 }
+
+public function xuLyThanhToanTienMat(Request $request)
+{
+    $request->validate([
+        'dat_ve_id' => 'required|exists:dat_ves,id',
+    ]);
+
+    $datVe = DatVe::with([
+        'nguoiDung',
+        'suatChieu.phim',
+        'suatChieu.phongChieu.rapPhim.chiNhanh',
+        'chiTietDatVes.ghe'
+    ])
+        ->where('id', $request->dat_ve_id)
+        ->where('trang_thai', 'Chờ thanh toán')
+        ->firstOrFail();
+
+    foreach ($datVe->gheNgois as $ghe) {
+        if ($ghe->trang_thai === 'da_dat') {
+            return response()->json([
+                'status'  => 'error',
+                'message' => 'Một hoặc nhiều ghế đã được đặt. Vui lòng chọn lại ghế khác.'
+            ]);
+        }
+    }
+
+    try {
+        // ✅ 1. Cập nhật trạng thái vé
+        $datVe->trang_thai = 'Đã thanh toán';
+        $datVe->phuong_thuc_tt = "Tiền mặt";
+        $datVe->ngay_thanh_toan = now();
+        $datVe->save();
+
+        // ✅ 2. Cập nhật trạng thái ghế
+        foreach ($datVe->chiTietDatVes as $chiTiet) {
+            $ghe = $chiTiet->ghe;
+            if ($ghe) {
+                GheNgoiSuatChieu::where('ghe_ngoi_id', $ghe->id)
+                    ->where('suat_chieu_id', $datVe->suat_chieu_id)
+                    ->update(['trang_thai' => 'da_dat']);
+            }
+        }
+
+        // ✅ 3. Gửi mail vé có barcode
+        if ($datVe->nguoiDung && $datVe->nguoiDung->email) {
+            try {
+                $barcode = new \Milon\Barcode\DNS1D();
+                $barcodeUrl = 'data:image/png;base64,' . $barcode->getBarcodePNG($datVe->ma_dat_ve, 'C128', 2, 60);
+                Mail::to($datVe->nguoiDung->email)->send(new GuiVeXemPhim($datVe, $barcodeUrl));
+            } catch (Exception $e) {
+                Log::error('Gửi mail thất bại: ' . $e->getMessage());
+            }
+        }
+
+        // ✅ 4. Cộng điểm thành viên
+        try {
+    $nguoiDung = $datVe->nguoiDung;
+
+    if ($nguoiDung && $nguoiDung->cap_bac_id) {
+        // Lấy cấp bậc theo ID từ người dùng
+        $capBac = CapBacThe::find($nguoiDung->cap_bac_id);
+
+        if ($capBac) {
+            // Tính điểm dựa trên phần trăm vé
+            $tongTien   = $datVe->tong_tien;
+            $phanTramVe = $capBac->phan_tram_ve;
+            $diemCong   = round($tongTien * $phanTramVe / 100);
+
+            if ($diemCong > 0) {
+                // Cộng điểm vào người dùng
+                $nguoiDung->diem += $diemCong;
+                $nguoiDung->save();
+
+                // Ghi vào lịch sử điểm
+                LichSuDiem::create([
+                    'users_id' => $nguoiDung->id,
+                    'thay_doi' => $diemCong,
+                    'ly_do'    => 'Cộng điểm từ đơn đặt vé #' . $datVe->ma_dat_ve,
+                    'thoi_gian'=> now(),
+                ]);
+
+                Log::info("Đã cộng điểm cho user ID {$nguoiDung->id}, số điểm cộng: {$diemCong}");
+
+                // ========= Cập nhật cấp bậc mới theo tổng chi tiêu =========
+                $tongTienChiTieu = DatVe::where('user_id', $nguoiDung->id)->sum('tong_tien');
+                Log::info("Tổng chi tiêu của user {$nguoiDung->id}: {$tongTienChiTieu}");
+
+                $capBacMoi = CapBacThe::where('tong_chi_tieu', '<=', $tongTienChiTieu)
+                    ->orderByDesc('tong_chi_tieu')
+                    ->first();
+
+                if ($capBacMoi && $capBacMoi->id !== $nguoiDung->cap_bac_id) {
+                    $nguoiDung->cap_bac_id = $capBacMoi->id;
+                    $nguoiDung->save();
+
+                    Log::info("Đã cập nhật cấp bậc mới cho user ID {$nguoiDung->id}: {$capBacMoi->ten}");
+                }
+            }
+        } else {
+            Log::warning("Không tìm thấy cấp bậc ID: {$nguoiDung->cap_bac_id}");
+        }
+    }
+} catch (Exception $e) {
+    Log::error('Lỗi khi cộng điểm: ' . $e->getMessage());
+}
+
+        // return response()->json([
+        //     'status' => 'success',
+        //     'message' => 'Thanh toán tiền mặt thành công!'
+        // ]);
+        return redirect()->route('home')->with('success', 'Đặt vé thành công! Vé đã được gửi vào email của bạn.');
+    } catch (\Exception $e) {
+        Log::error('Thanh toán tiền mặt lỗi: ' . $e->getMessage());
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Có lỗi xảy ra: ' . $e->getMessage()
+        ], 500);
+    }
+}
+
+
 
 
     public function xuLyThanhToan(Request $request)

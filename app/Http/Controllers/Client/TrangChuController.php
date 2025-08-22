@@ -171,6 +171,15 @@ class TrangChuController extends Controller
         if (!$id) {
             abort(404, 'Mã không hợp lệ');
         }
+        // Nếu user là vai trò rạp (vai_tro_id = 4)
+        if (auth()->check() && auth()->user()->vai_tro_id == 4) {
+            $userRapId = auth()->user()->rap_id;
+
+            // Nếu user cố vào rạp khác thì chặn
+            if ($id != $userRapId) {
+                return redirect()->route('home')->with('error', 'Bạn không có quyền truy cập rạp này!');
+            }
+        }
 
         $rap = RapPhim::findOrFail($id);
 

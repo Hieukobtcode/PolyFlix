@@ -371,12 +371,20 @@ class Str
      * Replace consecutive instances of a given character with a single character in the given string.
      *
      * @param  string  $string
-     * @param  string  $character
+     * @param  array<string>|string  $characters
      * @return string
      */
-    public static function deduplicate(string $string, string $character = ' ')
+    public static function deduplicate(string $string, array|string $characters = ' ')
     {
-        return preg_replace('/'.preg_quote($character, '/').'+/u', $character, $string);
+        if (is_string($characters)) {
+            return preg_replace('/'.preg_quote($characters, '/').'+/u', $characters, $string);
+        }
+
+        return array_reduce(
+            $characters,
+            fn ($carry, $character) => preg_replace('/'.preg_quote($character, '/').'+/u', $character, $carry),
+            $string
+        );
     }
 
     /**
@@ -629,7 +637,7 @@ class Str
      * Determine if a given value is a valid UUID.
      *
      * @param  mixed  $value
-     * @param  int<0, 8>|'max'|null  $version
+     * @param  int<0, 8>|'nil'|'max'|null  $version
      * @return bool
      */
     public static function isUuid($value, $version = null)
