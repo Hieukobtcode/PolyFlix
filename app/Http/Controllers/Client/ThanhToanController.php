@@ -401,31 +401,32 @@ class ThanhToanController extends Controller
         }
 
         try {
-            // Cập nhật trạng thái đơn đặt vé thành "Đã hủy" trước
+            // Cập nhật trạng thái đơn đặt vé thành "Đã hủy"
             $datVe->update([
                 'trang_thai' => 'Đã hủy',
-                'ngay_huy' => now()
+                'ghi_chu' => 'Hủy đơn vào lúc: ' . now()->format('d/m/Y H:i:s')
             ]);
 
             // Mở khóa tất cả ghế trong đơn đặt vé
             foreach ($datVe->gheNgois as $ghe) {
                 try {
-                    // Sử dụng raw query để tránh lỗi LostConnectionDetector
-                    DB::statement("UPDATE ghe_ngoi_suat_chieu SET trang_thai = 'trong', user_id = NULL, expires_at = NULL WHERE ghe_ngoi_id = ? AND suat_chieu_id = ? AND user_id = ?", [
-                        $ghe->id,
-                        $datVe->suat_chieu_id,
-                        Auth::id()
+                    DB::statement("
+                UPDATE ghe_ngoi_suat_chieu
+                SET trang_thai = 'trong', user_id = NULL
+                WHERE ghe_ngoi_id = ? AND suat_chieu_id = ?
+            ", [
+                        // dùng pivot nếu là belongsToMany
+                        $ghe->pivot->ghe_ngoi_id ?? $ghe->id,
+                        $datVe->suat_chieu_id
                     ]);
                 } catch (\Exception $e) {
-                    Log::warning('Không thể mở khóa ghế ID: ' . $ghe->id . ' - ' . $e->getMessage());
-                    // Tiếp tục với ghế khác
+                    Log::warning('Không thể mở khóa ghế ID: ' . ($ghe->pivot->ghe_ngoi_id ?? $ghe->id) . ' - ' . $e->getMessage());
                 }
             }
 
             return redirect()->route('home')->with('success', 'Đã hủy đơn đặt vé thành công. Ghế đã được mở khóa.');
         } catch (Exception $e) {
             Log::error('Lỗi khi hủy thanh toán: ' . $e->getMessage());
-            Log::error('Stack trace: ' . $e->getTraceAsString());
             return redirect()->back()->with('error', 'Có lỗi xảy ra khi hủy đơn đặt vé. Vui lòng thử lại.');
         }
     }

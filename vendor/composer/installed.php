@@ -3,7 +3,7 @@
         'name' => 'laravel/laravel',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => 'cbc95b6a95eba2995acc99a21f910bc1afffc4e9',
+        'reference' => 'c718ef7c78c6dbdac48df7c8c87f857c974e93a7',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -475,21 +475,6 @@
                 0 => '*',
             ),
         ),
-        'jean85/pretty-package-versions' => array(
-            'pretty_version' => '2.1.1',
-            'version' => '2.1.1.0',
-            'reference' => '4d7aa5dab42e2a76d99559706022885de0e18e1a',
-            'type' => 'library',
-            'install_path' => __DIR__ . '/../jean85/pretty-package-versions',
-            'aliases' => array(),
-            'dev_requirement' => true,
-        ),
-        'kodova/hamcrest-php' => array(
-            'dev_requirement' => true,
-            'replaced' => array(
-                0 => '*',
-            ),
-        ),
         'laravel/framework' => array(
             'pretty_version' => 'v12.23.1',
             'version' => '12.23.1.0',
@@ -502,7 +487,7 @@
         'laravel/laravel' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => 'cbc95b6a95eba2995acc99a21f910bc1afffc4e9',
+            'reference' => 'c718ef7c78c6dbdac48df7c8c87f857c974e93a7',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -1473,9 +1458,9 @@
             'dev_requirement' => false,
         ),
         'symfony/polyfill-php84' => array(
-            'pretty_version' => 'v1.32.0',
-            'version' => '1.32.0.0',
-            'reference' => '000df7860439609837bbe28670b0be15783b7fbf',
+            'pretty_version' => 'v1.33.0',
+            'version' => '1.33.0.0',
+            'reference' => 'd8ced4d875142b6a7426000426b8abc631d6b191',
             'type' => 'library',
             'install_path' => __DIR__ . '/../symfony/polyfill-php84',
             'aliases' => array(),
