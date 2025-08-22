@@ -6140,6 +6140,7 @@ return array(
     'Ramsey\\Uuid\\UuidInterface' => $vendorDir . '/ramsey/uuid/src/UuidInterface.php',
     'Ramsey\\Uuid\\Validator\\GenericValidator' => $vendorDir . '/ramsey/uuid/src/Validator/GenericValidator.php',
     'Ramsey\\Uuid\\Validator\\ValidatorInterface' => $vendorDir . '/ramsey/uuid/src/Validator/ValidatorInterface.php',
+    'ReflectionConstant' => $vendorDir . '/symfony/polyfill-php84/Resources/stubs/ReflectionConstant.php',
     'SQLite3Exception' => $vendorDir . '/symfony/polyfill-php83/Resources/stubs/SQLite3Exception.php',
     'Sabberworm\\CSS\\CSSElement' => $vendorDir . '/sabberworm/php-css-parser/src/CSSElement.php',
     'Sabberworm\\CSS\\CSSList\\AtRuleBlockList' => $vendorDir . '/sabberworm/php-css-parser/src/CSSList/AtRuleBlockList.php',
