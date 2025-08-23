@@ -100,7 +100,8 @@
             border-radius: 4px;
             background: #f7f7f7;
         }
-            })->implode("\n") !!}
+        })->implode("\n") ! !
+        }
     </style>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
@@ -294,8 +295,8 @@
                         <input id="point" style="height: 35px; border-radius: 5px;" type="number">
                         <button id="btnPoint" class="btn btn-warning">Đổi điểm</button>
                         <p style="color: yellow;" class="text-muted">
-                            Số điểm hiện có: <span style="color: yellow;" id="diemHienCo"
-                                data-diem="{{ Auth::user()->diem }}">{{ number_format(Auth::user()->diem) }}</span>
+                        <h6>Số điểm hiện có: <span style="color: yellow;" id="diemHienCo"
+                                data-diem="{{ Auth::user()->diem }}">{{ number_format(Auth::user()->diem) }}</span></h6>
                         </p>
                     </div>
                     <div class="total-price">
