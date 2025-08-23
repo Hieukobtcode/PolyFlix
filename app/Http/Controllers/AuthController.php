@@ -38,6 +38,8 @@ class AuthController extends Controller
                 case 2:
                 case 3:
                     return redirect()->route('admin.thong-ke.index');
+                case 4:
+                    return redirect()->route('home')->with('success', "Đăng nhập thành công");
                 case 5:
                     return redirect()->route('home')->with('success', "Đăng nhập thành công");
                 default:

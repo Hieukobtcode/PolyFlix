@@ -17,25 +17,40 @@
 
             <div class="payment-container">
                 <div class="payment-methods">
-                    <form id="payment-form">
-                        @csrf
-                        <input type="hidden" name="dat_ve_id" value="{{ $datVe->id }}">
+                    @csrf
+                    <input type="hidden" name="dat_ve_id" value="{{ $datVe->id }}">
 
-                        <div class="payment-option" data-method="zalopay">
-                            <input type="radio" name="phuong_thuc_tt" value="zalopay" id="zalopay">
-                            <div class="payment-icon zalopay">
-                                <i class="fas fa-mobile-alt"></i>
-                            </div>
-                            <div class="payment-details">
-                                <h4>ZaloPay</h4>
-                                <p>Thanh toán nhanh chóng với ví điện tử ZaloPay</p>
-                            </div>
-                        </div>
-                    </form>
+                    @if (Auth::check() && Auth::user()->vai_tro_id == 4)
+                        {{-- ✅ Nhân viên: chỉ thanh toán tiền mặt --}}
+                        <form action="{{ route('thanh-toan.tien-mat') }}" method="POST">
+                            @csrf
+                            <input type="hidden" name="dat_ve_id" value="{{ $datVe->id }}">
+                            <button type="submit" class="btn-thanh-toan" style="font-size:18px; width:100%;">
+                                <i class="fas fa-money-bill-wave"></i> Thanh toán
+                            </button>
+                        </form>
+                    @else
+                        {{-- ✅ Khách hàng: ZaloPay --}}
+                        <form id="payment-form">
+                            @csrf
+                            <input type="hidden" name="dat_ve_id" value="{{ $datVe->id }}">
 
-                    <button id="btn-pay" class="btn-thanh-toan" disabled>
-                        <i class="fas fa-credit-card"></i> Tiến hành thanh toán
-                    </button>
+                            <div class="payment-option">
+                                <div class="payment-icon zalopay">
+                                    <i class="fas fa-mobile-alt"></i>
+                                </div>
+                                <input type="radio" name="phuong_thuc_tt" value="zalopay" id="zalopay">
+                                <div class="payment-details">
+                                    <h4>ZaloPay</h4>
+                                    <p>Thanh toán nhanh chóng với ví điện tử ZaloPay</p>
+                                </div>
+                            </div>
+                        </form>
+
+                        <button id="btn-pay" class="btn-thanh-toan" disabled style="font-size:18px; width:100%;">
+                            <i class="fas fa-credit-card"></i> Tiến hành thanh toán
+                        </button>
+                    @endif
                 </div>
 
                 <div class="order-summary">
@@ -116,7 +131,8 @@
                     <form method="POST" action="{{ route('client.thanh-toan.huy', $datVe->id) }}"
                         style="margin-top: 20px;">
                         @csrf
-                        <button type="submit" class="payment-button" style="background: #e53e3e;"
+                        <button type="submit" class="payment-button"
+                            style="background: #e53e3e;width:50%;margin-left:250px;"
                             onclick="return confirm('Bạn có chắc chắn muốn hủy đặt vé?')">
                             <i class="fas fa-times"></i> Hủy đặt vé
                         </button>
@@ -128,4 +144,3 @@
     @vite('resources/js/thanh-toan.js')
 
 @endsection
-

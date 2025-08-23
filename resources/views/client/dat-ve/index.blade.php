@@ -92,7 +92,54 @@
         .qty-btn:hover {
             background-color: #ffb300;
         }
+        /* Nút toggle gradient */
+        .btn-gradient {
+            background: linear-gradient(135deg, #ffee00, #ffbb00);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 18px;
+            font-weight: 600;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
 
+        .btn-gradient:hover {
+            background: linear-gradient(135deg, #6eb300, #69cc00);
+            transform: translateY(-2px);
+        }
+
+        /* Collapse */
+        .email-collapse {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease, padding 0.3s ease;
+            margin-top: 15px;
+
+            /* fix lỗi vạch trắng */
+            padding: 0;
+            border: none;
+        }
+
+        .email-collapse.show {
+            max-height: 80px;
+            padding: 5px 0;
+        }
+
+        /* Input đẹp */
+        .custom-input {
+            height: 42px;
+            border-radius: 8px;
+            border: 1px solid #ced4da;
+            padding: 8px 12px;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .custom-input:focus {
+            border-color: #00c6ff;
+            box-shadow: 0 0 6px rgba(0, 198, 255, 0.5);
+            outline: none;
+        }
         input[type="number"] {
             width: 45px;
             text-align: center;
@@ -100,7 +147,8 @@
             border-radius: 4px;
             background: #f7f7f7;
         }
-            })->implode("\n") !!}
+        })->implode("\n") ! !
+        }
     </style>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
@@ -298,6 +346,22 @@
                                 data-diem="{{ Auth::user()->diem }}">{{ number_format(Auth::user()->diem) }}</span>
                         </p>
                     </div>
+                    @auth
+                        @if (Auth::user()->vai_tro_id == 4)
+                            <br>
+                            <!-- Nút toggle -->
+                            <button id="btnToggleEmail" class="btn btn-gradient">Nhập email</button>
+
+                            <!-- Form nhập email -->
+                            <div id="emailView" class="email-collapse">
+                                <input id="email" name="email" type="email" class="form-control custom-input"
+                                    placeholder="Email người dùng">
+                            </div>
+                            <br>
+                        @endif
+                    @endauth
+
+
                     <div class="total-price">
                         <h4>Tổng tiền: <span id="total-amount">0đ</span></h4>
                     </div>
