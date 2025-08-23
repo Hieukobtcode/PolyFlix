@@ -2,6 +2,11 @@
 
 @section('title', 'Thanh toán vé xem phim')
 
+@section('styles')
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+@endsection
+
 @section('content')
     @vite('resources/css/thanh-toan.css')
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -102,32 +107,119 @@
                         @endif
 
                         <!-- Khuyến mãi -->
-                        <div class="promotion-section" style="margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 10px;">
+                        <div class="promotion-section"
+                            style="margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 10px;">
                             <h5 style="margin-bottom: 15px; color: #333;"><i class="fas fa-tags"></i> Mã khuyến mãi</h5>
                             <div class="input-group">
                                 <input type="text" id="promotion-code" class="form-control"
-                                       placeholder="Nhập mã khuyến mãi..." style="border-radius: 8px 0 0 8px;">
+                                    placeholder="Nhập mã khuyến mãi..." style="border-radius: 8px 0 0 8px;">
                                 <button type="button" id="apply-promotion" class="btn btn-primary"
-                                        style="border-radius: 0 8px 8px 0;">
+                                    style="border-radius: 0 8px 8px 0;">
                                     <i class="fas fa-check"></i> Áp dụng
                                 </button>
                             </div>
                             <div id="promotion-message" class="mt-2" style="display: none;"></div>
-                            <div id="promotion-discount" class="price-row" style="display: none; color: #28a745; font-weight: bold;">
+                            <div id="promotion-discount" class="price-row"
+                                style="display: none; color: #28a745; font-weight: bold;">
                                 <span>Giảm giá</span>
                                 <span id="discount-amount">0đ</span>
                             </div>
                         </div>
 
                         <!-- Tổng tiền -->
-                        <div class="total-section" style="border-top: 2px solid #dee2e6; padding-top: 15px; margin-top: 15px;">
+                        <div class="total-section"
+                            style="border-top: 2px solid #dee2e6; padding-top: 15px; margin-top: 15px;">
                             <div class="price-row total" style="font-size: 1.2rem; font-weight: bold; color: #ff5757;">
                                 <span>Tổng cộng</span>
-                                <span id="final-total">{{ number_format($tongThanhTien + $tongTienCombo + $tongTienDoAn) }}đ</span>
+                                <span
+                                    id="final-total">{{ number_format($tongThanhTien + $tongTienCombo + $tongTienDoAn) }}đ</span>
                             </div>
                         </div>
                     </div>
+                    <!-- Đồng hồ đếm ngược -->
+                    @if (isset($expiresAt))
+                        <div class="alert alert-warning">
+                            Thời gian giữ vé còn: <span id="countdown"></span>
+                        </div>
 
+                        <!-- Modal thông báo -->
+                        <div class="modal fade" id="expireModal" tabindex="-1" aria-labelledby="expireModalLabel"
+                            aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content text-center text-dark"> {{-- 👈 thêm text-dark --}}
+                                    <div class="modal-header">
+                                        <h5 class="modal-title text-dark" id="expireModalLabel">Thông báo</h5>
+                                        {{-- 👈 thêm text-dark --}}
+                                    </div>
+                                    <div class="modal-body">
+                                        Đơn của bạn đã hết thời gian giữ vé.<br>
+                                        Bạn sẽ được chuyển về trang chủ sau <span id="autoClose">30</span> giây.
+                                    </div>
+                                    <div class="modal-footer justify-content-center">
+                                        <button type="button" id="agreeBtn" class="btn btn-primary">Đồng ý</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <script>
+                            (function() {
+                                const expiresAt = new Date("{{ $expiresAt->format('Y-m-d H:i:s') }}").getTime();
+                                const countdownEl = document.getElementById('countdown');
+                                const autoCloseEl = document.getElementById('autoClose');
+
+                                function pad(n) {
+                                    return n < 10 ? '0' + n : n;
+                                }
+
+                                const timer = setInterval(() => {
+                                    const now = Date.now();
+                                    const diff = Math.floor((expiresAt - now) / 1000);
+
+                                    if (diff <= 0) {
+                                        clearInterval(timer);
+                                        countdownEl.innerText = "Hết thời gian!";
+
+                                        // Gọi API hủy vé
+                                        fetch("{{ route('client.thanh-toan.huy', $datVe->id) }}", {
+                                            method: 'POST',
+                                            headers: {
+                                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                                'Accept': 'application/json'
+                                            }
+                                        }).then(() => {
+                                            // Hiện modal Bootstrap
+                                            const modal = new bootstrap.Modal(document.getElementById('expireModal'));
+                                            modal.show();
+
+                                            // Đếm ngược 30 giây
+                                            let autoClose = 30;
+                                            const autoTimer = setInterval(() => {
+                                                autoClose--;
+                                                autoCloseEl.innerText = autoClose;
+                                                if (autoClose <= 0) {
+                                                    clearInterval(autoTimer);
+                                                    window.location.href = "{{ route('home') }}";
+                                                }
+                                            }, 1000);
+
+                                            // Nút đồng ý → về home ngay
+                                            document.getElementById('agreeBtn').addEventListener('click', function() {
+                                                clearInterval(autoTimer);
+                                                window.location.href = "{{ route('home') }}";
+                                            });
+                                        });
+
+                                    } else {
+                                        const m = Math.floor(diff / 60);
+                                        const s = diff % 60;
+                                        countdownEl.innerText = pad(m) + ':' + pad(s);
+                                    }
+                                }, 1000);
+                            })();
+                        </script>
+                    @endif
+                    <!-- Hủy đặt vé -->
                     <form method="POST" action="{{ route('client.thanh-toan.huy', $datVe->id) }}"
                         style="margin-top: 20px;">
                         @csrf
@@ -143,4 +235,15 @@
     </div>
     @vite('resources/js/thanh-toan.js')
 
+@endsection
+@section('scripts')
+    <script>
+        window.addEventListener("beforeunload", function() {
+            const url = "{{ route('client.thanh-toan.huy', $datVe->id) }}";
+            const data = new FormData();
+            data.append("_token", "{{ csrf_token() }}");
+
+            navigator.sendBeacon(url, data);
+        });
+    </script>
 @endsection

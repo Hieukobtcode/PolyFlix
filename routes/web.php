@@ -98,7 +98,7 @@ Route::get('/', [TrangChuController::class, 'index'])->name('home');
 Route::get('/rap/{uuid}', [TrangChuController::class, 'showrap'])->name('showrap');
 Route::get('/bai-viet', [DanhSachBaiVietController::class, 'index'])->name('client.bai-viet');
 Route::get('/bai-viet/{uuid}', [DanhSachBaiVietController::class, 'show'])->name('show-bai-viet');
-
+Route::get('/client.khuyen-mai', [KhuyenMaiController::class, 'index'])->name('khuyen-mai.index');
 // Liên hệ
 Route::get('/lien-he', [ClientLienHeController::class, 'index'])->name('client.lien-he');
 Route::post('/lien-he', [ClientLienHeController::class, 'store'])->name('client.lien-he.store');
@@ -125,8 +125,6 @@ Route::get('/debug-khuyen-mai', function () {
         ]);
     }
 });
-
-
 
 // Khuyến mãi cho client - sử dụng tên route khác do vấn đề với server
 Route::get('/promotions', [KhuyenMaiController::class, 'index'])->name('client.khuyen-mai.index');
