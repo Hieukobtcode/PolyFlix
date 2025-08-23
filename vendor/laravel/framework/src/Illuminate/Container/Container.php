@@ -998,34 +998,34 @@ class Container implements ArrayAccess, ContainerContract
             return $abstract;
         }
 
-        return $this->getConcreteBindingFromAttributes($abstract);
+        $attributes = [];
+
+        try {
+            $attributes = (new ReflectionClass($abstract))->getAttributes(Bind::class);
+        } catch (ReflectionException) {
+        }
+
+        $this->checkedForAttributeBindings[$abstract] = true;
+
+        if ($attributes === []) {
+            return $abstract;
+        }
+
+        return $this->getConcreteBindingFromAttributes($abstract, $attributes);
     }
 
     /**
      * Get the concrete binding for an abstract from the Bind attribute.
      *
      * @param  string  $abstract
+     * @param  array<int, \ReflectionAttribute<Bind>>  $reflectedAttributes
      * @return mixed
      */
-    protected function getConcreteBindingFromAttributes($abstract)
+    protected function getConcreteBindingFromAttributes($abstract, $reflectedAttributes)
     {
-        $this->checkedForAttributeBindings[$abstract] = true;
-
-        try {
-            $reflected = new ReflectionClass($abstract);
-        } catch (ReflectionException) {
-            return $abstract;
-        }
-
-        $bindAttributes = $reflected->getAttributes(Bind::class);
-
-        if ($bindAttributes === []) {
-            return $abstract;
-        }
-
         $concrete = $maybeConcrete = null;
 
-        foreach ($bindAttributes as $reflectedAttribute) {
+        foreach ($reflectedAttributes as $reflectedAttribute) {
             $instance = $reflectedAttribute->newInstance();
 
             if ($instance->environments === ['*']) {
@@ -1049,11 +1049,7 @@ class Container implements ArrayAccess, ContainerContract
             return $abstract;
         }
 
-        match ($this->getScopedTyped($reflected)) {
-            'scoped' => $this->scoped($abstract, $concrete),
-            'singleton' => $this->singleton($abstract, $concrete),
-            null => $this->bind($abstract, $concrete),
-        };
+        $this->bind($abstract, $concrete);
 
         return $this->bindings[$abstract]['concrete'];
     }

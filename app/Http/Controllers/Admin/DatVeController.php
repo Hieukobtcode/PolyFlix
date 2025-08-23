@@ -163,7 +163,7 @@ class DatVeController extends Controller
         return back()->with('success', 'Đã gửi vé về email người dùng!');
     }
 
-    public function print($id)
+   public function print($id)
     {
         $datVe = DatVe::with([
             'nguoiDung',
@@ -224,4 +224,5 @@ class DatVeController extends Controller
 
         return $pdf->stream('ve_xem_phim_' . $datVe->ma_dat_ve . '.pdf');
     }
+
 }
