@@ -144,7 +144,6 @@
     <a href="{{ route('phim.dang-chieu') }}" class="btn-see-more">
         <button class="btn-see">XEM THÊM</button>
     </a>
-
     @php
         $user = Auth::user();
     @endphp
@@ -163,7 +162,6 @@
         <a href="{{ route('khuyen-mai.index') }}">
             <button class="btn-km">TẤT CẢ ƯU ĐÃI</button>
         </a>
-
         <div class="goc-dien-anh-wrapper">
             @include('client.partials.goc-dien-anh', [
                 'phims' => $phims,
@@ -288,5 +286,35 @@ background:rgba(0,0,0,0.7);z-index:998;">
 
             return 'https://www.youtube.com/embed/' + video_id;
         }
+
+        // Copy code functionality for promotions
+        document.querySelectorAll('.copy-code-home').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const code = this.dataset.code;
+                navigator.clipboard.writeText(code).then(() => {
+                    const originalText = this.innerHTML;
+                    this.innerHTML = '<i class="fas fa-check"></i> Đã sao chép!';
+                    this.style.backgroundColor = '#28a745';
+
+                    setTimeout(() => {
+                        this.innerHTML = originalText;
+                        this.style.backgroundColor = '';
+                    }, 2000);
+                });
+            });
+        });
+
+        // Hover effect for promotion cards
+        document.querySelectorAll('.promotion-card-home').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-10px) scale(1.05)';
+                this.style.boxShadow = '0 20px 40px rgba(0,0,0,0.3)';
+            });
+
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+                this.style.boxShadow = 'none';
+            });
+        });
     </script>
 @endsection

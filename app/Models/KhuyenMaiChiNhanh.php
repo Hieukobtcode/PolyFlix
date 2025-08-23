@@ -11,9 +11,7 @@ class KhuyenMaiChiNhanh extends Model
 
     protected $table = 'khuyen_mai_chi_nhanhs';
 
-    // Định nghĩa tên cột created_at và updated_at mặc định
-    const CREATED_AT = 'created_at';
-    const UPDATED_AT = 'updated_at';
+    // Sử dụng timestamps mặc định của Laravel
 
     protected $fillable = [
         'khuyen_mai_id',

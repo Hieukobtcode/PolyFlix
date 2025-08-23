@@ -20,6 +20,7 @@ class GheNgoiSuatChieu extends Model
         'suat_chieu_id',
         'trang_thai',
         'user_id',
+        'expires_at',
     ];
 
     protected $casts = [

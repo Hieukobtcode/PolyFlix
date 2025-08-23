@@ -6,6 +6,7 @@ import "../css/dat-ve.css";
 $(document).ready(function () {
     console.log("dat-ve-client.js loaded successfully");
     initDatVe();
+    initSeatLockManagement();
 });
 
 function initDatVe() {
@@ -845,3 +846,120 @@ document.addEventListener("DOMContentLoaded", function () {
             : "Nhập email";
     });
 });
+// =======
+// // Quản lý khóa ghế và heartbeat
+// function initSeatLockManagement() {
+//     let heartbeatInterval = null;
+//     let selectedSeats = [];
+
+//     // Hàm gửi heartbeat để duy trì khóa ghế
+//     function sendHeartbeat() {
+//         if (selectedSeats.length === 0) return;
+
+//         const suatChieuId = $('input[name="suat_chieu_id"]').val();
+
+//         $.ajax({
+//             url: "/seat/heartbeat",
+//             method: "POST",
+//             headers: {
+//                 "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+//             },
+//             data: {
+//                 ghe_ids: selectedSeats,
+//                 suat_chieu_id: suatChieuId,
+//             },
+//             success: function (response) {
+//                 console.log("Heartbeat sent successfully:", response);
+//             },
+//             error: function (xhr) {
+//                 console.error("Heartbeat failed:", xhr);
+//                 // Nếu heartbeat thất bại, có thể ghế đã bị mở khóa
+//                 if (xhr.status === 409) {
+//                     alert("Một số ghế đã bị mở khóa. Vui lòng chọn lại.");
+//                     location.reload();
+//                 }
+//             },
+//         });
+//     }
+
+//     // Hàm mở khóa tất cả ghế khi user rời khỏi
+//     function unlockAllSeats() {
+//         if (selectedSeats.length === 0) return;
+
+//         const suatChieuId = $('input[name="suat_chieu_id"]').val();
+
+//         // Sử dụng sendBeacon để đảm bảo request được gửi ngay cả khi trang đang đóng
+//         const formData = new FormData();
+//         formData.append("_token", $('meta[name="csrf-token"]').attr("content"));
+//         formData.append("suat_chieu_id", suatChieuId);
+//         selectedSeats.forEach((seatId) => {
+//             formData.append("ghe_ids[]", seatId);
+//         });
+
+//         navigator.sendBeacon("/seat/unlock", formData);
+//     }
+
+//     // Cập nhật danh sách ghế đã chọn
+//     function updateSelectedSeats() {
+//         selectedSeats = [];
+//         $(".ghe-chieu.selected").each(function () {
+//             selectedSeats.push($(this).data("seat-id"));
+//         });
+
+//         // Bắt đầu hoặc dừng heartbeat
+//         if (selectedSeats.length > 0) {
+//             if (!heartbeatInterval) {
+//                 // Gửi heartbeat mỗi 2 phút (ghế khóa trong 5 phút)
+//                 heartbeatInterval = setInterval(sendHeartbeat, 2 * 60 * 1000);
+//                 console.log("Started heartbeat for seats:", selectedSeats);
+//             }
+//         } else {
+//             if (heartbeatInterval) {
+//                 clearInterval(heartbeatInterval);
+//                 heartbeatInterval = null;
+//                 console.log("Stopped heartbeat - no seats selected");
+//             }
+//         }
+//     }
+
+//     // Lắng nghe thay đổi ghế được chọn
+//     $(document).on("click", ".ghe-chieu", function () {
+//         // Delay để đảm bảo class 'selected' đã được cập nhật
+//         setTimeout(updateSelectedSeats, 100);
+//     });
+
+//     // Xử lý khi user rời khỏi trang
+//     window.addEventListener("beforeunload", function (e) {
+//         unlockAllSeats();
+//     });
+
+//     // Xử lý khi trang bị ẩn (mobile, tab switching)
+//     document.addEventListener("visibilitychange", function () {
+//         if (document.hidden) {
+//             // Trang bị ẩn - có thể user đã chuyển tab hoặc minimize
+//             console.log("Page hidden - maintaining heartbeat");
+//         } else {
+//             // Trang được hiển thị lại
+//             console.log("Page visible again");
+//             updateSelectedSeats(); // Cập nhật lại trạng thái
+//         }
+//     });
+
+//     // Cleanup khi user idle quá lâu (10 phút)
+//     let idleTimer = null;
+//     function resetIdleTimer() {
+//         clearTimeout(idleTimer);
+//         idleTimer = setTimeout(function () {
+//             if (selectedSeats.length > 0) {
+//                 alert("Bạn đã không hoạt động quá lâu. Ghế sẽ được mở khóa.");
+//                 unlockAllSeats();
+//                 location.reload();
+//             }
+//         }, 10 * 60 * 1000); // 10 phút
+//     }
+
+//     // Reset idle timer khi có hoạt động
+//     $(document).on("click keypress mousemove", resetIdleTimer);
+//     resetIdleTimer(); // Khởi tạo timer
+// }
+// >>>>>>> main

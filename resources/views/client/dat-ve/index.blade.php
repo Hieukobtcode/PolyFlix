@@ -92,7 +92,6 @@
         .qty-btn:hover {
             background-color: #ffb300;
         }
-
         /* Nút toggle gradient */
         .btn-gradient {
             background: linear-gradient(135deg, #ffee00, #ffbb00);
@@ -141,8 +140,6 @@
             box-shadow: 0 0 6px rgba(0, 198, 255, 0.5);
             outline: none;
         }
-
-
         input[type="number"] {
             width: 45px;
             text-align: center;

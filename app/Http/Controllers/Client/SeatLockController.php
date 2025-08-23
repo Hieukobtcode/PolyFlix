@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Client;
 
 use Illuminate\Http\Request;
 use App\Models\GheNgoiSuatChieu;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use App\Http\Controllers\Controller;
 
 class SeatLockController extends Controller
 {
@@ -26,21 +27,24 @@ class SeatLockController extends Controller
         $LOCK_MINUTES = 5;
         $expiresAt = Carbon::now()->addMinutes($LOCK_MINUTES);
 
+        // Cleanup ghế hết hạn trước khi kiểm tra
+        $this->cleanupExpiredSeats();
+
         // 1. Kiểm tra xung đột: có ghế đã được đặt (da_dat) hay đang bị người khác giữ (da_chon & expires_at > now)
         $conflicts = GheNgoiSuatChieu::whereIn('ghe_ngoi_id', $inputSeatIds)
             ->where('suat_chieu_id', $suatId)
-            ->where(function($q){
-                $q->where('trang_thai','da_dat')
-                  ->orWhere(function($q2){
-                      $q2->where('trang_thai','da_chon')
-                         ->where('expires_at','>', now());
-                  });
+            ->where(function ($q) {
+                $q->where('trang_thai', 'da_dat')
+                    ->orWhere(function ($q2) {
+                        $q2->where('trang_thai', 'da_chon')
+                            ->where('expires_at', '>', now());
+                    });
             })
             ->get();
 
         // phân loại conflict theo user & trạng thái
-        $conflictBooked = $conflicts->where('trang_thai','da_dat');
-        $conflictLockedByOther = $conflicts->where('trang_thai','da_chon')->filter(function($r) use($userId){
+        $conflictBooked = $conflicts->where('trang_thai', 'da_dat');
+        $conflictLockedByOther = $conflicts->where('trang_thai', 'da_chon')->filter(function ($r) use ($userId) {
             return $r->user_id != $userId && (!$r->expires_at || $r->expires_at->isFuture());
         });
 
@@ -117,5 +121,19 @@ class SeatLockController extends Controller
             ->update(['expires_at' => $newExpires]);
 
         return response()->json(['success' => true, 'expires_at' => $newExpires->toDateTimeString()]);
+    }
+
+    /**
+     * Cleanup ghế hết hạn
+     */
+    private function cleanupExpiredSeats()
+    {
+        GheNgoiSuatChieu::where('trang_thai', 'da_chon')
+            ->where('expires_at', '<', Carbon::now())
+            ->update([
+                'trang_thai' => 'trong',
+                'user_id' => null,
+                'expires_at' => null
+            ]);
     }
 }

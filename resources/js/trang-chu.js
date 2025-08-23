@@ -7,6 +7,8 @@ $(document).ready(function () {
     console.log("Trang chu JS loaded");
     // Khởi tạo đặt vé nhanh
     initBookingFast();
+    // Khởi tạo copy code functionality
+    initCopyCode();
 });
 
 function initBookingFast() {
@@ -257,5 +259,88 @@ function showError(message) {
         });
     } else {
         alert(message);
+    }
+}
+
+function initCopyCode() {
+    // Xử lý copy mã khuyến mãi
+    $(document).on("click", ".copy-code-home", function (e) {
+        e.preventDefault();
+        const code = $(this).data("code");
+        const button = $(this);
+
+        // Copy to clipboard
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard
+                .writeText(code)
+                .then(() => {
+                    showCopySuccess(button, code);
+                })
+                .catch(() => {
+                    fallbackCopyTextToClipboard(code, button);
+                });
+        } else {
+            fallbackCopyTextToClipboard(code, button);
+        }
+    });
+}
+
+function fallbackCopyTextToClipboard(text, button) {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    textArea.style.top = "0";
+    textArea.style.left = "0";
+    textArea.style.position = "fixed";
+
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+
+    try {
+        document.execCommand("copy");
+        showCopySuccess(button, text);
+    } catch (err) {
+        console.error("Fallback: Oops, unable to copy", err);
+        showCopyError();
+    }
+
+    document.body.removeChild(textArea);
+}
+
+function showCopySuccess(button, code) {
+    const originalText = button.html();
+    button.html('<i class="fas fa-check"></i> Đã copy!');
+    button.removeClass("btn-warning").addClass("btn-success");
+
+    setTimeout(() => {
+        button.html(originalText);
+        button.removeClass("btn-success").addClass("btn-warning");
+    }, 2000);
+
+    // Show toast notification if available
+    if (typeof Swal !== "undefined") {
+        Swal.fire({
+            icon: "success",
+            title: "Thành công!",
+            text: `Đã copy mã: ${code}`,
+            timer: 2000,
+            showConfirmButton: false,
+            toast: true,
+            position: "top-end",
+        });
+    }
+}
+
+function showCopyError() {
+    if (typeof Swal !== "undefined") {
+        Swal.fire({
+            icon: "error",
+            title: "Lỗi!",
+            text: "Không thể copy mã khuyến mãi",
+            timer: 2000,
+            showConfirmButton: false,
+            toast: true,
+            position: "top-end",
+        });
     }
 }

@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\DatVeController;
 use App\Http\Controllers\Client\DanhSachBaiVietController;
 use App\Http\Controllers\Client\ThanhToanController;
 use App\Http\Controllers\Client\TrangChuController;
+use App\Http\Controllers\SeatLockController;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
@@ -41,10 +42,12 @@ use App\Http\Controllers\Admin\RequestController;
 use App\Http\Controllers\Client\AIChatController;
 use App\Http\Controllers\Client\LoginController;
 use App\Http\Controllers\Client\ProfileController;
-use App\Http\Controllers\Client\KhuyenMaiController;
+
+use App\Http\Controllers\Client\LichChieuController;
 use App\Http\Controllers\Client\PhimsController;
 use App\Http\Controllers\Client\LienHeController as ClientLienHeController;
 use App\Http\Controllers\Client\TheLoaiController;
+use App\Http\Controllers\Client\KhuyenMaiController;
 
 Route::get('/', [TrangChuController::class, 'index'])->name('home');
 
@@ -67,6 +70,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/thanh-toan/tien-mat', [ThanhToanController::class, 'xuLyThanhToanTienMat'])->name('thanh-toan.tien-mat');
 
     Route::post('/thanh-toan/huy/{datVeId}', [ThanhToanController::class, 'huyThanhToan'])->name('client.thanh-toan.huy');
+    Route::get('/thanh-toan/huy/{datVeId}', [ThanhToanController::class, 'huyThanhToan'])->name('client.thanh-toan.huy-get');
 
 
     Route::get('/zalopay/ketqua', [ThanhToanController::class, 'ketQuaThanhToan'])->name('zalopay.ketqua');
@@ -99,8 +103,115 @@ Route::get('/bai-viet/{uuid}', [DanhSachBaiVietController::class, 'show'])->name
 Route::get('/lien-he', [ClientLienHeController::class, 'index'])->name('client.lien-he');
 Route::post('/lien-he', [ClientLienHeController::class, 'store'])->name('client.lien-he.store');
 
-Route::get('/client.khuyen-mai', [KhuyenMaiController::class, 'index'])->name('khuyen-mai.index');
+// Test route
+Route::get('/test-route', function () {
+    return 'Laravel routing is working!';
+});
+
+// Debug khuyến mãi
+Route::get('/debug-khuyen-mai', function () {
+    try {
+        $khuyenMais = \App\Models\KhuyenMai::conHieuLuc()->get();
+        return response()->json([
+            'success' => true,
+            'count' => $khuyenMais->count(),
+            'data' => $khuyenMais->toArray()
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'error' => $e->getMessage(),
+            'trace' => $e->getTraceAsString()
+        ]);
+    }
+});
+
+
+
+// Khuyến mãi cho client - sử dụng tên route khác do vấn đề với server
+Route::get('/promotions', [KhuyenMaiController::class, 'index'])->name('client.khuyen-mai.index');
+
+// API endpoint cho AJAX requests
+Route::get('/api/promotions', [KhuyenMaiController::class, 'apiIndex'])->name('api.promotions.index');
+
+// Route alias cho /khuyen-mai
+Route::get('/khuyen-mai', function () {
+    return redirect('/promotions');
+});
+Route::get('/promotions/{id}', [KhuyenMaiController::class, 'show'])->name('client.khuyen-mai.show');
+Route::post('/promotions/check-code', [KhuyenMaiController::class, 'checkCode'])->name('client.khuyen-mai.check-code');
+Route::post('/khuyen-mai/check-code', [KhuyenMaiController::class, 'checkCode'])->name('client.khuyen-mai.check-code-alt');
+Route::get('/api/khuyen-mai/by-type', [KhuyenMaiController::class, 'getByType'])->name('api.khuyen-mai.by-type');
+
+// Test khuyến mãi
+Route::get('/test-khuyen-mai', function () {
+    return view('test-khuyen-mai');
+})->name('test.khuyen-mai');
+
+// Demo tính năng khuyến mãi
+Route::get('/promotion-demo', function () {
+    $khuyenMais = \App\Models\KhuyenMai::conHieuLuc()->take(3)->get();
+    return view('client.khuyen-mai.demo', compact('khuyenMais'));
+})->name('promotion.demo');
+
+// Debug view khuyến mãi
+Route::get('/debug-promotions-view', function () {
+    $khuyenMais = \App\Models\KhuyenMai::conHieuLuc()
+        ->with(['chiNhanhs'])
+        ->orderBy('ngay_bat_dau', 'desc')
+        ->paginate(12);
+
+    return view('debug.promotions', compact('khuyenMais'));
+});
+
+// Simple promotions view
+Route::get('/promotions-simple', function () {
+    $khuyenMais = \App\Models\KhuyenMai::conHieuLuc()
+        ->with(['chiNhanhs'])
+        ->orderBy('ngay_bat_dau', 'desc')
+        ->paginate(12);
+
+    return view('client.khuyen-mai.simple', compact('khuyenMais'));
+});
+
+// Navigation test page
+Route::get('/test-navigation', function () {
+    return view('test.navigation');
+});
+
+// SPA Test page
+Route::get('/spa-test', function () {
+    return view('client.khuyen-mai.spa-test');
+})->name('spa.test');
 Route::get('/phim-dang-chieu', [PhimsController::class, 'phimDangChieu'])->name('phim.dang-chieu');
+
+// Lịch chiếu
+Route::get('/lich-chieu', [LichChieuController::class, 'index'])->name('client.lich-chieu');
+
+// Test route để debug
+Route::get('/test-lich-chieu', function () {
+    $today = \Carbon\Carbon::today();
+    $suatChieus = \App\Models\SuatChieu::with(['phim', 'phongChieu.rapPhim'])
+        ->where('ngay_bat_dau', '>=', $today)
+        ->where('trang_thai', 'hoat_dong')
+        ->orderBy('ngay_bat_dau')
+        ->orderBy('bat_dau')
+        ->get();
+
+    return response()->json([
+        'today' => $today->format('Y-m-d'),
+        'count' => $suatChieus->count(),
+        'sample' => $suatChieus->take(5)->map(function ($s) {
+            return [
+                'id' => $s->id,
+                'phim' => $s->phim->ten_phim,
+                'ngay' => $s->ngay_bat_dau,
+                'gio' => $s->bat_dau,
+                'rap' => $s->phongChieu->rapPhim->ten_rap ?? 'N/A'
+            ];
+        })
+    ]);
+});
 
 //Phim
 Route::get('/phim-sap-chieu', [PhimsController::class, 'phimSapChieu'])->name('phim.sap-chieu');
