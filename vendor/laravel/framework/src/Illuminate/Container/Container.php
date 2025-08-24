@@ -131,6 +131,13 @@ class Container implements ArrayAccess, ContainerContract
     protected $checkedForAttributeBindings = [];
 
     /**
+     * Whether a class has already been checked for Singleton or Scoped attributes.
+     *
+     * @var array<class-string, "scoped"|"singleton"|null>
+     */
+    protected $checkedForSingletonOrScopedAttributes = [];
+
+    /**
      * All of the registered rebound callbacks.
      *
      * @var array[]
@@ -281,7 +288,7 @@ class Container implements ArrayAccess, ContainerContract
             return false;
         }
 
-        if (($scopedType = $this->getScopedTyped(new ReflectionClass($abstract))) === null) {
+        if (($scopedType = $this->getScopedTyped($abstract)) === null) {
             return false;
         }
 
@@ -297,20 +304,36 @@ class Container implements ArrayAccess, ContainerContract
     /**
      * Determine if a ReflectionClass has scoping attributes applied.
      *
-     * @param  ReflectionClass<object>  $reflection
+     * @param  ReflectionClass<object>|class-string  $reflection
      * @return "singleton"|"scoped"|null
      */
-    protected function getScopedTyped(ReflectionClass $reflection): ?string
+    protected function getScopedTyped(ReflectionClass|string $reflection): ?string
     {
+        $className = $reflection instanceof ReflectionClass
+            ? $reflection->getName()
+            : $reflection;
+
+        if (array_key_exists($className, $this->checkedForSingletonOrScopedAttributes)) {
+            return $this->checkedForSingletonOrScopedAttributes[$className];
+        }
+
+        try {
+            $reflection = $reflection instanceof ReflectionClass
+                ? $reflection
+                : new ReflectionClass($reflection);
+        } catch (ReflectionException) {
+            return $this->checkedForSingletonOrScopedAttributes[$className] = null;
+        }
+
+        $type = null;
+
         if (! empty($reflection->getAttributes(Singleton::class))) {
-            return 'singleton';
+            $type = 'singleton';
+        } elseif (! empty($reflection->getAttributes(Scoped::class))) {
+            $type = 'scoped';
         }
 
-        if (! empty($reflection->getAttributes(Scoped::class))) {
-            return 'scoped';
-        }
-
-        return null;
+        return $this->checkedForSingletonOrScopedAttributes[$className] = $type;
     }
 
     /**
@@ -998,34 +1021,34 @@ class Container implements ArrayAccess, ContainerContract
             return $abstract;
         }
 
-        $attributes = [];
-
-        try {
-            $attributes = (new ReflectionClass($abstract))->getAttributes(Bind::class);
-        } catch (ReflectionException) {
-        }
-
-        $this->checkedForAttributeBindings[$abstract] = true;
-
-        if ($attributes === []) {
-            return $abstract;
-        }
-
-        return $this->getConcreteBindingFromAttributes($abstract, $attributes);
+        return $this->getConcreteBindingFromAttributes($abstract);
     }
 
     /**
      * Get the concrete binding for an abstract from the Bind attribute.
      *
      * @param  string  $abstract
-     * @param  array<int, \ReflectionAttribute<Bind>>  $reflectedAttributes
      * @return mixed
      */
-    protected function getConcreteBindingFromAttributes($abstract, $reflectedAttributes)
+    protected function getConcreteBindingFromAttributes($abstract)
     {
+        $this->checkedForAttributeBindings[$abstract] = true;
+
+        try {
+            $reflected = new ReflectionClass($abstract);
+        } catch (ReflectionException) {
+            return $abstract;
+        }
+
+        $bindAttributes = $reflected->getAttributes(Bind::class);
+
+        if ($bindAttributes === []) {
+            return $abstract;
+        }
+
         $concrete = $maybeConcrete = null;
 
-        foreach ($reflectedAttributes as $reflectedAttribute) {
+        foreach ($bindAttributes as $reflectedAttribute) {
             $instance = $reflectedAttribute->newInstance();
 
             if ($instance->environments === ['*']) {
@@ -1049,7 +1072,11 @@ class Container implements ArrayAccess, ContainerContract
             return $abstract;
         }
 
-        $this->bind($abstract, $concrete);
+        match ($this->getScopedTyped($reflected)) {
+            'scoped' => $this->scoped($abstract, $concrete),
+            'singleton' => $this->singleton($abstract, $concrete),
+            null => $this->bind($abstract, $concrete),
+        };
 
         return $this->bindings[$abstract]['concrete'];
     }
@@ -1749,6 +1776,7 @@ class Container implements ArrayAccess, ContainerContract
         $this->abstractAliases = [];
         $this->scopedInstances = [];
         $this->checkedForAttributeBindings = [];
+        $this->checkedForSingletonOrScopedAttributes = [];
     }
 
     /**

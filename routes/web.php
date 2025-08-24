@@ -74,6 +74,7 @@ Route::middleware('auth')->group(function () {
 
 
     Route::get('/zalopay/ketqua', [ThanhToanController::class, 'ketQuaThanhToan'])->name('zalopay.ketqua');
+    Route::get('/client.khuyen-mai', [KhuyenMaiController::class, 'index'])->name('khuyen-mai.index');
 
     // Profile
     Route::get('profile', [ProfileController::class, 'index'])->name('profile');
