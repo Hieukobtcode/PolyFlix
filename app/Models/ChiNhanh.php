@@ -53,5 +53,3 @@ class ChiNhanh extends Model
         return $this->belongsTo(User::class, 'quan_ly_id');
     }
 }
-
-
