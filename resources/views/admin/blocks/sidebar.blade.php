@@ -422,54 +422,6 @@
                         </a>
                     </li>
                 @elseif(Auth::user()->vai_tro_id == 3)
-                    <li class="sidebar-item">
-                        <a class="sidebar-link has-arrow indigo-hover-bg" href="javascript:void(0)"
-                            aria-expanded="false">
-                            <span class="aside-icon p-2 bg-indigo-subtle rounded-1">
-                                <i class="ti ti-chart-pie fs-6"></i>
-                            </span>
-                            <span class="hide-menu ps-1">Thống kê</span>
-                        </a>
-                        <ul aria-expanded="false" class="collapse first-level">
-                            <li class="sidebar-item">
-                                <a href="{{ route('admin.thong-ke.index') }}" class="sidebar-link">
-                                    <span class="sidebar-icon"></span>
-                                    <span class="hide-menu">Tổng quan</span>
-                                </a>
-                            </li>
-                            <li class="sidebar-item">
-                                <a href="{{ route('admin.thong-ke.doanh-thu') }}" class="sidebar-link">
-                                    <span class="sidebar-icon"></span>
-                                    <span class="hide-menu">Doanh thu</span>
-                                </a>
-                            </li>
-                            {{-- <li class="sidebar-item">
-                                <a href="{{ route('admin.thong-ke.ve') }}" class="sidebar-link">
-                                    <span class="sidebar-icon"></span>
-                                    <span class="hide-menu">Vé</span>
-                                </a>
-                            </li> --}}
-                            <li class="sidebar-item">
-                                <a href="{{ route('admin.thong-ke.suat-chieu') }}" class="sidebar-link">
-                                    <span class="sidebar-icon"></span>
-                                    <span class="hide-menu">Suất chiếu</span>
-                                </a>
-                            </li>
-                            {{-- <li class="sidebar-item">
-                                <a href="{{ route('admin.thong-ke.suat-chieu') }}" class="sidebar-link">
-                                    <span class="sidebar-icon"></span>
-                                    <span class="hide-menu">Đồ ăn, combo</span>
-                                </a>
-                            </li> --}}
-                            {{-- <li class="sidebar-item">
-                                <a href="{{ route('admin.thong-ke.phim') }}" class="sidebar-link">
-                                    <span class="sidebar-icon"></span>
-                                    <span class="hide-menu">Phim</span>
-                                </a>
-                            </li> --}}
-                        </ul>
-                    </li>
-                    {{-- Hệ thống rạp --}}
                     @php
                         $chi_nhanh_id = \App\Models\RapPhim::where('quan_ly_id', Auth::id())->value('chi_nhanh_id');
                     @endphp
@@ -525,7 +477,16 @@
                             <span class="hide-menu ps-1">Đơn vé</span>
                         </a>
                     </li>
-                @endif
+                    @elseif(Auth::user()->vai_tro_id == 4)
+                    <li class="sidebar-item">
+                        <a href="{{ route('admin.dat-ves.index') }}" class="sidebar-link secondary-hover-bg">
+                            <span class="aside-icon p-2 bg-secondary-subtle rounded-1">
+                                <i class="ti ti-ticket fs-6"></i>
+                            </span>
+                            <span class="hide-menu ps-1">Đơn vé</span>
+                        </a>
+                    </li>
+                    @endif
 
             </ul>
         </nav>
