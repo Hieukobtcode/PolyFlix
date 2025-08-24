@@ -1,0 +1,62 @@
+/* 
+* CSS cho module Liên hệ Admin 
+* Điều chỉnh kích thước icon và các element giao diện
+*/
+
+/* Điều chỉnh kích thước icon cho các nút */
+.btn .icon {
+    width: 16px !important;
+    height: 16px !important;
+}
+
+.btn-sm .icon {
+    width: 14px !important;
+    height: 14px !important;
+}
+
+.btn-lg .icon {
+    width: 18px !important;
+    height: 18px !important;
+}
+
+/* Icon trong các card thống kê */
+.icon-xl {
+    width: 40px !important;
+    height: 40px !important;
+}
+
+/* Icon trong bảng danh sách */
+.table .icon {
+    width: 16px !important;
+    height: 16px !important;
+}
+
+/* Icon trong dropdown menu */
+.dropdown-menu .icon {
+    width: 14px !important;
+    height: 14px !important;
+}
+
+/* Icon trong breadcrumb */
+.breadcrumb .icon {
+    width: 14px !important;
+    height: 14px !important;
+}
+
+/* Điều chỉnh khoảng cách giữa icon và text */
+.btn .icon.me-2 {
+    margin-right: 6px !important;
+}
+
+/* Responsive cho mobile */
+@media (max-width: 768px) {
+    .btn .icon {
+        width: 14px !important;
+        height: 14px !important;
+    }
+
+    .btn-sm .icon {
+        width: 12px !important;
+        height: 12px !important;
+    }
+}

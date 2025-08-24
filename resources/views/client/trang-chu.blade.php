@@ -148,14 +148,129 @@
         $user = Auth::user();
     @endphp
 
-    {{-- Chỉ hiển thị nếu chưa đăng nhập hoặc user không có vai_tro_id = 4 --}}
-    @if (!$user || $user->vai_tro_id != 4)
-        <div class="khuyen-mai">
-            <p>KHUYẾN MÃI</p>
-            <div class="img">
-                <img width="350px" src="{{ asset('khuyen-mai/c_student.png') }}" alt="">
-                <img width="350px" src="{{ asset('khuyen-mai/C_TEN.png') }}" alt="">
-                <img width="350px" src="{{ asset('khuyen-mai/monday_1_.jpg') }}" alt="">
+    <style>
+        .promotions-section {
+            padding: 50px 0;
+            background: linear-gradient(135deg, #3f2b96 0%, #454578 50%, #3b3b96 100%);
+            color: white;
+        }
+        .promotions-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); /* 2 cards per row on desktop */
+            gap: 25px;
+            margin-top: 30px;
+        }
+        .promotion-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .promotion-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+        }
+        .promotion-title {
+            font-size: 1.5rem; /* Increased font size */
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .promotion-description {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-bottom: 15px;
+        }
+        .promo-code-wrapper {
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            padding: 10px;
+            margin: 20px 0;
+        }
+        .promo-code {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #f1c40f;
+            letter-spacing: 2px;
+        }
+        .promo-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        .btn-promo {
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-weight: 600;
+            text-transform: uppercase;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-details {
+            background-color: transparent;
+            border: 2px solid #f1c40f;
+            color: #f1c40f;
+        }
+        .btn-details:hover {
+            background-color: #f1c40f;
+            color: #3f2b96;
+        }
+        .btn-copy {
+            background-color: #f1c40f;
+            color: #3f2b96;
+        }
+        .btn-copy:hover {
+            background-color: #e1b30a;
+        }
+
+        /* Responsive: 1 card per row on mobile */
+        @media (max-width: 768px) {
+            .promotions-grid {
+                grid-template-columns: 1fr;
+            }
+            .promotion-title {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+
+    <!-- Khuyến mãi nổi bật -->
+    @if(isset($khuyenMaisNoiBat) && $khuyenMaisNoiBat->count() > 0)
+    <section class="promotions-section">
+        <div class="container">
+            <div class="text-center">
+                <h2 class="section-title">KHUYẾN MÃI HOT</h2>
+                <p class="section-subtitle">Những ưu đãi siêu hấp dẫn chỉ có tại PolyFlix!</p>
+            </div>
+
+            <div class="promotions-grid">
+                @foreach($khuyenMaisNoiBat as $km)
+                <div class="promotion-card">
+                    <h3 class="promotion-title">{{ $km->ten }}</h3>
+                    <p class="promotion-description">{{ $km->mo_ta }}</p>
+
+                    <div class="promo-code-wrapper">
+                        <span>MÃ KHUYẾN MÃI</span>
+                        <div class="promo-code">{{ $km->ma_khuyen_mai }}</div>
+                    </div>
+
+                    <div class="promo-buttons">
+                        <a href="{{ route('client.khuyen-mai.show', $km->id) }}" class="btn-promo btn-details">Chi tiết</a>
+                        <button class="btn-promo btn-copy copy-code-home" data-code="{{ $km->ma_khuyen_mai }}">Sao chép</button>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+
+             <div class="text-center mt-4">
+                <a href="{{ route('client.khuyen-mai.index') }}" class="btn-see-more">
+                    <button class="btn-see">XEM TẤT CẢ ƯU ĐÃI</button>
+                </a>
             </div>
         </div>
 

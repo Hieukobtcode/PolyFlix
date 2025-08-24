@@ -43,12 +43,17 @@ body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     line-height: 1.6;
     color: var(--text-primary);
-    background-color: #30304E;
+    background: radial-gradient(
+        circle at top left,
+        #3f2b96 0%,
+        #454578 40%,
+        #3b3b96 100%
+    );
 }
 
 /* Hero Section */
 .hero-section {
-    background: linear-gradient(135deg, #663399 0%, #414184 100%);
+    background: linear-gradient(135deg, #3f2b96 0%, #454578 50%, #3b3b96 100%);
     color: white;
     padding: 80px 0;
     text-align: center;
@@ -96,11 +101,12 @@ body {
 }
 
 .search-form {
-    background: white;
+    background: rgba(255, 255, 255, 0.1);
     border-radius: var(--border-radius-xl);
     box-shadow: var(--shadow-xl);
     overflow: hidden;
     transition: var(--transition);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .search-form:hover {
@@ -117,7 +123,7 @@ body {
 .search-icon {
     position: absolute;
     left: 24px;
-    color: var(--text-secondary);
+    color: #a0aec0;
     font-size: 1.2rem;
     z-index: 2;
     transition: var(--transition);
@@ -129,19 +135,19 @@ body {
     border: none;
     font-size: 1.1rem;
     font-weight: 500;
-    color: var(--text-primary);
+    color: white;
     background: transparent;
     outline: none;
 }
 
 .search-input::placeholder {
-    color: var(--text-light);
+    color: #a0aec0;
     font-weight: 400;
 }
 
 .search-btn {
     padding: 20px 32px;
-    background: linear-gradient(135deg, #663399 0%, #414184 100%);
+    background: linear-gradient(to right, #ff6600, #ffcc00);
     color: white;
     border: none;
     font-weight: 600;
@@ -159,7 +165,7 @@ body {
 /* Filter Tabs */
 .filter-section {
     padding: 60px 20px;
-    background: #30304E;
+    background: linear-gradient(135deg, #3f2b96 0%, #454578 50%, #3b3b96 100%);
 }
 
 .filter-container {
@@ -223,7 +229,7 @@ body {
 }
 
 .tab-btn.active {
-    background: linear-gradient(135deg, #663399 0%, #414184 100%);
+    background: linear-gradient(to right, #ff6600, #ffcc00);
     color: white;
     border-color: transparent;
     transform: translateY(-2px);
@@ -420,35 +426,9 @@ body {
 }
 
 .detail-btn:hover {
-    background: linear-gradient(135deg, #663399 0%, #414184 100%);
+    background: linear-gradient(to right, #ff6600, #ffcc00);
     color: white;
     transform: translateY(-2px);
-}
-
-/* Add background effects similar to homepage */
-.filter-section::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: radial-gradient(
-            circle at 20% 80%,
-            rgba(255, 107, 53, 0.1) 0%,
-            transparent 50%
-        ),
-        radial-gradient(
-            circle at 80% 20%,
-            rgba(255, 215, 0, 0.1) 0%,
-            transparent 50%
-        );
-    pointer-events: none;
-}
-
-.filter-section {
-    position: relative;
-    overflow: hidden;
 }
 
 /* Enhanced promotion card hover effects */
@@ -456,25 +436,6 @@ body {
     transform: translateY(-8px) scale(1.02);
     box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
     background: rgba(255, 255, 255, 0.15) !important;
-}
-
-/* Add floating animation */
-@keyframes float {
-    0%, 100% {
-        transform: translateY(0px);
-    }
-    50% {
-        transform: translateY(-5px);
-    }
-}
-
-.promotion-card-wrapper:nth-child(odd) {
-    animation: float 6s ease-in-out infinite;
-}
-
-.promotion-card-wrapper:nth-child(even) {
-    animation: float 6s ease-in-out infinite reverse;
-    animation-delay: 3s;
 }
 </style>
 
