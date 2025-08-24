@@ -11,8 +11,6 @@ return array(
     'Anhskohbo\\NoCaptcha\\NoCaptchaServiceProvider' => $vendorDir . '/anhskohbo/no-captcha/src/NoCaptchaServiceProvider.php',
     'App\\Console\\Commands\\CleanupExpiredSeats' => $baseDir . '/app/Console/Commands/CleanupExpiredSeats.php',
     'App\\Console\\Commands\\FreshSeed' => $baseDir . '/app/Console/Commands/FreshSeed.php',
-    'App\\Events\\GheBiHuyChon' => $baseDir . '/app/Events/GheBiHuyChon.php',
-    'App\\Events\\GheDangDuocChon' => $baseDir . '/app/Events/GheDangDuocChon.php',
     'App\\Helpers\\IdFormatter' => $baseDir . '/app/Helpers/IdFormatter.php',
     'App\\Http\\Controllers\\Admin\\BaiVietController' => $baseDir . '/app/Http/Controllers/Admin/BaiVietController.php',
     'App\\Http\\Controllers\\Admin\\BannerController' => $baseDir . '/app/Http/Controllers/Admin/BannerController.php',

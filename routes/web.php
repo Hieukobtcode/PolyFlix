@@ -50,6 +50,7 @@ use App\Http\Controllers\Client\TheLoaiController;
 use App\Http\Controllers\Client\KhuyenMaiController;
 
 Route::get('/', [TrangChuController::class, 'index'])->name('home');
+Route::get('/client.khuyen-mai', [KhuyenMaiController::class, 'index'])->name('khuyen-mai.index');
 
 Route::middleware('auth')->group(function () {
 

@@ -375,6 +375,7 @@
                         </a>
                     </li>
                 @elseif(Auth::user()->vai_tro_id == 3)
+                @elseif(Auth::user()->vai_tro_id == 3)
                     @php
                         $chi_nhanh_id = \App\Models\RapPhim::where('quan_ly_id', Auth::id())->value('chi_nhanh_id');
                     @endphp
@@ -430,7 +431,16 @@
                             <span class="hide-menu ps-1">Đơn vé</span>
                         </a>
                     </li>
-                @endif
+                    @elseif(Auth::user()->vai_tro_id == 4)
+                    <li class="sidebar-item">
+                        <a href="{{ route('admin.dat-ves.index') }}" class="sidebar-link secondary-hover-bg">
+                            <span class="aside-icon p-2 bg-secondary-subtle rounded-1">
+                                <i class="ti ti-ticket fs-6"></i>
+                            </span>
+                            <span class="hide-menu ps-1">Đơn vé</span>
+                        </a>
+                    </li>
+                    @endif
 
             </ul>
         </nav>
