@@ -42,13 +42,15 @@ class KhuyenMai extends Model
         'deleted_at' => 'datetime',
     ];
 
-    // Sử dụng timestamps mặc định của Laravel
+    // Định nghĩa tên cột timestamps tùy chỉnh
+    const CREATED_AT = 'create_at';
+    const UPDATED_AT = 'update_at';
 
     // Quan hệ với chi nhánh thông qua bảng trung gian
     public function chiNhanhs()
     {
         return $this->belongsToMany(ChiNhanh::class, 'khuyen_mai_chi_nhanhs', 'khuyen_mai_id', 'chi_nhanh_id')
-            ->withTimestamps();
+            ->withTimestamps('created_at', 'updated_at');
     }
 
     // Quan hệ với lịch sử sử dụng khuyến mãi
@@ -67,6 +69,19 @@ class KhuyenMai extends Model
     public function raps()
     {
         return $this->hasMany(Rap::class, 'khuyen_mai_id');
+    }
+
+    // Quan hệ với rạp phim thông qua bảng trung gian
+    public function rapPhims()
+    {
+        return $this->belongsToMany(RapPhim::class, 'khuyen_mai_rap_phims', 'khuyen_mai_id', 'rap_phim_id')
+            ->withTimestamps();
+    }
+
+    // Quan hệ với bảng trung gian khuyến mãi rạp phim
+    public function khuyenMaiRapPhims()
+    {
+        return $this->hasMany(KhuyenMaiRapPhim::class, 'khuyen_mai_id');
     }
 
     // Scope để lọc khuyến mãi theo trạng thái

@@ -7,11 +7,13 @@ use App\Models\LienHe;
 use App\Models\LienHeActivityLog;
 use App\Models\LienHeNote;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
-use App\Mail\ContactReplyMail;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\View;
+use App\Mail\ContactReplyMail;
 
 
 class LienHeController extends Controller
@@ -340,22 +342,41 @@ class LienHeController extends Controller
     public function dashboard()
     {
         try {
+            $user = Auth::user();
+            $chiNhanhId = null;
+
+            // Kiểm tra vai trò và lấy chi_nhanh_id nếu là Admin Chi Nhánh
+            if ($user->vaiTro->ten_vai_tro === 'Admin Chi Nhánh') {
+                $chiNhanhManaged = $user->chiNhanhDangQuanLy;
+                if ($chiNhanhManaged) {
+                    $chiNhanhId = $chiNhanhManaged->id;
+                }
+            }
+
+            // Query cơ sở - Admin Chi Nhánh chỉ thấy liên hệ của chi nhánh đó (nếu có trường chi_nhanh_id)
+            $lienHeQuery = LienHe::query();
+            if ($chiNhanhId && Schema::hasColumn('lien_hes', 'chi_nhanh_id')) {
+                $lienHeQuery->where('chi_nhanh_id', $chiNhanhId);
+            }
+
             // Thống kê tổng quan
             $stats = [
-                'total' => LienHe::count(),
-                'pending' => LienHe::where('trang_thai', false)->count(),
-                'completed' => LienHe::where('trang_thai', true)->count(),
-                'high_priority' => LienHe::where('muc_do_uu_tien', 'cao')->count(),
+                'total' => $lienHeQuery->clone()->count(),
+                'pending' => $lienHeQuery->clone()->where('trang_thai', false)->count(),
+                'completed' => $lienHeQuery->clone()->where('trang_thai', true)->count(),
+                'high_priority' => $lienHeQuery->clone()->where('muc_do_uu_tien', 'cao')->count(),
             ];
 
             // Thống kê theo phân loại
-            $categoryStats = LienHe::select('phan_loai', DB::raw('count(*) as total'))
+            $categoryStats = $lienHeQuery->clone()
+                ->select('phan_loai', DB::raw('count(*) as total'))
                 ->whereNotNull('phan_loai')
                 ->groupBy('phan_loai')
                 ->get();
 
             // Thống kê theo nguồn gốc
-            $sourceStats = LienHe::select('nguon_goc', DB::raw('count(*) as total'))
+            $sourceStats = $lienHeQuery->clone()
+                ->select('nguon_goc', DB::raw('count(*) as total'))
                 ->whereNotNull('nguon_goc')
                 ->groupBy('nguon_goc')
                 ->get();
@@ -364,7 +385,7 @@ class LienHeController extends Controller
             $dateStats = [];
             for ($i = 6; $i >= 0; $i--) {
                 $date = now()->subDays($i)->format('Y-m-d');
-                $count = LienHe::whereDate('create_at', $date)->count();
+                $count = $lienHeQuery->clone()->whereDate('create_at', $date)->count();
                 $dateStats[$date] = $count;
             }
 

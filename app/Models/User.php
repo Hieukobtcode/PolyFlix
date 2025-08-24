@@ -78,10 +78,9 @@ class User extends Authenticatable
         return $this->hasOne(ChiNhanh::class, 'quan_ly_id');
     }
 
-    
-    public function rapPhim()
+    // User là quản lý của 1 rạp
+    public function rapDangQuanLy()
     {
-        return $this->belongsTo(RapPhim::class, 'rap_id');
+        return $this->hasOne(RapPhim::class, 'quan_ly_id');
     }
-
 }

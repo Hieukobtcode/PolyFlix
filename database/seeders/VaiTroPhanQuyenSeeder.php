@@ -71,7 +71,10 @@ class VaiTroPhanQuyenSeeder extends Seeder
             139,
             140,
             141,
-            142
+            142,
+            198,
+            199,
+            200
         ];
 
         $rapPermissionIds = [

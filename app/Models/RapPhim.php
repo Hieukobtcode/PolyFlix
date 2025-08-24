@@ -62,5 +62,12 @@ class RapPhim extends Model
         return $this->hasMany(User::class, 'rap_id');
     }
 
+    // Quan hệ với khuyến mãi thông qua bảng trung gian
+    public function khuyenMais()
+    {
+        return $this->belongsToMany(KhuyenMai::class, 'khuyen_mai_rap_phims', 'rap_phim_id', 'khuyen_mai_id')
+            ->withTimestamps();
+    }
+
 
 }

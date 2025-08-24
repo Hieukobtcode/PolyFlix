@@ -60,27 +60,43 @@
         </div>
 
         <!-- Bộ lọc -->
-        <div class="d-flex col-12 mb-4 gap-3">
-            <div class="d-flex gap-2 w-100">
-                <select name="branch_id" id="branch-select" class="form-select w-100">
-                    <option value="">Tất cả chi nhánh</option>
-                    @foreach ($danhSachChiNhanh as $chiNhanh)
-                        <option value="{{ $chiNhanh->id }}" {{ request('branch_id') == $chiNhanh->id ? 'selected' : '' }}>
-                            {{ $chiNhanh->ten_chi_nhanh }}
+        <div class="d-flex col-12 mb-4 gap-3 align-items-center">
+            @if (Auth::user()->vaiTro->ten_vai_tro === 'Admin Chi Nhánh' && $danhSachChiNhanh->count() == 1)
+                <div class="flex-grow-1">
+                    <h6 class="mb-0">Chi nhánh: <strong>{{ $danhSachChiNhanh->first()->ten_chi_nhanh }}</strong></h6>
+                    <input type="hidden" id="branch-select" value="{{ $danhSachChiNhanh->first()->id }}">
+                </div>
+            @else
+                <div class="flex-grow-1">
+                    <select name="branch_id" id="branch-select" class="form-select">
+                        <option value="">Tất cả chi nhánh</option>
+                        @foreach ($danhSachChiNhanh as $chiNhanh)
+                            <option value="{{ $chiNhanh->id }}" {{ request('branch_id') == $chiNhanh->id ? 'selected' : '' }}>
+                                {{ $chiNhanh->ten_chi_nhanh }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+            @endif
+
+            <div class="flex-grow-1">
+                <select name="rap_id" id="rap-select" class="form-select">
+                    <option value="">Tất cả rạp chiếu</option>
+                    @foreach ($danhSachRap as $rap)
+                        <option value="{{ $rap->id }}" {{ request('rap_id') == $rap->id ? 'selected' : '' }}>
+                            {{ $rap->ten_rap }}
                         </option>
                     @endforeach
                 </select>
             </div>
-            <select name="rap_id" id="rap-select" class="form-select w-100">
-                <option value="">Tất cả rạp chiếu</option>
-                @foreach ($danhSachRap as $rap)
-                    <option value="{{ $rap->id }}" {{ request('rap_id') == $rap->id ? 'selected' : '' }}>
-                        {{ $rap->ten_rap }}
-                    </option>
-                @endforeach
-            </select>
-            <input type="date" id="tu-ngay" class="form-control" value="{{ $tuNgay ?? '' }}">
-            <input type="date" id="den-ngay" class="form-control" value="{{ $denNgay ?? '' }}">
+
+            <div class="flex-grow-1">
+                <input type="date" id="tu-ngay" class="form-control" value="{{ $tuNgay ?? '' }}" placeholder="Từ ngày">
+            </div>
+
+            <div class="flex-grow-1">
+                <input type="date" id="den-ngay" class="form-control" value="{{ $denNgay ?? '' }}" placeholder="Đến ngày">
+            </div>
         </div>
 
         <!-- Biểu đồ số vé bán được -->

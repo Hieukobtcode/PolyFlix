@@ -432,6 +432,130 @@
                     </li>
                 @endif
 
+                {{-- Menu cho Admin Chi Nhánh --}}
+                @if (Auth::user()->vai_tro_id == 2)
+                    {{-- Thống kê chi nhánh --}}
+                    <li class="sidebar-item">
+                        <a class="sidebar-link has-arrow indigo-hover-bg" href="javascript:void(0)"
+                            aria-expanded="false">
+                            <span class="aside-icon p-2 bg-indigo-subtle rounded-1">
+                                <i class="ti ti-chart-pie fs-6"></i>
+                            </span>
+                            <span class="hide-menu ps-1">Thống kê</span>
+                        </a>
+                        <ul aria-expanded="false" class="collapse first-level">
+                            <li class="sidebar-item">
+                                <a href="{{ route('admin.thong-ke.index') }}" class="sidebar-link">
+                                    <span class="sidebar-icon"></span>
+                                    <span class="hide-menu">Tổng quan</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-item">
+                                <a href="{{ route('admin.thong-ke.doanh-thu') }}" class="sidebar-link">
+                                    <span class="sidebar-icon"></span>
+                                    <span class="hide-menu">Doanh thu</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-item">
+                                <a href="{{ route('admin.thong-ke.suat-chieu') }}" class="sidebar-link">
+                                    <span class="sidebar-icon"></span>
+                                    <span class="hide-menu">Suất chiếu</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    {{-- Quản lý chi nhánh của mình --}}
+                    <li class="sidebar-item">
+                        <a class="sidebar-link has-arrow primary-hover-bg" href="javascript:void(0)"
+                            aria-expanded="false">
+                            <span class="aside-icon p-2 bg-primary-subtle rounded-1">
+                                <i class="ti ti-theater fs-7"></i>
+                            </span>
+                            <span class="hide-menu ps-1">Chi nhánh của tôi</span>
+                        </a>
+                        <ul aria-expanded="false" class="collapse first-level">
+                            <li class="sidebar-item">
+                                <a href="{{ route('admin.suat-chieu.index') }}" class="sidebar-link">
+                                    <span class="sidebar-icon"></span>
+                                    <span class="hide-menu">Suất chiếu</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-item">
+                                <a href="{{ route('admin.dat-ves.index') }}" class="sidebar-link">
+                                    <span class="sidebar-icon"></span>
+                                    <span class="hide-menu">Đơn vé</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-item">
+                                <a href="{{ route('admin.chi-nhanh-khuyen-mai.index') }}" class="sidebar-link">
+                                    <span class="sidebar-icon"></span>
+                                    <span class="hide-menu">Khuyến mãi</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                @endif
+
+                {{-- Menu cho Admin Rạp --}}
+                @if (Auth::user()->vai_tro_id == 3)
+                    {{-- Thống kê --}}
+                    <li class="sidebar-item">
+                        <a class="sidebar-link has-arrow indigo-hover-bg" href="javascript:void(0)"
+                            aria-expanded="false">
+                            <span class="aside-icon p-2 bg-indigo-subtle rounded-1">
+                                <i class="ti ti-chart-line fs-7 text-indigo"></i>
+                            </span>
+                            <span class="hide-menu ps-1">Thống kê</span>
+                        </a>
+                        <ul aria-expanded="false" class="collapse first-level">
+                            <li class="sidebar-item">
+                                <a href="{{ route('admin.thong-ke.index') }}" class="sidebar-link">
+                                    <span class="sidebar-icon"></span>
+                                    <span class="hide-menu">Tổng quan</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-item">
+                                <a href="{{ route('admin.thong-ke.doanh-thu') }}" class="sidebar-link">
+                                    <span class="sidebar-icon"></span>
+                                    <span class="hide-menu">Doanh thu</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-item">
+                                <a href="{{ route('admin.thong-ke.suat-chieu') }}" class="sidebar-link">
+                                    <span class="sidebar-icon"></span>
+                                    <span class="hide-menu">Suất chiếu</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    {{-- Quản lý rạp của mình --}}
+                    <li class="sidebar-item">
+                        <a class="sidebar-link has-arrow primary-hover-bg" href="javascript:void(0)"
+                            aria-expanded="false">
+                            <span class="aside-icon p-2 bg-primary-subtle rounded-1">
+                                <i class="ti ti-building fs-7 text-primary"></i>
+                            </span>
+                            <span class="hide-menu ps-1">Quản lý rạp</span>
+                        </a>
+                        <ul aria-expanded="false" class="collapse first-level">
+                            <li class="sidebar-item">
+                                <a href="{{ route('admin.phong-chieu.index') }}" class="sidebar-link">
+                                    <span class="sidebar-icon"></span>
+                                    <span class="hide-menu">Phòng chiếu</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-item">
+                                <a href="{{ route('admin.suat-chieu.index') }}" class="sidebar-link">
+                                    <span class="sidebar-icon"></span>
+                                    <span class="hide-menu">Suất chiếu</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                @endif
+
             </ul>
         </nav>
     </div>

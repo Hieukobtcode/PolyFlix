@@ -425,4 +425,11 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access', 'per
     });
     // Hủy lời mời quản lý
     Route::post('invite/cancel', [InviteController::class, 'cancel'])->name('invite.cancel');
+
+    // Khuyến mãi cho admin chi nhánh
+    Route::prefix('chi-nhanh-khuyen-mai')->name('chi-nhanh-khuyen-mai.')->middleware('admin.chi.nhanh')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\ChiNhanhKhuyenMaiController::class, 'index'])->name('index');
+        Route::get('/{id}', [\App\Http\Controllers\Admin\ChiNhanhKhuyenMaiController::class, 'show'])->name('show');
+        Route::get('/bao-cao/index', [\App\Http\Controllers\Admin\ChiNhanhKhuyenMaiController::class, 'baoCao'])->name('bao-cao');
+    });
 });

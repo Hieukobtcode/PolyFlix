@@ -188,9 +188,10 @@ class PhanQuyenSeeder extends Seeder
             ['id' => 169, 'ten' => 'Gán khuyến mãi cho chi nhánh', 'slug' => 'admin.khuyen-mai.assign-chi-nhanh'],
             ['id' => 170, 'ten' => 'Xem thống kê sử dụng khuyến mãi', 'slug' => 'admin.khuyen-mai.thong-ke-su-dung'],
 
-
-
-
+            // Khuyến mãi cho admin chi nhánh
+            ['id' => 198, 'ten' => 'Xem khuyến mãi chi nhánh', 'slug' => 'admin.chi-nhanh-khuyen-mai.index'],
+            ['id' => 199, 'ten' => 'Xem chi tiết khuyến mãi chi nhánh', 'slug' => 'admin.chi-nhanh-khuyen-mai.show'],
+            ['id' => 200, 'ten' => 'Xem báo cáo khuyến mãi chi nhánh', 'slug' => 'admin.chi-nhanh-khuyen-mai.bao-cao'],
 
             ['id' => 171, 'ten' => 'Xem yêu cầu quản lý', 'slug' => 'admin.requests.index'],
             ['id' => 172, 'ten' => 'Phê duyệt yêu cầu', 'slug' => 'admin.requests.approve'],
