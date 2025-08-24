@@ -17,18 +17,12 @@
         overflow-x: hidden;
     }
 
-    /* Particle Background */
-    #particles-js {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        z-index: 1;
-    }
+    
 
     /* Hero Section */
     .hero-section {
         min-height: 60vh;
-        background: radial-gradient(circle at top left, #3f2b96 0%, #454578 40%, #3b3b96 100%);
+        background: #30304E;
         position: relative;
         display: flex;
         align-items: center;
@@ -36,16 +30,7 @@
         overflow: hidden;
     }
 
-    .hero-section::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.2);
-        z-index: 2;
-    }
+    
 
     .hero-section::after {
         content: '';
@@ -712,7 +697,7 @@
 
 <!-- Hero Section -->
 <div class="hero-section">
-    <div id="particles-js"></div>
+    
     <div class="hero-content">
         <h1 class="hero-title">Liên hệ với chúng tôi</h1>
         <p class="hero-subtitle">
@@ -953,77 +938,10 @@
 </div>
 
 <!-- Scripts -->
-<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Initialize Particles.js
-        if (window.particlesJS) {
-            particlesJS('particles-js', {
-                particles: {
-                    number: {
-                        value: 50,
-                        density: {
-                            enable: true,
-                            value_area: 800
-                        }
-                    },
-                    color: {
-                        value: '#ffffff'
-                    },
-                    shape: {
-                        type: 'circle'
-                    },
-                    opacity: {
-                        value: 0.5,
-                        random: true
-                    },
-                    size: {
-                        value: 3,
-                        random: true
-                    },
-                    line_linked: {
-                        enable: true,
-                        distance: 150,
-                        color: '#ffffff',
-                        opacity: 0.2,
-                        width: 1
-                    },
-                    move: {
-                        enable: true,
-                        speed: 2,
-                        direction: 'none',
-                        random: false,
-                        straight: false,
-                        out_mode: 'out'
-                    }
-                },
-                interactivity: {
-                    detect_on: 'canvas',
-                    events: {
-                        onhover: {
-                            enable: true,
-                            mode: 'grab'
-                        },
-                        onclick: {
-                            enable: true,
-                            mode: 'push'
-                        }
-                    },
-                    modes: {
-                        grab: {
-                            distance: 140,
-                            line_linked: {
-                                opacity: 0.5
-                            }
-                        },
-                        push: {
-                            particles_nb: 4
-                        }
-                    }
-                },
-                retina_detect: true
-            });
-        }
+        
 
         // Intersection Observer for animations
         const observerOptions = {
@@ -1115,24 +1033,7 @@
             });
         });
 
-        // Parallax effect for hero section
-        let ticking = false;
-
-        function updateParallax() {
-            const scrolled = window.pageYOffset;
-            const heroSection = document.querySelector('.hero-section');
-            if (heroSection) {
-                heroSection.style.transform = `translateY(${scrolled * 0.3}px)`;
-            }
-            ticking = false;
-        }
-
-        window.addEventListener('scroll', function() {
-            if (!ticking) {
-                requestAnimationFrame(updateParallax);
-                ticking = true;
-            }
-        });
+        
 
         // Smooth scroll to form when clicking CTA
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {

@@ -144,7 +144,7 @@
     <style>
         .promotions-section {
             padding: 50px 0;
-            background-color: #4a3f78; /* Darker purple from the palette */
+            background: linear-gradient(135deg, #3f2b96 0%, #454578 50%, #3b3b96 100%);
             color: white;
         }
         .promotions-grid {
@@ -154,13 +154,14 @@
             margin-top: 30px;
         }
         .promotion-card {
-            background-color: #5e509e; /* Slightly lighter purple for contrast */
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
             border-radius: 12px;
             padding: 20px;
             text-align: center;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
         .promotion-card:hover {
             transform: translateY(-5px);
@@ -210,11 +211,11 @@
         }
         .btn-details:hover {
             background-color: #f1c40f;
-            color: #4a3f78;
+            color: #3f2b96;
         }
         .btn-copy {
             background-color: #f1c40f;
-            color: #4a3f78;
+            color: #3f2b96;
         }
         .btn-copy:hover {
             background-color: #e1b30a;

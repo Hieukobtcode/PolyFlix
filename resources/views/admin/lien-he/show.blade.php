@@ -4,9 +4,59 @@
 @section('page-title', 'Chi tiết liên hệ')
 @section('breadcrumb', 'Chi tiết liên hệ')
 
+@section('styles')
+<style>
+    /* Điều chỉnh kích thước icon cho các nút trong trang liên hệ admin */
+    .btn .icon {
+        width: 16px !important;
+        height: 16px !important;
+    }
+
+    .btn-sm .icon {
+        width: 14px !important;
+        height: 14px !important;
+    }
+
+    .btn-lg .icon {
+        width: 18px !important;
+        height: 18px !important;
+    }
+
+    /* Điều chỉnh khoảng cách giữa icon và text */
+    .btn .icon.me-2 {
+        margin-right: 6px !important;
+    }
+</style>
+@endsection
+
 @section('content')
+
 <div class="body flex-grow-1">
     <div class="container-lg px-4">
+        @if(session('success'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ session('success') }}
+            <button type="button" class="btn-close" data-coreui-dismiss="alert" aria-label="Close"></button>
+        </div>
+        @endif
+
+        @if(session('error'))
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ session('error') }}
+            <button type="button" class="btn-close" data-coreui-dismiss="alert" aria-label="Close"></button>
+        </div>
+        @endif
+
+        @if($errors->any())
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <ul class="mb-0">
+                @foreach($errors->all() as $error)
+                <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+            <button type="button" class="btn-close" data-coreui-dismiss="alert" aria-label="Close"></button>
+        </div>
+        @endif
         <div class="card mb-4">
             <div class="card-header">
                 <div class="d-flex justify-content-between align-items-center">
