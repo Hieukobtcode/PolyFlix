@@ -355,7 +355,7 @@
                         {{-- Chỉ ẩn menu này khi đăng nhập và vai_tro_id == 4 --}}
                         @if (!$user || $user->vai_tro_id != 4)
                             <li>
-                                <a href="{{ route('khuyen-mai.index') }}"
+                                <a href="{{ route('client.khuyen-mai.index') }}"
                                     style="text-decoration: none; color: inherit;">
                                     Khuyến mãi
                                 </a>
