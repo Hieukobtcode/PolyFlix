@@ -342,8 +342,8 @@
                         <input id="point" style="height: 35px; border-radius: 5px;" type="number">
                         <button id="btnPoint" class="btn btn-warning">Đổi điểm</button>
                         <p style="color: yellow;" class="text-muted">
-                            Số điểm hiện có: <span style="color: yellow;" id="diemHienCo"
-                                data-diem="{{ Auth::user()->diem }}">{{ number_format(Auth::user()->diem) }}</span>
+                        <h6>Số điểm hiện có: <span style="color: yellow;" id="diemHienCo"
+                                data-diem="{{ Auth::user()->diem }}">{{ number_format(Auth::user()->diem) }}</span></h6>
                         </p>
                     </div>
                     @auth

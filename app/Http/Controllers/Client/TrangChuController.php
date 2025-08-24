@@ -206,6 +206,7 @@ class TrangChuController extends Controller
         $threeDaysLater = $today->copy()->addDays(3);
 
         $suatChieuTheoPhim = SuatChieu::whereIn('phim_id', $phimDangChieu->pluck('id'))
+            ->where('trang_thai', 'hoat_dong') // 👈 chỉ lấy suất hoạt động
             ->whereBetween('ngay_bat_dau', [$today, $threeDaysLater])
             ->whereHas('phongChieu', function ($query) use ($rap) {
                 $query->where('rap_phim_id', $rap->id);
@@ -219,6 +220,7 @@ class TrangChuController extends Controller
 
         foreach ($phimSapChieu as $phim) {
             $suatDacBiet = SuatChieu::where('phim_id', $phim->id)
+                ->where('trang_thai', 'hoat_dong') // 👈 thêm điều kiện trạng thái
                 ->whereHas('phongChieu', function ($query) use ($rap) {
                     $query->where('rap_phim_id', $rap->id);
                 })

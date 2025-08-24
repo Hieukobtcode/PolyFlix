@@ -117,7 +117,7 @@
                                                     @endif
                                                 @endif
                                                 @if (Auth::user()->vai_tro_id == 1)
-                                                    <li>
+                                                    {{-- <li>
                                                         <form action="{{ route('admin.phim.destroy', $phim->id) }}"
                                                             method="POST"
                                                             onsubmit="return confirm('Bạn có chắc chắn muốn xóa mềm phim này?')">
@@ -128,7 +128,7 @@
                                                                 <i class="ti ti-trash fs-5"></i> Xóa
                                                             </button>
                                                         </form>
-                                                    </li>
+                                                    </li> --}}
                                                 @endif
                                             </ul>
                                         </div>

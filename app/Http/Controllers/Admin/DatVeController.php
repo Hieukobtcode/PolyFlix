@@ -14,6 +14,7 @@ use DNS1D;
 use App\Mail\GuiVeXemPhim;
 use Illuminate\Support\Facades\Mail;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
@@ -147,6 +148,27 @@ class DatVeController extends Controller
             abort(404, 'Không có thông tin để hiển thị vé');
         }
 
+        // ✅ Kiểm tra quyền quản lý theo vai trò
+        $user = auth()->user();
+        $rapPhim   = $datVe->suatChieu->phongChieu->rapPhim;
+        $chiNhanh  = $rapPhim->chiNhanh;
+
+        // Nếu là admin chi nhánh
+        if ($user->vai_tro_id == 2) {
+            if ($chiNhanh->quan_ly_id != $user->id) {
+                return back()
+                    ->with('error', 'Bạn không có quyền xem vé của chi nhánh này.');
+            }
+        }
+
+        // Nếu là admin rạp
+        if ($user->vai_tro_id == 3) {
+            if ($rapPhim->quan_ly_id != $user->id) {
+                return back()
+                    ->with('error', 'Bạn không có quyền xem vé của rạp này.');
+            }
+        }
+
         return view('admin.dat-ve.show', compact('datVe'));
     }
 
@@ -163,7 +185,7 @@ class DatVeController extends Controller
         return back()->with('success', 'Đã gửi vé về email người dùng!');
     }
 
-   public function print($id)
+    public function print($id)
     {
         $datVe = DatVe::with([
             'nguoiDung',
@@ -224,5 +246,4 @@ class DatVeController extends Controller
 
         return $pdf->stream('ve_xem_phim_' . $datVe->ma_dat_ve . '.pdf');
     }
-
 }
