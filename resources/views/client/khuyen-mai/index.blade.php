@@ -43,12 +43,17 @@ body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     line-height: 1.6;
     color: var(--text-primary);
-    background: var(--bg-secondary);
+    background: radial-gradient(
+        circle at top left,
+        #3f2b96 0%,
+        #454578 40%,
+        #3b3b96 100%
+    );
 }
 
 /* Hero Section */
 .hero-section {
-    background: var(--primary-gradient);
+    background: linear-gradient(135deg, #3f2b96 0%, #454578 50%, #3b3b96 100%);
     color: white;
     padding: 80px 0;
     text-align: center;
@@ -96,11 +101,12 @@ body {
 }
 
 .search-form {
-    background: white;
+    background: rgba(255, 255, 255, 0.1);
     border-radius: var(--border-radius-xl);
     box-shadow: var(--shadow-xl);
     overflow: hidden;
     transition: var(--transition);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .search-form:hover {
@@ -117,7 +123,7 @@ body {
 .search-icon {
     position: absolute;
     left: 24px;
-    color: var(--text-secondary);
+    color: #a0aec0;
     font-size: 1.2rem;
     z-index: 2;
     transition: var(--transition);
@@ -129,19 +135,19 @@ body {
     border: none;
     font-size: 1.1rem;
     font-weight: 500;
-    color: var(--text-primary);
+    color: white;
     background: transparent;
     outline: none;
 }
 
 .search-input::placeholder {
-    color: var(--text-light);
+    color: #a0aec0;
     font-weight: 400;
 }
 
 .search-btn {
     padding: 20px 32px;
-    background: var(--primary-gradient);
+    background: linear-gradient(to right, #ff6600, #ffcc00);
     color: white;
     border: none;
     font-weight: 600;
@@ -152,14 +158,14 @@ body {
 }
 
 .search-btn:hover {
-    background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+    background: linear-gradient(to right, #ff6600, #ffcc00);
     transform: scale(1.02);
 }
 
 /* Filter Tabs */
 .filter-section {
     padding: 60px 20px;
-    background: var(--bg-primary);
+    background: linear-gradient(135deg, #3f2b96 0%, #454578 50%, #3b3b96 100%);
 }
 
 .filter-container {
@@ -172,7 +178,7 @@ body {
     font-size: 2.5rem;
     font-weight: 700;
     margin-bottom: 50px;
-    color: var(--text-primary);
+    color: white;
     position: relative;
 }
 
@@ -184,7 +190,7 @@ body {
     transform: translateX(-50%);
     width: 80px;
     height: 4px;
-    background: var(--primary-gradient);
+    background: linear-gradient(to right, #ff6600, #ffcc00);
     border-radius: 2px;
 }
 
@@ -204,8 +210,8 @@ body {
     align-items: center;
     gap: 8px;
     padding: 16px 24px;
-    background: var(--bg-secondary);
-    color: var(--text-secondary);
+    background: rgba(255, 255, 255, 0.1);
+    color: #b5b5b5;
     border: 2px solid transparent;
     border-radius: var(--border-radius);
     font-weight: 600;
@@ -216,14 +222,14 @@ body {
 }
 
 .tab-btn:hover {
-    background: var(--bg-accent);
-    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
     transform: translateY(-2px);
     box-shadow: var(--shadow);
 }
 
 .tab-btn.active {
-    background: var(--primary-gradient);
+    background: linear-gradient(to right, #ff6600, #ffcc00);
     color: white;
     border-color: transparent;
     transform: translateY(-2px);
@@ -259,7 +265,7 @@ body {
 }
 
 .promotion-card {
-    background: white;
+    background: rgba(255, 255, 255, 0.1);
     border-radius: var(--border-radius-lg);
     overflow: hidden;
     box-shadow: var(--shadow);
@@ -268,6 +274,7 @@ body {
     height: 100%;
     display: flex;
     flex-direction: column;
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .promotion-card:hover {
@@ -325,7 +332,7 @@ body {
 .promotion-type {
     font-size: 0.875rem;
     font-weight: 700;
-    color: var(--text-secondary);
+    color: #ffcc00;
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
@@ -338,13 +345,13 @@ body {
 .promotion-title {
     font-size: 1.25rem;
     font-weight: 700;
-    color: var(--text-primary);
+    color: white;
     margin-bottom: 12px;
     line-height: 1.3;
 }
 
 .promotion-description {
-    color: var(--text-secondary);
+    color: #b5b5b5;
     font-size: 0.95rem;
     line-height: 1.5;
     margin-bottom: 20px;
@@ -361,7 +368,7 @@ body {
     align-items: center;
     gap: 8px;
     font-size: 0.875rem;
-    color: var(--text-secondary);
+    color: #b5b5b5;
 }
 
 .detail-item i {
@@ -383,7 +390,7 @@ body {
     justify-content: center;
     gap: 8px;
     padding: 12px 20px;
-    background: var(--success-gradient);
+    background: linear-gradient(135deg, #e37248 0%, #fb9440 100%);
     color: white;
     border: none;
     border-radius: var(--border-radius);
@@ -407,8 +414,8 @@ body {
 .detail-btn {
     width: 44px;
     height: 44px;
-    background: var(--bg-accent);
-    color: var(--text-secondary);
+    background: rgba(255, 255, 255, 0.1);
+    color: #b5b5b5;
     border: none;
     border-radius: var(--border-radius);
     display: flex;
@@ -419,9 +426,16 @@ body {
 }
 
 .detail-btn:hover {
-    background: var(--primary-gradient);
+    background: linear-gradient(to right, #ff6600, #ffcc00);
     color: white;
     transform: translateY(-2px);
+}
+
+/* Enhanced promotion card hover effects */
+.promotion-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+    background: rgba(255, 255, 255, 0.15) !important;
 }
 </style>
 

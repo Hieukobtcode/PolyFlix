@@ -7,6 +7,8 @@ use App\Models\LienHe;
 use App\Models\LienHeActivityLog;
 use App\Models\LienHeNote;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\ContactReplyMail;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\View;
@@ -404,41 +406,46 @@ class LienHeController extends Controller
      */
     public function sendEmail(Request $request, LienHe $lienHe)
     {
+        // Debug log
+        Log::info('sendEmail method called', [
+            'lien_he_id' => $lienHe->id,
+            'request_data' => $request->all()
+        ]);
+
         $validated = $request->validate([
             'subject' => 'required|string|max:255',
             'message' => 'required|string',
         ]);
 
         try {
-            // Gửi email (giả lập)
-            // Mail::to($lienHe->email)->send(new ContactResponse($lienHe, $validated['subject'], $validated['message']));
+            // Gửi email bằng Mailable
+            Mail::to($lienHe->email)->send(new ContactReplyMail($validated['subject'], $validated['message']));
+
+            Log::info('Email sent successfully', [
+                'to' => $lienHe->email,
+                'subject' => $validated['subject']
+            ]);
 
             // Cập nhật trạng thái đã phản hồi
-            $lienHe->update(['da_phan_hoi' => true]);
+            $lienHe->da_phan_hoi = true;
+            $lienHe->save();
 
             // Ghi log hoạt động
             LienHeActivityLog::create([
                 'lien_he_id' => $lienHe->id,
                 'hanh_dong' => 'send_email',
-                'mo_ta' => 'Gửi email phản hồi',
+                'mo_ta' => "Đã gửi email phản hồi với tiêu đề: {$validated['subject']}",
                 'nguoi_thuc_hien' => 'Hệ thống',
-                'du_lieu_moi' => [
-                    'subject' => $validated['subject'],
-                    'message' => $validated['message'],
-                ],
-            ]);
-
-            // Thêm ghi chú về việc gửi email
-            LienHeNote::create([
-                'lien_he_id' => $lienHe->id,
-                'noi_dung' => "Đã gửi email phản hồi với tiêu đề: {$validated['subject']}",
-                'nguoi_tao' => 'Hệ thống',
             ]);
 
             return redirect()->route('admin.lien-he.show', $lienHe)
                 ->with('success', 'Email phản hồi đã được gửi thành công.');
         } catch (\Exception $e) {
-            return back()->withInput()->withErrors(['error' => 'Đã xảy ra lỗi khi gửi email: ' . $e->getMessage()]);
+            Log::error('Lỗi gửi email: ' . $e->getMessage(), [
+                'exception' => $e,
+                'lien_he_id' => $lienHe->id
+            ]);
+            return back()->withInput()->withErrors(['error' => 'Đã xảy ra lỗi khi gửi email. Vui lòng thử lại sau. Error: ' . $e->getMessage()]);
         }
     }
 

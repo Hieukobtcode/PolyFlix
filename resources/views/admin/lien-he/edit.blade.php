@@ -1,10 +1,58 @@
-@extends('layouts.admin')
+@exten@extends('layouts.admin')
 
 @section('title', 'Quản lý liên hệ')
 @section('page-title', 'Chỉnh sửa liên hệ')
 @section('breadcrumb', 'Chỉnh sửa liên hệ')
 
+@section('styles')
+<style>
+    /* Điều chỉnh kích thước icon cho các nút trong trang liên hệ admin */
+    .btn .icon {
+        width: 16px !important;
+        height: 16px !important;
+    }
+    
+    .btn-sm .icon {
+        width: 14px !important;
+        height: 14px !important;
+    }
+    
+    .btn-lg .icon {
+        width: 18px !important;
+        height: 18px !important;
+    }
+    
+    /* Điều chỉnh khoảng cách giữa icon và text */
+    .btn .icon.me-2 {
+        margin-right: 6px !important;
+    }
+</style>
+@endsection
+
 @section('content')
+@section('title', 'Quản lý liên hệ')
+@section('page-title', 'Chỉnh sửa liên hệ')
+@section('breadcrumb', 'Chỉnh sửa liên hệ')
+
+@section('content')
+<style>
+    /* Điều chỉnh kích thước icon cho các nút trong trang liên hệ */
+    .btn .icon {
+        width: 16px !important;
+        height: 16px !important;
+    }
+    
+    .btn-sm .icon {
+        width: 14px !important;
+        height: 14px !important;
+    }
+    
+    .btn-lg .icon {
+        width: 18px !important;
+        height: 18px !important;
+    }
+</style>
+
     <div class="body flex-grow-1">
         <div class="container-lg px-4">
             <div class="card mb-4">

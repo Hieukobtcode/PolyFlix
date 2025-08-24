@@ -43,7 +43,7 @@ class PhimController extends Controller
     public function index()
     {
         $user = Auth::user();
-    
+
         if ($user->vai_tro_id == 1) {
             // Admin tổng: tất cả phim
             $phims = Phim::orderBy('create_at', 'desc')->paginate(10);
@@ -61,10 +61,10 @@ class PhimController extends Controller
             // Vai trò khác: không thấy gì
             $phims = collect();
         }
-    
+
         return view('admin.phim.index', compact('phims'));
     }
-    
+
 
     public function create()
     {
