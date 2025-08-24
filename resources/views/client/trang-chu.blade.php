@@ -121,11 +121,17 @@
                     <img src="{{ asset('storage/' . $phim->poster) }}" alt="{{ $phim->ten_phim }}">
                     <div class="age-label">{{ $phim->do_tuoi }}</div>
                     <div class="overlay">
-                        <a href="{{ route('phim.chi-tiet', urlencode($phim->ten_phim)) }}#lich-chieu">
-                            <button class="btn buy">
-                                <i class="fa-solid fa-ticket"></i> Mua vé
-                            </button>
-                        </a>
+                        @php
+                            $user = Auth::user();
+                        @endphp
+
+                        @if (!$user || $user->vai_tro_id != 4)
+                            <a href="{{ route('phim.chi-tiet', urlencode($phim->ten_phim)) }}#lich-chieu">
+                                <button class="btn buy">
+                                    <i class="fa-solid fa-ticket"></i> Mua vé
+                                </button>
+                            </a>
+                        @endif
                         <button class="btn trailer" data-video="{{ $phim->trailer }}"><i class="fa-solid fa-video"></i>
                             Trailer</button>
                     </div>
@@ -138,8 +144,9 @@
     <a href="{{ route('phim.dang-chieu') }}" class="btn-see-more">
         <button class="btn-see">XEM THÊM</button>
     </a>
-
-
+    @php
+        $user = Auth::user();
+    @endphp
 
     <style>
         .promotions-section {
@@ -266,16 +273,20 @@
                 </a>
             </div>
         </div>
-    </section>
-    @endif
 
-    <div class="goc-dien-anh-wrapper">
-        @include('client.partials.goc-dien-anh', [
-            'phims' => $phims,
-            'ratings' => $ratings,
-            'baiViet' => $baiViet ?? [],
-        ])
-    </div>
+        <a href="{{ route('khuyen-mai.index') }}">
+            <button class="btn-km">TẤT CẢ ƯU ĐÃI</button>
+        </a>
+        <div class="goc-dien-anh-wrapper">
+            @include('client.partials.goc-dien-anh', [
+                'phims' => $phims,
+                'ratings' => $ratings,
+                'baiViet' => $baiViet ?? [],
+            ])
+        </div>
+    @else
+    <br>
+    @endif
 
     <!-- Popup trailer -->
     <div id="trailerPopup"

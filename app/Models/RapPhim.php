@@ -57,6 +57,10 @@ class RapPhim extends Model
     {
         return $this->belongsToMany(DoAn::class, 'rap_do_an');
     }
+    public function users()
+    {
+        return $this->hasMany(User::class, 'rap_id');
+    }
 
 
 }

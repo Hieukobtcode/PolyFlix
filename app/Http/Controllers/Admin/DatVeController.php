@@ -22,33 +22,83 @@ class DatVeController extends Controller
 {
     public function index(Request $request)
     {
+        $user = auth()->user();
+
         $phimId = $request->input('phim');
         $rapId = $request->input('rap');
         $chiNhanhId = $request->input('chi_nhanh');
 
-        $query = DatVe::with(['nguoiDung', 'suatChieu.phim', 'suatChieu.phongChieu.rapPhim.chiNhanh']);
+        // Query cơ bản
+        $query = DatVe::with([
+            'nguoiDung',
+            'suatChieu.phim',
+            'suatChieu.phongChieu.rapPhim.chiNhanh'
+        ]);
 
-        if (!empty($chiNhanhId)) {
-            $query->whereHas('suatChieu.phongChieu.rapPhim.chiNhanh', function ($q) use ($chiNhanhId) {
-                $q->where('chi_nhanhs.id', $chiNhanhId);
+        // ===== PHÂN QUYỀN =====
+        if ($user->vai_tro_id == 2 && $user->chiNhanhDangQuanLy) {
+            // Admin chi nhánh: chỉ xem vé thuộc chi nhánh đó
+            $query->whereHas('suatChieu.phongChieu.rapPhim', function ($q) use ($user) {
+                $q->where('chi_nhanh_id', $user->chiNhanhDangQuanLy->id);
             });
         }
 
-        if (!empty($rapId)) {
+        if ($user->vai_tro_id == 3 && $user->rap_phim_id) {
+            // Admin rạp: chỉ xem vé thuộc rạp mà họ quản lý
+            $query->whereHas('suatChieu.phongChieu.rapPhim', function ($q) use ($user) {
+                $q->where('id', $user->rap_phim_id);
+            });
+        }
+
+        // ===== BỘ LỌC =====
+        if ($user->vai_tro_id == 1 && !empty($chiNhanhId)) {
+            // Admin tổng: có quyền lọc theo chi nhánh
+            $query->whereHas('suatChieu.phongChieu.rapPhim.chiNhanh', function ($q) use ($chiNhanhId) {
+                $q->where('id', $chiNhanhId);
+            });
+        }
+
+        if (in_array($user->vai_tro_id, [1, 2]) && !empty($rapId)) {
+            // Admin tổng hoặc Admin chi nhánh: có quyền lọc theo rạp
             $query->whereHas('suatChieu.phongChieu.rapPhim', function ($q) use ($rapId) {
-                $q->where('rap_phims.id', $rapId);
+                $q->where('id', $rapId);
             });
         }
 
         if (!empty($phimId)) {
             $query->whereHas('suatChieu.phim', function ($q) use ($phimId) {
-                $q->where('phims.id', $phimId);
+                $q->where('id', $phimId);
             });
         }
 
+        // Lấy kết quả
         $datVes = $query->orderBy('created_at', 'desc')->get();
 
-        $chiNhanhs = ChiNhanh::with('rapPhims')->get();
+        // ===== CHI NHÁNH / RẠP HIỂN THỊ TRONG VIEW =====
+        if ($user->vai_tro_id == 1) {
+            // Admin tổng: lấy tất cả chi nhánh và rạp
+            $chiNhanhs = ChiNhanh::with('rapPhims')->get();
+        } elseif ($user->vai_tro_id == 2) {
+            // Admin chi nhánh: chỉ lấy chi nhánh mà họ quản lý
+            $chiNhanh = ChiNhanh::where('quan_ly_id', $user->id)->with('rapPhims')->first();
+            $chiNhanhs = $chiNhanh ? collect([$chiNhanh]) : collect();
+        } elseif ($user->vai_tro_id == 3) {
+            // Admin rạp: chỉ lấy chi nhánh chứa rạp của họ
+            $rap = RapPhim::with('chiNhanh')->find($user->rap_phim_id);
+
+            if ($rap && $rap->chiNhanh) {
+                $chiNhanh = $rap->chiNhanh;
+                $chiNhanh->load(['rapPhims' => function ($q) use ($user) {
+                    $q->where('id', $user->rap_phim_id);
+                }]);
+                $chiNhanhs = collect([$chiNhanh]);
+            } else {
+                $chiNhanhs = collect();
+            }
+        } else {
+            $chiNhanhs = collect();
+        }
+
         $dsPhim = Phim::all();
 
         return view('admin.dat-ve.index', compact(
@@ -57,7 +107,8 @@ class DatVeController extends Controller
             'dsPhim',
             'phimId',
             'rapId',
-            'chiNhanhId'
+            'chiNhanhId',
+            'user'
         ));
     }
 
@@ -111,7 +162,7 @@ class DatVeController extends Controller
 
         return back()->with('success', 'Đã gửi vé về email người dùng!');
     }
-    
+
    public function print($id)
     {
         $datVe = DatVe::with([

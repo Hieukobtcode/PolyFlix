@@ -67,6 +67,8 @@ Route::middleware('auth')->group(function () {
     // Thanh toán
     Route::get('/thanh-toan/{datVeId}', [ThanhToanController::class, 'index'])->name('client.thanh-toan.index');
     Route::post('/thanh-toan/xu-ly', [ThanhToanController::class, 'xuLyThanhToan'])->name('client.thanh-toan.xu-ly');
+    Route::post('/thanh-toan/tien-mat', [ThanhToanController::class, 'xuLyThanhToanTienMat'])->name('thanh-toan.tien-mat');
+
     Route::post('/thanh-toan/huy/{datVeId}', [ThanhToanController::class, 'huyThanhToan'])->name('client.thanh-toan.huy');
     Route::get('/thanh-toan/huy/{datVeId}', [ThanhToanController::class, 'huyThanhToan'])->name('client.thanh-toan.huy-get');
 
