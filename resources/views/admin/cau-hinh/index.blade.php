@@ -11,7 +11,7 @@
                 <!-- Cột trái -->
                 <div class="col-md-8">
                     <div class="card shadow-sm border-0">
-                        
+
                         <div class="card-body row g-3">
                             @php
                                 $fields = [

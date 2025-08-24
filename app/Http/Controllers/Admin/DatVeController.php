@@ -10,6 +10,7 @@ use App\Models\ChiNhanh;
 use App\Models\DoAn;
 use App\Models\RapPhim;
 use App\Models\Phim;
+use App\Models\CauHinh;
 use DNS1D;
 use App\Mail\GuiVeXemPhim;
 use Illuminate\Support\Facades\Mail;
@@ -44,10 +45,15 @@ class DatVeController extends Controller
             });
         }
 
-        if ($user->vai_tro_id == 3 && $user->rap_phim_id) {
-            // Admin rạp: chỉ xem vé thuộc rạp mà họ quản lý
-            $query->whereHas('suatChieu.phongChieu.rapPhim', function ($q) use ($user) {
-                $q->where('id', $user->rap_phim_id);
+        if ($user->vai_tro_id == 3 && $user->rapPhimDangQuanLy) {
+            $query->whereHas('suatChieu.phongChieu', function ($q) use ($user) {
+                $q->where('rap_phim_id', $user->rapPhimDangQuanLy->id);
+            });
+        }
+
+        if ($user->vai_tro_id == 4 && $user->rapLamViec) {
+            $query->whereHas('suatChieu.phongChieu', function ($q) use ($user) {
+                $q->where('rap_phim_id', $user->rapLamViec->id);
             });
         }
 
@@ -73,29 +79,24 @@ class DatVeController extends Controller
         }
 
         // Lấy kết quả
-        $datVes = $query->orderBy('created_at', 'desc')->get();
+        $datVes = $query->orderBy('created_at', 'desc')->paginate(10);;
 
         // ===== CHI NHÁNH / RẠP HIỂN THỊ TRONG VIEW =====
         if ($user->vai_tro_id == 1) {
             // Admin tổng: lấy tất cả chi nhánh và rạp
             $chiNhanhs = ChiNhanh::with('rapPhims')->get();
-        } elseif ($user->vai_tro_id == 2) {
-            // Admin chi nhánh: chỉ lấy chi nhánh mà họ quản lý
-            $chiNhanh = ChiNhanh::where('quan_ly_id', $user->id)->with('rapPhims')->first();
-            $chiNhanhs = $chiNhanh ? collect([$chiNhanh]) : collect();
-        } elseif ($user->vai_tro_id == 3) {
-            // Admin rạp: chỉ lấy chi nhánh chứa rạp của họ
-            $rap = RapPhim::with('chiNhanh')->find($user->rap_phim_id);
-
-            if ($rap && $rap->chiNhanh) {
-                $chiNhanh = $rap->chiNhanh;
-                $chiNhanh->load(['rapPhims' => function ($q) use ($user) {
-                    $q->where('id', $user->rap_phim_id);
-                }]);
-                $chiNhanhs = collect([$chiNhanh]);
-            } else {
-                $chiNhanhs = collect();
-            }
+        } elseif ($user->vai_tro_id == 2 && $user->chiNhanhDangQuanLy) {
+            $chiNhanhs = collect([$user->chiNhanhDangQuanLy->load('rapPhims')]);
+        } elseif ($user->vai_tro_id == 3 && $user->rapPhimDangQuanLy) {
+            $rap = $user->rapPhimDangQuanLy;
+            $chiNhanh = $rap->chiNhanh;
+            $chiNhanh->setRelation('rapPhims', collect([$rap]));
+            $chiNhanhs = collect([$chiNhanh]);
+        } elseif ($user->vai_tro_id == 4 && $user->rapLamViec) {
+            $rap = $user->rapLamViec;
+            $chiNhanh = $rap->chiNhanh;
+            $chiNhanh->setRelation('rapPhims', collect([$rap]));
+            $chiNhanhs = collect([$chiNhanh]);
         } else {
             $chiNhanhs = collect();
         }
@@ -225,8 +226,10 @@ class DatVeController extends Controller
         // Lưu mã vạch vào file
         file_put_contents($barcodePath, base64_decode($barcodeData));
 
+        // ✅ Lấy cấu hình
+        $cauHinh = CauHinh::first();
         // Tải view
-        $pdf = Pdf::loadView('admin.dat-ve.print', compact('datVe', 'tongTienGhe', 'tongTienCombo', 'tongTienDoAn', 'tongThanhTien', 'barcodeFileName'))
+        $pdf = Pdf::loadView('admin.dat-ve.print', compact('datVe', 'tongTienGhe', 'tongTienCombo', 'tongTienDoAn', 'tongThanhTien', 'barcodeFileName', 'cauHinh'))
             ->setPaper('a4')
             ->setOption('enable-local-file-access', true)
             ->setOption('isHtml5ParserEnabled', true)

@@ -78,10 +78,18 @@ class User extends Authenticatable
         return $this->hasOne(ChiNhanh::class, 'quan_ly_id');
     }
 
-    
-    public function rapPhim()
+    public function rapPhimDangQuanLy()
+    {
+        return $this->hasOne(RapPhim::class, 'quan_ly_id', 'id');
+    }
+
+    public function rapLamViec()
     {
         return $this->belongsTo(RapPhim::class, 'rap_id');
     }
 
+    public function rapPhim()
+    {
+        return $this->belongsTo(RapPhim::class, 'rap_id');
+    }
 }
