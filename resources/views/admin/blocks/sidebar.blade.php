@@ -488,9 +488,9 @@
                                 </a>
                             </li>
                             <li class="sidebar-item">
-                                <a href="{{ route('admin.chi-nhanh-khuyen-mai.index') }}" class="sidebar-link">
+                                <a href="{{ route('admin.chi-nhanh-khuyen-mai.manager') }}" class="sidebar-link">
                                     <span class="sidebar-icon"></span>
-                                    <span class="hide-menu">Khuyến mãi</span>
+                                    <span class="hide-menu">Quản lý Khuyến mãi</span>
                                 </a>
                             </li>
                         </ul>

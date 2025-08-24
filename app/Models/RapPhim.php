@@ -66,8 +66,6 @@ class RapPhim extends Model
     public function khuyenMais()
     {
         return $this->belongsToMany(KhuyenMai::class, 'khuyen_mai_rap_phims', 'rap_phim_id', 'khuyen_mai_id')
-            ->withTimestamps();
+            ->withTimestamps('created_at', 'updated_at');
     }
-
-
 }

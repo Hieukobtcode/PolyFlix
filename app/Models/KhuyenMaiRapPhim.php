@@ -16,6 +16,10 @@ class KhuyenMaiRapPhim extends Model
         'rap_phim_id'
     ];
 
+    // Sử dụng timestamps chuẩn của Laravel
+    const CREATED_AT = 'created_at';
+    const UPDATED_AT = 'updated_at';
+
     // Quan hệ với khuyến mãi
     public function khuyenMai()
     {

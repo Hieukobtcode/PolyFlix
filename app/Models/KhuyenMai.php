@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\ChiNhanh;
 use App\Models\KhuyenMaiChiNhanh;
+use App\Models\KhuyenMaiRapPhim;
 use App\Models\LichSuSuDungKhuyenMai;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -42,9 +43,9 @@ class KhuyenMai extends Model
         'deleted_at' => 'datetime',
     ];
 
-    // Định nghĩa tên cột timestamps tùy chỉnh
-    const CREATED_AT = 'create_at';
-    const UPDATED_AT = 'update_at';
+    // Sử dụng timestamps mặc định của Laravel
+    // const CREATED_AT = 'created_at'; // Laravel default
+    // const UPDATED_AT = 'updated_at'; // Laravel default
 
     // Quan hệ với chi nhánh thông qua bảng trung gian
     public function chiNhanhs()
@@ -75,7 +76,7 @@ class KhuyenMai extends Model
     public function rapPhims()
     {
         return $this->belongsToMany(RapPhim::class, 'khuyen_mai_rap_phims', 'khuyen_mai_id', 'rap_phim_id')
-            ->withTimestamps();
+            ->withTimestamps('created_at', 'updated_at');
     }
 
     // Quan hệ với bảng trung gian khuyến mãi rạp phim
