@@ -77,4 +77,11 @@ class User extends Authenticatable
     {
         return $this->hasOne(ChiNhanh::class, 'quan_ly_id');
     }
+
+    
+    public function rapPhim()
+    {
+        return $this->belongsTo(RapPhim::class, 'rap_id');
+    }
+
 }

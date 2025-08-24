@@ -917,11 +917,11 @@
 
             function loadLichChieu() {
                 $('#lich-chieu-list').html(`
-        <div class="custom-loading text-center py-4">
-            <div class="spinner"></div>
-            <p class="text-light mt-3" style="font-size: 1.05rem;">Đang tìm kiếm suất chiếu...</p>
-        </div>
-    `);
+                    <div class="custom-loading text-center py-4">
+                        <div class="spinner"></div>
+                        <p class="text-light mt-3" style="font-size: 1.05rem;">Đang tìm kiếm suất chiếu...</p>
+                    </div>
+                `);
 
                 let url = `/phim/${phimId}/lich-chieu?ngay_bat_dau=${currentDate}&chi_nhanh_id=${currentChiNhanh}`;
                 $.ajax({

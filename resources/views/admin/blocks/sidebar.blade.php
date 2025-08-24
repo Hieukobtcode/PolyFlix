@@ -292,8 +292,7 @@
                             <span class="hide-menu ps-1">Đơn vé</span>
                         </a>
                     </li>
-
-                    @elseif(Auth::user()->vai_tro_id == 2)
+                @elseif(Auth::user()->vai_tro_id == 2)
                     <li class="sidebar-item">
                         <a class="sidebar-link has-arrow primary-hover-bg" href="javascript:void(0)"
                             aria-expanded="false">
@@ -367,6 +366,14 @@
                             </li>
                         </ul>
                     </li>
+                    <li class="sidebar-item">
+                        <a href="{{ route('admin.dat-ves.index') }}" class="sidebar-link secondary-hover-bg">
+                            <span class="aside-icon p-2 bg-secondary-subtle rounded-1">
+                                <i class="ti ti-ticket fs-6"></i>
+                            </span>
+                            <span class="hide-menu ps-1">Đơn vé</span>
+                        </a>
+                    </li>
                 @elseif(Auth::user()->vai_tro_id == 3)
                     @php
                         $chi_nhanh_id = \App\Models\RapPhim::where('quan_ly_id', Auth::id())->value('chi_nhanh_id');
@@ -414,7 +421,15 @@
                                 </a>
                             </li>
                         </ul>
-                    </li>   
+                    </li>
+                    <li class="sidebar-item">
+                        <a href="{{ route('admin.dat-ves.index') }}" class="sidebar-link secondary-hover-bg">
+                            <span class="aside-icon p-2 bg-secondary-subtle rounded-1">
+                                <i class="ti ti-ticket fs-6"></i>
+                            </span>
+                            <span class="hide-menu ps-1">Đơn vé</span>
+                        </a>
+                    </li>
                 @endif
 
             </ul>
