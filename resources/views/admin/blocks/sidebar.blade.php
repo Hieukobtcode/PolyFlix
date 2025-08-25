@@ -37,23 +37,23 @@
                                 <span class="hide-menu">Doanh thu</span>
                             </a>
                         </li>
+                        <li class="sidebar-item">
+                            <a href="{{ route('admin.thong-ke.ve') }}" class="sidebar-link">
+                                <span class="sidebar-icon"></span>
+                                <span class="hide-menu">Vé</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a href="{{ route('admin.thong-ke.suat-chieu') }}" class="sidebar-link">
+                                <span class="sidebar-icon"></span>
+                                <span class="hide-menu">Suất chiếu</span>
+                            </a>
+                        </li>
                         {{-- <li class="sidebar-item">
-                                <a href="{{ route('admin.thong-ke.ve') }}" class="sidebar-link">
-                        <span class="sidebar-icon"></span>
-                        <span class="hide-menu">Vé</span>
-                        </a>
-                </li> --}}
-                <li class="sidebar-item">
-                    <a href="{{ route('admin.thong-ke.suat-chieu') }}" class="sidebar-link">
-                        <span class="sidebar-icon"></span>
-                        <span class="hide-menu">Suất chiếu</span>
-                    </a>
-                </li>
-                {{-- <li class="sidebar-item">
                                 <a href="{{ route('admin.thong-ke.suat-chieu') }}" class="sidebar-link">
-                <span class="sidebar-icon"></span>
-                <span class="hide-menu">Đồ ăn, combo</span>
-                </a>
+                        <span class="sidebar-icon"></span>
+                        <span class="hide-menu">Đồ ăn, combo</span>
+                        </a>
                 </li> --}}
                 {{-- <li class="sidebar-item">
                                 <a href="{{ route('admin.thong-ke.phim') }}" class="sidebar-link">
@@ -457,6 +457,12 @@
                         </a>
                     </li>
                     <li class="sidebar-item">
+                        <a href="{{ route('admin.thong-ke.ve') }}" class="sidebar-link">
+                            <span class="sidebar-icon"></span>
+                            <span class="hide-menu">Vé</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-item">
                         <a href="{{ route('admin.thong-ke.suat-chieu') }}" class="sidebar-link">
                             <span class="sidebar-icon"></span>
                             <span class="hide-menu">Suất chiếu</span>
@@ -499,7 +505,7 @@
 
             {{-- Menu cho Admin Rạp --}}
             @if (Auth::user()->vai_tro_id == 3)
-            {{-- Thống kê --}}
+            {{-- Thống kê (ẩn mục Vé cho Admin Rạp) --}}
             <li class="sidebar-item">
                 <a class="sidebar-link has-arrow indigo-hover-bg" href="javascript:void(0)"
                     aria-expanded="false">

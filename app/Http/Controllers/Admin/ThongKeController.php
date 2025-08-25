@@ -843,56 +843,132 @@ class ThongKeController extends Controller
     public function ve(Request $request)
     {
         $user = Auth::user();
-        $chiNhanhId = null;
 
-        // Kiểm tra vai trò và lấy chi_nhanh_id nếu là Admin Chi Nhánh (vai_tro_id = 2)
-        if ($user->vaiTro && $user->vaiTro->id == 2) {
-            $chiNhanhManaged = $user->chiNhanhDangQuanLy;
-            if ($chiNhanhManaged) {
-                $chiNhanhId = $chiNhanhManaged->id;
+        // Không cho Admin Rạp truy cập trang Thống kê vé
+        if ($user && $user->vai_tro_id == 3) {
+            abort(403, 'Bạn không có quyền truy cập mục này.');
+        }
+
+        // Default bộ lọc
+        $tuNgay = $request->input('tu_ngay');
+        $denNgay = $request->input('den_ngay');
+        $loaiThongKe = $request->input('loai_thong_ke', 'ngay'); // ngay | tuan | thang
+
+        // Xác định giới hạn theo vai trò
+        $chiNhanhId = null;
+        $rapIdGioiHan = null;
+        if ($user->vaiTro && $user->vaiTro->id == 2) { // Admin chi nhánh
+            $managed = $user->chiNhanhDangQuanLy;
+            if ($managed) {
+                $chiNhanhId = $managed->id;
+            }
+        }
+        if ($user->vaiTro && $user->vaiTro->id == 3) { // Admin rạp
+            $rapManaged = $user->rapDangQuanLy;
+            if ($rapManaged) {
+                $rapIdGioiHan = $rapManaged->id;
+                $chiNhanhId = $rapManaged->chi_nhanh_id; // Ngầm giới hạn theo chi nhánh của rạp
             }
         }
 
-        // Lấy tham số từ request, ưu tiên chi nhánh của quản lý
-        $branchId = $chiNhanhId ?? $request->input('branch_id');
-        $rapId = $request->input('rap_id');
-        $tuNgay = $request->input('tu_ngay');
-        $denNgay = $request->input('den_ngay');
+        // Nhận filter từ request nhưng tôn trọng giới hạn vai trò
+        $chiNhanhId = $chiNhanhId ?? $request->input('chi_nhanh_id');
+        $rapId = $rapIdGioiHan ?? $request->input('rap_id');
 
         // Query cơ sở cho thống kê vé
-        $veQuery = DatVe::join('suat_chieus', 'dat_ves.suat_chieu_id', '=', 'suat_chieus.id')
+        $base = DatVe::join('suat_chieus', 'dat_ves.suat_chieu_id', '=', 'suat_chieus.id')
             ->join('phong_chieus', 'suat_chieus.phong_chieu_id', '=', 'phong_chieus.id')
             ->join('rap_phims', 'phong_chieus.rap_phim_id', '=', 'rap_phims.id')
-            ->join('chi_nhanhs', 'rap_phims.chi_nhanh_id', '=', 'chi_nhanhs.id');
+            ->join('chi_nhanhs', 'rap_phims.chi_nhanh_id', '=', 'chi_nhanhs.id')
+            ->join('phims', 'suat_chieus.phim_id', '=', 'phims.id');
 
-        if ($branchId) {
-            $veQuery->where('chi_nhanhs.id', $branchId);
+        if ($chiNhanhId) {
+            $base->where('chi_nhanhs.id', $chiNhanhId);
         }
         if ($rapId) {
-            $veQuery->where('rap_phims.id', $rapId);
+            $base->where('rap_phims.id', $rapId);
         }
         if ($tuNgay && $denNgay) {
-            $veQuery->whereBetween('suat_chieus.bat_dau', [$tuNgay, $denNgay . ' 23:59:59']);
+            $base->whereBetween('suat_chieus.bat_dau', [$tuNgay, $denNgay . ' 23:59:59']);
         }
 
+        // Thống kê tổng quan
+        $tongVeBan = (clone $base)->count();
+        $soSuatChieu = (clone $base)->distinct('suat_chieus.id')->count('suat_chieus.id');
+        // Không rõ tổng vé có thể bán theo schema, tạm thời dùng bằng tổng đã bán để tránh chia 0
+        $tongVeCoTheBan = max($tongVeBan, $tongVeBan);
+        $tyLeBanVe = $tongVeCoTheBan > 0 ? round($tongVeBan * 100 / $tongVeCoTheBan, 2) : 0;
+
         $veTongQuan = [
-            'tong_ve_ban' => $veQuery->count(),
-            'tong_doanh_thu' => $veQuery->sum('dat_ves.tong_tien'),
+            'tong_ve_ban' => $tongVeBan,
+            'tong_ve_co_the_ban' => $tongVeCoTheBan,
+            'ty_le_ban_ve' => $tyLeBanVe,
+            'so_suat_chieu' => $soSuatChieu,
         ];
 
-        // Lấy danh sách chi nhánh và rạp cho bộ lọc
-        $danhSachChiNhanh = $chiNhanhId ? ChiNhanh::where('id', $chiNhanhId)->get() : ChiNhanh::all();
-        $danhSachRap = $branchId
-            ? RapPhim::where('chi_nhanh_id', $branchId)->get()
-            : ($chiNhanhId ? RapPhim::where('chi_nhanh_id', $chiNhanhId)->get() : RapPhim::all());
+        // Vé theo thời gian
+        $format = match ($loaiThongKe) {
+            'tuan' => '%x-%v', // ISO year-week
+            'thang' => '%Y-%m',
+            default => '%Y-%m-%d',
+        };
+        $veTheoThoiGianRows = (clone $base)
+            ->selectRaw("DATE_FORMAT(suat_chieus.bat_dau, '{$format}') as label, COUNT(*) as so_ve_ban")
+            ->groupBy('label')
+            ->orderBy('label')
+            ->get();
+        $veTheoThoiGian = $veTheoThoiGianRows->map(fn($r) => [
+            'label' => $r->label,
+            'so_ve_ban' => (int) $r->so_ve_ban,
+        ])->values();
 
-        return view('admin.thong-ke.ve', compact(
-            'veTongQuan',
-            'danhSachChiNhanh',
-            'danhSachRap',
-            'tuNgay',
-            'denNgay'
-        ));
+        // Vé theo chi nhánh (chỉ meaningful với admin tổng)
+        $veTheoChiNhanhRows = (clone $base)
+            ->selectRaw('chi_nhanhs.id as chi_nhanh_id, chi_nhanhs.ten_chi_nhanh, COUNT(*) as so_ve_ban, COUNT(DISTINCT suat_chieus.id) as so_suat_chieu')
+            ->groupBy('chi_nhanhs.id', 'chi_nhanhs.ten_chi_nhanh')
+            ->orderBy('so_ve_ban', 'desc')
+            ->get();
+        $veTheoChiNhanh = $veTheoChiNhanhRows->map(fn($r) => [
+            'chi_nhanh_id' => (int) $r->chi_nhanh_id,
+            'ten_chi_nhanh' => $r->ten_chi_nhanh,
+            'so_ve_ban' => (int) $r->so_ve_ban,
+            'so_suat_chieu' => (int) $r->so_suat_chieu,
+        ])->values();
+
+        // Vé theo phim (top 10)
+        $veTheoPhimRows = (clone $base)
+            ->selectRaw('phims.id as phim_id, phims.ten_phim, COUNT(*) as so_ve_ban, COUNT(DISTINCT suat_chieus.id) as so_suat_chieu')
+            ->groupBy('phims.id', 'phims.ten_phim')
+            ->orderBy('so_ve_ban', 'desc')
+            ->limit(10)
+            ->get();
+        $veTheoPhim = $veTheoPhimRows->map(fn($r) => [
+            'phim_id' => (int) $r->phim_id,
+            'ten_phim' => $r->ten_phim,
+            'so_ve_ban' => (int) $r->so_ve_ban,
+            'so_suat_chieu' => (int) $r->so_suat_chieu,
+        ])->values();
+
+        // Danh sách chọn lọc
+        if ($user->vaiTro && $user->vaiTro->id == 1) { // Admin tổng
+            $chiNhanhs = ChiNhanh::orderBy('ten_chi_nhanh')->get();
+        } elseif ($chiNhanhId) { // Admin chi nhánh hoặc rạp
+            $chiNhanhs = ChiNhanh::where('id', $chiNhanhId)->get();
+        } else {
+            $chiNhanhs = ChiNhanh::orderBy('ten_chi_nhanh')->get();
+        }
+
+        return view('admin.thong-ke.ve', [
+            'veTongQuan' => $veTongQuan,
+            'veTheoThoiGian' => $veTheoThoiGian,
+            'veTheoChiNhanh' => $veTheoChiNhanh,
+            'veTheoPhim' => $veTheoPhim,
+            'chiNhanhs' => $chiNhanhs,
+            'chiNhanhId' => $chiNhanhId,
+            'tuNgay' => $tuNgay,
+            'denNgay' => $denNgay,
+            'loaiThongKe' => $loaiThongKe,
+        ]);
     }
 
     public function doAnCombo(Request $request)

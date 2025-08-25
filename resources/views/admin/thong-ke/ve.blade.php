@@ -37,9 +37,9 @@
                             <select name="chi_nhanh_id" class="form-select">
                                 <option value="">Tất cả</option>
                                 @foreach($chiNhanhs as $chiNhanh)
-                                    <option value="{{ $chiNhanh->id }}" {{ $chiNhanhId == $chiNhanh->id ? 'selected' : '' }}>
-                                        {{ $chiNhanh->ten_chi_nhanh }}
-                                    </option>
+                                <option value="{{ $chiNhanh->id }}" {{ $chiNhanhId == $chiNhanh->id ? 'selected' : '' }}>
+                                    {{ $chiNhanh->ten_chi_nhanh }}
+                                </option>
                                 @endforeach
                             </select>
                         </div>
@@ -220,66 +220,74 @@
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Biểu đồ vé theo thời gian
-    const ctx1 = document.getElementById('veChart').getContext('2d');
-    const veData = @json($veTheoThoiGian);
-    
-    new Chart(ctx1, {
-        type: 'bar',
-        data: {
-            labels: veData.map(item => item.label),
-            datasets: [{
-                label: 'Số vé bán',
-                data: veData.map(item => item.so_ve_ban),
-                backgroundColor: 'rgba(40, 167, 69, 0.8)',
-                borderColor: 'rgba(40, 167, 69, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
-    });
+    document.addEventListener('DOMContentLoaded', function() {
+        // Biểu đồ vé theo thời gian
+        const ctx1 = document.getElementById('veChart').getContext('2d');
+        const veData = @json($veTheoThoiGian);
 
-    // Biểu đồ tròn tỷ lệ bán vé
-    const ctx2 = document.getElementById('tyLeBanVeChart').getContext('2d');
-    const veBan = {{ $veTongQuan['tong_ve_ban'] }};
-    const veChuaBan = {{ $veTongQuan['tong_ve_co_the_ban'] - $veTongQuan['tong_ve_ban'] }};
-    
-    new Chart(ctx2, {
-        type: 'doughnut',
-        data: {
-            labels: ['Vé đã bán', 'Vé chưa bán'],
-            datasets: [{
-                data: [veBan, veChuaBan],
-                backgroundColor: [
-                    'rgba(40, 167, 69, 0.8)',
-                    'rgba(220, 53, 69, 0.8)'
-                ],
-                borderColor: [
-                    'rgba(40, 167, 69, 1)',
-                    'rgba(220, 53, 69, 1)'
-                ],
-                borderWidth: 2
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'bottom'
+        new Chart(ctx1, {
+            type: 'bar',
+            data: {
+                labels: veData.map(item => item.label),
+                datasets: [{
+                    label: 'Số vé bán',
+                    data: veData.map(item => item.so_ve_ban),
+                    backgroundColor: 'rgba(40, 167, 69, 0.8)',
+                    borderColor: 'rgba(40, 167, 69, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
                 }
             }
-        }
+        });
+
+        // Biểu đồ tròn tỷ lệ bán vé
+        const ctx2 = document.getElementById('tyLeBanVeChart').getContext('2d');
+        const veBan = {
+            {
+                $veTongQuan['tong_ve_ban']
+            }
+        };
+        const veChuaBan = {
+            {
+                $veTongQuan['tong_ve_co_the_ban'] - $veTongQuan['tong_ve_ban']
+            }
+        };
+
+        new Chart(ctx2, {
+            type: 'doughnut',
+            data: {
+                labels: ['Vé đã bán', 'Vé chưa bán'],
+                datasets: [{
+                    data: [veBan, veChuaBan],
+                    backgroundColor: [
+                        'rgba(40, 167, 69, 0.8)',
+                        'rgba(220, 53, 69, 0.8)'
+                    ],
+                    borderColor: [
+                        'rgba(40, 167, 69, 1)',
+                        'rgba(220, 53, 69, 1)'
+                    ],
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
     });
-});
 </script>
 @endsection

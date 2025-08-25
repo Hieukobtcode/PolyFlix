@@ -230,6 +230,8 @@ class PhanQuyenSeeder extends Seeder
             ['id' => 195, 'ten' => 'Xem thống kê doanh thu', 'slug' => 'admin.thong-ke.doanh-thu'],
             ['id' => 196, 'ten' => 'Xem thống kê suất chiếu ', 'slug' => 'admin.thong-ke.suat-chieu'],
             ['id' => 197, 'ten' => 'Xuất báo cáo thống kê', 'slug' => 'admin.thong-ke.xuat-bao-cao'],
+            // Thêm mới: tránh trùng ID với quyền 198 đã dùng cho chi nhánh khuyến mãi
+            ['id' => 202, 'ten' => 'Thống kê vé', 'slug' => 'admin.thong-ke.ve'],
 
 
 
