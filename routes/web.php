@@ -297,6 +297,59 @@ Route::get('/test-navigation', function () {
     return view('test.navigation');
 });
 
+// Comment và Rating routes
+Route::middleware('auth')->group(function () {
+    Route::post('/comments', [\App\Http\Controllers\Client\CommentController::class, 'store'])->name('comments.store');
+    Route::post('/ratings', [\App\Http\Controllers\Client\CommentController::class, 'rate'])->name('ratings.store');
+});
+
+Route::get('/comments/{phim}', [\App\Http\Controllers\Client\CommentController::class, 'getComments'])->name('comments.get');
+
+// Test route để kiểm tra admin comments
+Route::get('/test-admin-comments', function () {
+    return 'Admin Comments Route hoạt động! <a href="' . route('admin.comments.index') . '">Vào trang quản lý comment</a>';
+});
+
+// Test route để debug comments
+Route::get('/debug-comments', function () {
+    try {
+        $comments = \App\Models\Comment::with(['user', 'phim'])->take(5)->get();
+        return response()->json([
+            'success' => true,
+            'count' => $comments->count(),
+            'data' => $comments->toArray()
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'error' => $e->getMessage()
+        ]);
+    }
+});
+
+// Test route để debug comments view trực tiếp
+Route::get('/debug-comments-view', function () {
+    try {
+        // Test controller method trực tiếp
+        $controller = new \App\Http\Controllers\Admin\CommentController();
+        $request = new \Illuminate\Http\Request();
+
+        // Mock auth user
+        $user = \App\Models\User::first();
+        if ($user) {
+            \Illuminate\Support\Facades\Auth::login($user);
+        }
+
+        return $controller->index($request);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'error' => $e->getMessage(),
+            'trace' => $e->getTraceAsString()
+        ]);
+    }
+});
+
 // SPA Test page
 Route::get('/spa-test', function () {
     return view('client.khuyen-mai.spa-test');
@@ -490,6 +543,18 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access', 'per
     Route::resource('loai-ghe', LoaiGheController::class);
     Route::resource('so-do-ghe', SoDoGheController::class);
     Route::resource('ghe-ngoi', GheNgoiController::class);
+
+    // Comment management routes
+    Route::prefix('comments')->name('comments.')->group(function () {
+        Route::get('/', [CommentController::class, 'index'])->name('index');
+        Route::get('/test', function () {
+            return view('admin.comments.test');
+        })->name('test');
+        Route::get('/{phim}', [CommentController::class, 'show'])->name('show');
+        Route::post('/{comment}/reply', [CommentController::class, 'reply'])->name('reply');
+        Route::post('/{comment}/hide', [CommentController::class, 'hide'])->name('hide');
+        Route::post('/{comment}/unhide', [CommentController::class, 'unhide'])->name('unhide');
+    });
     Route::post('ghe-ngoi/updateSeat', [GheNgoiController::class, 'updateSeat'])->name('ghe-ngoi.updateSeat');
 
     Route::resource('cap-bac-the', CapBacTheController::class);

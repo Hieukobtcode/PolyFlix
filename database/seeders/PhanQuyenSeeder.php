@@ -192,6 +192,7 @@ class PhanQuyenSeeder extends Seeder
             ['id' => 198, 'ten' => 'Xem khuyến mãi chi nhánh', 'slug' => 'admin.chi-nhanh-khuyen-mai.index'],
             ['id' => 199, 'ten' => 'Xem chi tiết khuyến mãi chi nhánh', 'slug' => 'admin.chi-nhanh-khuyen-mai.show'],
             ['id' => 200, 'ten' => 'Xem báo cáo khuyến mãi chi nhánh', 'slug' => 'admin.chi-nhanh-khuyen-mai.bao-cao'],
+            ['id' => 201, 'ten' => 'Quản lý khuyến mãi chi nhánh', 'slug' => 'admin.chi-nhanh-khuyen-mai.manager'],
 
             ['id' => 171, 'ten' => 'Xem yêu cầu quản lý', 'slug' => 'admin.requests.index'],
             ['id' => 172, 'ten' => 'Phê duyệt yêu cầu', 'slug' => 'admin.requests.approve'],
@@ -226,8 +227,8 @@ class PhanQuyenSeeder extends Seeder
 
             ['id' => 193, 'ten' => 'Xem tổng quan thống kê', 'slug' => 'admin.thong-ke.index'],
             ['id' => 194, 'ten' => 'Xem biểu đồ thống kê', 'slug' => 'admin.thong-ke.dashboard'],
-            ['id' => 195, 'ten' => 'Xem thống kê phim', 'slug' => 'admin.thong-ke.phim'],
-            ['id' => 196, 'ten' => 'Xem thống kê liên hệ', 'slug' => 'admin.thong-ke.lien-he'],
+            ['id' => 195, 'ten' => 'Xem thống kê doanh thu', 'slug' => 'admin.thong-ke.doanh-thu'],
+            ['id' => 196, 'ten' => 'Xem thống kê suất chiếu ', 'slug' => 'admin.thong-ke.suat-chieu'],
             ['id' => 197, 'ten' => 'Xuất báo cáo thống kê', 'slug' => 'admin.thong-ke.xuat-bao-cao'],
 
 

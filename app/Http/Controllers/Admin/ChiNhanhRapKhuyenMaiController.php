@@ -36,8 +36,6 @@ class ChiNhanhRapKhuyenMaiController extends Controller
 
         // Debug: Nếu vẫn không có, tạo dữ liệu mẫu
         if ($rapPhims->isEmpty()) {
-            \Log::info('No rapPhims found for chi nhanh: ' . $chiNhanh->id);
-
             // Tạo dữ liệu mẫu để test
             $rapPhims = collect([
                 (object)[
@@ -76,8 +74,6 @@ class ChiNhanhRapKhuyenMaiController extends Controller
 
         // Debug: Nếu không có khuyến mãi, tạo dữ liệu mẫu
         if ($khuyenMaisCoTheGan->isEmpty()) {
-            \Log::info('No khuyenMais found for chi nhanh: ' . $chiNhanh->id);
-
             $khuyenMaisCoTheGan = collect([
                 (object)[
                     'id' => 1,
@@ -107,11 +103,6 @@ class ChiNhanhRapKhuyenMaiController extends Controller
      */
     public function assignToRap(Request $request)
     {
-        \Log::info('assignToRap called', [
-            'request_data' => $request->all(),
-            'user_id' => Auth::id()
-        ]);
-
         $user = Auth::user();
 
         // Kiểm tra quyền admin chi nhánh
@@ -160,10 +151,6 @@ class ChiNhanhRapKhuyenMaiController extends Controller
             ]);
         } catch (\Exception $e) {
             DB::rollback();
-            \Log::error('assignToRap error', [
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
             return response()->json(['success' => false, 'message' => 'Có lỗi xảy ra: ' . $e->getMessage()]);
         }
     }
@@ -173,15 +160,9 @@ class ChiNhanhRapKhuyenMaiController extends Controller
      */
     public function removeFromRap(Request $request)
     {
-        \Log::info('removeFromRap called', [
-            'request_data' => $request->all(),
-            'user_id' => Auth::id()
-        ]);
-
         $user = Auth::user();
 
         if ($user->vai_tro_id != 2) {
-            \Log::warning('removeFromRap: User không có quyền', ['user_id' => $user->id, 'vai_tro_id' => $user->vai_tro_id]);
             return response()->json(['success' => false, 'message' => 'Bạn không có quyền thực hiện thao tác này.']);
         }
 
@@ -191,30 +172,17 @@ class ChiNhanhRapKhuyenMaiController extends Controller
                 'rap_phim_id' => 'required|exists:rap_phims,id'
             ]);
 
-            \Log::info('removeFromRap: Validation passed', $validated);
-
             $khuyenMai = KhuyenMai::findOrFail($validated['khuyen_mai_id']);
             $rapPhim = RapPhim::findOrFail($validated['rap_phim_id']);
             $chiNhanh = $user->chiNhanhDangQuanLy;
 
-            \Log::info('removeFromRap: Models loaded', [
-                'khuyen_mai' => $khuyenMai->ten,
-                'rap_phim' => $rapPhim->ten_rap,
-                'chi_nhanh' => $chiNhanh->ten_chi_nhanh ?? 'N/A'
-            ]);
-
             // Kiểm tra rạp có thuộc chi nhánh không
             if ($rapPhim->chi_nhanh_id !== $chiNhanh->id) {
-                \Log::warning('removeFromRap: Rạp không thuộc chi nhánh', [
-                    'rap_chi_nhanh_id' => $rapPhim->chi_nhanh_id,
-                    'user_chi_nhanh_id' => $chiNhanh->id
-                ]);
                 return response()->json(['success' => false, 'message' => 'Rạp này không thuộc chi nhánh bạn quản lý.']);
             }
 
             // Kiểm tra xem liên kết có tồn tại không
             $exists = $khuyenMai->rapPhims()->where('rap_phim_id', $validated['rap_phim_id'])->exists();
-            \Log::info('removeFromRap: Checking existing relationship', ['exists' => $exists]);
 
             if (!$exists) {
                 return response()->json(['success' => false, 'message' => 'Khuyến mãi chưa được gán cho rạp này.']);
@@ -222,20 +190,11 @@ class ChiNhanhRapKhuyenMaiController extends Controller
 
             // Hủy liên kết
             $detached = $khuyenMai->rapPhims()->detach($validated['rap_phim_id']);
-            \Log::info('removeFromRap: Detach result', ['detached_count' => $detached]);
 
             return response()->json(['success' => true, 'message' => 'Đã hủy gán khuyến mãi khỏi rạp.']);
         } catch (\Illuminate\Validation\ValidationException $e) {
-            \Log::error('removeFromRap: Validation error', [
-                'errors' => $e->errors(),
-                'request_data' => $request->all()
-            ]);
             return response()->json(['success' => false, 'message' => 'Dữ liệu không hợp lệ: ' . implode(', ', $e->errors())]);
         } catch (\Exception $e) {
-            \Log::error('removeFromRap: Exception', [
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
             return response()->json(['success' => false, 'message' => 'Có lỗi xảy ra: ' . $e->getMessage()]);
         }
     }

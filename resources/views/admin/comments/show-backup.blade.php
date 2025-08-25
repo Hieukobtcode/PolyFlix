@@ -1,30 +1,42 @@
 @extends('layouts.admin')
 
 @section('title', 'Chi tiết bình luận')
-@section('page-title', 'Chi tiết bình luận')
-@section('breadcrumb')
-<ol class="breadcrumb">
-    <li class="breadcrumb-item"><a href="{{ route('admin.comments.index') }}">Quản lý bình luận</a></li>
-    <li class="breadcrumb-item active">{{ $phim->ten_phim }}</li>
-</ol>
-@endsection
+@section('page-title            @endif
+        </div>
+
+        <div class="card-body p-4">
+            {{-- Filter Form --}}
+            <form method="GET" class="mb-4">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label">Lọc theo trạng thái:</label>
+                        <select name="status" class="form-select">
+                            <option value="">-- Tất cả bình luận --</option>
+                            <option value="visible" {{ request('status') === 'visible' ? 'selected' : '' }}>Đang hiển thị</option>
+                            <option value="hidden" {{ request('status') === 'hidden' ? 'selected' : '' }}>Đã ẩn</option>
+                            <option value="replied" {{ request('status') === 'replied' ? 'selected' : '' }}>Đã phản hồi</option>
+                            <option value="unreplied" {{ request('status') === 'unreplied' ? 'selected' : '' }}>Chưa phản hồi</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">&nbsp;</label>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-filter me-1"></i> Lọc
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>Chi tiết bình luận')
+@section('breadcrumb', 'Chi tiết bình luận')
 
 @section('styles')
 <style>
-    .card {
-        border-radius: 10px;
-    }
-
     .comment-box {
         border: 1px solid #dee2e6;
         border-radius: 10px;
         padding: 1rem;
         margin-bottom: 1rem;
-        transition: all 0.3s ease;
-    }
-
-    .comment-box:hover {
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
 
     .comment-header {
@@ -73,7 +85,6 @@
                 <i class="fas fa-arrow-left me-1"></i> Quay lại
             </a>
         </div>
-        
         <div class="px-4 pt-3">
             {{-- Thống kê tổng quan --}}
             <div class="row mb-3">
@@ -122,30 +133,6 @@
         </div>
 
         <div class="card-body p-4">
-            {{-- Filter Form --}}
-            <form method="GET" class="mb-4">
-                <div class="row g-3">
-                    <div class="col-md-4">
-                        <label class="form-label">Lọc theo trạng thái:</label>
-                        <select name="status" class="form-select">
-                            <option value="">-- Tất cả bình luận --</option>
-                            <option value="visible" {{ request('status') === 'visible' ? 'selected' : '' }}>Đang hiển thị</option>
-                            <option value="hidden" {{ request('status') === 'hidden' ? 'selected' : '' }}>Đã ẩn</option>
-                            <option value="replied" {{ request('status') === 'replied' ? 'selected' : '' }}>Đã phản hồi</option>
-                            <option value="unreplied" {{ request('status') === 'unreplied' ? 'selected' : '' }}>Chưa phản hồi</option>
-                        </select>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">&nbsp;</label>
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-filter me-1"></i> Lọc
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </form>
-
             @forelse ($comments as $comment)
             <div class="comment-box {{ $comment->visible ? 'comment-visible' : 'comment-hidden' }}">
                 <div class="d-flex justify-content-between align-items-start">
@@ -214,21 +201,21 @@
                     @endif
                 </div>
             </div>
-            @empty
-            <div class="text-center py-5">
-                <i class="fas fa-comments fa-3x text-muted mb-3"></i>
-                <h5 class="text-muted">Không có bình luận</h5>
-                <p class="text-muted">Chưa có bình luận nào cho phim này.</p>
-            </div>
-            @endforelse
-
-            {{-- Phân trang --}}
-            @if($comments->hasPages())
-            <div class="d-flex justify-content-center mt-4">
-                {{ $comments->appends(request()->query())->links() }}
-            </div>
-            @endif
+        @empty
+        <div class="text-center py-5">
+            <i class="fas fa-comments fa-3x text-muted mb-3"></i>
+            <h5 class="text-muted">Không có bình luận</h5>
+            <p class="text-muted">Chưa có bình luận nào cho phim này.</p>
         </div>
+        @endforelse
+
+        {{-- Phân trang --}}
+        @if($comments->hasPages())
+        <div class="d-flex justify-content-center mt-4">
+            {{ $comments->links() }}
+        </div>
+        @endif
     </div>
+</div>
 </div>
 @endsection
