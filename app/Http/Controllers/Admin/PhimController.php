@@ -43,7 +43,7 @@ class PhimController extends Controller
     public function index()
     {
         $user = Auth::user();
-    
+
         if ($user->vai_tro_id == 1) {
             // Admin tổng: tất cả phim
             $phims = Phim::orderBy('create_at', 'desc')->paginate(10);
@@ -61,10 +61,10 @@ class PhimController extends Controller
             // Vai trò khác: không thấy gì
             $phims = collect();
         }
-    
+
         return view('admin.phim.index', compact('phims'));
     }
-    
+
 
     public function create()
     {
@@ -181,46 +181,72 @@ class PhimController extends Controller
         ));
     }
 
-
     public function update(Request $request, $id)
     {
-        $phim = Phim::findOrFail($id);
+        $phim = Phim::with(['chiNhanhs:id', 'rapPhims:id,chi_nhanh_id'])->findOrFail($id);
 
         if (Auth::user()->vai_tro_id == 1) {
-            //  Admin tổng: full quyền
+            // === ADMIN TỔNG ===
             $this->validateAdmin($request);
             $data = $this->prepareData($request, $phim);
-
             $phim->update($data);
-            $this->syncAllRelations($phim, $request);
+
+            // 1) Sync CHI NHÁNH theo form (admin tổng chỉ quản lý tới chi nhánh)
+            $chiNhanhIds = $request->input('chi_nhanh_ids', []);
+            $phim->chiNhanhs()->sync($chiNhanhIds);
+
+            // 2) KHÔNG đụng vào rạp đã có, TRỪ rạp thuộc chi nhánh bị bỏ
+            if (!empty($chiNhanhIds)) {
+                // các rạp đang gán cho phim
+                $currentRapIds = $phim->rapPhims->pluck('id')->toArray();
+
+                // rạp nào thuộc chi nhánh KHÔNG còn nằm trong $chiNhanhIds thì gỡ
+                $rapIdsToDetach = $phim->rapPhims
+                    ->whereNotIn('chi_nhanh_id', $chiNhanhIds)
+                    ->pluck('id')->toArray();
+
+                if (!empty($rapIdsToDetach)) {
+                    $phim->rapPhims()->detach($rapIdsToDetach);
+                }
+                // LƯU Ý: không gọi sync([]) cho rapPhims, để tránh xóa sạch khi form không gửi rap_phim_ids
+            }
+
+            // các quan hệ khác xử lý bình thường
+            $phim->theLoais()->sync($request->input('the_loai_ids', []));
+            $phim->dinhDangs()->sync($request->input('dinh_dang_ids', []));
+            $phim->phuDes()->sync($request->input('phu_de_ids', []));
         } elseif (Auth::user()->vai_tro_id == 2) {
-            //  Admin chi nhánh: chỉ được update rạp thuộc chi nhánh mình quản lý
+            // === ADMIN CHI NHÁNH ===
+            // Chỉ được gán/bỏ rạp thuộc chi nhánh mình quản lý, không được đụng chi nhánh của phim
             $request->validate([
-                'rap_phim_ids' => 'required|array',
+                'rap_phim_ids'   => 'required|array',
                 'rap_phim_ids.*' => [
                     'exists:rap_phims,id',
-                    function ($attribute, $value, $fail) {
-                        $rapPhim = RapPhim::find($value);
-                        if (!$rapPhim || $rapPhim->chiNhanh->quan_ly_id != Auth::id()) {
+                    function ($attr, $value, $fail) {
+                        $rap = RapPhim::find($value);
+                        if (!$rap || $rap->chiNhanh->quan_ly_id != Auth::id()) {
                             $fail("Rạp ID {$value} không thuộc quyền quản lý.");
                         }
                     }
                 ],
             ]);
 
-            //  Lấy danh sách rạp thuộc chi nhánh admin quản lý
-            $rapPhimsThuocQuyen = RapPhim::whereHas('chiNhanh', function ($q) {
-                $q->where('quan_ly_id', Auth::id());
-            })->pluck('id')->toArray();
+            $currentRapIds   = $phim->rapPhims()->pluck('rap_phims.id')->toArray();
+            $allowedRapIds   = RapPhim::whereHas('chiNhanh', fn($q) => $q->where('quan_ly_id', Auth::id()))
+                ->pluck('id')->toArray();
 
-            //  Giữ nguyên các rạp không thuộc quyền quản lý
-            $rapPhimsHienTai = $phim->rapPhims->pluck('id')->toArray();
-            $rapPhimsKhacQuyen = array_diff($rapPhimsHienTai, $rapPhimsThuocQuyen);
+            // Giữ nguyên các rạp hiện có không thuộc quyền quản lý của admin chi nhánh
+            $protectedRapIds = array_diff($currentRapIds, $allowedRapIds);
 
-            //  Merge lại rạp cũ ngoài quyền quản lý + rạp mới được gán
-            $newRapPhimIds = array_merge($rapPhimsKhacQuyen, $request->rap_phim_ids);
+            // Tập mới = rạp được phép từ request + các rạp bảo vệ (ngoài quyền)
+            $newRapIds = array_values(array_unique(array_merge(
+                $protectedRapIds,
+                $request->input('rap_phim_ids', [])
+            )));
 
-            $phim->rapPhims()->sync($newRapPhimIds);
+            $phim->rapPhims()->sync($newRapIds);
+
+            // Không cho sửa chi nhánh ở vai trò 2
         } else {
             return redirect()->route('admin.phim.index')
                 ->with('error', 'Bạn không có quyền cập nhật phim này.');
@@ -229,7 +255,6 @@ class PhimController extends Controller
         return redirect()->route('admin.phim.index')
             ->with('success', 'Phim đã được cập nhật thành công!');
     }
-
 
     public function destroy($id)
     {

@@ -335,38 +335,46 @@
         }
     </style>
     <style>
-        .ticket { 
-            background-color: linear-gradient(to bottom right, #fff0f0, #ffffff); 
-            border: 2px dashed #e0e0e0; 
-            border-radius: 12px; 
-            margin-bottom: 1.5rem; 
-            padding: 1.5rem; 
+        .ticket {
+            background-color: linear-gradient(to bottom right, #fff0f0, #ffffff);
+            border: 2px dashed #e0e0e0;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            padding: 1.5rem;
         }
-        .ticket-title { 
-            font-size: 1.5rem; 
-            font-weight: bold; 
-            color: #1f2937; 
-            text-align: center; 
-            margin-bottom: 1rem; 
+
+        .ticket-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #1f2937;
+            text-align: center;
+            margin-bottom: 1rem;
         }
-        .ticket-line { 
-            font-size: 1rem; 
-            color: #374151; 
-            margin: 0.5rem 0; 
+
+        .ticket-line {
+            font-size: 1rem;
+            color: #374151;
+            margin: 0.5rem 0;
         }
-        .barcode { 
-            text-align: center; 
-            margin-top: 1rem; 
+
+        .barcode {
+            text-align: center;
+            margin-top: 1rem;
         }
-        .divider { 
-            border-top: 1px dashed #9ca3af; 
-            margin: 1rem 0; 
+
+        .divider {
+            border-top: 1px dashed #9ca3af;
+            margin: 1rem 0;
         }
+
         @media print {
-            .no-print { display: none; }
-            .ticket { 
-                page-break-inside: avoid; 
-                margin-bottom: 0.5in; 
+            .no-print {
+                display: none;
+            }
+
+            .ticket {
+                page-break-inside: avoid;
+                margin-bottom: 0.5in;
             }
         }
     </style>
@@ -418,6 +426,21 @@
                         <div class="detail-item">
                             <i class="fas fa-clock"></i>
                             <span>{{ $datVe->suatChieu?->bat_dau }} - {{ $datVe->suatChieu?->ket_thuc }}</span>
+                        </div>
+                        {{-- ✅ Thời gian đặt vé --}}
+                        <div class="detail-item">
+                            <i class="fas fa-hourglass-start"></i>
+                            <span>Đặt lúc:
+                                {{ $datVe->created_at ? $datVe->created_at->format('d/m/Y - H:i') : '---' }}
+                            </span>
+                        </div>
+
+                        {{-- ✅ Thời gian thanh toán --}}
+                        <div class="detail-item">
+                            <i class="fas fa-credit-card"></i>
+                            <span>Thanh toán:
+                                {{ $datVe->ngay_thanh_toan ? \Carbon\Carbon::parse($datVe->ngay_thanh_toan)->format('d/m/Y - H:i') : '---' }}
+                            </span>
                         </div>
                         <div class="detail-item">
                             <i class="fas fa-tag"></i>
@@ -513,6 +536,10 @@
                         </div>
                     @endif
                     <div class="price-row">
+                        <span>Phương thức thanh toán:</span>
+                        <span>{{ $datVe->phuong_thuc_tt }}</span>
+                    </div>
+                    <div class="price-row">
                         <span>Tổng cộng</span>
                         <span>{{ number_format($tongThanhTien, 0, ',', '.') }}đ</span>
                     </div>
@@ -523,9 +550,13 @@
 
         <div class="action-buttons">
 
-            <button onclick="printInvoice()" class="btn-modern btn-outline-modern">
-                <i class="fas fa-print"></i> In hóa đơn
-            </button>
+            @if ($datVe->trang_thai === 'Đã thanh toán')
+                <button onclick="printInvoice()" class="btn-modern btn-outline-modern">
+                    <i class="fas fa-print"></i> In hóa đơn
+                </button>
+            @endif
+
+            {{-- Nút quay lại danh sách vé --}}
             <a href="{{ route('admin.dat-ves.index') }}" class="btn-modern btn-outline-modern">
                 <i class="fas fa-list"></i>
                 Quản lý vé
@@ -631,32 +662,32 @@
 
     <script>
         function printInvoice() {
-    // Lấy ID của đặt vé từ biến hoặc DOM
-    const datVeId = "{{ $datVe->id }}"; // Giả sử $datVe->id có sẵn trong Blade
-    const url = "{{ route('admin.dat-ve.print', ':id') }}".replace(':id', datVeId);
+            // Lấy ID của đặt vé từ biến hoặc DOM
+            const datVeId = "{{ $datVe->id }}"; // Giả sử $datVe->id có sẵn trong Blade
+            const url = "{{ route('admin.dat-ve.print', ':id') }}".replace(':id', datVeId);
 
-    // Gửi yêu cầu AJAX để lấy PDF
-    fetch(url, {
-        method: 'GET',
-        headers: {
-            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-            'Accept': 'application/pdf'
+            // Gửi yêu cầu AJAX để lấy PDF
+            fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/pdf'
+                    }
+                })
+                .then(response => response.blob())
+                .then(blob => {
+                    // Tạo URL tạm thời cho PDF
+                    const pdfUrl = window.URL.createObjectURL(blob);
+                    // Mở PDF trong tab mới hoặc iframe
+                    window.open(pdfUrl, '_blank');
+                    // Giải phóng URL sau khi sử dụng
+                    setTimeout(() => window.URL.revokeObjectURL(pdfUrl), 100);
+                })
+                .catch(error => {
+                    console.error('Lỗi khi tải PDF:', error);
+                    alert('Không thể tải hóa đơn. Vui lòng thử lại.');
+                });
         }
-    })
-    .then(response => response.blob())
-    .then(blob => {
-        // Tạo URL tạm thời cho PDF
-        const pdfUrl = window.URL.createObjectURL(blob);
-        // Mở PDF trong tab mới hoặc iframe
-        window.open(pdfUrl, '_blank');
-        // Giải phóng URL sau khi sử dụng
-        setTimeout(() => window.URL.revokeObjectURL(pdfUrl), 100);
-    })
-    .catch(error => {
-        console.error('Lỗi khi tải PDF:', error);
-        alert('Không thể tải hóa đơn. Vui lòng thử lại.');
-    });
-}
     </script>
 
 @endsection

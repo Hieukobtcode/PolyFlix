@@ -50,6 +50,7 @@ use App\Http\Controllers\Client\TheLoaiController;
 use App\Http\Controllers\Client\KhuyenMaiController;
 
 Route::get('/', [TrangChuController::class, 'index'])->name('home');
+Route::get('/client.khuyen-mai', [KhuyenMaiController::class, 'index'])->name('khuyen-mai.index');
 
 Route::middleware('auth')->group(function () {
 
@@ -74,6 +75,10 @@ Route::middleware('auth')->group(function () {
 
 
     Route::get('/zalopay/ketqua', [ThanhToanController::class, 'ketQuaThanhToan'])->name('zalopay.ketqua');
+    // callback ZaloPay bắn về server
+    Route::post('/api/payments/zalopay/callback', [ThanhToanController::class, 'callBack'])
+        ->name('zalopay.callback');
+    Route::get('/client.khuyen-mai', [KhuyenMaiController::class, 'index'])->name('khuyen-mai.index');
 
     // Profile
     Route::get('profile', [ProfileController::class, 'index'])->name('profile');
@@ -98,7 +103,7 @@ Route::get('/', [TrangChuController::class, 'index'])->name('home');
 Route::get('/rap/{uuid}', [TrangChuController::class, 'showrap'])->name('showrap');
 Route::get('/bai-viet', [DanhSachBaiVietController::class, 'index'])->name('client.bai-viet');
 Route::get('/bai-viet/{uuid}', [DanhSachBaiVietController::class, 'show'])->name('show-bai-viet');
-
+Route::get('/client.khuyen-mai', [KhuyenMaiController::class, 'index'])->name('khuyen-mai.index');
 // Liên hệ
 Route::get('/lien-he', [ClientLienHeController::class, 'index'])->name('client.lien-he');
 Route::post('/lien-he', [ClientLienHeController::class, 'store'])->name('client.lien-he.store');
@@ -243,8 +248,6 @@ Route::get('/debug-khuyen-mai', function () {
         ]);
     }
 });
-
-
 
 // Khuyến mãi cho client - sử dụng tên route khác do vấn đề với server
 Route::get('/promotions', [KhuyenMaiController::class, 'index'])->name('client.khuyen-mai.index');
@@ -490,7 +493,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access', 'per
     Route::resource('rap-phim', RapphimController::class);
 
     // Quản lý cấu hình
-    Route::resource('cau-hinh', CauHinhController::class);
+    // Route::resource('cau-hinh', CauHinhController::class);
 
     // Quản lý ghế ngồi
     Route::resource('ghe-ngoi', GheNgoiController::class);
@@ -535,9 +538,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access', 'per
     Route::resource('loai-phong', LoaiPhongController::class);
     Route::resource('rap-phim', RapphimController::class);
 
-    Route::get('cau-hinh-settings', [CauHinhController::class, 'index'])->name('cau-hinh-settings.index');
-    Route::get('cau-hinh-settings/edit', [CauHinhController::class, 'edit'])->name('cau-hinh-settings.edit');
-    Route::post('cau-hinh-settings/update', [CauHinhController::class, 'update'])->name('cau-hinh-settings.update');
+    // Quản lý cấu hình hệ thống (chỉ 1 record)
+    Route::get('cau-hinh', [CauHinhController::class, 'index'])->name('cau-hinh.index');
+    Route::post('cau-hinh/update', [CauHinhController::class, 'update'])->name('cau-hinh.update');
 
     Route::resource('phong-chieu', PhongChieuController::class);
     Route::resource('loai-ghe', LoaiGheController::class);
@@ -633,7 +636,6 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access', 'per
 
         // Test route
         Route::post('/test-assign', function (Request $request) {
-            \Log::info('Test assign called', $request->all());
             return response()->json([
                 'success' => true,
                 'message' => 'Test thành công!',
@@ -643,10 +645,6 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access', 'per
 
         // Test remove route
         Route::post('/test-remove', function (Request $request) {
-            \Log::info('Test remove route called', [
-                'request_data' => $request->all()
-            ]);
-
             return response()->json([
                 'success' => true,
                 'message' => 'Test remove kết nối thành công!',
@@ -813,7 +811,6 @@ Route::post('/test-remove-bypass', function (\Illuminate\Http\Request $request) 
             'message' => 'Test remove bypass thành công! Đã xóa ' . $deleted . ' bản ghi'
         ]);
     } catch (\Exception $e) {
-        \Log::error('Test remove bypass error', ['error' => $e->getMessage()]);
         return response()->json([
             'success' => false,
             'message' => 'Lỗi: ' . $e->getMessage()
@@ -823,7 +820,6 @@ Route::post('/test-remove-bypass', function (\Illuminate\Http\Request $request) 
 
 // Debug route siêu đơn giản
 Route::post('/debug-remove', function (\Illuminate\Http\Request $request) {
-    \Log::info('Debug remove called', $request->all());
 
     return response()->json([
         'success' => true,
@@ -836,7 +832,6 @@ Route::post('/debug-remove', function (\Illuminate\Http\Request $request) {
 // Test assign KHÔNG QUA middleware admin
 Route::post('test-assign-direct', function (\Illuminate\Http\Request $request) {
     try {
-        \Log::info('Direct assign test', $request->all());
 
         return response()->json([
             'success' => true,
@@ -858,7 +853,6 @@ Route::post('test-assign-direct', function (\Illuminate\Http\Request $request) {
 // Route assign thật KHÔNG QUA middleware admin
 Route::post('direct-assign-promotion', function (\Illuminate\Http\Request $request) {
     try {
-        \Log::info('Direct promotion assign', $request->all());
 
         $khuyenMaiId = $request->input('khuyen_mai_id');
         $rapPhimIds = $request->input('rap_phim_ids', []);

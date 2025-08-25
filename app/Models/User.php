@@ -67,11 +67,6 @@ class User extends Authenticatable
         return $this->hasMany(Rating::class);
     }
 
-    public function comments()
-    {
-        return $this->hasMany(Comment::class);
-    }
-
     public function lichSuDiem()
     {
         return $this->hasMany(LichSuDiem::class, 'users_id');
@@ -83,9 +78,18 @@ class User extends Authenticatable
         return $this->hasOne(ChiNhanh::class, 'quan_ly_id');
     }
 
-    // User là quản lý của 1 rạp
-    public function rapDangQuanLy()
+    public function rapPhimDangQuanLy()
     {
-        return $this->hasOne(RapPhim::class, 'quan_ly_id');
+        return $this->hasOne(RapPhim::class, 'quan_ly_id', 'id');
+    }
+
+    public function rapLamViec()
+    {
+        return $this->belongsTo(RapPhim::class, 'rap_id');
+    }
+
+    public function rapPhim()
+    {
+        return $this->belongsTo(RapPhim::class, 'rap_id');
     }
 }

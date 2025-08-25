@@ -88,12 +88,16 @@ class ThanhToanController extends Controller
 
         $tongThanhTien = $datVe->tong_tien;
 
+        $timeoutMinutes = 5; // giữ vé trong 10 phút
+        $expiresAt = $datVe->created_at->copy()->addMinutes($timeoutMinutes);
+
         return view('client.thanh-toan.index', compact(
             'datVe',
             'tongTienGhe',
             'tongTienCombo',
             'tongTienDoAn',
-            'tongThanhTien'
+            'tongThanhTien',
+            'expiresAt'
         ));
     }
 
@@ -216,9 +220,6 @@ class ThanhToanController extends Controller
         }
     }
 
-
-
-
     public function xuLyThanhToan(Request $request)
     {
         $request->validate([
@@ -339,7 +340,6 @@ class ThanhToanController extends Controller
         }
     }
 
-
     public function callBack(Request $request)
     {
         $result = [];
@@ -420,7 +420,7 @@ class ThanhToanController extends Controller
                                     $capBac = CapBacThe::find($nguoiDung->cap_bac_id);
 
                                     if ($capBac) {
-                                        // Tính điểm dựa trên phần trăm vé
+                                        // Tính điểm dựa trên phần trăm cấp bậc 
                                         $tongTien = $datVe->tong_tien;
                                         $phanTramVe = $capBac->phan_tram_ve;
                                         $diemCong = round($tongTien * $phanTramVe / 100);
@@ -443,7 +443,6 @@ class ThanhToanController extends Controller
                                             // =========
 
                                             $tongTienChiTieu = DatVe::where('user_id', $nguoiDung->id)->sum('tong_tien');
-                                            Log::info('tong chi tieu:' . $tongTienChiTieu);
                                             $capBacMoi = CapBacThe::where('tong_chi_tieu', '<=', $tongTienChiTieu)
                                                 ->orderByDesc('tong_chi_tieu')
                                                 ->first();
@@ -451,8 +450,6 @@ class ThanhToanController extends Controller
                                             if ($capBacMoi && $capBacMoi->id !== $nguoiDung->cap_bac_id) {
                                                 $nguoiDung->cap_bac_id = $capBacMoi->id;
                                                 $nguoiDung->save();
-
-                                                Log::info("Đã cập nhật cấp bậc mới cho người dùng ID {$nguoiDung->id}: {$capBacMoi->ten}");
                                             }
                                         }
                                     } else {
@@ -503,7 +500,7 @@ class ThanhToanController extends Controller
     /**
      * Hủy thanh toán và mở khóa ghế
      */
-    public function huyThanhToan($datVeId)
+    public function huyThanhToan(Request $request, $datVeId)
     {
         if (!Auth::check()) {
             return redirect()->route('login.form')->with('error', 'Vui lòng đăng nhập!');
@@ -544,6 +541,10 @@ class ThanhToanController extends Controller
                 } catch (\Exception $e) {
                     Log::warning('Không thể mở khóa ghế ID: ' . ($ghe->pivot->ghe_ngoi_id ?? $ghe->id) . ' - ' . $e->getMessage());
                 }
+            }
+
+            if ($request->expectsJson()) {
+                return response()->json(['status' => 'success']);
             }
 
             return redirect()->route('home')->with('success', 'Đã hủy đơn đặt vé thành công. Ghế đã được mở khóa.');

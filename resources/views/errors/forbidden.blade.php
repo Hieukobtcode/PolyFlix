@@ -8,7 +8,7 @@
         <p class="lead">
             Vui lòng liên hệ quản trị viên nếu bạn nghĩ đây là nhầm lẫn.
         </p>
-        <a href="{{ route('login') }}" class="btn btn-primary mt-3">
+        <a href="{{ url()->previous() }}" class="btn btn-primary mt-3">
             <i class="fas fa-arrow-left me-1"></i> Quay lại
         </a>
     </div>
