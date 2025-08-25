@@ -13,7 +13,7 @@ class VaiTroPhanQuyenSeeder extends Seeder
         $adminChiNhanhId = 2;
         $adminRapId = 3;
 
-        $fullPermissionIds = range(1, 197);
+        $fullPermissionIds = range(1, 201);
 
         $chiNhanhPermissionIds = [
             193,
@@ -71,7 +71,11 @@ class VaiTroPhanQuyenSeeder extends Seeder
             139,
             140,
             141,
-            142
+            142,
+            198,
+            199,
+            200,
+            201
         ];
 
         $rapPermissionIds = [

@@ -113,6 +113,124 @@ Route::get('/test-route', function () {
     return 'Laravel routing is working!';
 });
 
+// Debug user access
+Route::get('/debug-user-access', function () {
+    $user = \Illuminate\Support\Facades\Auth::user();
+
+    if (!$user) {
+        return response()->json(['error' => 'User chưa đăng nhập']);
+    }
+
+    $vaiTro = $user->vaiTro;
+    $chiNhanhDangQuanLy = $user->chiNhanhDangQuanLy;
+
+    return response()->json([
+        'user_info' => [
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'vai_tro_id' => $user->vai_tro_id,
+            'vai_tro_name' => $vaiTro ? $vaiTro->ten : 'Không có',
+        ],
+        'admin_chi_nhanh_check' => [
+            'is_admin_chi_nhanh' => $user->vai_tro_id == 2,
+            'has_chi_nhanh' => $chiNhanhDangQuanLy ? true : false,
+            'chi_nhanh_info' => $chiNhanhDangQuanLy ? [
+                'id' => $chiNhanhDangQuanLy->id,
+                'ten' => $chiNhanhDangQuanLy->ten_chi_nhanh
+            ] : null,
+        ],
+        'can_access' => $user->vai_tro_id == 2 && $chiNhanhDangQuanLy,
+        'all_chi_nhanhs' => \App\Models\ChiNhanh::with('quanLy')->get()->map(function ($cn) {
+            return [
+                'id' => $cn->id,
+                'ten' => $cn->ten_chi_nhanh,
+                'quan_ly' => $cn->quanLy ? $cn->quanLy->name : 'Chưa có quản lý'
+            ];
+        })
+    ]);
+});
+
+// Test permission check cho manager route
+Route::get('/test-manager-permission', function () {
+    $user = \Illuminate\Support\Facades\Auth::user();
+
+    if (!$user) {
+        return response()->json(['error' => 'Chưa đăng nhập']);
+    }
+
+    $hasPermission = $user->coQuyen('admin.chi-nhanh-khuyen-mai.manager');
+    $isAdminChiNhanh = $user->vai_tro_id == 2;
+    $hasChiNhanh = $user->chiNhanhDangQuanLy ? true : false;
+
+    return response()->json([
+        'user_id' => $user->id,
+        'user_name' => $user->name,
+        'vai_tro_id' => $user->vai_tro_id,
+        'has_permission' => $hasPermission,
+        'is_admin_chi_nhanh' => $isAdminChiNhanh,
+        'has_chi_nhanh' => $hasChiNhanh,
+        'can_access' => $hasPermission && $isAdminChiNhanh && $hasChiNhanh,
+        'permission_slug' => 'admin.chi-nhanh-khuyen-mai.manager'
+    ]);
+});
+
+// Fix user access - gán quyền admin chi nhánh cho user hiện tại
+Route::get('/fix-user-access', function () {
+    $user = \Illuminate\Support\Facades\Auth::user();
+
+    if (!$user) {
+        return response()->json(['error' => 'User chưa đăng nhập']);
+    }
+
+    $messages = [];
+
+    // Kiểm tra và gán vai trò admin chi nhánh
+    if ($user->vai_tro_id != 2) {
+        $user->vai_tro_id = 2;
+        $user->save();
+        $messages[] = "✅ Đã gán vai trô admin chi nhánh cho user";
+    } else {
+        $messages[] = "✅ User đã có vai trò admin chi nhánh";
+    }
+
+    // Kiểm tra và gán quản lý chi nhánh
+    $chiNhanhDangQuanLy = $user->chiNhanhDangQuanLy;
+    if (!$chiNhanhDangQuanLy) {
+        // Tìm chi nhánh chưa có quản lý
+        $chiNhanhKhongCoQuanLy = \App\Models\ChiNhanh::whereNull('quan_ly_id')->first();
+
+        if ($chiNhanhKhongCoQuanLy) {
+            $chiNhanhKhongCoQuanLy->quan_ly_id = $user->id;
+            $chiNhanhKhongCoQuanLy->save();
+            $messages[] = "✅ Đã gán user làm quản lý chi nhánh: " . $chiNhanhKhongCoQuanLy->ten_chi_nhanh;
+        } else {
+            // Tạo chi nhánh mới cho user này
+            $chiNhanhMoi = \App\Models\ChiNhanh::create([
+                'ten_chi_nhanh' => 'Chi nhánh ' . $user->name,
+                'dia_chi' => 'Địa chỉ mẫu',
+                'quan_ly_id' => $user->id,
+                'trang_thai' => 'hoat_dong'
+            ]);
+            $messages[] = "✅ Đã tạo và gán chi nhánh mới: " . $chiNhanhMoi->ten_chi_nhanh;
+        }
+    } else {
+        $messages[] = "✅ User đã được gán quản lý chi nhánh: " . $chiNhanhDangQuanLy->ten_chi_nhanh;
+    }
+
+    return response()->json([
+        'success' => true,
+        'messages' => $messages,
+        'user_info' => [
+            'id' => $user->id,
+            'name' => $user->name,
+            'vai_tro_id' => $user->vai_tro_id,
+            'chi_nhanh' => $user->chiNhanhDangQuanLy ? $user->chiNhanhDangQuanLy->ten_chi_nhanh : 'Không có'
+        ],
+        'redirect_url' => url('/admin/chi-nhanh-promotion-manager')
+    ]);
+});
+
 // Debug khuyến mãi
 Route::get('/debug-khuyen-mai', function () {
     try {
@@ -180,6 +298,59 @@ Route::get('/promotions-simple', function () {
 // Navigation test page
 Route::get('/test-navigation', function () {
     return view('test.navigation');
+});
+
+// Comment và Rating routes
+Route::middleware('auth')->group(function () {
+    Route::post('/comments', [\App\Http\Controllers\Client\CommentController::class, 'store'])->name('comments.store');
+    Route::post('/ratings', [\App\Http\Controllers\Client\CommentController::class, 'rate'])->name('ratings.store');
+});
+
+Route::get('/comments/{phim}', [\App\Http\Controllers\Client\CommentController::class, 'getComments'])->name('comments.get');
+
+// Test route để kiểm tra admin comments
+Route::get('/test-admin-comments', function () {
+    return 'Admin Comments Route hoạt động! <a href="' . route('admin.comments.index') . '">Vào trang quản lý comment</a>';
+});
+
+// Test route để debug comments
+Route::get('/debug-comments', function () {
+    try {
+        $comments = \App\Models\Comment::with(['user', 'phim'])->take(5)->get();
+        return response()->json([
+            'success' => true,
+            'count' => $comments->count(),
+            'data' => $comments->toArray()
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'error' => $e->getMessage()
+        ]);
+    }
+});
+
+// Test route để debug comments view trực tiếp
+Route::get('/debug-comments-view', function () {
+    try {
+        // Test controller method trực tiếp
+        $controller = new \App\Http\Controllers\Admin\CommentController();
+        $request = new \Illuminate\Http\Request();
+
+        // Mock auth user
+        $user = \App\Models\User::first();
+        if ($user) {
+            \Illuminate\Support\Facades\Auth::login($user);
+        }
+
+        return $controller->index($request);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'error' => $e->getMessage(),
+            'trace' => $e->getTraceAsString()
+        ]);
+    }
 });
 
 // SPA Test page
@@ -375,6 +546,18 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access', 'per
     Route::resource('loai-ghe', LoaiGheController::class);
     Route::resource('so-do-ghe', SoDoGheController::class);
     Route::resource('ghe-ngoi', GheNgoiController::class);
+
+    // Comment management routes
+    Route::prefix('comments')->name('comments.')->group(function () {
+        Route::get('/', [CommentController::class, 'index'])->name('index');
+        Route::get('/test', function () {
+            return view('admin.comments.test');
+        })->name('test');
+        Route::get('/{phim}', [CommentController::class, 'show'])->name('show');
+        Route::post('/{comment}/reply', [CommentController::class, 'reply'])->name('reply');
+        Route::post('/{comment}/hide', [CommentController::class, 'hide'])->name('hide');
+        Route::post('/{comment}/unhide', [CommentController::class, 'unhide'])->name('unhide');
+    });
     Route::post('ghe-ngoi/updateSeat', [GheNgoiController::class, 'updateSeat'])->name('ghe-ngoi.updateSeat');
 
     Route::resource('cap-bac-the', CapBacTheController::class);
@@ -428,4 +611,297 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access', 'per
     });
     // Hủy lời mời quản lý
     Route::post('invite/cancel', [InviteController::class, 'cancel'])->name('invite.cancel');
+
+    // Khuyến mãi cho admin chi nhánh
+    Route::prefix('chi-nhanh-khuyen-mai')->name('chi-nhanh-khuyen-mai.')->middleware('admin.chi.nhanh')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\ChiNhanhKhuyenMaiController::class, 'index'])->name('index');
+        Route::get('/{id}', [\App\Http\Controllers\Admin\ChiNhanhKhuyenMaiController::class, 'show'])->name('show');
+        Route::get('/bao-cao/index', [\App\Http\Controllers\Admin\ChiNhanhKhuyenMaiController::class, 'baoCao'])->name('bao-cao');
+    });
+
+    // Quản lý khuyến mãi rạp cho admin chi nhánh
+    Route::prefix('chi-nhanh-rap-khuyen-mai')->name('chi-nhanh-rap-khuyen-mai.')->middleware('admin.chi.nhanh')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\ChiNhanhRapKhuyenMaiController::class, 'index'])->name('index');
+        Route::post('/assign', [\App\Http\Controllers\Admin\ChiNhanhRapKhuyenMaiController::class, 'assignToRap'])->name('assign');
+        Route::post('/remove', [\App\Http\Controllers\Admin\ChiNhanhRapKhuyenMaiController::class, 'removeFromRap'])->name('remove');
+        Route::get('/assigned-raps/{khuyenMaiId}', [\App\Http\Controllers\Admin\ChiNhanhRapKhuyenMaiController::class, 'getAssignedRaps'])->name('assigned-raps');
+    });
+
+    // Quản lý khuyến mãi tổng hợp cho admin chi nhánh  
+    Route::prefix('chi-nhanh-promotion-manager')->name('chi-nhanh-khuyen-mai.')->middleware('admin.chi.nhanh')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\ChiNhanhRapKhuyenMaiController::class, 'index'])->name('manager');
+        Route::post('/assign-to-cinema', [\App\Http\Controllers\Admin\ChiNhanhRapKhuyenMaiController::class, 'assignToRap'])->name('assign-to-cinema');
+        Route::post('/remove-from-cinema', [\App\Http\Controllers\Admin\ChiNhanhRapKhuyenMaiController::class, 'removeFromRap'])->name('remove-from-cinema');
+        Route::get('/assigned-cinemas/{khuyenMaiId}', [\App\Http\Controllers\Admin\ChiNhanhRapKhuyenMaiController::class, 'getAssignedRaps'])->name('assigned-cinemas');
+
+        // Test route
+        Route::post('/test-assign', function (Request $request) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Test thành công!',
+                'data' => $request->all()
+            ]);
+        })->name('test-assign');
+
+        // Test remove route
+        Route::post('/test-remove', function (Request $request) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Test remove kết nối thành công!',
+                'data' => $request->all()
+            ]);
+        })->name('test-remove');
+
+        // Debug user info
+        Route::get('/debug-user', function () {
+            $user = \Illuminate\Support\Facades\Auth::user();
+            if (!$user) {
+                return response()->json(['error' => 'User chưa đăng nhập']);
+            }
+
+            return response()->json([
+                'user_id' => $user->id,
+                'name' => $user->name,
+                'vai_tro_id' => $user->vai_tro_id,
+                'chi_nhanh' => $user->chiNhanhDangQuanLy ? $user->chiNhanhDangQuanLy->ten_chi_nhanh : 'Chưa có',
+                'can_access' => $user->vai_tro_id == 2 && $user->chiNhanhDangQuanLy ? true : false
+            ]);
+        })->withoutMiddleware(['admin.chi.nhanh']);
+    });
 });
+
+// Debug user info - NGOÀI middleware admin.chi.nhanh
+Route::get('admin/debug-user-info', function () {
+    $user = \Illuminate\Support\Facades\Auth::user();
+    if (!$user) {
+        return response()->json(['error' => 'User chưa đăng nhập']);
+    }
+
+    return response()->json([
+        'user_id' => $user->id,
+        'name' => $user->name,
+        'email' => $user->email,
+        'vai_tro_id' => $user->vai_tro_id,
+        'chi_nhanh' => $user->chiNhanhDangQuanLy ? [
+            'id' => $user->chiNhanhDangQuanLy->id,
+            'ten' => $user->chiNhanhDangQuanLy->ten_chi_nhanh
+        ] : null,
+        'can_access_chi_nhanh' => $user->vai_tro_id == 2 && $user->chiNhanhDangQuanLy ? true : false,
+        'permissions_check' => [
+            'is_admin_chi_nhanh' => $user->vai_tro_id == 2,
+            'has_chi_nhanh' => $user->chiNhanhDangQuanLy ? true : false
+        ]
+    ]);
+})->middleware('auth');
+
+// Debug permissions cho user
+Route::get('admin/debug-permissions', function () {
+    $user = \Illuminate\Support\Facades\Auth::user();
+    if (!$user) {
+        return response()->json(['error' => 'User chưa đăng nhập']);
+    }
+
+    $permissions = $user->phanQuyens->pluck('slug')->toArray();
+    $routeName = 'admin.chi-nhanh-khuyen-mai.manager';
+
+    return response()->json([
+        'user_id' => $user->id,
+        'vai_tro_id' => $user->vai_tro_id,
+        'required_permission' => $routeName,
+        'has_permission' => in_array($routeName, $permissions),
+        'all_permissions' => $permissions,
+        'permissions_count' => count($permissions)
+    ]);
+})->middleware('auth');
+
+// Route SIÊU ĐƠN GIẢN - chỉ auth + gán khuyến mãi
+Route::post('simple-assign', function (\Illuminate\Http\Request $request) {
+    try {
+        $user = auth()->user();
+        $khuyenMaiId = $request->input('khuyen_mai_id');
+        $rapPhimIds = $request->input('rap_phim_ids', []);
+
+        \Log::info('Simple assign attempt', [
+            'user_id' => $user->id,
+            'khuyen_mai_id' => $khuyenMaiId,
+            'rap_phim_ids' => $rapPhimIds
+        ]);
+
+        if (!$khuyenMaiId || empty($rapPhimIds)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Thiếu thông tin cần thiết'
+            ]);
+        }
+
+        // Gán đơn giản
+        $assigned = 0;
+        foreach ($rapPhimIds as $rapId) {
+            $exists = \DB::table('khuyen_mai_rap_phims')
+                ->where('khuyen_mai_id', $khuyenMaiId)
+                ->where('rap_phim_id', $rapId)
+                ->exists();
+
+            if (!$exists) {
+                \DB::table('khuyen_mai_rap_phims')->insert([
+                    'khuyen_mai_id' => $khuyenMaiId,
+                    'rap_phim_id' => $rapId,
+                    'created_at' => now(),
+                    'updated_at' => now()
+                ]);
+                $assigned++;
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => "Đã gán thành công {$assigned} rạp!",
+            'assigned_count' => $assigned
+        ]);
+    } catch (\Exception $e) {
+        \Log::error('Simple assign error: ' . $e->getMessage());
+        return response()->json([
+            'success' => false,
+            'message' => 'Lỗi: ' . $e->getMessage()
+        ], 500);
+    }
+})->middleware('auth');
+
+// Test remove bypass middleware
+Route::post('/test-remove-bypass', function (\Illuminate\Http\Request $request) {
+    \Log::info('Test remove bypass called', $request->all());
+
+    try {
+        $user = auth()->user();
+        if (!$user) {
+            return response()->json(['success' => false, 'message' => 'User chưa đăng nhập']);
+        }
+
+        $khuyenMaiId = $request->input('khuyen_mai_id');
+        $rapPhimId = $request->input('rap_phim_id');
+
+        if (!$khuyenMaiId || !$rapPhimId) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Thiếu thông tin khuyến mãi hoặc rạp'
+            ]);
+        }
+
+        // Kiểm tra xem liên kết có tồn tại không
+        $exists = \DB::table('khuyen_mai_rap_phims')
+            ->where('khuyen_mai_id', $khuyenMaiId)
+            ->where('rap_phim_id', $rapPhimId)
+            ->exists();
+
+        if (!$exists) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Liên kết không tồn tại'
+            ]);
+        }
+
+        // Xóa liên kết
+        $deleted = \DB::table('khuyen_mai_rap_phims')
+            ->where('khuyen_mai_id', $khuyenMaiId)
+            ->where('rap_phim_id', $rapPhimId)
+            ->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Test remove bypass thành công! Đã xóa ' . $deleted . ' bản ghi'
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Lỗi: ' . $e->getMessage()
+        ]);
+    }
+})->middleware('auth');
+
+// Debug route siêu đơn giản
+Route::post('/debug-remove', function (\Illuminate\Http\Request $request) {
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Debug remove thành công!',
+        'data' => $request->all(),
+        'user_id' => auth()->id()
+    ]);
+});
+
+// Test assign KHÔNG QUA middleware admin
+Route::post('test-assign-direct', function (\Illuminate\Http\Request $request) {
+    try {
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Test assign trực tiếp thành công!',
+            'data' => [
+                'request_data' => $request->all(),
+                'user_id' => auth()->id(),
+                'timestamp' => now()
+            ]
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Lỗi: ' . $e->getMessage()
+        ]);
+    }
+})->middleware('auth');
+
+// Route assign thật KHÔNG QUA middleware admin
+Route::post('direct-assign-promotion', function (\Illuminate\Http\Request $request) {
+    try {
+
+        $khuyenMaiId = $request->input('khuyen_mai_id');
+        $rapPhimIds = $request->input('rap_phim_ids', []);
+
+        if (!$khuyenMaiId || empty($rapPhimIds)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Thiếu thông tin khuyến mãi hoặc rạp phim'
+            ]);
+        }
+
+        // Lấy thông tin khuyến mãi
+        $khuyenMai = \App\Models\KhuyenMai::find($khuyenMaiId);
+        if (!$khuyenMai) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Không tìm thấy khuyến mãi'
+            ]);
+        }
+
+        // Gán khuyến mãi cho các rạp
+        $assigned = [];
+        foreach ($rapPhimIds as $rapPhimId) {
+            $existing = \App\Models\KhuyenMaiRapPhim::where('khuyen_mai_id', $khuyenMaiId)
+                ->where('rap_phim_id', $rapPhimId)
+                ->first();
+
+            if (!$existing) {
+                \App\Models\KhuyenMaiRapPhim::create([
+                    'khuyen_mai_id' => $khuyenMaiId,
+                    'rap_phim_id' => $rapPhimId
+                ]);
+                $assigned[] = $rapPhimId;
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Gán khuyến mãi thành công cho ' . count($assigned) . ' rạp!',
+            'data' => [
+                'assigned_cinemas' => $assigned,
+                'promotion_name' => $khuyenMai->ten_khuyen_mai
+            ]
+        ]);
+    } catch (\Exception $e) {
+        \Log::error('Direct assign error: ' . $e->getMessage());
+        return response()->json([
+            'success' => false,
+            'message' => 'Lỗi: ' . $e->getMessage()
+        ]);
+    }
+})->middleware('auth');

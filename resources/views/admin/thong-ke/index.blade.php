@@ -14,55 +14,97 @@
     <div class="row">
         <div class="col-lg-12 d-flex align-items-stretch">
             <div class="row g-1 w-100">
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <div class="card warning-card overflow-hidden text-bg-primary">
                         <div class="card-body p-4">
                             <div class="mb-7">
-                                <i class="ti ti-building-community fs-8"></i>
+                                @if (Auth::user()->vai_tro_id == 3)
+                                    {{-- Admin Rạp - Vé đã bán --}}
+                                    <i class="ti ti-ticket fs-8"></i>
+                                @elseif (Auth::user()->vai_tro_id == 2)
+                                    {{-- Admin Chi Nhánh - Vé đã bán --}}
+                                    <i class="ti ti-ticket fs-8"></i>
+                                @else
+                                    {{-- Admin Tổng - Chi nhánh --}}
+                                    <i class="ti ti-building-community fs-8"></i>
+                                @endif
                             </div>
                             <h5 class="text-white fw-bold fs-14 text-nowrap">
-                                {{ $soChiNhanhs }}<span class="fs-2 fw-light"></span>
+                                @if (Auth::user()->vai_tro_id == 3)
+                                    {{ $soVeDaBan ?? 0 }}<span class="fs-2 fw-light"></span>
+                                @elseif (Auth::user()->vai_tro_id == 2)
+                                    {{ $soVeDaBan ?? 0 }}<span class="fs-2 fw-light"></span>
+                                @else
+                                    {{ $soChiNhanhs ?? 0 }}<span class="fs-2 fw-light"></span>
+                                @endif
                             </h5>
-                            <p class="opacity-50 mb-0">Chi nhánh</p>
+                            <p class="opacity-50 mb-0">
+                                @if (Auth::user()->vai_tro_id == 3)
+                                    Vé đã bán
+                                @elseif (Auth::user()->vai_tro_id == 2)
+                                    Vé đã bán
+                                @else
+                                    Chi nhánh
+                                @endif
+                            </p>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <div class="card info-card overflow-hidden text-bg-primary">
                         <div class="card-body p-4">
                             <div class="mb-7">
-                                <i class="ti ti-building fs-8"></i>
+                                @if (Auth::user()->vai_tro_id == 3)
+                                    {{-- Admin Rạp - Phòng chiếu --}}
+                                    <i class="ti ti-screen-share fs-8"></i>
+                                @else
+                                    {{-- Admin Chi Nhánh & Admin Tổng - Rạp chiếu --}}
+                                    <i class="ti ti-building fs-8"></i>
+                                @endif
                             </div>
                             <h5 class="text-white fw-bold fs-14 text-nowrap">
-                                {{ $soRaps }} <span class="fs-2 fw-light"></span>
+                                @if (Auth::user()->vai_tro_id == 3)
+                                    {{ $soPhongChieus }} <span class="fs-2 fw-light"></span>
+                                @else
+                                    {{ $soRaps }} <span class="fs-2 fw-light"></span>
+                                @endif
                             </h5>
-                            <p class="opacity-50 mb-0">Rạp chiếu</p>
+                            <p class="opacity-50 mb-0">
+                                @if (Auth::user()->vai_tro_id == 3)
+                                    Phòng chiếu
+                                @else
+                                    Rạp chiếu
+                                @endif
+                            </p>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <div class="card danger-card overflow-hidden text-bg-primary">
                         <div class="card-body p-4">
                             <div class="mb-7">
-                                <i class="ti ti-screen-share fs-8"></i>
+                                @if (Auth::user()->vai_tro_id == 3)
+                                    {{-- Admin Rạp - Suất chiếu --}}
+                                    <i class="ti ti-calendar fs-8"></i>
+                                @else
+                                    {{-- Admin Chi Nhánh & Admin Tổng - Phòng chiếu --}}
+                                    <i class="ti ti-screen-share fs-8"></i>
+                                @endif
                             </div>
                             <h5 class="text-white fw-bold fs-14">
-                                {{ $soPhongChieus }} <span class="fs-2 fw-light"></span>
+                                @if (Auth::user()->vai_tro_id == 3)
+                                    {{ $soSuatChieus ?? 0 }} <span class="fs-2 fw-light"></span>
+                                @else
+                                    {{ $soPhongChieus }} <span class="fs-2 fw-light"></span>
+                                @endif
                             </h5>
-                            <p class="opacity-50 mb-0">Phòng chiếu</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card info-card overflow-hidden text-bg-primary">
-                        <div class="card-body p-4">
-                            <div class="mb-7">
-                                <i class="ti ti-users fs-8"></i>
-                            </div>
-                            <h5 class="text-white fw-bold fs-14 text-nowrap">
-                                {{ $soNguoiDungs }} <span class="fs-2 fw-light"></span>
-                            </h5>
-                            <p class="opacity-50 mb-0">Người dùng</p>
+                            <p class="opacity-50 mb-0">
+                                @if (Auth::user()->vai_tro_id == 3)
+                                    Suất chiếu
+                                @else
+                                    Phòng chiếu
+                                @endif
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -70,24 +112,42 @@
         </div>
 
         <div class="d-flex col-12 mb-4 gap-3">
-            <div class="d-flex gap-2 w-100">
-                <select name="branch_id" id="branch-select" class="form-select w-100">
-                    <option value="">Tất cả chi nhánh</option>
-                    @foreach ($danhSachChiNhanh as $chiNhanh)
-                        <option value="{{ $chiNhanh->id }}" {{ request('branch_id') == $chiNhanh->id ? 'selected' : '' }}>
-                            {{ $chiNhanh->ten_chi_nhanh }}
+            @if (Auth::user()->vai_tro_id == 3 && $danhSachRap->count() == 1)
+                {{-- Admin Rạp - hiển thị thông tin rạp đang quản lý --}}
+                <div class="w-50">
+                    <h5 class="mb-0">Rạp: <strong>{{ $danhSachRap->first()->ten_rap }}</strong></h5>
+                    <input type="hidden" id="rap-select" value="{{ $danhSachRap->first()->id }}">
+                </div>
+            @elseif (Auth::user()->vai_tro_id == 2 && $danhSachChiNhanh->count() == 1)
+                {{-- Admin Chi Nhánh - hiển thị thông tin chi nhánh đang quản lý --}}
+                <div class="w-50">
+                    <h5 class="mb-0">Chi nhánh: <strong>{{ $danhSachChiNhanh->first()->ten_chi_nhanh }}</strong></h5>
+                    <input type="hidden" id="branch-select" value="{{ $danhSachChiNhanh->first()->id }}">
+                </div>
+            @else
+                {{-- Admin Tổng - hiển thị dropdown filter --}}
+                <div class="d-flex gap-2 w-50">
+                    <select name="branch_id" id="branch-select" class="form-select w-100">
+                        <option value="">Tất cả chi nhánh</option>
+                        @foreach ($danhSachChiNhanh as $chiNhanh)
+                            <option value="{{ $chiNhanh->id }}" {{ request('branch_id') == $chiNhanh->id ? 'selected' : '' }}>
+                                {{ $chiNhanh->ten_chi_nhanh }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+            @endif
+
+            <div class="d-flex gap-2 w-50">
+                <select name="rap_id" id="rap-select" class="form-select w-100">
+                    <option value="">Tất cả rạp chiếu</option>
+                    @foreach ($danhSachRap as $rap)
+                        <option value="{{ $rap->id }}" {{ request('rap_id') == $rap->id ? 'selected' : '' }}>
+                            {{ $rap->ten_rap }}
                         </option>
                     @endforeach
                 </select>
             </div>
-            <select name="rap_id" id="rap-select" class="form-select w-100">
-                <option value="">Tất cả rạp chiếu</option>
-                @foreach ($danhSachRap as $rap)
-                    <option value="{{ $rap->id }}" {{ request('rap_id') == $rap->id ? 'selected' : '' }}>
-                        {{ $rap->ten_rap }}
-                    </option>
-                @endforeach
-            </select>
         </div>
 
         <div class="col-lg-3 d-flex align-items-stretch">
@@ -96,17 +156,21 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between">
                             <div>
-                                <h4 class="card-title mb-1">Top doanh thu</h4>
+                                @if (isset($rapId) && $rapId)
+                                    <h4 class="card-title mb-1">Top phim doanh thu</h4>
+                                @else
+                                    <h4 class="card-title mb-1">Top doanh thu</h4>
+                                @endif
                             </div>
                         </div>
-                        @if ($top5ChiNhanh->isEmpty())
+                        @if ($top5Query->isEmpty())
                             <p class="text-muted">Không có doanh thu.</p>
                         @else
-                            @foreach ($top5ChiNhanh as $item)
+                            @foreach ($top5Query as $item)
                                 <div class="d-flex align-items-center justify-content-between mb-2">
                                     <div class="d-flex align-items-center">
                                         <i class="ti ti-circle text-primary fs-4 me-2"></i>
-                                        <p class="mb-0">{{ $item->ten_chi_nhanh }}</p>
+                                        <p class="mb-0">{{ $item->ten_item }}</p>
                                     </div>
                                     <p class="mb-0">
                                         ({{ $item->phan_tram }}%)

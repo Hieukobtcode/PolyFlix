@@ -7,6 +7,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <!-- Favicon icon-->
     <link rel="shortcut icon" type="image/png" sizes="192x192" href="{{ asset('logo/IconPolyFlixAdmin.png') }}">
     <!-- Core Css -->
@@ -26,6 +27,8 @@
         integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     @yield('styles')
 </head>
 
@@ -44,26 +47,26 @@
 
                     @include('admin.blocks.header')
                     @if (session('success') || session('error'))
-                        <div class="position-fixed top-0 end-0 m-4" style="z-index: 1055;">
-                            @if (session('success'))
-                                <div class="alert alert-success alert-dismissible fade show shadow-sm mb-2 small d-flex align-items-center"
-                                    role="alert">
-                                    <i class="ti ti-check me-2"></i>
-                                    {{ session('success') }}
-                                    <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"
-                                        aria-label="Close"></button>
-                                </div>
-                            @endif
-                            @if (session('error'))
-                                <div class="alert alert-danger alert-dismissible fade show shadow-sm small d-flex align-items-center"
-                                    role="alert">
-                                    <i class="ti ti-alert-circle me-2"></i>
-                                    {{ session('error') }}
-                                    <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"
-                                        aria-label="Close"></button>
-                                </div>
-                            @endif
+                    <div class="position-fixed top-0 end-0 m-4" style="z-index: 1055;">
+                        @if (session('success'))
+                        <div class="alert alert-success alert-dismissible fade show shadow-sm mb-2 small d-flex align-items-center"
+                            role="alert">
+                            <i class="ti ti-check me-2"></i>
+                            {{ session('success') }}
+                            <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"
+                                aria-label="Close"></button>
                         </div>
+                        @endif
+                        @if (session('error'))
+                        <div class="alert alert-danger alert-dismissible fade show shadow-sm small d-flex align-items-center"
+                            role="alert">
+                            <i class="ti ti-alert-circle me-2"></i>
+                            {{ session('error') }}
+                            <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"
+                                aria-label="Close"></button>
+                        </div>
+                        @endif
+                    </div>
                     @endif
 
                     @yield('content')
