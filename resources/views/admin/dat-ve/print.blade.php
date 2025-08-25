@@ -219,9 +219,21 @@
                             </td>
                         </tr>
                         <tr>
-                            <td class="footer">
-                                <div style="margin-bottom:4px;">Cảm ơn bạn đã đặt vé tại <strong>PolyFlix</strong></div>
-                                <div>Chúc bạn có trải nghiệm xem phim tuyệt vời!</div>
+                            <td class="footer" style="text-align:center; font-size:13px; line-height:1.6; color:#555;">
+                                <div style="margin-bottom:6px;">
+                                    Cảm ơn bạn đã đặt vé tại
+                                    <strong>{{ $cauHinh->ten_thuong_hieu ?? 'PolyFlix' }}</strong>
+                                </div>
+                                <div style="margin-bottom:6px;">
+                                    Hotline: {{ $cauHinh->so_dien_thoai ?? '---' }} •
+                                    Email: {{ $cauHinh->email ?? '---' }}
+                                </div>
+                                <div style="margin-bottom:6px; font-size:12px; color:#d9534f;">
+                                    * Vé điện tử – vui lòng không chia sẻ mã vé / QR cho người khác.
+                                </div>
+                                <div style="font-size:12px; margin-top:6px; color:#888;">
+                                    &copy; {{ now()->year }} {{ $cauHinh->ban_quyen ?? 'PolyFlix' }}
+                                </div>
                             </td>
                         </tr>
                     </table>
@@ -306,9 +318,21 @@
                             </td>
                         </tr>
                         <tr>
-                            <td class="footer">
-                                <div style="margin-bottom:4px;">Cảm ơn bạn đã đặt vé tại <strong>PolyFlix</strong></div>
-                                <div>Chúc bạn có trải nghiệm xem phim tuyệt vời!</div>
+                            <td class="footer" style="text-align:center; font-size:13px; line-height:1.6; color:#555;">
+                                <div style="margin-bottom:6px;">
+                                    Cảm ơn bạn đã đặt vé tại
+                                    <strong>{{ $cauHinh->ten_thuong_hieu ?? 'PolyFlix' }}</strong>
+                                </div>
+                                <div style="margin-bottom:6px;">
+                                    Hotline: {{ $cauHinh->so_dien_thoai ?? '---' }} •
+                                    Email: {{ $cauHinh->email ?? '---' }}
+                                </div>
+                                <div style="margin-bottom:6px; font-size:12px; color:#d9534f;">
+                                    * Vé điện tử – vui lòng không chia sẻ mã vé / QR cho người khác.
+                                </div>
+                                <div style="font-size:12px; margin-top:6px; color:#888;">
+                                    &copy; {{ now()->year }} {{ $cauHinh->ban_quyen ?? 'PolyFlix' }}
+                                </div>
                             </td>
                         </tr>
                     </table>
@@ -370,10 +394,22 @@
                             </td>
                         </tr>
                         <tr>
-                            <td class="footer">
-                                <div style="margin-bottom:4px;">Cảm ơn bạn đã đặt vé tại <strong>PolyFlix</strong>
+                            <td class="footer"
+                                style="text-align:center; font-size:13px; line-height:1.6; color:#555;">
+                                <div style="margin-bottom:6px;">
+                                    Cảm ơn bạn đã đặt vé tại
+                                    <strong>{{ $cauHinh->ten_thuong_hieu ?? 'PolyFlix' }}</strong>
                                 </div>
-                                <div>Chúc bạn có trải nghiệm tuyệt vời!</div>
+                                <div style="margin-bottom:6px;">
+                                    Hotline: {{ $cauHinh->so_dien_thoai ?? '---' }} •
+                                    Email: {{ $cauHinh->email ?? '---' }}
+                                </div>
+                                <div style="margin-bottom:6px; font-size:12px; color:#d9534f;">
+                                    * Vé điện tử – vui lòng không chia sẻ mã vé / QR cho người khác.
+                                </div>
+                                <div style="font-size:12px; margin-top:6px; color:#888;">
+                                    &copy; {{ now()->year }} {{ $cauHinh->ban_quyen ?? 'PolyFlix' }}
+                                </div>
                             </td>
                         </tr>
                     </table>
@@ -440,9 +476,20 @@
                         </td>
                     </tr>
                     <tr>
-                        <td class="footer">
-                            <div style="margin-bottom:4px;">Cảm ơn bạn đã đặt vé tại <strong>PolyFlix</strong></div>
-                            <div>Chúc bạn có trải nghiệm tuyệt vời!</div>
+                        <td class="footer" style="text-align:center; font-size:13px; line-height:1.6; color:#555;">
+                            <div style="margin-bottom:6px;">
+                                Cảm ơn bạn đã đặt vé tại <strong>{{ $cauHinh->ten_thuong_hieu ?? 'PolyFlix' }}</strong>
+                            </div>
+                            <div style="margin-bottom:6px;">
+                                Hotline: {{ $cauHinh->so_dien_thoai ?? '---' }} •
+                                Email: {{ $cauHinh->email ?? '---' }}
+                            </div>
+                            <div style="margin-bottom:6px; font-size:12px; color:#d9534f;">
+                                * Vé điện tử – vui lòng không chia sẻ mã vé / QR cho người khác.
+                            </div>
+                            <div style="font-size:12px; margin-top:6px; color:#888;">
+                                &copy; {{ now()->year }} {{ $cauHinh->ban_quyen ?? 'PolyFlix' }}
+                            </div>
                         </td>
                     </tr>
                 </table>
