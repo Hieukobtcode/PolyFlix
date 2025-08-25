@@ -18,7 +18,6 @@ class AIChatController extends Controller
                 ], 429);
             }
 
-            // 🚫 Đánh dấu đang chờ AI trả lời
             session(['is_waiting_ai' => true]);
 
             $userMessage = $request->input('message');

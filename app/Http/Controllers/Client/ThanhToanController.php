@@ -220,9 +220,6 @@ class ThanhToanController extends Controller
         }
     }
 
-
-
-
     public function xuLyThanhToan(Request $request)
     {
         $request->validate([
@@ -343,7 +340,6 @@ class ThanhToanController extends Controller
         }
     }
 
-
     public function callBack(Request $request)
     {
         $result = [];
@@ -424,7 +420,7 @@ class ThanhToanController extends Controller
                                     $capBac = CapBacThe::find($nguoiDung->cap_bac_id);
 
                                     if ($capBac) {
-                                        // Tính điểm dựa trên phần trăm vé
+                                        // Tính điểm dựa trên phần trăm cấp bậc 
                                         $tongTien = $datVe->tong_tien;
                                         $phanTramVe = $capBac->phan_tram_ve;
                                         $diemCong = round($tongTien * $phanTramVe / 100);
@@ -447,7 +443,6 @@ class ThanhToanController extends Controller
                                             // =========
 
                                             $tongTienChiTieu = DatVe::where('user_id', $nguoiDung->id)->sum('tong_tien');
-                                            Log::info('tong chi tieu:' . $tongTienChiTieu);
                                             $capBacMoi = CapBacThe::where('tong_chi_tieu', '<=', $tongTienChiTieu)
                                                 ->orderByDesc('tong_chi_tieu')
                                                 ->first();
@@ -455,8 +450,6 @@ class ThanhToanController extends Controller
                                             if ($capBacMoi && $capBacMoi->id !== $nguoiDung->cap_bac_id) {
                                                 $nguoiDung->cap_bac_id = $capBacMoi->id;
                                                 $nguoiDung->save();
-
-                                                Log::info("Đã cập nhật cấp bậc mới cho người dùng ID {$nguoiDung->id}: {$capBacMoi->ten}");
                                             }
                                         }
                                     } else {

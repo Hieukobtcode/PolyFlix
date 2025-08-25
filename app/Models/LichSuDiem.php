@@ -8,7 +8,7 @@ class LichSuDiem extends Model
 {
     public $timestamps = false;
 
-    protected $table = 'lich_su_diem'; // chỉ định tên bảng
+    protected $table = 'lich_su_diem'; 
 
     protected $fillable = [
         'users_id',
