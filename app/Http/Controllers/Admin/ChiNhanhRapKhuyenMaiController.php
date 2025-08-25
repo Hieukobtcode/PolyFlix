@@ -34,30 +34,7 @@ class ChiNhanhRapKhuyenMaiController extends Controller
             $rapPhims = $chiNhanh->rapPhims()->get();
         }
 
-        // Debug: Nếu vẫn không có, tạo dữ liệu mẫu
-        if ($rapPhims->isEmpty()) {
-            // Tạo dữ liệu mẫu để test
-            $rapPhims = collect([
-                (object)[
-                    'id' => 1,
-                    'ten_rap' => 'PolyFlix Bà Triệu',
-                    'dia_chi' => 'Quận Hai Bà Trưng, Hà Nội',
-                    'chi_nhanh_id' => $chiNhanh->id
-                ],
-                (object)[
-                    'id' => 2,
-                    'ten_rap' => 'PolyFlix Long Biên',
-                    'dia_chi' => 'Quận Long Biên, Hà Nội',
-                    'chi_nhanh_id' => $chiNhanh->id
-                ],
-                (object)[
-                    'id' => 3,
-                    'ten_rap' => 'PolyFlix Royal City',
-                    'dia_chi' => 'Quận Thanh Xuân, Hà Nội',
-                    'chi_nhanh_id' => $chiNhanh->id
-                ]
-            ]);
-        }
+        // Không còn dữ liệu mẫu: nếu trống vẫn trả về rỗng để UI hiển thị thông báo phù hợp
 
         // Khuyến mãi chung (không cần nữa)
         $khuyenMaisChung = collect();
@@ -72,23 +49,7 @@ class ChiNhanhRapKhuyenMaiController extends Controller
             }])
             ->get();
 
-        // Debug: Nếu không có khuyến mãi, tạo dữ liệu mẫu
-        if ($khuyenMaisCoTheGan->isEmpty()) {
-            $khuyenMaisCoTheGan = collect([
-                (object)[
-                    'id' => 1,
-                    'ten' => 'test2',
-                    'mo_ta' => 'Khuyến mãi test cho rạp',
-                    'loai_giam_gia' => 'phan_tram',
-                    'gia_tri_giam' => 20,
-                    'ap_dung_cho' => 've',
-                    'rapPhims' => collect([
-                        (object)['id' => 1, 'ten_rap' => 'PolyFlix Bà Triệu'],
-                        (object)['id' => 2, 'ten_rap' => 'PolyFlix Long Biên']
-                    ])
-                ]
-            ]);
-        }
+        // Không còn dữ liệu mẫu: nếu trống vẫn trả về rỗng để UI hiển thị thông báo phù hợp
 
         return view('admin.chi-nhanh-khuyen-mai.manager', compact(
             'chiNhanh',
