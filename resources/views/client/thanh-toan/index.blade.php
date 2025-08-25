@@ -52,7 +52,7 @@
                             </div>
                         </form>
 
-                        <button id="btn-pay" class="btn-thanh-toan" disabled style="font-size:18px; width:100%;">
+                        <button id="btn-pay" class="btn-thanh-toan" style="font-size:18px; width:100%;">
                             <i class="fas fa-credit-card"></i> Tiến hành thanh toán
                         </button>
                     @endif
@@ -238,12 +238,20 @@
 @endsection
 @section('scripts')
     <script>
-        window.addEventListener("beforeunload", function() {
-            const url = "{{ route('client.thanh-toan.huy', $datVe->id) }}";
-            const data = new FormData();
-            data.append("_token", "{{ csrf_token() }}");
+        let isPaying = false;
 
-            navigator.sendBeacon(url, data);
+        document.getElementById("btn-pay").addEventListener("click", function() {
+            isPaying = true; // bật cờ khi bấm thanh toán
+        });
+
+        window.addEventListener("beforeunload", function() {
+            if (!isPaying) { // chỉ hủy nếu KHÔNG phải đang thanh toán
+                const url = "{{ route('client.thanh-toan.huy', $datVe->id) }}";
+                const data = new FormData();
+                data.append("_token", "{{ csrf_token() }}");
+
+                navigator.sendBeacon(url, data);
+            }
         });
     </script>
 @endsection

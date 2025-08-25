@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\SuatChieu;
+use App\Models\DatVe;
 use App\Models\Phim;
 use App\Models\PhongChieu;
 use Carbon\Carbon;
@@ -594,17 +595,60 @@ class SuatChieuController extends Controller
 
     public function bulkDelete(Request $request)
     {
+        $ids = (array) $request->input('ids', []);
+        if (empty($ids)) {
+            return response()->json(['success' => false, 'message' => 'Chưa chọn suất chiếu.'], 422);
+        }
+
         try {
             DB::beginTransaction();
 
-            SuatChieu::whereIn('id', $request->ids)->delete();
+            // Các suất chiếu bị chặn do có vé
+            $blockedByVe = DatVe::whereIn('suat_chieu_id', $ids)
+                ->pluck('suat_chieu_id')->unique()->toArray();
+
+            // Các suất chiếu bị chặn do đang hoạt động
+            $blockedByStatus = SuatChieu::whereIn('id', $ids)
+                ->where('trang_thai', 'hoat_dong')
+                ->pluck('id')->toArray();
+
+            // Gom dữ liệu có cả lý do
+            $blockedShows = SuatChieu::whereIn('id', array_merge($blockedByVe, $blockedByStatus))
+                ->get(['id', 'ngay_bat_dau', 'bat_dau', 'ket_thuc'])
+                ->map(function ($sc) use ($blockedByVe, $blockedByStatus) {
+                    $reason = [];
+                    if (in_array($sc->id, $blockedByVe)) {
+                        $reason[] = 'đã có vé';
+                    }
+                    if (in_array($sc->id, $blockedByStatus)) {
+                        $reason[] = 'đang hoạt động';
+                    }
+                    // Format ngày sang dd/mm/yyyy
+                    $sc->ngay_bat_dau = Carbon::parse($sc->ngay_bat_dau)->format('d/m/Y');
+                    $sc->reason = implode(' và ', $reason);
+                    return $sc;
+                })
+                ->values();
+
+            // Các suất chiếu được phép xóa
+            $deletableIds = array_diff($ids, $blockedShows->pluck('id')->toArray());
+            $deleted = !empty($deletableIds)
+                ? SuatChieu::whereIn('id', $deletableIds)->delete()
+                : 0;
 
             DB::commit();
-            return response()->json(['success' => true]);
-        } catch (\Exception $e) {
+
+            return response()->json([
+                'success'       => true,
+                'deleted_count' => $deleted,
+                'blocked'       => $blockedShows,
+                'message'       => $blockedShows->isEmpty()
+                    ? 'Đã xóa các suất chiếu đã chọn.'
+                    : 'Một số suất chiếu không thể xóa.'
+            ]);
+        } catch (\Throwable $e) {
             DB::rollBack();
-            Log::error('Lỗi xóa nhiều suất chiếu: ' . $e->getMessage());
-            return response()->json(['success' => false], 500);
+            return response()->json(['success' => false, 'message' => 'Lỗi máy chủ.'], 500);
         }
     }
 

@@ -88,6 +88,7 @@
                                     <th>Mã vé</th>
                                     <th>Phim</th>
                                     <th>Thời gian đặt</th>
+                                    <th>Trạng thái</th>
                                     <th style="width: 10%">Thao tác</th>
                                 </tr>
                             </thead>
@@ -99,6 +100,26 @@
                                         <td>{{ $datVe->suatChieu->phim->ten_phim }}</td>
                                         <td>{{ $datVe->created_at->format('H:i d/m/Y') }}</td>
                                         <td>
+                                            @php
+                                                $statusClasses = [
+                                                    'Chờ thanh toán' => 'badge bg-warning text-dark',
+                                                    'Đã thanh toán' => 'badge bg-success',
+                                                    'Thanh toán thất bại' => 'badge bg-danger',
+                                                    'Chờ thanh toán tại quầy' => 'badge bg-info text-dark',
+                                                    'Đã hủy' => 'badge bg-danger',
+                                                    'Hết hạn' => 'badge bg-secondary',
+                                                    'Chưa xuất vé' => 'badge bg-primary',
+                                                    'Đã xuất vé' => 'badge bg-success',
+                                                ];
+
+                                                $class =
+                                                    $statusClasses[$datVe->trang_thai] ?? 'badge bg-light text-dark';
+                                            @endphp
+
+                                            <span class="{{ $class }}">{{ $datVe->trang_thai }}</span>
+                                        </td>
+
+                                        <td>
                                             <a href="{{ route('admin.dat-ve.show', ['id' => $datVe->id, 'ma_ve' => $datVe->ma_dat_ve]) }}"
                                                 class="btn btn-sm btn-outline-primary">
                                                 <i class="fas fa-eye"></i>
@@ -108,6 +129,10 @@
                                 @endforeach
                             </tbody>
                         </table>
+                    </div>
+                    {{-- ✅ Hiển thị phân trang --}}
+                    <div class="mt-3">
+                        {{ $datVes->links('pagination::bootstrap-5') }}
                     </div>
                 @else
                     <div class="alert alert-info mt-4 mb-0 rounded-3">

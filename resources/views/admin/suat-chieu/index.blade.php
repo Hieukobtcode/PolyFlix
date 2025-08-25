@@ -374,8 +374,24 @@
                         })
                         .then(res => res.json())
                         .then(data => {
-                            if (data.success) location.reload();
-                            else alert('Lỗi khi xóa các suất chiếu.');
+                            if (!data.success) {
+                                alert(data.message || 'Lỗi khi xóa các suất chiếu.');
+                                return;
+                            }
+
+                            // Có suất chiếu bị chặn xóa?
+                            if (data.blocked && data.blocked.length) {
+                                let list = data.blocked.map(sc =>
+                                    `Ngày ${sc.ngay_bat_dau} | Giờ chiếu: ${sc.bat_dau} - ${sc.ket_thuc} (${sc.reason})`
+                                ).join('\n');
+
+                                alert(data.message + '\n' + list);
+                            }
+
+                            // Nếu có xóa được cái nào thì reload để cập nhật UI
+                            if (data.deleted_count && data.deleted_count > 0) {
+                                location.reload();
+                            }
                         })
                         .catch(() => alert('Lỗi kết nối máy chủ.'));
                 });

@@ -33,7 +33,7 @@
                             </div>
 
                             <a href="{{ route('dat-ve.chi-tiet', $datVe->id) }}"
-                               style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 10px 20px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 14px;">
+                                style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 10px 20px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 14px;">
                                 📱 Xem chi tiết vé
                             </a>
                         </td>
@@ -102,11 +102,21 @@
                     </tr>
 
                     <tr>
-                        <td
-                            style="padding:20px 32px 28px 32px; text-align:center; font-size:14px; color:#888; border-top:1px dashed #e0e0e0;">
-                            <div style="margin-bottom:4px;">Cảm ơn bạn đã đặt vé tại <strong
-                                    style="color:#2b6cb0;">PolyFlix</strong></div>
-                            <div>Chúc bạn có trải nghiệm xem phim tuyệt vời!</div>
+                        <td class="footer" style="text-align:center; font-size:13px; line-height:1.6; color:#555;">
+                            <div style="margin-bottom:6px;">
+                                Cảm ơn bạn đã đặt vé tại
+                                <strong>{{ $cauHinh->ten_thuong_hieu ?? 'PolyFlix' }}</strong>
+                            </div>
+                            <div style="margin-bottom:6px;">
+                                Hotline: {{ $cauHinh->so_dien_thoai ?? '---' }} •
+                                Email: {{ $cauHinh->email ?? '---' }}
+                            </div>
+                            <div style="margin-bottom:6px; font-size:12px; color:#d9534f;">
+                                * Vé điện tử – vui lòng không chia sẻ mã vé / QR cho người khác.
+                            </div>
+                            <div style="font-size:12px; margin-top:6px; color:#888;">
+                                &copy; {{ now()->year }} {{ $cauHinh->ban_quyen ?? 'PolyFlix' }}
+                            </div>
                         </td>
                     </tr>
                 </table>

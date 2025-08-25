@@ -435,6 +435,7 @@
                             <th style="padding: 10px; text-align: left;">Mã vé</th>
                             <th style="padding: 10px; text-align: left;">Phim</th>
                             <th style="padding: 10px; text-align: left;">Trạng thái</th>
+                            <th style="padding: 10px; text-align: left;">Ghi chú</th>
                             <th style="padding: 10px; text-align: left;">Số tiền</th>
                             <th style=" text-align: left;">Hành động</th>
                         </tr>
@@ -448,7 +449,8 @@
                                 <td style="padding: 10px;">
                                     Đặt vé phim "{{ $ve->suatChieu->phim->ten_phim ?? 'N/A' }}"
                                 </td>
-                                <td style="padding: 10px;">Chưa xuất vé</td>
+                                <td style="padding: 10px;">{{ $ve->trang_thai }}</td>
+                                <td style="padding: 10px;">{{ $ve->ghi_chu }}</td>
                                 <td style="padding: 10px; color: #f97316;">
                                     {{ number_format($ve->tong_tien, 0, ',', '.') }}
                                     đ

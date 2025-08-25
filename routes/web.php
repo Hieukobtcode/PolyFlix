@@ -75,6 +75,9 @@ Route::middleware('auth')->group(function () {
 
 
     Route::get('/zalopay/ketqua', [ThanhToanController::class, 'ketQuaThanhToan'])->name('zalopay.ketqua');
+    // callback ZaloPay bắn về server
+    Route::post('/api/payments/zalopay/callback', [ThanhToanController::class, 'callBack'])
+        ->name('zalopay.callback');
     Route::get('/client.khuyen-mai', [KhuyenMaiController::class, 'index'])->name('khuyen-mai.index');
 
     // Profile
@@ -319,7 +322,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access', 'per
     Route::resource('rap-phim', RapphimController::class);
 
     // Quản lý cấu hình
-    Route::resource('cau-hinh', CauHinhController::class);
+    // Route::resource('cau-hinh', CauHinhController::class);
 
     // Quản lý ghế ngồi
     Route::resource('ghe-ngoi', GheNgoiController::class);
@@ -364,9 +367,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access', 'per
     Route::resource('loai-phong', LoaiPhongController::class);
     Route::resource('rap-phim', RapphimController::class);
 
-    Route::get('cau-hinh-settings', [CauHinhController::class, 'index'])->name('cau-hinh-settings.index');
-    Route::get('cau-hinh-settings/edit', [CauHinhController::class, 'edit'])->name('cau-hinh-settings.edit');
-    Route::post('cau-hinh-settings/update', [CauHinhController::class, 'update'])->name('cau-hinh-settings.update');
+    // Quản lý cấu hình hệ thống (chỉ 1 record)
+    Route::get('cau-hinh', [CauHinhController::class, 'index'])->name('cau-hinh.index');
+    Route::post('cau-hinh/update', [CauHinhController::class, 'update'])->name('cau-hinh.update');
 
     Route::resource('phong-chieu', PhongChieuController::class);
     Route::resource('loai-ghe', LoaiGheController::class);
