@@ -338,14 +338,14 @@
                         <h4>Đồ ăn & nước uống:</h4>
                         <div id="selected-food-list">Chưa chọn</div>
                     </div>
-                    <div id="pointView" style="display: none" class="point">
+                    {{-- <div id="pointView" style="display: none" class="point">
                         <input id="point" style="height: 35px; border-radius: 5px;" type="number">
                         <button id="btnPoint" class="btn btn-warning">Đổi điểm</button>
                         <p style="color: yellow;" class="text-muted">
                         <h6>Số điểm hiện có: <span style="color: yellow;" id="diemHienCo"
                                 data-diem="{{ Auth::user()->diem }}">{{ number_format(Auth::user()->diem) }}</span></h6>
                         </p>
-                    </div>
+                    </div> --}}
                     @auth
                         @if (Auth::user()->vai_tro_id == 4)
                             <br>

@@ -26,8 +26,6 @@ use Illuminate\Support\Facades\Cache;
 class DatVeController extends Controller
 {
 
-
-
     // xử lý chọn ghế
     public function chonGhe(Request $request)
     {
@@ -290,8 +288,6 @@ class DatVeController extends Controller
             $user->save();
         }
 
-
-
         try {
             $suatChieu = SuatChieu::with(['phongChieu.rapPhim', 'phongChieu.loaiPhong'])
                 ->findOrFail($request->suat_chieu_id);
@@ -451,13 +447,10 @@ class DatVeController extends Controller
             $ghe = GheNgoi::with('loaiGhe')->find($gheId);
             $phuThuGhe = $ghe->loaiGhe->phu_thu ?? 0;
 
-            // Giá cho 1 ghế = giá cơ bản + phụ thu loại phòng + phụ thu loại ghế
-            $giaMotGhe = $giaVeCoBan + $phuThuLoaiPhong + $phuThuGhe;
+            // Giá cho 1 ghế = giá cơ bản + phụ thu loại phòng + phụ thu loại ghế + phụ thu rạp
+            $giaMotGhe = $giaVeCoBan + $phuThuLoaiPhong + $phuThuGhe + $phuThuRap;
             $tongTien += $giaMotGhe;
         }
-
-        // Cộng phụ thu rạp CHỈ 1 LẦN cho tất cả ghế
-        $tongTien += $phuThuRap;
 
         // Tính tiền đồ ăn
         if ($request->do_an) {
@@ -530,4 +523,3 @@ class DatVeController extends Controller
         return response()->json(['message' => 'Đổi điểm thành công']);
     }
 }
-

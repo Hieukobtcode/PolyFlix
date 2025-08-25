@@ -48,15 +48,18 @@ use App\Http\Controllers\Client\PhimsController;
 use App\Http\Controllers\Client\LienHeController as ClientLienHeController;
 use App\Http\Controllers\Client\TheLoaiController;
 use App\Http\Controllers\Client\KhuyenMaiController;
+use App\Http\Controllers\Client\PointController;
+
 
 Route::get('/', [TrangChuController::class, 'index'])->name('home');
 Route::get('/client.khuyen-mai', [KhuyenMaiController::class, 'index'])->name('khuyen-mai.index');
 
 Route::middleware('auth')->group(function () {
 
+
+    Route::post('/update-points', [PointController::class, 'updatePoints'])->middleware('auth');
+
     Route::get('admin/dat-ve/{id}/print', [DatVeController::class, 'print'])->name('admin.dat-ve.print');
-    //Đổi điểm
-    Route::post('/doi-diem', [\App\Http\Controllers\Client\DatVeController::class, 'doiDiem'])->name('doi-diem');
 
     // Đặt vé client
     Route::get('/dat-ve', [\App\Http\Controllers\Client\DatVeController::class, 'indexDatVe'])->name('client.dat-ve');
