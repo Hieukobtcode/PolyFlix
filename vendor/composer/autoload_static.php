@@ -239,9 +239,9 @@ class ComposerStaticInit8499d38441e61b435221bf3cdd228385
         ),
         'phpDocumentor\\Reflection\\' => 
         array (
-            0 => __DIR__ . '/..' . '/phpdocumentor/reflection-common/src',
+            0 => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src',
             1 => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src',
-            2 => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src',
+            2 => __DIR__ . '/..' . '/phpdocumentor/reflection-common/src',
         ),
         'Whoops\\' => 
         array (
@@ -425,8 +425,8 @@ class ComposerStaticInit8499d38441e61b435221bf3cdd228385
         ),
         'Psr\\Http\\Message\\' => 
         array (
-            0 => __DIR__ . '/..' . '/psr/http-message/src',
-            1 => __DIR__ . '/..' . '/psr/http-factory/src',
+            0 => __DIR__ . '/..' . '/psr/http-factory/src',
+            1 => __DIR__ . '/..' . '/psr/http-message/src',
         ),
         'Psr\\Http\\Client\\' => 
         array (
@@ -514,8 +514,8 @@ class ComposerStaticInit8499d38441e61b435221bf3cdd228385
         ),
         'League\\Uri\\' => 
         array (
-            0 => __DIR__ . '/..' . '/league/uri-interfaces',
-            1 => __DIR__ . '/..' . '/league/uri',
+            0 => __DIR__ . '/..' . '/league/uri',
+            1 => __DIR__ . '/..' . '/league/uri-interfaces',
         ),
         'League\\OAuth1\\Client\\' => 
         array (
@@ -718,6 +718,8 @@ class ComposerStaticInit8499d38441e61b435221bf3cdd228385
         'App\\Http\\Controllers\\Admin\\CapBacTheController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/CapBacTheController.php',
         'App\\Http\\Controllers\\Admin\\CauHinhController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/CauHinhController.php',
         'App\\Http\\Controllers\\Admin\\ChiNhanhController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/ChiNhanhController.php',
+        'App\\Http\\Controllers\\Admin\\ChiNhanhKhuyenMaiController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/ChiNhanhKhuyenMaiController.php',
+        'App\\Http\\Controllers\\Admin\\ChiNhanhRapKhuyenMaiController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/ChiNhanhRapKhuyenMaiController.php',
         'App\\Http\\Controllers\\Admin\\ChiTietDatVeController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/ChiTietDatVeController.php',
         'App\\Http\\Controllers\\Admin\\ComboController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/ComboController.php',
         'App\\Http\\Controllers\\Admin\\CommentController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/CommentController.php',
@@ -746,6 +748,7 @@ class ComposerStaticInit8499d38441e61b435221bf3cdd228385
         'App\\Http\\Controllers\\Admin\\VaiTroController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/VaiTroController.php',
         'App\\Http\\Controllers\\AuthController' => __DIR__ . '/../..' . '/app/Http/Controllers/AuthController.php',
         'App\\Http\\Controllers\\Client\\AIChatController' => __DIR__ . '/../..' . '/app/Http/Controllers/Client/AIChatController.php',
+        'App\\Http\\Controllers\\Client\\CommentController' => __DIR__ . '/../..' . '/app/Http/Controllers/Client/CommentController.php',
         'App\\Http\\Controllers\\Client\\DanhSachBaiVietController' => __DIR__ . '/../..' . '/app/Http/Controllers/Client/DanhSachBaiVietController.php',
         'App\\Http\\Controllers\\Client\\DatVeController' => __DIR__ . '/../..' . '/app/Http/Controllers/Client/DatVeController.php',
         'App\\Http\\Controllers\\Client\\DiemController' => __DIR__ . '/../..' . '/app/Http/Controllers/Client/DiemController.php',
@@ -766,6 +769,7 @@ class ComposerStaticInit8499d38441e61b435221bf3cdd228385
         'App\\Http\\Controllers\\SocialAuthController' => __DIR__ . '/../..' . '/app/Http/Controllers/SocialAuthController.php',
         'App\\Http\\Middleware\\AuthRedirect' => __DIR__ . '/../..' . '/app/Http/Middleware/AuthRedirect.php',
         'App\\Http\\Middleware\\CheckAdminAccess' => __DIR__ . '/../..' . '/app/Http/Middleware/CheckAdminAccess.php',
+        'App\\Http\\Middleware\\CheckAdminChiNhanh' => __DIR__ . '/../..' . '/app/Http/Middleware/CheckAdminChiNhanh.php',
         'App\\Http\\Middleware\\CheckPermission' => __DIR__ . '/../..' . '/app/Http/Middleware/CheckPermission.php',
         'App\\Http\\Requests\\BaiVietRequest' => __DIR__ . '/../..' . '/app/Http/Requests/BaiVietRequest.php',
         'App\\Http\\Requests\\LoginRequest' => __DIR__ . '/../..' . '/app/Http/Requests/LoginRequest.php',
@@ -796,6 +800,7 @@ class ComposerStaticInit8499d38441e61b435221bf3cdd228385
         'App\\Models\\GheNgoiSuatChieu' => __DIR__ . '/../..' . '/app/Models/GheNgoiSuatChieu.php',
         'App\\Models\\KhuyenMai' => __DIR__ . '/../..' . '/app/Models/KhuyenMai.php',
         'App\\Models\\KhuyenMaiChiNhanh' => __DIR__ . '/../..' . '/app/Models/KhuyenMaiChiNhanh.php',
+        'App\\Models\\KhuyenMaiRapPhim' => __DIR__ . '/../..' . '/app/Models/KhuyenMaiRapPhim.php',
         'App\\Models\\LichSuDiem' => __DIR__ . '/../..' . '/app/Models/LichSuDiem.php',
         'App\\Models\\LichSuSuDungKhuyenMai' => __DIR__ . '/../..' . '/app/Models/LichSuSuDungKhuyenMai.php',
         'App\\Models\\LienHe' => __DIR__ . '/../..' . '/app/Models/LienHe.php',
@@ -953,6 +958,7 @@ class ComposerStaticInit8499d38441e61b435221bf3cdd228385
         'Database\\Seeders\\CauHinhSeeder' => __DIR__ . '/../..' . '/database/seeders/CauHinhSeeder.php',
         'Database\\Seeders\\ChiNhanhSeeder' => __DIR__ . '/../..' . '/database/seeders/ChiNhanhSeeder.php',
         'Database\\Seeders\\ComboSeeder' => __DIR__ . '/../..' . '/database/seeders/ComboSeeder.php',
+        'Database\\Seeders\\CommentRatingSeeder' => __DIR__ . '/../..' . '/database/seeders/CommentRatingSeeder.php',
         'Database\\Seeders\\CommentSeeder' => __DIR__ . '/../..' . '/database/seeders/CommentSeeder.php',
         'Database\\Seeders\\DanhGiaSeeder' => __DIR__ . '/../..' . '/database/seeders/DanhGiaSeeder.php',
         'Database\\Seeders\\DatVeSeeder' => __DIR__ . '/../..' . '/database/seeders/DatVeSeeder.php',
@@ -5064,7 +5070,6 @@ class ComposerStaticInit8499d38441e61b435221bf3cdd228385
         'PHPUnit\\Framework\\MockObject\\Generator\\SoapExtensionNotAvailableException' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/MockObject/Generator/Exception/SoapExtensionNotAvailableException.php',
         'PHPUnit\\Framework\\MockObject\\Generator\\TemplateLoader' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/MockObject/Generator/TemplateLoader.php',
         'PHPUnit\\Framework\\MockObject\\Generator\\UnknownClassException' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/MockObject/Generator/Exception/UnknownClassException.php',
-        'PHPUnit\\Framework\\MockObject\\Generator\\UnknownInterfaceException' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/MockObject/Generator/Exception/UnknownInterfaceException.php',
         'PHPUnit\\Framework\\MockObject\\Generator\\UnknownTraitException' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/MockObject/Generator/Exception/UnknownTraitException.php',
         'PHPUnit\\Framework\\MockObject\\Generator\\UnknownTypeException' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/MockObject/Generator/Exception/UnknownTypeException.php',
         'PHPUnit\\Framework\\MockObject\\IncompatibleReturnValueException' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/MockObject/Exception/IncompatibleReturnValueException.php',
@@ -5282,7 +5287,6 @@ class ComposerStaticInit8499d38441e61b435221bf3cdd228385
         'PHPUnit\\Metadata\\WithoutErrorHandler' => __DIR__ . '/..' . '/phpunit/phpunit/src/Metadata/WithoutErrorHandler.php',
         'PHPUnit\\Runner\\Baseline\\Baseline' => __DIR__ . '/..' . '/phpunit/phpunit/src/Runner/Baseline/Baseline.php',
         'PHPUnit\\Runner\\Baseline\\CannotLoadBaselineException' => __DIR__ . '/..' . '/phpunit/phpunit/src/Runner/Baseline/Exception/CannotLoadBaselineException.php',
-        'PHPUnit\\Runner\\Baseline\\CannotWriteBaselineException' => __DIR__ . '/..' . '/phpunit/phpunit/src/Runner/Baseline/Exception/CannotWriteBaselineException.php',
         'PHPUnit\\Runner\\Baseline\\FileDoesNotHaveLineException' => __DIR__ . '/..' . '/phpunit/phpunit/src/Runner/Baseline/Exception/FileDoesNotHaveLineException.php',
         'PHPUnit\\Runner\\Baseline\\Generator' => __DIR__ . '/..' . '/phpunit/phpunit/src/Runner/Baseline/Generator.php',
         'PHPUnit\\Runner\\Baseline\\Issue' => __DIR__ . '/..' . '/phpunit/phpunit/src/Runner/Baseline/Issue.php',
@@ -5302,7 +5306,6 @@ class ComposerStaticInit8499d38441e61b435221bf3cdd228385
         'PHPUnit\\Runner\\CodeCoverage' => __DIR__ . '/..' . '/phpunit/phpunit/src/Runner/CodeCoverage.php',
         'PHPUnit\\Runner\\DeprecationCollector\\Collector' => __DIR__ . '/..' . '/phpunit/phpunit/src/Runner/DeprecationCollector/Collector.php',
         'PHPUnit\\Runner\\DeprecationCollector\\Facade' => __DIR__ . '/..' . '/phpunit/phpunit/src/Runner/DeprecationCollector/Facade.php',
-        'PHPUnit\\Runner\\DeprecationCollector\\InIsolationCollector' => __DIR__ . '/..' . '/phpunit/phpunit/src/Runner/DeprecationCollector/InIsolationCollector.php',
         'PHPUnit\\Runner\\DeprecationCollector\\Subscriber' => __DIR__ . '/..' . '/phpunit/phpunit/src/Runner/DeprecationCollector/Subscriber/Subscriber.php',
         'PHPUnit\\Runner\\DeprecationCollector\\TestPreparedSubscriber' => __DIR__ . '/..' . '/phpunit/phpunit/src/Runner/DeprecationCollector/Subscriber/TestPreparedSubscriber.php',
         'PHPUnit\\Runner\\DeprecationCollector\\TestTriggeredDeprecationSubscriber' => __DIR__ . '/..' . '/phpunit/phpunit/src/Runner/DeprecationCollector/Subscriber/TestTriggeredDeprecationSubscriber.php',
@@ -5340,7 +5343,6 @@ class ComposerStaticInit8499d38441e61b435221bf3cdd228385
         'PHPUnit\\Runner\\ResultCache\\NullResultCache' => __DIR__ . '/..' . '/phpunit/phpunit/src/Runner/ResultCache/NullResultCache.php',
         'PHPUnit\\Runner\\ResultCache\\ResultCache' => __DIR__ . '/..' . '/phpunit/phpunit/src/Runner/ResultCache/ResultCache.php',
         'PHPUnit\\Runner\\ResultCache\\ResultCacheHandler' => __DIR__ . '/..' . '/phpunit/phpunit/src/Runner/ResultCache/ResultCacheHandler.php',
-        'PHPUnit\\Runner\\ResultCache\\ResultCacheId' => __DIR__ . '/..' . '/phpunit/phpunit/src/Runner/ResultCache/ResultCacheId.php',
         'PHPUnit\\Runner\\ResultCache\\Subscriber' => __DIR__ . '/..' . '/phpunit/phpunit/src/Runner/ResultCache/Subscriber/Subscriber.php',
         'PHPUnit\\Runner\\ResultCache\\TestConsideredRiskySubscriber' => __DIR__ . '/..' . '/phpunit/phpunit/src/Runner/ResultCache/Subscriber/TestConsideredRiskySubscriber.php',
         'PHPUnit\\Runner\\ResultCache\\TestErroredSubscriber' => __DIR__ . '/..' . '/phpunit/phpunit/src/Runner/ResultCache/Subscriber/TestErroredSubscriber.php',
@@ -5394,7 +5396,6 @@ class ComposerStaticInit8499d38441e61b435221bf3cdd228385
         'PHPUnit\\TextUI\\CliArguments\\Exception' => __DIR__ . '/..' . '/phpunit/phpunit/src/TextUI/Configuration/Cli/Exception.php',
         'PHPUnit\\TextUI\\CliArguments\\XmlConfigurationFileFinder' => __DIR__ . '/..' . '/phpunit/phpunit/src/TextUI/Configuration/Cli/XmlConfigurationFileFinder.php',
         'PHPUnit\\TextUI\\Command\\AtLeastVersionCommand' => __DIR__ . '/..' . '/phpunit/phpunit/src/TextUI/Command/Commands/AtLeastVersionCommand.php',
-        'PHPUnit\\TextUI\\Command\\CheckPhpConfigurationCommand' => __DIR__ . '/..' . '/phpunit/phpunit/src/TextUI/Command/Commands/CheckPhpConfigurationCommand.php',
         'PHPUnit\\TextUI\\Command\\Command' => __DIR__ . '/..' . '/phpunit/phpunit/src/TextUI/Command/Command.php',
         'PHPUnit\\TextUI\\Command\\GenerateConfigurationCommand' => __DIR__ . '/..' . '/phpunit/phpunit/src/TextUI/Command/Commands/GenerateConfigurationCommand.php',
         'PHPUnit\\TextUI\\Command\\ListGroupsCommand' => __DIR__ . '/..' . '/phpunit/phpunit/src/TextUI/Command/Commands/ListGroupsCommand.php',
@@ -6853,7 +6854,6 @@ class ComposerStaticInit8499d38441e61b435221bf3cdd228385
         'Ramsey\\Uuid\\UuidInterface' => __DIR__ . '/..' . '/ramsey/uuid/src/UuidInterface.php',
         'Ramsey\\Uuid\\Validator\\GenericValidator' => __DIR__ . '/..' . '/ramsey/uuid/src/Validator/GenericValidator.php',
         'Ramsey\\Uuid\\Validator\\ValidatorInterface' => __DIR__ . '/..' . '/ramsey/uuid/src/Validator/ValidatorInterface.php',
-        'ReflectionConstant' => __DIR__ . '/..' . '/symfony/polyfill-php84/Resources/stubs/ReflectionConstant.php',
         'SQLite3Exception' => __DIR__ . '/..' . '/symfony/polyfill-php83/Resources/stubs/SQLite3Exception.php',
         'Sabberworm\\CSS\\CSSElement' => __DIR__ . '/..' . '/sabberworm/php-css-parser/src/CSSElement.php',
         'Sabberworm\\CSS\\CSSList\\AtRuleBlockList' => __DIR__ . '/..' . '/sabberworm/php-css-parser/src/CSSList/AtRuleBlockList.php',
