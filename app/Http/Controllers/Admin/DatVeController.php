@@ -197,6 +197,14 @@ class DatVeController extends Controller
             'doAns'
         ])->findOrFail($id);
 
+        // ✅ Cập nhật trạng thái xuất vé
+        if ($datVe->trang_thai !== 'Đã xuất vé') {
+            $datVe->update([
+                'trang_thai' => 'Đã xuất vé',
+                'ghi_chu'    => 'Xuất vé lúc: ' . now()->format('d/m/Y H:i:s'),
+            ]);
+        }
+
         // Tính tổng tiền
         $phuThuRap = $datVe->suatChieu->phongChieu->rapPhim->phu_thu ?? 0;
         $tongTienGhe = $datVe->gheNgois->sum(function ($ghe) use ($phuThuRap) {

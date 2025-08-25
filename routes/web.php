@@ -75,6 +75,9 @@ Route::middleware('auth')->group(function () {
 
 
     Route::get('/zalopay/ketqua', [ThanhToanController::class, 'ketQuaThanhToan'])->name('zalopay.ketqua');
+    // callback ZaloPay bắn về server
+    Route::post('/api/payments/zalopay/callback', [ThanhToanController::class, 'callBack'])
+        ->name('zalopay.callback');
     Route::get('/client.khuyen-mai', [KhuyenMaiController::class, 'index'])->name('khuyen-mai.index');
 
     // Profile

@@ -10,6 +10,7 @@ use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Support\Str;
+use App\Models\CauHinh;
 use DNS1D;
 
 class GuiVeXemPhim extends Mailable
@@ -20,11 +21,13 @@ class GuiVeXemPhim extends Mailable
     public $pdf;
     public $barcode;
     public $barcodeUrl;
+    public $cauHinh;
 
 
     public function __construct($datVe)
     {
         $this->datVe = $datVe;
+        $this->cauHinh = CauHinh::first();
     }
 
     public function build()
@@ -43,6 +46,7 @@ class GuiVeXemPhim extends Mailable
             ->with([
                 'barcodeCid' => $filename,
                 'datVe' => $this->datVe,
+                'cauHinh' => $this->cauHinh,
             ]);
     }
     public function content(): Content

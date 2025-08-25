@@ -264,28 +264,6 @@
                                 @enderror
                             </div>
 
-                            {{-- <div class="mb-4">
-                                <label for="trang_thai" class="form-label fw-semibold">Trạng thái <span
-                                        class="text-danger">*</span></label>
-                                <select class="form-select rounded @error('trang_thai') is-invalid @enderror"
-                                    id="trang_thai" name="trang_thai">
-                                    <option value="đang chiếu"
-                                        {{ old('trang_thai', $phim->trang_thai) === 'đang chiếu' ? 'selected' : '' }}>
-                                        Đang chiếu</option>
-                                    <option value="sắp chiếu"
-                                        {{ old('trang_thai', $phim->trang_thai) === 'sắp chiếu' ? 'selected' : '' }}>
-                                        Sắp chiếu</option>
-                                    <option value="đã kết thúc"
-                                        {{ old('trang_thai', $phim->trang_thai) === 'đã kết thúc' ? 'selected' : '' }}>
-                                        Đã kết thúc</option>
-                                    <option value="bị hủy"
-                                        {{ old('trang_thai', $phim->trang_thai) === 'bị hủy' ? 'selected' : '' }}>
-                                        Bị hủy</option>
-                                </select>
-                                @error('trang_thai')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div> --}}
                             @if (Auth::user()->vai_tro_id == 1)
                                 <div class="mb-4">
                                     <label for="chi_nhanh_ids" class="form-label fw-semibold">Chi nhánh <span
@@ -421,7 +399,7 @@
             ].sort((a, b) => a.text.localeCompare(b.text)); // Sắp xếp theo tên tiếng Việt
 
             const ngonNguSelect = document.getElementById('ngon_ngu');
-            const oldNgonNgu = "{{ old('ngon_ngu') }}";
+            const oldNgonNgu = "{{ old('ngon_ngu', $phim->ngon_ngu ?? '') }}";
             ngonNguData.forEach(lang => {
                 const option = document.createElement('option');
                 option.value = lang.value;
@@ -436,17 +414,15 @@
                 .then(res => res.json())
                 .then(data => {
                     const quocGiaSelect = document.getElementById('quoc_gia');
-                    const oldQuocGia = "{{ old('quoc_gia') }}";
+                    const oldQuocGia = "{{ old('quoc_gia', $phim->quoc_gia ?? '') }}";
 
-                    // Xử lý và sắp xếp dữ liệu
                     const countries = data.map(country => {
-                        // Ưu tiên tên tiếng Việt, nếu không có thì dùng tên chung
                         const displayName = country.translations.vie?.common || country.name.common;
                         return {
                             value: country.name.common,
                             text: displayName
                         };
-                    }).sort((a, b) => a.text.localeCompare(b.text, 'vi')); // Sắp xếp theo tiếng Việt
+                    }).sort((a, b) => a.text.localeCompare(b.text, 'vi'));
 
                     countries.forEach(country => {
                         const option = document.createElement('option');

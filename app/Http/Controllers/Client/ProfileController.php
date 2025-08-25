@@ -34,7 +34,7 @@ class ProfileController extends Controller
         // Lấy đơn đặt vé đã thanh toán
         $donDatVeDaThanhToan = DatVe::with('suatChieu.phim')
             ->where('user_id', $user->id)
-            ->where('trang_thai', 'Đã thanh toán')
+            ->whereIn('trang_thai', ['Đã thanh toán', 'Đã xuất vé'])
             ->orderBy('ngay_thanh_toan', 'desc')
             ->get();
 
@@ -75,7 +75,6 @@ class ProfileController extends Controller
             'phanTramChiTieu'
         ));
     }
-
 
     public function updatePassword(Request $request)
     {

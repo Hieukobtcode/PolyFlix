@@ -550,9 +550,13 @@
 
         <div class="action-buttons">
 
-            <button onclick="printInvoice()" class="btn-modern btn-outline-modern">
-                <i class="fas fa-print"></i> In hóa đơn
-            </button>
+            @if ($datVe->trang_thai === 'Đã thanh toán')
+                <button onclick="printInvoice()" class="btn-modern btn-outline-modern">
+                    <i class="fas fa-print"></i> In hóa đơn
+                </button>
+            @endif
+
+            {{-- Nút quay lại danh sách vé --}}
             <a href="{{ route('admin.dat-ves.index') }}" class="btn-modern btn-outline-modern">
                 <i class="fas fa-list"></i>
                 Quản lý vé
