@@ -380,6 +380,7 @@
         });
     </script>
 
+    <script>
         window.addEventListener("beforeunload", function() {
             if (!isPaying) { 
                 const url = "{{ route('client.thanh-toan.huy', $datVe->id) }}";
@@ -450,8 +451,7 @@
                     },
                     success: function(response) {
                         if (response.success) {
-                            pointMessage.text('Đổi điểm thành công').css('color', 'green')
-                            .show();
+                            pointMessage.text('Đổi điểm thành công').css('color', 'green').show();
                             // Cập nhật số điểm hiển thị
                             let newPoints = availablePoints - points;
                             $('strong', '.point-section').text(numberFormat(newPoints));
@@ -459,13 +459,11 @@
                             // Ẩn chỉ cái input-group đầu tiên
                             $('.input-group:first').hide();
                         } else {
-                            pointMessage.text('Lỗi khi cập nhật điểm: ' + response.message).css(
-                                'color', 'red').show();
+                            pointMessage.text('Lỗi khi cập nhật điểm: ' + response.message).css('color', 'red').show();
                         }
                     },
                     error: function(xhr) {
-                        pointMessage.text('Đã có lỗi xảy ra, vui lòng thử lại!').css('color',
-                            'red').show();
+                        pointMessage.text('Đã có lỗi xảy ra, vui lòng thử lại!').css('color', 'red').show();
                     }
                 });
             });

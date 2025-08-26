@@ -102,7 +102,10 @@ $(document).ready(function () {
             .prop("disabled", true)
             .html('<i class="fas fa-spinner fa-spin"></i> Đang kiểm tra...');
 
-        const datVeId = $('input[name="dat_ve_id"]').val();
+        // Lấy dat_ve_id từ input đầu tiên trong .payment-methods container
+        const datVeId = $(
+            '.payment-methods input[name="dat_ve_id"]:first'
+        ).val();
 
         $.ajax({
             url: "/khuyen-mai/check-code",

@@ -99,8 +99,17 @@ class KhuyenMaiController extends Controller
             'dat_ve_id' => 'nullable|integer|exists:dat_ves,id'
         ]);
 
+        Log::info('Check promotion code started', [
+            'ma_khuyen_mai' => $request->ma_khuyen_mai,
+            'tong_tien' => $request->tong_tien,
+            'dat_ve_id' => $request->dat_ve_id,
+            'user_id' => Auth::id(),
+            'request_all' => $request->all()
+        ]);
+
         $khuyenMai = KhuyenMai::where('ma_khuyen_mai', $request->ma_khuyen_mai)
             ->conHieuLuc()
+            ->with(['chiNhanhs', 'rapPhims']) // Load thông tin chi nhánh và rạp
             ->first();
 
         if (!$khuyenMai) {
@@ -110,6 +119,68 @@ class KhuyenMaiController extends Controller
             ]);
         }
 
+        // Kiểm tra số lượt sử dụng toàn hệ thống (kiểm tra sớm để tránh tính toán không cần thiết)
+        if ($khuyenMai->so_lan_su_dung_toi_da && $khuyenMai->so_lan_da_su_dung >= $khuyenMai->so_lan_su_dung_toi_da) {
+            $conLai = max(0, $khuyenMai->so_lan_su_dung_toi_da - $khuyenMai->so_lan_da_su_dung);
+            return response()->json([
+                'success' => false,
+                'message' => "Mã khuyến mãi đã hết lượt sử dụng (đã dùng {$khuyenMai->so_lan_da_su_dung}/{$khuyenMai->so_lan_su_dung_toi_da} lượt)"
+            ]);
+        }
+
+        // Kiểm tra chi nhánh và rạp (nếu có dat_ve_id)
+        if ($request->filled('dat_ve_id')) {
+            Log::info('dat_ve_id is provided, checking branch/cinema validation');
+            $datVe = \App\Models\DatVe::with(['suatChieu.phongChieu.rapPhim.chiNhanh'])
+                ->find($request->dat_ve_id);
+
+            if ($datVe && $datVe->suatChieu) {
+                $chiNhanhHienTai = $datVe->suatChieu->phongChieu->rapPhim->chiNhanh ?? null;
+                $rapPhimHienTai = $datVe->suatChieu->phongChieu->rapPhim ?? null;
+
+                Log::info('Promotion validation - Current cinema info', [
+                    'chi_nhanh_hien_tai' => $chiNhanhHienTai ? ['id' => $chiNhanhHienTai->id, 'ten' => $chiNhanhHienTai->ten_chi_nhanh] : null,
+                    'rap_phim_hien_tai' => $rapPhimHienTai ? ['id' => $rapPhimHienTai->id, 'ten' => $rapPhimHienTai->ten] : null,
+                    'chi_nhanhs_hop_le' => $khuyenMai->chiNhanhs->pluck('ten_chi_nhanh')->toArray(),
+                    'rap_phims_hop_le' => $khuyenMai->rapPhims->pluck('ten')->toArray()
+                ]);
+
+                // Kiểm tra nếu khuyến mãi có giới hạn chi nhánh
+                if ($khuyenMai->chiNhanhs->count() > 0) {
+                    $coChiNhanhHopLe = $khuyenMai->chiNhanhs->contains('id', $chiNhanhHienTai->id);
+                    if (!$coChiNhanhHopLe) {
+                        $tenChiNhanhHopLe = $khuyenMai->chiNhanhs->pluck('ten_chi_nhanh')->join(', ');
+                        Log::warning('Promotion validation failed - Wrong branch', [
+                            'chi_nhanh_hien_tai' => $chiNhanhHienTai->ten_chi_nhanh,
+                            'chi_nhanhs_hop_le' => $tenChiNhanhHopLe
+                        ]);
+                        return response()->json([
+                            'success' => false,
+                            'message' => "Mã khuyến mãi này chỉ áp dụng tại: {$tenChiNhanhHopLe}. Hiện tại bạn đang đặt vé tại {$chiNhanhHienTai->ten_chi_nhanh}."
+                        ]);
+                    }
+                }
+
+                // Kiểm tra nếu khuyến mãi có giới hạn rạp
+                if ($khuyenMai->rapPhims->count() > 0) {
+                    $coRapHopLe = $khuyenMai->rapPhims->contains('id', $rapPhimHienTai->id);
+                    if (!$coRapHopLe) {
+                        $tenRapHopLe = $khuyenMai->rapPhims->pluck('ten')->join(', ');
+                        Log::warning('Promotion validation failed - Wrong cinema', [
+                            'rap_phim_hien_tai' => $rapPhimHienTai->ten,
+                            'rap_phims_hop_le' => $tenRapHopLe
+                        ]);
+                        return response()->json([
+                            'success' => false,
+                            'message' => "Mã khuyến mãi này chỉ áp dụng tại: {$tenRapHopLe}. Hiện tại bạn đang đặt vé tại {$rapPhimHienTai->ten}."
+                        ]);
+                    }
+                }
+            }
+        } else {
+            Log::warning('dat_ve_id not provided - skipping branch validation');
+        }
+
         // Kiểm tra loại áp dụng khuyến mãi
         $loaiSanPham = $request->get('loai_san_pham', 've'); // Mặc định là vé phim
 
@@ -117,6 +188,11 @@ class KhuyenMaiController extends Controller
         if ($khuyenMai->ap_dung_cho !== 'tat_ca' && $khuyenMai->ap_dung_cho !== $loaiSanPham) {
             $tenLoai = $loaiSanPham === 've' ? 'vé phim' : 'đồ ăn/combo';
             $tenKhuyenMai = $khuyenMai->ap_dung_cho === 've' ? 'vé phim' : ($khuyenMai->ap_dung_cho === 'do_an' ? 'đồ ăn/combo' : 'tất cả sản phẩm');
+
+            Log::warning('Promotion validation failed - Wrong product type', [
+                'khuyen_mai_ap_dung_cho' => $khuyenMai->ap_dung_cho,
+                'loai_san_pham_yeu_cau' => $loaiSanPham
+            ]);
 
             return response()->json([
                 'success' => false,
@@ -129,14 +205,6 @@ class KhuyenMaiController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Đơn hàng chưa đạt giá trị tối thiểu ' . number_format($khuyenMai->don_toi_thieu) . 'đ'
-            ]);
-        }
-
-        // Kiểm tra số lần sử dụng
-        if ($khuyenMai->so_lan_su_dung_toi_da && $khuyenMai->so_lan_da_su_dung >= $khuyenMai->so_lan_su_dung_toi_da) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Mã khuyến mãi đã hết lượt sử dụng'
             ]);
         }
 
@@ -154,6 +222,8 @@ class KhuyenMaiController extends Controller
         $response = [
             'success' => true,
             'message' => 'Áp dụng mã khuyến mãi thành công',
+            'khuyen_mai_id' => $khuyenMai->id,
+            'discount' => $giam_gia,
             'data' => [
                 'id' => $khuyenMai->id,
                 'ma_khuyen_mai' => $khuyenMai->ma_khuyen_mai,
