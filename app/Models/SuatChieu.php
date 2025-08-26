@@ -25,7 +25,7 @@ class SuatChieu extends Model
 
     public function phim()
     {
-        return $this->belongsTo(Phim::class);
+        return $this->belongsTo(Phim::class, 'phim_id');
     }
 
     public function phongChieu()

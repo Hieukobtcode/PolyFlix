@@ -167,13 +167,238 @@
                             </div>
                         </div>
                     @endif
-
                 </div>
+                @php
+                    // Kiểm tra người dùng đã đánh giá phim này chưa (theo user_id và phim_id)
+                    $userReviewedPhim = false;
+                    if (Auth::check()) {
+                        $userReviewedPhim =
+                            \App\Models\Rating::where('user_id', Auth::id())->where('phim_id', $phim->id)->exists() ||
+                            \App\Models\Comment::where('user_id', Auth::id())->where('phim_id', $phim->id)->exists();
+                    }
+                @endphp
+
+                @if (Auth::check() && Auth::id() === $ve->user_id)
+                    @php
+                        // Kiểm tra vé này đã được dùng để đánh giá chưa (theo dat_ve_id)
+                        $veUsedForReview =
+                            \App\Models\Rating::where('dat_ve_id', $ve->id)->exists() ||
+                            \App\Models\Comment::where('dat_ve_id', $ve->id)->exists();
+
+                        // Kiểm tra vé đã thanh toán chưa
+                        $canReview = in_array($ve->trang_thai, ['Đã thanh toán', 'Đã xuất vé']);
+                    @endphp
+
+                    @if (!$veUsedForReview && $canReview && $phim)
+                        <div class="card review-card mt-4">
+                            <div class="card-header">
+                                <h5>Đánh giá phim {{ $phim->ten_phim }}</h5>
+                            </div>
+                            <div class="card-body">
+                                @if ($userReviewedPhim)
+                                    <div class="alert alert-info mb-3">
+                                        Bạn đã đánh giá phim này trước đó. Đánh giá mới sẽ thay thế đánh giá cũ.
+                                    </div>
+                                @endif
+
+                                <form action="{{ route('review.store', $phim->id) }}" method="POST">
+                                    @csrf
+                                    <input type="hidden" name="dat_ve_id" value="{{ $ve->id }}">
+
+                                    {{-- ⭐⭐⭐ Rating sao thay cho select --}}
+                                    <div class="mb-3">
+                                        <label class="form-label d-block mb-1">Đánh giá</label>
+                                        <div class="star-row">
+                                            <div class="star-rating">
+                                                @for ($i = 5; $i >= 1; $i--)
+                                                    <input type="radio" id="star{{ $i }}" name="rating"
+                                                        value="{{ $i }}" required>
+                                                    <label for="star{{ $i }}"
+                                                        title="{{ $i }} sao"></label>
+                                                @endfor
+                                            </div>
+                                            <div class="help">Nhấp để chọn từ 1–5 sao</div>
+                                        </div>
+                                    </div>
+
+
+                                    {{-- Bình luận --}}
+                                    <div class="mb-3">
+                                        <label class="form-label">Bình luận</label>
+                                        <textarea name="content" class="form-control" rows="3" required></textarea>
+                                    </div>
+
+                                    <button type="submit" class="btn btn-primary mt-2">
+                                        @if ($userReviewedPhim)
+                                            Cập nhật đánh giá & bình luận
+                                        @else
+                                            Gửi đánh giá & bình luận
+                                        @endif
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    @elseif ($veUsedForReview)
+                        <div class="alert alert-info mt-3">
+                            Vé này đã được sử dụng để đánh giá/bình luận phim. Cảm ơn bạn! 💙
+                        </div>
+                    @elseif (!$canReview)
+                        <div class="alert alert-warning mt-3">
+                            Bạn cần thanh toán vé này để có thể đánh giá phim.
+                        </div>
+                    @endif
+                @endif
+
             </div>
         </div>
     </div>
 
     <style>
+        /* ===== Review Card ===== */
+        .card.review-card {
+            --bg-1: #2f3278;
+            /* nền card */
+            --bg-2: #2a2d6d;
+            /* nền chuyển */
+            --text: #e9ecff;
+            /* chữ chính */
+            --muted: #b9c4ff;
+            /* chữ phụ */
+            --accent: #00c6ff;
+            /* xanh nhấn */
+            --accent-2: #007bff;
+            /* xanh đậm */
+            --ring: rgba(0, 198, 255, .35);
+
+            border: none;
+            border-radius: 18px;
+            background: linear-gradient(180deg, var(--bg-1) 0%, var(--bg-2) 100%);
+            color: var(--text);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, .28);
+            overflow: hidden;
+        }
+
+        .review-card .card-header {
+            border: none;
+            padding: 14px 18px;
+            color: #fff;
+            background: linear-gradient(135deg, var(--accent-2), var(--accent));
+            font-weight: 700;
+        }
+
+        .review-card .card-body {
+            padding: 20px 22px 24px;
+        }
+
+        /* ===== Typography & spacing ===== */
+        .review-card .form-label {
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .review-card .help {
+            color: var(--muted);
+            font-size: .9rem;
+        }
+
+        /* ===== Inputs ===== */
+        .review-card .form-control {
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, .15);
+            background: rgba(255, 255, 255, .08);
+            color: #fff;
+            padding: .65rem .9rem;
+        }
+
+        .review-card .form-control::placeholder {
+            color: rgba(255, 255, 255, .55);
+        }
+
+        .review-card .form-control:focus {
+            border-color: transparent;
+            box-shadow: 0 0 0 .25rem var(--ring);
+            background: rgba(255, 255, 255, .10);
+        }
+
+        /* ===== Button ===== */
+        .review-card .btn-primary {
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            padding: .7rem 1.1rem;
+            background: linear-gradient(135deg, var(--accent-2), var(--accent));
+            transition: transform .15s ease, box-shadow .15s ease;
+        }
+
+        .review-card .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 22px rgba(0, 198, 255, .25);
+        }
+
+        /* ===== Alerts ===== */
+        .review-card .alert {
+            border-radius: 12px;
+            border: none;
+            background: rgba(255, 255, 255, .08);
+            color: #fff;
+        }
+
+        /* ===== Star rating (no JS) ===== */
+        .star-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .star-rating {
+            direction: rtl;
+            display: inline-flex;
+            gap: 10px;
+            line-height: 1;
+            font-size: 30px;
+            user-select: none;
+        }
+
+        .star-rating input {
+            display: none;
+        }
+
+        .star-rating label {
+            cursor: pointer;
+            color: #5f6bb2;
+            transition: transform .12s, color .12s;
+        }
+
+        .star-rating label::before {
+            content: "★";
+        }
+
+        .star-rating label:hover {
+            transform: scale(1.1);
+        }
+
+        /* tô sao khi hover/chọn */
+        .star-rating input:checked~label,
+        .star-rating label:hover,
+        .star-rating label:hover~label {
+            color: #ffd966;
+            text-shadow: 0 0 10px rgba(255, 217, 102, .35);
+        }
+
+        /* ===== Small screens ===== */
+        @media (max-width:576px) {
+            .review-card .card-body {
+                padding: 16px;
+            }
+
+            .star-rating {
+                font-size: 26px;
+                gap: 8px;
+            }
+        }
+
         /* Modern Ticket Page Styles */
         .ticket-page-wrapper {
             /* background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); */
