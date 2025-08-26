@@ -49,6 +49,8 @@ use App\Http\Controllers\Client\LienHeController as ClientLienHeController;
 use App\Http\Controllers\Client\TheLoaiController;
 use App\Http\Controllers\Client\KhuyenMaiController;
 use App\Http\Controllers\Client\PointController;
+use App\Http\Controllers\Client\ReviewController;
+
 
 
 Route::get('/', [TrangChuController::class, 'index'])->name('home');
@@ -56,6 +58,9 @@ Route::get('/client.khuyen-mai', [KhuyenMaiController::class, 'index'])->name('k
 
 Route::middleware('auth')->group(function () {
 
+    // {phim} sẽ tự bind về App\Models\Phim
+    Route::post('/phim/{phim}/review', [ReviewController::class, 'storeReview'])
+        ->name('review.store');
 
     Route::post('/update-points', [PointController::class, 'updatePoints'])->middleware('auth');
 
