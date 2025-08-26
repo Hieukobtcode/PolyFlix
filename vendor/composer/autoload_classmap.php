@@ -71,6 +71,7 @@ return array(
     'App\\Http\\Requests\\RegisterRequest' => $baseDir . '/app/Http/Requests/RegisterRequest.php',
     'App\\Http\\Requests\\SoDoGheRequest' => $baseDir . '/app/Http/Requests/SoDoGheRequest.php',
     'App\\Mail\\AccountApprovedMail' => $baseDir . '/app/Mail/AccountApprovedMail.php',
+    'App\\Mail\\ContactReplyMail' => $baseDir . '/app/Mail/ContactReplyMail.php',
     'App\\Mail\\ForgotPasswordMail' => $baseDir . '/app/Mail/ForgotPasswordMail.php',
     'App\\Mail\\GuiVeXemPhim' => $baseDir . '/app/Mail/GuiVeXemPhim.php',
     'App\\Mail\\MoiQuanLyChiNhanh' => $baseDir . '/app/Mail/MoiQuanLyChiNhanh.php',

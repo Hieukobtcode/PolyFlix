@@ -239,9 +239,9 @@ class ComposerStaticInit8499d38441e61b435221bf3cdd228385
         ),
         'phpDocumentor\\Reflection\\' => 
         array (
-            0 => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src',
+            0 => __DIR__ . '/..' . '/phpdocumentor/reflection-common/src',
             1 => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src',
-            2 => __DIR__ . '/..' . '/phpdocumentor/reflection-common/src',
+            2 => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src',
         ),
         'Whoops\\' => 
         array (
@@ -425,8 +425,8 @@ class ComposerStaticInit8499d38441e61b435221bf3cdd228385
         ),
         'Psr\\Http\\Message\\' => 
         array (
-            0 => __DIR__ . '/..' . '/psr/http-factory/src',
-            1 => __DIR__ . '/..' . '/psr/http-message/src',
+            0 => __DIR__ . '/..' . '/psr/http-message/src',
+            1 => __DIR__ . '/..' . '/psr/http-factory/src',
         ),
         'Psr\\Http\\Client\\' => 
         array (
@@ -514,8 +514,8 @@ class ComposerStaticInit8499d38441e61b435221bf3cdd228385
         ),
         'League\\Uri\\' => 
         array (
-            0 => __DIR__ . '/..' . '/league/uri',
-            1 => __DIR__ . '/..' . '/league/uri-interfaces',
+            0 => __DIR__ . '/..' . '/league/uri-interfaces',
+            1 => __DIR__ . '/..' . '/league/uri',
         ),
         'League\\OAuth1\\Client\\' => 
         array (
@@ -772,6 +772,7 @@ class ComposerStaticInit8499d38441e61b435221bf3cdd228385
         'App\\Http\\Requests\\RegisterRequest' => __DIR__ . '/../..' . '/app/Http/Requests/RegisterRequest.php',
         'App\\Http\\Requests\\SoDoGheRequest' => __DIR__ . '/../..' . '/app/Http/Requests/SoDoGheRequest.php',
         'App\\Mail\\AccountApprovedMail' => __DIR__ . '/../..' . '/app/Mail/AccountApprovedMail.php',
+        'App\\Mail\\ContactReplyMail' => __DIR__ . '/../..' . '/app/Mail/ContactReplyMail.php',
         'App\\Mail\\ForgotPasswordMail' => __DIR__ . '/../..' . '/app/Mail/ForgotPasswordMail.php',
         'App\\Mail\\GuiVeXemPhim' => __DIR__ . '/../..' . '/app/Mail/GuiVeXemPhim.php',
         'App\\Mail\\MoiQuanLyChiNhanh' => __DIR__ . '/../..' . '/app/Mail/MoiQuanLyChiNhanh.php',
