@@ -269,6 +269,117 @@
             isPaying = true; // bật cờ khi bấm thanh toán
         });
 
+        // Debug script để kiểm tra appliedPromotion
+        $(document).ready(function() {
+            // Kiểm tra xem có mã khuyến mãi được hiển thị không
+            setTimeout(function() {
+                const discountDiv = $("#promotion-discount");
+                if (discountDiv.is(':visible')) {
+                    console.log("Có mã khuyến mãi được hiển thị");
+                    console.log("Discount text:", $("#discount-amount").text());
+                } else {
+                    console.log("Không có mã khuyến mãi nào được hiển thị");
+                }
+            }, 1000);
+
+            // Override phần click thanh toán để debug
+            $("#btn-pay").off('click').on('click', function(e) {
+                e.preventDefault();
+                console.log("=== DEBUG THANH TOÁN ===");
+                
+                const datVeId = $('input[name="dat_ve_id"]').val();
+                console.log("dat_ve_id:", datVeId);
+                
+                // Kiểm tra appliedPromotion từ global scope
+                if (typeof window.appliedPromotion !== 'undefined') {
+                    console.log("Found appliedPromotion:", window.appliedPromotion);
+                } else {
+                    console.log("appliedPromotion not found in global scope");
+                }
+
+                // Kiểm tra từ DOM
+                const promotionSuccess = $("#apply-promotion").hasClass('btn-success');
+                console.log("Promotion button has success class:", promotionSuccess);
+                
+                const discountVisible = $("#promotion-discount").is(':visible');
+                console.log("Discount div visible:", discountVisible);
+
+                // Kiểm tra dữ liệu trong localStorage nếu có
+                const localStoragePromo = localStorage.getItem('appliedPromotion');
+                if (localStoragePromo) {
+                    console.log("Found promotion in localStorage:", JSON.parse(localStoragePromo));
+                }
+
+                if (discountVisible) {
+                    const discountAmount = $("#discount-amount").text();
+                    const finalTotal = $("#final-total").text();
+                    const promoCode = $("#promotion-code").val();
+                    
+                    console.log("Discount amount:", discountAmount);
+                    console.log("Final total:", finalTotal);
+                    console.log("Promo code:", promoCode);
+                    
+                    // Parse số tiền
+                    const giam_gia = parseInt(discountAmount.replace(/[^\d]/g, '')) || 0;
+                    const tong_sau_giam = parseInt(finalTotal.replace(/[^\d]/g, '')) || 0;
+                    
+                    // Gửi request với thông tin từ DOM
+                    const payload = {
+                        phuong_thuc_tt: 'zalopay',
+                        dat_ve_id: datVeId,
+                        tong_sau_giam: tong_sau_giam,
+                        ma_khuyen_mai: promoCode,
+                        giam_gia: giam_gia,
+                        _token: $('meta[name="csrf-token"]').attr('content')
+                    };
+                    
+                    console.log("Sending payload with promotion:", payload);
+                    
+                    $.ajax({
+                        url: "/thanh-toan/xu-ly",
+                        method: "POST",
+                        data: payload,
+                        success: function(response) {
+                            console.log("Payment response:", response);
+                            if (response.redirect_url) {
+                                window.location.href = response.redirect_url;
+                            }
+                        },
+                        error: function(xhr) {
+                            console.error("Payment error:", xhr);
+                        }
+                    });
+                } else {
+                    console.log("No promotion applied, proceeding with normal payment");
+                    
+                    // Thanh toán bình thường
+                    const payload = {
+                        phuong_thuc_tt: 'zalopay',
+                        dat_ve_id: datVeId,
+                        _token: $('meta[name="csrf-token"]').attr('content')
+                    };
+                    
+                    console.log("Sending payload without promotion:", payload);
+                    
+                    $.ajax({
+                        url: "/thanh-toan/xu-ly",
+                        method: "POST",
+                        data: payload,
+                        success: function(response) {
+                            console.log("Payment response:", response);
+                            if (response.redirect_url) {
+                                window.location.href = response.redirect_url;
+                            }
+                        },
+                        error: function(xhr) {
+                            console.error("Payment error:", xhr);
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+
         window.addEventListener("beforeunload", function() {
             if (!isPaying) { 
                 const url = "{{ route('client.thanh-toan.huy', $datVe->id) }}";

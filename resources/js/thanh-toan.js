@@ -34,13 +34,28 @@ $(document).ready(function () {
         const datVeId = $('input[name="dat_ve_id"]').val();
         const csrfToken = $('meta[name="csrf-token"]').attr("content");
 
+        // Payload thanh toán; gửi kèm thông tin khuyến mãi nếu đã áp dụng
+        const payload = {
+            phuong_thuc_tt: paymentMethod,
+            dat_ve_id: datVeId,
+        };
+
+        console.log("Applied promotion:", appliedPromotion);
+
+        if (appliedPromotion) {
+            payload.khuyen_mai_id = appliedPromotion.id;
+            payload.ma_khuyen_mai = appliedPromotion.ma_khuyen_mai;
+            payload.giam_gia = appliedPromotion.giam_gia;
+            payload.tong_sau_giam = appliedPromotion.tong_sau_giam;
+            console.log("Đã thêm thông tin khuyến mãi vào payload:", payload);
+        } else {
+            console.log("Không có khuyến mãi được áp dụng");
+        }
+
         $.ajax({
             url: "/thanh-toan/xu-ly",
             method: "POST",
-            data: {
-                phuong_thuc_tt: paymentMethod,
-                dat_ve_id: datVeId,
-            },
+            data: payload,
             headers: {
                 "X-CSRF-TOKEN": csrfToken,
             },
@@ -87,6 +102,8 @@ $(document).ready(function () {
             .prop("disabled", true)
             .html('<i class="fas fa-spinner fa-spin"></i> Đang kiểm tra...');
 
+        const datVeId = $('input[name="dat_ve_id"]').val();
+
         $.ajax({
             url: "/khuyen-mai/check-code",
             method: "POST",
@@ -94,6 +111,7 @@ $(document).ready(function () {
                 ma_khuyen_mai: promotionCode,
                 tong_tien: originalTotal,
                 loai_san_pham: "ve", // Chỉ định đây là thanh toán vé phim
+                dat_ve_id: datVeId,
                 _token: $('meta[name="csrf-token"]').attr("content"),
             },
             success: function (response) {

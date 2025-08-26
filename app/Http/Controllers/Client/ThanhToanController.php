@@ -43,7 +43,7 @@ class ThanhToanController extends Controller
             $query->where('user_id', Auth::id());
         }
 
-        $point = Auth::user()->diem;    
+        $point = Auth::user()->diem;
 
         $datVe = $query->firstOrFail();
 
@@ -230,6 +230,15 @@ class ThanhToanController extends Controller
             'phuong_thuc_tt' => 'required|in:zalopay',
         ]);
 
+        // Log thông tin khuyến mãi từ frontend
+        Log::info('ZaloPay - Thông tin request:', [
+            'dat_ve_id' => $request->dat_ve_id,
+            'khuyen_mai_id' => $request->input('khuyen_mai_id'),
+            'ma_khuyen_mai' => $request->input('ma_khuyen_mai'),
+            'giam_gia' => $request->input('giam_gia'),
+            'tong_sau_giam' => $request->input('tong_sau_giam')
+        ]);
+
         $datVe = DatVe::with([
             'nguoiDung',
             'suatChieu.phim',
@@ -271,7 +280,29 @@ class ThanhToanController extends Controller
         //     $tongTienDoAn += $doAn->gia * $doAn->pivot->so_luong;
         // }
 
+        // Kiểm tra xem có khuyến mãi được áp dụng từ request hay không
         $tongThanhTien = intval($datVe->tong_tien);
+
+        // Nếu có thông tin khuyến mãi từ frontend, sử dụng số tiền đã giảm
+        if ($request->filled('tong_sau_giam')) {
+            $tongThanhTien = intval($request->tong_sau_giam);
+            Log::info('ZaloPay - Sử dụng tổng tiền sau giảm từ frontend: ' . $tongThanhTien);
+        }
+        // Nếu không có từ frontend, kiểm tra trong database xem có khuyến mãi không
+        else if ($datVe->khuyen_mai_id) {
+            $khuyenMai = \App\Models\KhuyenMai::find($datVe->khuyen_mai_id);
+            if ($khuyenMai) {
+                // Tính lại giảm giá
+                $giaGoc = $datVe->tong_tien; // Đây là số tiền đã được cập nhật trong checkCode
+                $tongThanhTien = $giaGoc; // Sử dụng số tiền đã giảm từ database
+
+                Log::info('ZaloPay - Tìm thấy khuyến mãi trong DB: ' . $khuyenMai->ma_khuyen_mai . ', số tiền: ' . $tongThanhTien);
+            } else {
+                Log::info('ZaloPay - Không tìm thấy thông tin khuyến mãi với ID: ' . $datVe->khuyen_mai_id);
+            }
+        } else {
+            Log::info('ZaloPay - Sử dụng tổng tiền từ database (không có khuyến mãi): ' . $tongThanhTien);
+        }
 
         $embedData = [
             'dat_ve_id' => $datVe->id,
@@ -390,6 +421,32 @@ class ThanhToanController extends Controller
                         $datVe->phuong_thuc_tt = "ZaloPay";
                         $datVe->ngay_thanh_toan = now();
                         $datVe->save();
+
+                        // Cập nhật lịch sử sử dụng khuyến mãi nếu có
+                        if ($datVe->khuyen_mai_id) {
+                            try {
+                                $khuyenMai = \App\Models\KhuyenMai::find($datVe->khuyen_mai_id);
+                                if ($khuyenMai) {
+                                    // Cập nhật số lần đã sử dụng
+                                    $khuyenMai->increment('so_lan_da_su_dung');
+
+                                    // Tạo lịch sử sử dụng khuyến mãi
+                                    \App\Models\LichSuSuDungKhuyenMai::create([
+                                        'khuyen_mai_id' => $khuyenMai->id,
+                                        'nguoi_dung_id' => $datVe->user_id,
+                                        'thoi_gian_su_dung' => now()
+                                    ]);
+
+                                    Log::info('ZaloPay callback - Đã cập nhật lịch sử khuyến mãi', [
+                                        'khuyen_mai_id' => $khuyenMai->id,
+                                        'ma_khuyen_mai' => $khuyenMai->ma_khuyen_mai,
+                                        'dat_ve_id' => $datVe->id
+                                    ]);
+                                }
+                            } catch (Exception $e) {
+                                Log::error('ZaloPay callback - Lỗi cập nhật khuyến mãi: ' . $e->getMessage());
+                            }
+                        }
 
                         foreach ($datVe->chiTietDatVes as $chiTiet) {
                             $ghe = $chiTiet->ghe;
@@ -556,5 +613,4 @@ class ThanhToanController extends Controller
             return redirect()->back()->with('error', 'Có lỗi xảy ra khi hủy đơn đặt vé. Vui lòng thử lại.');
         }
     }
-    
 }

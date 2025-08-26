@@ -40,7 +40,7 @@ function loadChiNhanhs() {
             });
 
             hideLoading();
-        }
+        },
     });
 }
 
@@ -303,91 +303,109 @@ $(document).ready(function () {
     });
 });
 
-// Khởi tạo Laravel Echo với socket.io
-window.Echo = new Echo({
-    broadcaster: "socket.io",
-    host: window.location.hostname + ":6001",
-});
+// Khởi tạo Laravel Echo với socket.io (chỉ khi có thư viện Echo và đang ở trang có ghế)
+try {
+    const hasSeatGrid = document.querySelector(".ghe-chieu") !== null;
+    const EchoClass = typeof window.Echo === "function" ? window.Echo : null;
+    if (hasSeatGrid && EchoClass) {
+        window.Echo = new EchoClass({
+            broadcaster: "socket.io",
+            host: window.location.hostname + ":6001",
+        });
+    }
+} catch (e) {
+    console.warn("Echo init skipped:", e?.message || e);
+}
 
 // Khi có người chọn ghế -> tất cả client khác sẽ nhận được sự kiện này
-window.Echo.channel("ghe-duoc-chon").listen(".ghe-duoc-chon", function (e) {
-    console.log("Đã nhận được sự kiện ghe-duoc-chon:", e);
-    const ghe = document.querySelector(`.ghe-chieu[data-seat-id="${e.gheId}"]`);
-    const currentUserId = parseInt(
-        document.querySelector('meta[name="user-id"]').content
-    );
+if (
+    typeof window.Echo !== "undefined" &&
+    window.Echo &&
+    typeof window.Echo.channel === "function"
+) {
+    window.Echo.channel("ghe-duoc-chon").listen(".ghe-duoc-chon", function (e) {
+        console.log("Đã nhận được sự kiện ghe-duoc-chon:", e);
+        const ghe = document.querySelector(
+            `.ghe-chieu[data-seat-id="${e.gheId}"]`
+        );
+        const currentUserId = parseInt(
+            document.querySelector('meta[name="user-id"]').content
+        );
 
-    if (ghe && e.userId !== currentUserId) {
-        // Kiểm tra xem ghế có phải là ghế đôi
-        const isCoupleSeat = ghe.classList.contains("ghe-doi");
-        if (isCoupleSeat) {
-            const seatName = ghe.getAttribute("data-seat-name");
-            const seatNumber = parseInt(seatName.match(/\d+/)[0]);
-            const row = seatName.match(/[A-Za-z]+/)[0];
-            const partnerSeatNumber =
-                seatNumber % 2 === 1 ? seatNumber + 1 : seatNumber - 1;
-            const partnerSeatName = row + partnerSeatNumber;
-            const partnerSeat = document.querySelector(
-                `.ghe-chieu[data-seat-name="${partnerSeatName}"]`
-            );
+        if (ghe && e.userId !== currentUserId) {
+            // Kiểm tra xem ghế có phải là ghế đôi
+            const isCoupleSeat = ghe.classList.contains("ghe-doi");
+            if (isCoupleSeat) {
+                const seatName = ghe.getAttribute("data-seat-name");
+                const seatNumber = parseInt(seatName.match(/\d+/)[0]);
+                const row = seatName.match(/[A-Za-z]+/)[0];
+                const partnerSeatNumber =
+                    seatNumber % 2 === 1 ? seatNumber + 1 : seatNumber - 1;
+                const partnerSeatName = row + partnerSeatNumber;
+                const partnerSeat = document.querySelector(
+                    `.ghe-chieu[data-seat-name="${partnerSeatName}"]`
+                );
 
-            // Cập nhật cả hai ghế
-            [ghe, partnerSeat].forEach((seat) => {
-                if (seat) {
-                    seat.classList.add("selected-by-other");
-                    seat.disabled = true;
-                }
-            });
-        } else {
-            ghe.classList.add("selected-by-other");
-            ghe.disabled = true;
+                // Cập nhật cả hai ghế
+                [ghe, partnerSeat].forEach((seat) => {
+                    if (seat) {
+                        seat.classList.add("selected-by-other");
+                        seat.disabled = true;
+                    }
+                });
+            } else {
+                ghe.classList.add("selected-by-other");
+                ghe.disabled = true;
+            }
+
+            const thongBao = document.getElementById("thong-bao-ghe");
+            if (thongBao) {
+                thongBao.innerText = `⚠️ Ghế số ${e.gheId} vừa được người khác chọn. Vui lòng chọn ghế khác.`;
+                thongBao.style.display = "block";
+
+                setTimeout(() => {
+                    thongBao.style.display = "none";
+                }, 5000);
+            }
         }
+    });
 
-        const thongBao = document.getElementById("thong-bao-ghe");
-        if (thongBao) {
-            thongBao.innerText = `⚠️ Ghế số ${e.gheId} vừa được người khác chọn. Vui lòng chọn ghế khác.`;
-            thongBao.style.display = "block";
+    // Khi người dùng hủy chọn ghế
+    window.Echo.channel("ghe-bi-huy").listen(".ghe-bi-huy", function (e) {
+        const ghe = document.querySelector(
+            `.ghe-chieu[data-seat-id="${e.gheId}"]`
+        );
+        const currentUserId = parseInt(
+            document.querySelector('meta[name="user-id"]').content
+        );
 
-            setTimeout(() => {
-                thongBao.style.display = "none";
-            }, 5000);
+        if (ghe && e.userId !== currentUserId) {
+            const isCoupleSeat = ghe.classList.contains("ghe-doi");
+            if (isCoupleSeat) {
+                const seatName = ghe.getAttribute("data-seat-name");
+                const seatNumber = parseInt(seatName.match(/\d+/)[0]);
+                const row = seatName.match(/[A-Za-z]+/)[0];
+                const partnerSeatNumber =
+                    seatNumber % 2 === 1 ? seatNumber + 1 : seatNumber - 1;
+                const partnerSeatName = row + partnerSeatNumber;
+                const partnerSeat = document.querySelector(
+                    `.ghe-chieu[data-seat-name="${partnerSeatName}"]`
+                );
+
+                // Cập nhật cả hai ghế
+                [ghe, partnerSeat].forEach((seat) => {
+                    if (seat) {
+                        seat.classList.remove("selected-by-other");
+                        seat.disabled = false;
+                    }
+                });
+            } else {
+                ghe.classList.remove("selected-by-other");
+                ghe.disabled = false;
+            }
         }
-    }
-});
-
-// Khi người dùng hủy chọn ghế
-window.Echo.channel("ghe-bi-huy").listen(".ghe-bi-huy", function (e) {
-    const ghe = document.querySelector(`.ghe-chieu[data-seat-id="${e.gheId}"]`);
-    const currentUserId = parseInt(
-        document.querySelector('meta[name="user-id"]').content
-    );
-
-    if (ghe && e.userId !== currentUserId) {
-        const isCoupleSeat = ghe.classList.contains("ghe-doi");
-        if (isCoupleSeat) {
-            const seatName = ghe.getAttribute("data-seat-name");
-            const seatNumber = parseInt(seatName.match(/\d+/)[0]);
-            const row = seatName.match(/[A-Za-z]+/)[0];
-            const partnerSeatNumber =
-                seatNumber % 2 === 1 ? seatNumber + 1 : seatNumber - 1;
-            const partnerSeatName = row + partnerSeatNumber;
-            const partnerSeat = document.querySelector(
-                `.ghe-chieu[data-seat-name="${partnerSeatName}"]`
-            );
-
-            // Cập nhật cả hai ghế
-            [ghe, partnerSeat].forEach((seat) => {
-                if (seat) {
-                    seat.classList.remove("selected-by-other");
-                    seat.disabled = false;
-                }
-            });
-        } else {
-            ghe.classList.remove("selected-by-other");
-            ghe.disabled = false;
-        }
-    }
-});
+    });
+}
 
 // Khi tải lại trang, vô hiệu hóa các ghế đã bị chọn bởi người khác
 document.querySelectorAll(".ghe-chieu.selected-by-other").forEach((ghe) => {

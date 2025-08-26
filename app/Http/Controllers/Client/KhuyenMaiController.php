@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Client;
 use App\Http\Controllers\Controller;
 use App\Models\KhuyenMai;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class KhuyenMaiController extends Controller
 {
@@ -93,7 +95,8 @@ class KhuyenMaiController extends Controller
         $request->validate([
             'ma_khuyen_mai' => 'required|string',
             'tong_tien' => 'required|numeric|min:0',
-            'loai_san_pham' => 'nullable|string|in:ve,do_an,tat_ca' // Thêm validation cho loại sản phẩm
+            'loai_san_pham' => 'nullable|string|in:ve,do_an,tat_ca', // Thêm validation cho loại sản phẩm
+            'dat_ve_id' => 'nullable|integer|exists:dat_ves,id'
         ]);
 
         $khuyenMai = KhuyenMai::where('ma_khuyen_mai', $request->ma_khuyen_mai)
@@ -148,7 +151,7 @@ class KhuyenMaiController extends Controller
             $giam_gia = $khuyenMai->gia_tri_giam;
         }
 
-        return response()->json([
+        $response = [
             'success' => true,
             'message' => 'Áp dụng mã khuyến mãi thành công',
             'data' => [
@@ -158,7 +161,56 @@ class KhuyenMaiController extends Controller
                 'giam_gia' => $giam_gia,
                 'tong_sau_giam' => $request->tong_tien - $giam_gia
             ]
-        ]);
+        ];
+
+        // Nếu có dat_ve_id, cập nhật trực tiếp đơn chờ thanh toán của user hiện tại
+        try {
+            Log::info('Apply promo attempt', [
+                'route' => 'khuyen-mai.check-code',
+                'dat_ve_id' => $request->input('dat_ve_id'),
+                'user_id' => Auth::id(),
+                'success' => true,
+                'promo_code' => $khuyenMai->ma_khuyen_mai,
+                'discount' => $giam_gia,
+                'original_total' => $request->tong_tien
+            ]);
+
+            if ($request->filled('dat_ve_id') && Auth::check()) {
+                $datVe = \App\Models\DatVe::where('id', $request->dat_ve_id)
+                    ->where('user_id', Auth::id())
+                    ->where('trang_thai', 'Chờ thanh toán')
+                    ->first();
+
+                if ($datVe) {
+                    $oldTotal = (int) $datVe->tong_tien;
+                    $datVe->khuyen_mai_id = $khuyenMai->id;
+                    $datVe->tong_tien = max(0, (int) ($request->tong_tien - $giam_gia));
+                    $datVe->save();
+
+                    $response['order_updated'] = true;
+                    $response['order_total'] = $datVe->tong_tien;
+
+                    Log::info('Apply promo updated order', [
+                        'dat_ve_id' => $datVe->id,
+                        'old_total' => $oldTotal,
+                        'new_total' => $datVe->tong_tien,
+                        'khuyen_mai_id' => $datVe->khuyen_mai_id
+                    ]);
+                } else {
+                    Log::warning('Apply promo: order not found or not in pending state', [
+                        'dat_ve_id' => $request->dat_ve_id,
+                        'user_id' => Auth::id()
+                    ]);
+                }
+            }
+        } catch (\Throwable $e) {
+            Log::error('Apply promo update error', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+        }
+
+        return response()->json($response);
     }
 
     public function getFeatured()
