@@ -1,57 +1,57 @@
 <?php
 
-use App\Http\Controllers\Admin\ChiTietDatVeController;
-use App\Http\Controllers\Admin\DatVeController;
-use App\Http\Controllers\Client\DanhSachBaiVietController;
-use App\Http\Controllers\Client\ThanhToanController;
-use App\Http\Controllers\Client\TrangChuController;
-use App\Http\Controllers\SeatLockController;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\Admin\BannerController;
-use App\Http\Controllers\Admin\CapBacTheController;
-use App\Http\Controllers\Admin\ChiNhanhController;
-use App\Http\Controllers\Admin\ComboController;
-use App\Http\Controllers\Admin\DanhMucDoAnController;
+use App\Http\Controllers\SeatLockController;
 use App\Http\Controllers\Admin\DoAnController;
 use App\Http\Controllers\Admin\PhimController;
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\SocialAuthController;
+use App\Http\Controllers\Admin\ComboController;
+use App\Http\Controllers\Admin\DatVeController;
+use App\Http\Controllers\Admin\GiaVeController;
+use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\InviteController;
 use App\Http\Controllers\Admin\LienHeController;
+use App\Http\Controllers\Admin\VaiTroController;
+use App\Http\Controllers\Client\LoginController;
+use App\Http\Controllers\Client\PhimsController;
 use App\Http\Controllers\Admin\BaiVietController;
 use App\Http\Controllers\Admin\CauHinhController;
-use App\Http\Controllers\Admin\DinhDangPhimController;
-use App\Http\Controllers\Admin\PhuDePhimController;
+use App\Http\Controllers\Admin\CommentController;
 use App\Http\Controllers\Admin\GheNgoiController;
 use App\Http\Controllers\Admin\LoaiGheController;
+use App\Http\Controllers\Admin\RapPhimController;
+use App\Http\Controllers\Admin\RequestController;
+use App\Http\Controllers\Admin\SoDoGheController;
+use App\Http\Controllers\Admin\ThongKeController;
+use App\Http\Controllers\Client\AIChatController;
+use App\Http\Controllers\Admin\ChiNhanhController;
+use App\Http\Controllers\Client\ProfileController;
+use App\Http\Controllers\Client\TheLoaiController;
+use App\Http\Controllers\Admin\CapBacTheController;
 use App\Http\Controllers\Admin\LoaiPhongController;
 use App\Http\Controllers\Admin\PhanQuyenController;
-use App\Http\Controllers\Admin\PhongChieuController;
-use App\Http\Controllers\Admin\RapphimController;
-use App\Http\Controllers\Admin\SoDoGheController;
+use App\Http\Controllers\Admin\PhuDePhimController;
 use App\Http\Controllers\Admin\SuatChieuController;
-use App\Http\Controllers\Admin\TheLoaiPhimController;
-use App\Http\Controllers\Admin\ThongKeController;
-use App\Http\Controllers\Admin\UserController;
-use App\Http\Controllers\Admin\VaiTroController;
-use App\Http\Controllers\SocialAuthController;
-use App\Http\Controllers\Admin\CommentController;
-use App\Http\Controllers\Admin\GiaVeController;
-use App\Http\Controllers\Admin\KhuyenMaiController as AdminKhuyenMaiController;
-use App\Http\Controllers\Admin\RequestController;
-use App\Http\Controllers\Client\AIChatController;
-use App\Http\Controllers\Client\LoginController;
-use App\Http\Controllers\Client\ProfileController;
-
-use App\Http\Controllers\Client\LichChieuController;
-use App\Http\Controllers\Client\PhimsController;
-use App\Http\Controllers\Client\LienHeController as ClientLienHeController;
-use App\Http\Controllers\Client\TheLoaiController;
+use App\Http\Controllers\Client\TrangChuController;
+use App\Http\Controllers\Admin\PhongChieuController;
 use App\Http\Controllers\Client\KhuyenMaiController;
 use App\Http\Controllers\Client\PointController;
 use App\Http\Controllers\Client\ReviewController;
 
 
+use App\Http\Controllers\Client\LichChieuController;
+use App\Http\Controllers\Client\ThanhToanController;
+
+use App\Http\Controllers\Admin\DanhMucDoAnController;
+use App\Http\Controllers\Admin\TheLoaiPhimController;
+use App\Http\Controllers\Admin\ChiTietDatVeController;
+use App\Http\Controllers\Admin\DinhDangPhimController;
+use App\Http\Controllers\Client\DanhSachBaiVietController;
+use App\Http\Controllers\Client\LienHeController as ClientLienHeController;
+use App\Http\Controllers\Admin\KhuyenMaiController as AdminKhuyenMaiController;
 
 Route::get('/', [TrangChuController::class, 'index'])->name('home');
 Route::get('/client.khuyen-mai', [KhuyenMaiController::class, 'index'])->name('khuyen-mai.index');
@@ -498,7 +498,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access', 'per
     Route::resource('khuyen-mai', AdminKhuyenMaiController::class);
 
     // Quản lý rạp phim
-    Route::resource('rap-phim', RapphimController::class);
+    Route::resource('rap-phim', RapPhimController::class);
 
     // Quản lý cấu hình
     // Route::resource('cau-hinh', CauHinhController::class);
@@ -544,7 +544,14 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.access', 'per
     });
 
     Route::resource('loai-phong', LoaiPhongController::class);
-    Route::resource('rap-phim', RapphimController::class);
+
+
+    Route::get('rap-phim/{rap_id}/show-staff', [RapPhimController::class,'showStaff'])->name('rap-phim.show-staff');
+    Route::get('rap-phim/{id}/add-staff', [RapPhimController::class,'addStaff'])->name('rap-phim.add-staff');
+    Route::post('rap-phim/store-staff', [RapPhimController::class,'storeStaff'])->name('rap-phim.store-staff');
+    Route::post('/staff/{id}/update-status', [RapPhimController::class, 'updateStatus'])->name('staff.updateStatus');
+
+
 
     // Quản lý cấu hình hệ thống (chỉ 1 record)
     Route::get('cau-hinh', [CauHinhController::class, 'index'])->name('cau-hinh.index');

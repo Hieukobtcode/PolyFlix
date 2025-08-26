@@ -15,6 +15,7 @@ class User extends Authenticatable
     protected $fillable = [
         'cap_bac_id',
         'name',
+        'rap_id',
         'email',
         'password',
         'avatar',

@@ -16,21 +16,22 @@
                         @endif
 
                     </div>
+                    @if (Auth::user()->vai_tro_id == 1 || (Auth::user()->vai_tro_id == 2 && $chiNhanh->quan_ly_id == Auth::id()))
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+
+                            <a href="{{ route('admin.rap-phim.create', ['chiNhanhId' => $chiNhanh->id]) }}"
+                                class="btn btn-sm btn-primary d-inline-flex align-items-center gap-2 py-2 px-3">
+                                <i class="ti ti-plus"></i> Thêm rạp chiếu
+                            </a>
+
+                        </div>
+                    @endif
                     @if ($chiNhanh->rapPhims->isEmpty())
                         <p class="text-muted mb-0"><i class="fas fa-info-circle me-1"></i> Không có rạp nào thuộc chi
                             nhánh này.</p>
                     @else
                         <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
-                            @if (Auth::user()->vai_tro_id == 1 || (Auth::user()->vai_tro_id == 2 && $chiNhanh->quan_ly_id == Auth::id()))
-                                <div class="d-flex justify-content-between align-items-center mb-3">
 
-                                    <a href="{{ route('admin.rap-phim.create', ['chiNhanhId' => $chiNhanh->id]) }}"
-                                        class="btn btn-sm btn-primary d-inline-flex align-items-center gap-2 py-2 px-3">
-                                        <i class="ti ti-plus"></i> Thêm rạp chiếu
-                                    </a>
-
-                                </div>
-                            @endif
                             <table class="table text-nowrap align-middle mb-0">
                                 <thead class="bg-gradient-dark text-white small">
                                     <tr>
@@ -134,8 +135,7 @@
                                                             </li>
                                                         @endif
                                                         @if (
-                                                            !$rap->quan_ly_id &&
-                                                                !in_array($rap->id, $pendingRapInvites) &&
+                                                            !in_array($rap->id, $pendingRapInvites) &&
                                                                 (Auth::user()->vai_tro_id == 1 || (Auth::user()->vai_tro_id == 2 && $chiNhanh->quan_ly_id == Auth::id())))
                                                             <li>
                                                                 <button
@@ -145,6 +145,19 @@
                                                                     <i class="ti ti-user-plus fs-5 text-warning"></i>
                                                                     Phân công quản lý
                                                                 </button>
+                                                            </li>
+                                                        @endif
+                                                        @if (Auth::user()->vai_tro_id == 1 || (Auth::user()->vai_tro_id == 2 && $chiNhanh->rapPhims->quan_ly_id == Auth::id()))
+                                                            <li>
+
+                                                                <a class="dropdown-item d-flex align-items-center gap-2"
+                                                                    href="{{ route('admin.rap-phim.show-staff', $rap->id) }}">
+                                                                    <i class="ti ti-user-plus fs-5 text-success"></i>
+                                                                    Xem danh sách nhân viên
+                                                                </a>
+
+
+
                                                             </li>
                                                         @endif
                                                     </ul>
