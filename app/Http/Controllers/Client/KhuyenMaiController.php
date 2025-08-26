@@ -161,9 +161,6 @@ class KhuyenMaiController extends Controller
         ]);
     }
 
-    /**
-     * Lấy khuyến mãi nổi bật cho trang chủ
-     */
     public function getFeatured()
     {
         $khuyenMais = KhuyenMai::conHieuLuc()

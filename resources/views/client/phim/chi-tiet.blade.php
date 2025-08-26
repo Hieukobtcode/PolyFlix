@@ -792,8 +792,6 @@
         });
     </script>
 
-
-
     <div class="swiper list-movie">
         <div class="swiper-wrapper">
             @foreach ($allPhims as $phim)

@@ -106,6 +106,31 @@
                             </div>
                         @endif
 
+                        <!-- Điểm -->
+                        <div class="point-section"
+                            style="margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 10px;">
+                            <h5 style="margin-bottom: 15px; color: #333;">
+                                <i class="fa-solid fa-gift"></i> Đổi điểm
+                            </h5>
+
+                            <!-- Số điểm hiện có -->
+                            <p style="margin-bottom: 10px; color: #555;">
+                                <i class="fa-solid fa-coins text-warning"></i>
+                                Bạn hiện có: <strong>{{ number_format(Auth::user()->diem) }}</strong> điểm
+                            </p>
+
+                            <div class="input-group">
+                                <input type="text" id="point" class="form-control"
+                                    placeholder="Nhập số điểm cần đổi..." style="border-radius: 8px 0 0 8px;">
+                                <button type="button" id="apply-point" class="btn btn-primary"
+                                    style="border-radius: 0 8px 8px 0;">
+                                    <i class="fas fa-check"></i> Áp dụng
+                                </button>
+                            </div>
+
+                            <div id="point-message" class="mt-2" style="display: none;"></div>
+                        </div>
+
                         <!-- Khuyến mãi -->
                         <div class="promotion-section"
                             style="margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 10px;">
@@ -245,12 +270,98 @@
         });
 
         window.addEventListener("beforeunload", function() {
-            if (!isPaying) { // chỉ hủy nếu KHÔNG phải đang thanh toán
+            if (!isPaying) { 
                 const url = "{{ route('client.thanh-toan.huy', $datVe->id) }}";
                 const data = new FormData();
                 data.append("_token", "{{ csrf_token() }}");
 
                 navigator.sendBeacon(url, data);
+            }
+        });
+
+        $(document).ready(function() {
+            $('#apply-point').click(function() {
+                // Lấy số điểm nhập vào và tổng tiền hiện tại
+                let points = parseInt($('#point').val()) || 0;
+                let pointMessage = $('#point-message');
+                let pointDiscount = $('#point-discount');
+                let discountAmount = $('#discount-amount');
+                let finalTotal = $('#final-total');
+
+                // Lấy tổng tiền hiện tại từ phần tử final-total (loại bỏ ký tự đ và định dạng)
+                let currentTotalText = finalTotal.text().replace('đ', '').replace(/,/g, '');
+                let currentTotal = parseInt(currentTotalText) || 0;
+
+                // Lấy số điểm hiện có của người dùng
+                let availablePointsText = $('strong', '.point-section').text().replace(/,/g, '');
+                let availablePoints = parseInt(availablePointsText) || 0;
+
+                // Kiểm tra dữ liệu đầu vào
+                if (points <= 0) {
+                    pointMessage.text('Vui lòng nhập số điểm hợp lệ!').css('color', 'red').show();
+                    return;
+                }
+
+                if (points < 1000) {
+                    pointMessage.text('Số điểm đổi tối thiểu phải là 1000!').css('color', 'red').show();
+                    return;
+                }
+
+                if (points > availablePoints) {
+                    pointMessage.text('Số điểm nhập vượt quá số điểm hiện có!').css('color', 'red').show();
+                    return;
+                }
+
+                // Tính toán giảm giá (1000 điểm = 1000 VND)
+                let discount = points;
+                let newTotal = currentTotal - discount;
+
+                if (newTotal < 0) {
+                    pointMessage.text('Số điểm đổi vượt quá tổng tiền!').css('color', 'red').show();
+                    return;
+                }
+
+                // Cập nhật giao diện
+                pointMessage.text('Đổi điểm thành công!').css('color', 'green').show();
+                pointDiscount.show();
+                discountAmount.text(numberFormat(discount) + 'đ');
+                finalTotal.text(numberFormat(newTotal) + 'đ');
+
+                // Gửi yêu cầu AJAX để cập nhật cơ sở dữ liệu
+                $.ajax({
+                    url: '/update-points', // Điều chỉnh URL theo route của bạn
+                    type: 'POST',
+                    data: {
+                        points_used: points,
+                        discount: discount,
+                        new_total: newTotal,
+                        _token: '{{ csrf_token() }}' // Token CSRF của Laravel
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            pointMessage.text('Đổi điểm thành công').css('color', 'green')
+                            .show();
+                            // Cập nhật số điểm hiển thị
+                            let newPoints = availablePoints - points;
+                            $('strong', '.point-section').text(numberFormat(newPoints));
+                            $('#point').val(''); // Xóa input
+                            // Ẩn chỉ cái input-group đầu tiên
+                            $('.input-group:first').hide();
+                        } else {
+                            pointMessage.text('Lỗi khi cập nhật điểm: ' + response.message).css(
+                                'color', 'red').show();
+                        }
+                    },
+                    error: function(xhr) {
+                        pointMessage.text('Đã có lỗi xảy ra, vui lòng thử lại!').css('color',
+                            'red').show();
+                    }
+                });
+            });
+
+            // Hàm định dạng số với dấu phẩy
+            function numberFormat(number) {
+                return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
             }
         });
     </script>

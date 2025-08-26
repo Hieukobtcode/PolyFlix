@@ -43,6 +43,8 @@ class ThanhToanController extends Controller
             $query->where('user_id', Auth::id());
         }
 
+        $point = Auth::user()->diem;    
+
         $datVe = $query->firstOrFail();
 
         /**
@@ -92,6 +94,7 @@ class ThanhToanController extends Controller
         $expiresAt = $datVe->created_at->copy()->addMinutes($timeoutMinutes);
 
         return view('client.thanh-toan.index', compact(
+            'point',
             'datVe',
             'tongTienGhe',
             'tongTienCombo',
@@ -553,4 +556,5 @@ class ThanhToanController extends Controller
             return redirect()->back()->with('error', 'Có lỗi xảy ra khi hủy đơn đặt vé. Vui lòng thử lại.');
         }
     }
+    
 }
