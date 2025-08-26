@@ -913,3 +913,19 @@ Route::post('direct-assign-promotion', function (\Illuminate\Http\Request $reque
         ]);
     }
 })->middleware('auth');
+
+// Test promotion validation
+Route::get('/test-promotion-validation', function () {
+    return view('test-promotion');
+});
+
+// Quick test
+Route::get('/quick-test', function () {
+    return view('quick-test');
+});
+
+// Debug TESTHN
+Route::get('/debug-testhn', function () {
+    return view('debug-testhn');
+});
+

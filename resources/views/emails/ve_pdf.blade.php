@@ -18,10 +18,10 @@
                     <tr>
                         <td style="padding: 0 32px 24px 32px; text-align: center;">
                             @if (!empty($barcodeCid))
-                                <img src="cid:{{ $barcodeCid }}" alt="Mã vạch"
-                                    style="max-width: 180px; display: block; margin: 0 auto 8px;">
+                            <img src="cid:{{ $barcodeCid }}" alt="Mã vạch"
+                                style="max-width: 180px; display: block; margin: 0 auto 8px;">
                             @else
-                                <p style="color: red;">Không thể hiển thị mã vạch.</p>
+                            <p style="color: red;">Không thể hiển thị mã vạch.</p>
                             @endif
 
                             <div style="margin: 12px 0 6px; font-size: 13px; font-weight: bold; color: #888;">
@@ -50,7 +50,8 @@
                                 <tr>
                                     <td align="left"><strong>Rạp</strong></td>
                                     <td align="right">
-                                        {{ $datVe->suatChieu?->phongChieu?->rapPhim?->ten_rap ?? 'Không rõ' }}</td>
+                                        {{ $datVe->suatChieu?->phongChieu?->rapPhim?->ten_rap ?? 'Không rõ' }}
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td align="left"><strong>Phòng</strong></td>
@@ -63,8 +64,8 @@
                                         Ngày:
                                         {{ \Carbon\Carbon::parse($datVe->suatChieu?->ngay_bat_dau)->format('d/m/Y') ?? '' }}<br>
                                         @if ($datVe->suatChieu?->bat_dau && $datVe->suatChieu?->ket_thuc)
-                                            Giờ: {{ \Carbon\Carbon::parse($datVe->suatChieu->bat_dau)->format('H:i') }}
-                                            - {{ \Carbon\Carbon::parse($datVe->suatChieu->ket_thuc)->format('H:i') }}
+                                        Giờ: {{ \Carbon\Carbon::parse($datVe->suatChieu->bat_dau)->format('H:i') }}
+                                        - {{ \Carbon\Carbon::parse($datVe->suatChieu->ket_thuc)->format('H:i') }}
                                         @endif
                                     </td>
                                 </tr>
@@ -79,24 +80,24 @@
                             <hr style="border: none; border-top: 2px dashed #ccc; margin: 30px 0;">
 
                             @if ($datVe->combos->count())
-                                <h4 style="margin-top: 30px;">Combo đi kèm:</h4>
-                                @foreach ($datVe->combos as $combo)
-                                    <div style="margin-bottom: 10px;">
-                                        <strong>{{ $combo->tieu_de }}</strong>
-                                        @if ($combo->doAns->count())
-                                            <ul style="margin: 5px 0 10px 20px; padding: 0;">
-                                                @foreach ($combo->doAns as $doAn)
-                                                    <li>{{ $doAn->tieu_de }} × {{ $doAn->pivot->so_luong }}</li>
-                                                @endforeach
-                                            </ul>
-                                        @else
-                                            <p style="font-style: italic; color: #777;">Không có món ăn trong combo này.
-                                            </p>
-                                        @endif
-                                    </div>
-                                @endforeach
+                            <h4 style="margin-top: 30px;">Combo đi kèm:</h4>
+                            @foreach ($datVe->combos as $combo)
+                            <div style="margin-bottom: 10px;">
+                                <strong>{{ $combo->tieu_de }}</strong>
+                                @if ($combo->doAns->count())
+                                <ul style="margin: 5px 0 10px 20px; padding: 0;">
+                                    @foreach ($combo->doAns as $doAn)
+                                    <li>{{ $doAn->tieu_de }} × {{ $doAn->pivot->so_luong }}</li>
+                                    @endforeach
+                                </ul>
+                                @else
+                                <p style="font-style: italic; color: #777;">Không có món ăn trong combo này.
+                                </p>
+                                @endif
+                            </div>
+                            @endforeach
                             @else
-                                <p><strong>Combo:</strong> Không có combo kèm theo.</p>
+                            <p><strong>Combo:</strong> Không có combo kèm theo.</p>
                             @endif
                         </td>
                     </tr>
