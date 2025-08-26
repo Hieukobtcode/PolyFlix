@@ -255,49 +255,7 @@
         }
     </style>
 
-    <!-- Khuyến mãi nổi bật -->
-    @if (isset($khuyenMaisNoiBat) && $khuyenMaisNoiBat->count() > 0)
-        <section class="promotions-section">
-            <div class="container">
-                <div class="text-center">
-                    <h2 class="section-title">KHUYẾN MÃI HOT</h2>
-                    <p class="section-subtitle">Những ưu đãi siêu hấp dẫn chỉ có tại PolyFlix!</p>
-                </div>
-
-                <div class="promotions-grid">
-                    @foreach ($khuyenMaisNoiBat as $km)
-                        <div class="promotion-card">
-                            <h3 class="promotion-title">{{ $km->ten }}</h3>
-                            <p class="promotion-description">{{ $km->mo_ta }}</p>
-
-                            <div class="promo-code-wrapper">
-                                <span>MÃ KHUYẾN MÃI</span>
-                                <div class="promo-code">{{ $km->ma_khuyen_mai }}</div>
-                            </div>
-
-                            <div class="promo-buttons">
-                                <a href="{{ route('client.khuyen-mai.show', $km->id) }}" class="btn-promo btn-details">Chi
-                                    tiết</a>
-                                <button class="btn-promo btn-copy copy-code-home" data-code="{{ $km->ma_khuyen_mai }}">Sao
-                                    chép</button>
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
-
-                <div class="text-center mt-4">
-                    <a href="{{ route('client.khuyen-mai.index') }}" class="btn-see-more">
-                        <button class="btn-see">XEM TẤT CẢ ƯU ĐÃI</button>
-                    </a>
-                </div>
-            </div>
-
-            <a href="{{ route('khuyen-mai.index') }}">
-                <button class="btn-km">TẤT CẢ ƯU ĐÃI</button>
-            </a>
-        @else
-            <br>
-    @endif
+    
     <div class="goc-dien-anh-wrapper">
         @include('client.partials.goc-dien-anh', [
             'phims' => $phims,
