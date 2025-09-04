@@ -2,20 +2,24 @@
 @section('content')
 
     @php
-        $cauTrucGhes = $soDoGhe->cau_truc_ghe;
+        $cauTrucGhes = $soDoGhe->cau_truc_ghe ?? [];
         $rows = [];
         $gheId = [];
-        foreach ($cauTrucGhes as $seat => $type) {
-            $row = substr($seat, 0, 1);
-            $col = substr($seat, 1);
-            $rows[$row][$col] = $type;
-            $gheId[] = $type;
+        
+        // Kiểm tra nếu cấu trúc ghế không rỗng và là mảng
+        if (is_array($cauTrucGhes) && !empty($cauTrucGhes)) {
+            foreach ($cauTrucGhes as $seat => $type) {
+                $row = substr($seat, 0, 1);
+                $col = substr($seat, 1);
+                $rows[$row][$col] = $type;
+                $gheId[] = $type;
+            }
+            ksort($rows);
+            foreach ($rows as &$cols) {
+                ksort($cols);
+            }
+            unset($cols);
         }
-        ksort($rows);
-        foreach ($rows as &$cols) {
-            ksort($cols);
-        }
-        unset($cols);
     @endphp
 
     <style>
@@ -51,7 +55,7 @@
         .seat-map-grid {
             padding: 10px;
             display: grid;
-            grid-template-columns: repeat({{ count(reset($rows)) + 2 }}, 36px);
+            grid-template-columns: repeat({{ !empty($rows) && reset($rows) !== false ? count(reset($rows)) + 2 : 2 }}, 36px);
             gap: 2px;
             justify-content: center;
             align-items: center;
@@ -234,23 +238,26 @@
                 <input type="hidden" name="seat_data" id="seat_data">
                 <input type="hidden" value="{{ $phongChieu->id }}" name="phong_chieu_id">
                 <div class="seat-map-grid">
-                    <div></div>
-                    @foreach (array_keys(reset($rows)) as $col)
-                        <div class="seat-label">{{ $col }}</div>
-                    @endforeach
-                    <div></div>
+                    @if(!empty($rows))
+                        <div></div>
+                        @if(reset($rows) !== false)
+                            @foreach (array_keys(reset($rows)) as $col)
+                                <div class="seat-label">{{ $col }}</div>
+                            @endforeach
+                        @endif
+                        <div></div>
+                        
+                        @foreach ($rows as $rowKey => $cols)
+                            <div class="seat-row-label">{{ $rowKey }}</div>
+                            @foreach ($cols as $colKey => $loaiGheId)
+                                @php
 
-                    @foreach ($rows as $rowKey => $cols)
-                        <div class="seat-row-label">{{ $rowKey }}</div>
-                        @foreach ($cols as $colKey => $loaiGheId)
-                            @php
+                                    $mau = $mauGhes[$loaiGheId] ?? '#ccc';
+                                    $typeClass = $loaiGheId;
+                                    $statusClass = 'empty';
+                                    $isDouble = $loaiGheId == 12 ? 'doi' : '';
 
-                                $mau = $mauGhes[$loaiGheId] ?? '#ccc';
-                                $typeClass = $loaiGheId;
-                                $statusClass = 'empty';
-                                $isDouble = $loaiGheId == 12 ? 'doi' : '';
-
-                            @endphp
+                                @endphp
 
                             <button type="button" style="background-color: {{ $mau }}"
                                 class="seat {{ $typeClass }} {{ $statusClass }} {{ $isDouble }}" empty
@@ -279,6 +286,15 @@
                             </button>
                         </div>
                     @endforeach
+                    @else
+                        <div class="col-12 text-center p-4">
+                            <div class="alert alert-warning">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <strong>Không có dữ liệu sơ đồ ghế!</strong><br>
+                                Vui lòng kiểm tra lại cấu trúc dữ liệu hoặc tạo lại sơ đồ ghế.
+                            </div>
+                        </div>
+                    @endif
                 </div>
             </div>
 

@@ -223,7 +223,7 @@ class PhimController extends Controller
                 'rap_phim_ids.*' => [
                     'exists:rap_phims,id',
                     function ($attr, $value, $fail) {
-                        $rap = RapPhim::find($value);
+                        $rap = RapPhim::with('chiNhanh')->find($value);
                         if (!$rap || $rap->chiNhanh->quan_ly_id != Auth::id()) {
                             $fail("Rạp ID {$value} không thuộc quyền quản lý.");
                         }
