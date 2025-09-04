@@ -551,28 +551,30 @@
 
     <div id="invoice-section" style="display: none">
         <!-- 🎟️ Vé xem phim -->
-        <div class="invoice-box">
-            <div class="invoice-title">🎟️ VÉ XEM PHIM</div>
-            <p class="invoice-line"><strong>Phim:</strong> {{ $datVe->suatChieu?->phim?->ten_phim ?? 'Không xác định' }}
-            </p>
-            <p class="invoice-line"><strong>Thời gian:</strong>
-                {{ \Carbon\Carbon::parse($datVe->suatChieu?->ngay_chieu)->format('d/m/Y') }}
-                - {{ $datVe->suatChieu?->bat_dau ?? '---' }}
-            </p>
-            <p class="invoice-line"><strong>Rạp:</strong>
-                {{ $datVe->suatChieu?->phongChieu?->rapPhim?->ten_rap ?? 'Không xác định' }}</p>
-            <p class="invoice-line"><strong>Chi nhánh:</strong>
-                {{ $datVe->suatChieu?->phongChieu?->rapPhim?->chiNhanh?->ten_chi_nhanh ?? '---' }}</p>
-            <p class="invoice-line"><strong>Phòng:</strong> {{ $datVe->suatChieu?->phongChieu?->ten_phong ?? '---' }}</p>
-            <p class="invoice-line"><strong>Ghế:</strong>
-                {{ $datVe->gheNgois->pluck('ma_ghe')->join(', ') ?? 'Không có ghế' }}</p>
-            <p class="invoice-line"><strong>Khách hàng (Email):</strong>
-                {{ $datVe->nguoiDung?->email ?? 'Không có email' }}</p>
-            <p class="invoice-line"><strong>Mã vé:</strong> {{ $datVe->ma_dat_ve }}</p>
-            <div style="margin-top: 20px; text-align: center;">
-                {!! DNS1D::getBarcodeHTML($datVe->ma_dat_ve, 'C128', 2, 60) !!}
+        @foreach ($datVe->gheNgois as $ghe)
+            <div class="invoice-box" style="page-break-after: always;">
+                <div class="invoice-title">🎟️ VÉ XEM PHIM</div>
+                <p class="invoice-line"><strong>Phim:</strong>
+                    {{ $datVe->suatChieu?->phim?->ten_phim ?? 'Không xác định' }}</p>
+                <p class="invoice-line"><strong>Thời gian:</strong>
+                    {{ \Carbon\Carbon::parse($datVe->suatChieu?->ngay_chieu)->format('d/m/Y') }}
+                    - {{ $datVe->suatChieu?->bat_dau ?? '---' }}
+                </p>
+                <p class="invoice-line"><strong>Rạp:</strong>
+                    {{ $datVe->suatChieu?->phongChieu?->rapPhim?->ten_rap ?? 'Không xác định' }}</p>
+                <p class="invoice-line"><strong>Chi nhánh:</strong>
+                    {{ $datVe->suatChieu?->phongChieu?->rapPhim?->chiNhanh?->ten_chi_nhanh ?? '---' }}</p>
+                <p class="invoice-line"><strong>Phòng:</strong>
+                    {{ $datVe->suatChieu?->phongChieu?->ten_phong ?? '---' }}</p>
+                <p class="invoice-line"><strong>Ghế:</strong> {{ $ghe->ma_ghe }}</p>
+                <p class="invoice-line"><strong>Khách hàng (Email):</strong>
+                    {{ $datVe->nguoiDung?->email ?? 'Không có email' }}</p>
+                <p class="invoice-line"><strong>Mã vé:</strong> {{ $datVe->ma_dat_ve }}-{{ $ghe->ma_ghe }}</p>
+                <div style="margin-top: 20px; text-align: center;">
+                    {!! DNS1D::getBarcodeHTML($datVe->ma_dat_ve . '-' . $ghe->ma_ghe, 'C128', 2, 60) !!}
+                </div>
             </div>
-        </div>
+        @endforeach
 
         <!-- 🧾 Hóa đơn tổng -->
         <div class="invoice-box">
