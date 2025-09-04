@@ -85,7 +85,7 @@
                                                             class="text-decoration-none fw-medium">
                                                             {{ $rap->quanLy->name ?? 'ID: ' . $rap->quan_ly_id }}
                                                         </a>
-                                                    @elseif(Auth::user()->vai_tro_id == 2 && $rap->chiNhanh->quan_ly_id == Auth::id())
+                                                    @elseif(Auth::user()->vai_tro_id == 2 && $chiNhanh->quan_ly_id == Auth::id())
                                                         <span class="text-decoration-none fw-medium">
                                                             {{ $rap->quanLy->name ?? 'ID: ' . $rap->quan_ly_id }}
                                                         </span>
@@ -147,7 +147,7 @@
                                                                 </button>
                                                             </li>
                                                         @endif
-                                                        @if (Auth::user()->vai_tro_id == 1 || (Auth::user()->vai_tro_id == 2 && $chiNhanh->rapPhims->quan_ly_id == Auth::id()))
+                                                        @if (Auth::user()->vai_tro_id == 1 || (Auth::user()->vai_tro_id == 2 && $chiNhanh->quan_ly_id == Auth::id()))
                                                             <li>
 
                                                                 <a class="dropdown-item d-flex align-items-center gap-2"

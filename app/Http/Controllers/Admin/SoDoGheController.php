@@ -13,7 +13,7 @@ class SoDoGheController extends Controller
 {
 
     public function store(SoDoGheRequest $request)
-    { 
+    {
         try {
             $phongchieuId = $request->phong_id;
             $cauTruc = $request->ma_tran_ghe;
@@ -35,17 +35,26 @@ class SoDoGheController extends Controller
 
     public function edit(string $id)
     {
-
         $loaiGhes = LoaiGhe::all();
-        $mauGhes = LoaiGhe::pluck('chu_thich_mau_ghe','id');
+        $mauGhes = LoaiGhe::pluck('chu_thich_mau_ghe', 'id');
         $phongChieu = PhongChieu::where('so_do_ghe_id', $id)->first();
         $soDoGhe = SoDoGhe::findOrFail($id);
 
-        $decodedLevel1 = json_decode($soDoGhe->cau_truc_ghe, true);
-        $cauTrucGhe = json_decode($decodedLevel1, true); 
+        // Kiểm tra và decode cấu trúc ghế an toàn
+        $cauTrucGhe = [];
+        if (!empty($soDoGhe->cau_truc_ghe)) {
+            $decodedLevel1 = json_decode($soDoGhe->cau_truc_ghe, true);
+
+            // Nếu level 1 là string, decode thêm lần nữa
+            if (is_string($decodedLevel1)) {
+                $cauTrucGhe = json_decode($decodedLevel1, true) ?? [];
+            } elseif (is_array($decodedLevel1)) {
+                $cauTrucGhe = $decodedLevel1;
+            }
+        }
 
         $soDoGhe->cau_truc_ghe = $cauTrucGhe;
 
-        return view('admin.so-do-ghe.edit', compact('soDoGhe', 'phongChieu','loaiGhes','mauGhes'));
+        return view('admin.so-do-ghe.edit', compact('soDoGhe', 'phongChieu', 'loaiGhes', 'mauGhes'));
     }
 }
