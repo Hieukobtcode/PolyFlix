@@ -753,6 +753,12 @@
             </div>
 
         </div>
+        <div class="goc-dien-anh-wrapper">
+            @include('client.partials.goc-dien-anh-2', [
+                'phims' => $phim,
+                'baiViet' => $baiViet ?? [],
+            ])
+        </div>
         <!-- Swiper CSS -->
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 
@@ -792,32 +798,31 @@
             });
         </script>
 
-
-
         <div class="swiper list-movie">
             <div class="swiper-wrapper">
-                @foreach ($allPhims as $phim)
+                @foreach ($allPhims as $otherPhim)
                     <div class="swiper-slide">
-                        <div class="movie clickable-movie" data-href="{{ route('phim.chi-tiet', $phim->id) }}">
+                        <div class="movie clickable-movie" data-href="{{ route('phim.chi-tiet', $otherPhim->id) }}">
                             <div class="img-wrapper">
-                                <a href="{{ route('phim.chi-tiet', $phim->id) }}">
-                                    <img src="{{ asset('storage/' . $phim->poster) }}" alt="{{ $phim->ten_phim }}">
+                                <a href="{{ route('phim.chi-tiet', $otherPhim->id) }}">
+                                    <img src="{{ asset('storage/' . $otherPhim->poster) }}"
+                                        alt="{{ $otherPhim->ten_phim }}">
                                 </a>
-                                <div class="age-label">{{ $phim->do_tuoi }}</div>
+                                <div class="age-label">{{ $otherPhim->do_tuoi }}</div>
                                 <div class="overlay">
-                                    <a href="{{ route('phim.chi-tiet', $phim->id) }}#lich-chieu">
+                                    <a href="{{ route('phim.chi-tiet', urlencode($otherPhim->ten_phim)) }}#lich-chieu">
                                         <button class="btn buy">
                                             <i class="fa-solid fa-ticket"></i> Mua vé
                                         </button>
                                     </a>
-                                    <button class="btn trailer" data-video="{{ $phim->trailer }}"
+                                    <button class="btn trailer" data-video="{{ $otherPhim->trailer }}"
                                         onclick="showTrailer(this)">
                                         <i class="fa-solid fa-video"></i> Trailer
                                     </button>
                                 </div>
                             </div>
-                            <a href="{{ route('phim.chi-tiet', $phim->id) }}">
-                                <p>{{ $phim->ten_phim }}</p>
+                            <a href="{{ route('phim.chi-tiet', $otherPhim->id) }}">
+                                <p>{{ $otherPhim->ten_phim }}</p>
                             </a>
                         </div>
                     </div>
@@ -828,46 +833,6 @@
                 <button class="btn-see">XEM THÊM</button>
             </a>
         </div>
-    </div>
-
-    <div class="swiper list-movie">
-        <div class="swiper-wrapper">
-            @foreach ($allPhims as $phim)
-                <div class="swiper-slide">
-                    <div class="movie clickable-movie" style="display: flex; gap:4"
-                        data-href="{{ route('phim.chi-tiet', $phim->id) }}">
-                        <div class="img-wrapper">
-                            <a href="{{ route('phim.chi-tiet', $phim->id) }}">
-                                <img src="{{ asset('storage/' . $phim->poster) }}" alt="{{ $phim->ten_phim }}">
-                            </a>
-                            <div class="age-label">{{ $phim->do_tuoi }}</div>
-                            <div class="overlay">
-                                <a href="{{ route('phim.chi-tiet', $phim->id) }}#lich-chieu">
-                                    <button class="btn buy">
-                                        <i class="fa-solid fa-ticket"></i> Mua vé
-                                    </button>
-                                </a>
-                                <button class="btn trailer" data-video="{{ $phim->trailer }}" onclick="showTrailer(this)">
-                                    <i class="fa-solid fa-video"></i> Trailer
-                                </button>
-                            </div>
-                        </div>
-                        <a href="{{ route('phim.chi-tiet', $phim->id) }}">
-                            <p>{{ $phim->ten_phim }}</p>
-                        </a>
-                    </div>
-                </div>
-            @endforeach
-        </div>
-
-        <div class="swiper-navigation">
-            <div class="swiper-button-prev custom-nav"></div>
-            <div class="swiper-button-next custom-nav"></div>
-        </div>
-
-        <a href="{{ route('phim.dang-chieu') }}" class="btn-see-more">
-            <button class="btn-see">XEM THÊM</button>
-        </a>
     </div>
 
     <div id="trailerPopup"
@@ -957,11 +922,11 @@
 
             function loadLichChieu() {
                 $('#lich-chieu-list').html(`
-        <div class="custom-loading text-center py-4">
-            <div class="spinner"></div>
-            <p class="text-light mt-3" style="font-size: 1.05rem;">Đang tìm kiếm suất chiếu...</p>
-        </div>
-    `);
+                    <div class="custom-loading text-center py-4">
+                        <div class="spinner"></div>
+                        <p class="text-light mt-3" style="font-size: 1.05rem;">Đang tìm kiếm suất chiếu...</p>
+                    </div>
+                `);
 
                 let url = `/phim/${phimId}/lich-chieu?ngay_bat_dau=${currentDate}&chi_nhanh_id=${currentChiNhanh}`;
                 $.ajax({

@@ -8,7 +8,16 @@
     <div class="container-fluid">
         <div class="card shadow-sm border-0">
             <div class="card-body p-4">
-
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    @if (Auth::user()->vai_tro_id == 1)
+                        <div class="d-flex gap-2">
+                            <a href="{{ route('admin.dinh-dang-phim.create') }}"
+                                class="btn btn-primary btn-sm d-inline-flex align-items-center gap-2 px-3 py-2">
+                                <i class="ti ti-plus fs-5"></i> Thêm định dạng phim
+                            </a>
+                        </div>
+                    @endif
+                </div>
                 {{-- Bảng --}}
                 <div class="table-responsive">
                     <table class="table table-hover align-middle mb-0">

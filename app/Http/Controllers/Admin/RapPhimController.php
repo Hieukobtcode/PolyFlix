@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\User;
 use App\Models\LoaiGhe;
 use App\Models\RapPhim;
 use App\Models\ChiNhanh;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class RapPhimController extends Controller
 {
@@ -154,6 +156,87 @@ class RapPhimController extends Controller
 
         return redirect()->route('admin.rap-phim.index')->with('success', 'Xóa rạp chiếu thành công');
     }
+    public function showStaff(Request $request, $rap_id)
+    {
+        $query = User::query()->where('vai_tro_id', 4)
+        ->where('rap_id', $rap_id);
+
+        if ($request->has('keyword') && $request->keyword) {
+            $query->where(function($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->keyword . '%')
+                ->orWhere('email', 'like', '%' . $request->keyword . '%');
+            });
+        }
+
+        if ($request->has('status') && $request->status !== null) {
+            $query->where('trang_thai', $request->status);
+        }
+
+        // nếu muốn lọc theo rạp phim
+        if ($request->has('rap_id') && $request->rap_id) {
+            $query->where('rap_id', $request->rap_id);
+        }
+        $rapPhim = RapPhim::findOrFail($rap_id);
+
+        $staffs = $query->paginate(10);
+
+        return view('admin.rap-phim.show-staff', compact('staffs', 'rapPhim'));
+    }
+    public function addStaff(Request $request, $id)
+    {
+        $rapPhim = RapPhim::findOrFail($id);
+
+
+
+        //  Quản lý rạp chỉ thêm nhân viên cho rạp mình quản lý
+        if (Auth::user()->vai_tro_id == 3 && $rapPhim->quan_ly_id != Auth::id()) {
+            return redirect()->route('admin.rap-phim.index')
+                ->with('error', 'Bạn không có quyền thêm nhân viên cho rạp này.');
+        }
+
+        // Logic to add staff to the cinema
+        // For example, you might have a many-to-many relationship between RapPhim and User models
+        // $rapPhim->staff()->attach($request->user_id);
+
+            return view('admin.rap-phim.add-staff', compact('rapPhim'));
+    }
+    public function storeStaff(Request $request)
+    {
+
+        $request->validate([
+        'email' => 'required|email|unique:users,email',
+        'password' => 'required|string|min:6',
+        'rap_id' => 'required|exists:rap_phims,id',
+    ]);
+    $rapPhim = RapPhim::findOrFail($request->rap_id);
+
+    // Tạo user mới
+    $user = User::create([
+        'name' => $rapPhim->ten_rap,
+        'email' => $request->email,
+        'password' => Hash::make($request->password),
+        'vai_tro_id' => 4, // nhân viên
+        'rap_id' => $rapPhim->id
+    ]);
+    // dd($user);
+
+    return redirect()->route('admin.rap-phim.show-staff', $rapPhim->id)
+                     ->with('success', 'Thêm nhân viên thành công!');
+    }
+public function updateStatus(Request $request, $id)
+{
+    $staff = User::where('vai_tro_id', 4)->findOrFail($id);
+
+    // Chỉ nhận giá trị hợp lệ
+    $validated = $request->validate([
+        'trang_thai' => 'required|in:Active,Block',
+    ]);
+
+    $staff->trang_thai = $validated['trang_thai']; // Lưu Active hoặc Block
+    $staff->save();
+
+    return redirect()->back()->with('success', 'Cập nhật trạng thái thành công!');
+}
 
     public function trash()
     {

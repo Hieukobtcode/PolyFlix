@@ -4,6 +4,18 @@
     box-sizing: border-box;
 }
 
+/* Smooth scrolling for better navigation experience */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Prevent scroll restoration on page navigation */
+html,
+body {
+    scroll-behavior: smooth;
+    transition: scroll-behavior 0.3s ease;
+}
+
 body {
     max-width: 100%;
     overflow-x: auto;

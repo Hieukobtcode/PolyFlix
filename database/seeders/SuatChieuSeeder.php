@@ -22,8 +22,8 @@ class SuatChieuSeeder extends Seeder
         $phienBanPhims = ['long_tieng', 'phu_de'];
         $gioChieus = ['09:00', '12:00', '15:00', '18:00', '21:00'];
 
-        // Tạo suất chiếu cho 7 ngày tới
-        for ($i = 0; $i < 7; $i++) {
+        // Tạo suất chiếu cho 7 ngày tới (bắt đầu từ ngày mai)
+        for ($i = 1; $i <= 7; $i++) {
             $ngayChieu = Carbon::now()->addDays($i)->format('Y-m-d');
 
             foreach ($phims as $phim) {

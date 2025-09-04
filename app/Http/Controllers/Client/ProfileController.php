@@ -34,7 +34,7 @@ class ProfileController extends Controller
         // Lấy đơn đặt vé đã thanh toán
         $donDatVeDaThanhToan = DatVe::with('suatChieu.phim')
             ->where('user_id', $user->id)
-            ->where('trang_thai', 'Đã thanh toán')
+            ->whereIn('trang_thai', ['Đã thanh toán', 'Đã xuất vé'])
             ->orderBy('ngay_thanh_toan', 'desc')
             ->get();
 
@@ -75,7 +75,6 @@ class ProfileController extends Controller
             'phanTramChiTieu'
         ));
     }
-
 
     public function updatePassword(Request $request)
     {
@@ -142,15 +141,23 @@ class ProfileController extends Controller
                 abort(403, 'Bạn không có quyền xem vé này.');
             }
 
+            // Lấy phim từ quan hệ suatChieu
+            $phim = optional($ve->suatChieu)->phim; // sẽ là null nếu thiếu quan hệ
+
             // Tạo mã vạch
             $maVachHtml = (new DNS1D)->getBarcodeHTML($ve->ma_dat_ve, 'C128', 2, 60);
 
-            return view('client.chi-tiet-ve', compact('ve', 'maVachHtml'));
+            // Kiểm tra vé đã được đánh giá chưa
+            $alreadyReviewed = \App\Models\Rating::where('dat_ve_id', $ve->id)->exists() ||
+                \App\Models\Comment::where('dat_ve_id', $ve->id)->exists();
+
+            return view('client.chi-tiet-ve', compact('ve', 'phim', 'maVachHtml', 'alreadyReviewed'));
         } catch (\Exception $e) {
             Log::error('Lỗi lấy chi tiết vé: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Không thể lấy chi tiết vé!');
         }
     }
+
 
     public function printVe($id)
     {

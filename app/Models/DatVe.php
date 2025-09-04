@@ -21,6 +21,7 @@ class DatVe extends Model
         'trang_thai',
         'ma_giao_dich',
         'ngay_thanh_toan',
+        'ngay_huy',
         'ghi_chu',
     ];
 
@@ -53,6 +54,11 @@ class DatVe extends Model
     public function suatChieu()
     {
         return $this->belongsTo(SuatChieu::class, 'suat_chieu_id');
+    }
+
+    public function khuyenMai()
+    {
+        return $this->belongsTo(KhuyenMai::class, 'khuyen_mai_id');
     }
     public function DoAn()
     {

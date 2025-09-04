@@ -2,16 +2,18 @@
 
 namespace App\Http\Controllers\Client;
 
-use App\Http\Controllers\Controller;
-use App\Mail\GuiVeXemPhim;
-use App\Models\CapBacThe;
-use App\Models\DatVe;
-use App\Models\LichSuDiem;
 use Exception;
+use App\Models\DatVe;
+use App\Models\CapBacThe;
+use App\Mail\GuiVeXemPhim;
+use App\Models\LichSuDiem;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use App\Models\GheNgoiSuatChieu;
 use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\DB;
 
 
 class ThanhToanController extends Controller
@@ -19,15 +21,13 @@ class ThanhToanController extends Controller
     /**
      * Hiển thị trang thanh toán
      */
+
     public function index($datVeId)
     {
-        // Kiểm tra người dùng đã đăng nhập
         if (!Auth::check()) {
             return redirect()->route('login.form')->with('error', 'Vui lòng đăng nhập để thanh toán!');
         }
-
-        // Lấy thông tin đặt vé, kèm các quan hệ cần thiết
-        $datVe = DatVe::with([
+        $query = DatVe::with([
             'nguoiDung',
             'suatChieu.phim',
             'suatChieu.phongChieu.rapPhim.chiNhanh',
@@ -37,63 +37,190 @@ class ThanhToanController extends Controller
             'doAns'
         ])
             ->where('id', $datVeId)
-            ->where('user_id', Auth::id())
+            ->where('trang_thai', 'Chờ thanh toán');
+
+        if (Auth::user()->vai_tro_id != 4) {
+            $query->where('user_id', Auth::id());
+        }
+
+        $point = Auth::user()->diem;
+
+        $datVe = $query->firstOrFail();
+
+        /**
+         * Cập nhật trạng thái ghế trong bảng ghe_ngoi_suat_chieus
+         * Nếu đã tồn tại thì update, chưa có thì insert
+         */
+        foreach ($datVe->gheNgois as $ghe) {
+            GheNgoiSuatChieu::updateOrCreate(
+                [
+                    'ghe_ngoi_id'   => $ghe->id,
+                    'suat_chieu_id' => $datVe->suatChieu->id
+                ],
+                [
+                    'trang_thai' => 'da_chon'
+                ]
+            );
+        }
+
+        // --- TÍNH TIỀN GHẾ ---
+        $tongTienGhe = 0;
+        $giaVeCoBan = 0;
+
+        $phuThuRap = $datVe->suatChieu->phongChieu->rapPhim->phu_thu ?? 0;
+        $phuThuLoaiPhong = $datVe->suatChieu->phongChieu->loaiPhong->phu_thu ?? 0;
+
+        foreach ($datVe->gheNgois as $ghe) {
+            $phuThuGhe = $ghe->loaiGhe->phu_thu ?? 0;
+            $giaMotGhe = $giaVeCoBan + $phuThuLoaiPhong + $phuThuGhe;
+            $tongTienGhe += $giaMotGhe;
+        }
+
+        $tongTienGhe += $phuThuRap;
+
+        $tongTienCombo = 0;
+        foreach ($datVe->combos as $combo) {
+            $tongTienCombo += $combo->gia * $combo->pivot->so_luong;
+        }
+
+        $tongTienDoAn = 0;
+        foreach ($datVe->doAns as $doAn) {
+            $tongTienDoAn += $doAn->gia * $doAn->pivot->so_luong;
+        }
+
+        $tongThanhTien = $datVe->tong_tien;
+
+        $timeoutMinutes = 5; // giữ vé trong 10 phút
+        $expiresAt = $datVe->created_at->copy()->addMinutes($timeoutMinutes);
+
+        return view('client.thanh-toan.index', compact(
+            'point',
+            'datVe',
+            'tongTienGhe',
+            'tongTienCombo',
+            'tongTienDoAn',
+            'tongThanhTien',
+            'expiresAt'
+        ));
+    }
+
+    public function xuLyThanhToanTienMat(Request $request)
+    {
+        $request->validate([
+            'dat_ve_id' => 'required|exists:dat_ves,id',
+        ]);
+
+        $datVe = DatVe::with([
+            'nguoiDung',
+            'suatChieu.phim',
+            'suatChieu.phongChieu.rapPhim.chiNhanh',
+            'chiTietDatVes.ghe'
+        ])
+            ->where('id', $request->dat_ve_id)
             ->where('trang_thai', 'Chờ thanh toán')
             ->firstOrFail();
 
         foreach ($datVe->gheNgois as $ghe) {
             if ($ghe->trang_thai === 'da_dat') {
                 return response()->json([
-                    'status' => 'error',
+                    'status'  => 'error',
                     'message' => 'Một hoặc nhiều ghế đã được đặt. Vui lòng chọn lại ghế khác.'
                 ]);
             }
         }
 
-        // --- TÍNH TIỀN GHẾ ---
-        $tongTienGhe = 0;
-        $giaVeCoBan = 0; // Tạm thời set 0, sau có thể cấu hình từ DB hoặc biến cấu hình
+        try {
+            // ✅ 1. Cập nhật trạng thái vé
+            $datVe->trang_thai = 'Đã thanh toán';
+            $datVe->phuong_thuc_tt = "Tiền mặt";
+            $datVe->ngay_thanh_toan = now();
+            $datVe->save();
 
-        // Phụ thu theo rạp và loại phòng
-        $phuThuRap = $datVe->suatChieu->phongChieu->rapPhim->phu_thu ?? 0;
-        $phuThuLoaiPhong = $datVe->suatChieu->phongChieu->loaiPhong->phu_thu ?? 0;
+            // ✅ 2. Cập nhật trạng thái ghế
+            foreach ($datVe->chiTietDatVes as $chiTiet) {
+                $ghe = $chiTiet->ghe;
+                if ($ghe) {
+                    GheNgoiSuatChieu::where('ghe_ngoi_id', $ghe->id)
+                        ->where('suat_chieu_id', $datVe->suat_chieu_id)
+                        ->update(['trang_thai' => 'da_dat']);
+                }
+            }
 
-        // Duyệt qua từng ghế được chọn
-        foreach ($datVe->gheNgois as $ghe) {
-            $phuThuGhe = $ghe->loaiGhe->phu_thu ?? 0;
+            // ✅ 3. Gửi mail vé có barcode
+            if ($datVe->nguoiDung && $datVe->nguoiDung->email) {
+                try {
+                    $barcode = new \Milon\Barcode\DNS1D();
+                    $barcodeUrl = 'data:image/png;base64,' . $barcode->getBarcodePNG($datVe->ma_dat_ve, 'C128', 2, 60);
+                    Mail::to($datVe->nguoiDung->email)->send(new GuiVeXemPhim($datVe, $barcodeUrl));
+                } catch (Exception $e) {
+                    Log::error('Gửi mail thất bại: ' . $e->getMessage());
+                }
+            }
 
-            // Tính giá cho từng ghế
-            $giaMotGhe = $giaVeCoBan + $phuThuLoaiPhong + $phuThuGhe;
+            // ✅ 4. Cộng điểm thành viên
+            try {
+                $nguoiDung = $datVe->nguoiDung;
 
-            $tongTienGhe += $giaMotGhe;
+                if ($nguoiDung && $nguoiDung->cap_bac_id) {
+                    // Lấy cấp bậc theo ID từ người dùng
+                    $capBac = CapBacThe::find($nguoiDung->cap_bac_id);
+
+                    if ($capBac) {
+                        // Tính điểm dựa trên phần trăm vé
+                        $tongTien   = $datVe->tong_tien;
+                        $phanTramVe = $capBac->phan_tram_ve;
+                        $diemCong   = round($tongTien * $phanTramVe / 100);
+
+                        if ($diemCong > 0) {
+                            // Cộng điểm vào người dùng
+                            $nguoiDung->diem += $diemCong;
+                            $nguoiDung->save();
+
+                            // Ghi vào lịch sử điểm
+                            LichSuDiem::create([
+                                'users_id' => $nguoiDung->id,
+                                'thay_doi' => $diemCong,
+                                'ly_do'    => 'Cộng điểm từ đơn đặt vé #' . $datVe->ma_dat_ve,
+                                'thoi_gian' => now(),
+                            ]);
+
+                            Log::info("Đã cộng điểm cho user ID {$nguoiDung->id}, số điểm cộng: {$diemCong}");
+
+                            // ========= Cập nhật cấp bậc mới theo tổng chi tiêu =========
+                            $tongTienChiTieu = DatVe::where('user_id', $nguoiDung->id)->sum('tong_tien');
+                            Log::info("Tổng chi tiêu của user {$nguoiDung->id}: {$tongTienChiTieu}");
+
+                            $capBacMoi = CapBacThe::where('tong_chi_tieu', '<=', $tongTienChiTieu)
+                                ->orderByDesc('tong_chi_tieu')
+                                ->first();
+
+                            if ($capBacMoi && $capBacMoi->id !== $nguoiDung->cap_bac_id) {
+                                $nguoiDung->cap_bac_id = $capBacMoi->id;
+                                $nguoiDung->save();
+
+                                Log::info("Đã cập nhật cấp bậc mới cho user ID {$nguoiDung->id}: {$capBacMoi->ten}");
+                            }
+                        }
+                    } else {
+                        Log::warning("Không tìm thấy cấp bậc ID: {$nguoiDung->cap_bac_id}");
+                    }
+                }
+            } catch (Exception $e) {
+                Log::error('Lỗi khi cộng điểm: ' . $e->getMessage());
+            }
+
+            // return response()->json([
+            //     'status' => 'success',
+            //     'message' => 'Thanh toán tiền mặt thành công!'
+            // ]);
+            return redirect()->route('home')->with('success', 'Đặt vé thành công! Vé đã được gửi vào email của bạn.');
+        } catch (\Exception $e) {
+            Log::error('Thanh toán tiền mặt lỗi: ' . $e->getMessage());
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Có lỗi xảy ra: ' . $e->getMessage()
+            ], 500);
         }
-
-        // Phụ thu rạp chỉ tính một lần
-        $tongTienGhe += $phuThuRap;
-
-        // --- TÍNH TIỀN COMBO ---
-        $tongTienCombo = 0;
-        foreach ($datVe->combos as $combo) {
-            $tongTienCombo += $combo->gia * $combo->pivot->so_luong;
-        }
-
-        // --- TÍNH TIỀN ĐỒ ĂN ---
-        $tongTienDoAn = 0;
-        foreach ($datVe->doAns as $doAn) {
-            $tongTienDoAn += $doAn->gia * $doAn->pivot->so_luong;
-        }
-
-        // --- TỔNG THANH TOÁN ---
-        $tongThanhTien = $datVe->tong_tien;
-
-        // Trả về view thanh toán với các dữ liệu cần thiết
-        return view('client.thanh-toan.index', compact(
-            'datVe',
-            'tongTienGhe',
-            'tongTienCombo',
-            'tongTienDoAn',
-            'tongThanhTien'
-        ));
     }
 
     public function xuLyThanhToan(Request $request)
@@ -101,6 +228,15 @@ class ThanhToanController extends Controller
         $request->validate([
             'dat_ve_id' => 'required|exists:dat_ves,id',
             'phuong_thuc_tt' => 'required|in:zalopay',
+        ]);
+
+        // Log thông tin khuyến mãi từ frontend
+        Log::info('ZaloPay - Thông tin request:', [
+            'dat_ve_id' => $request->dat_ve_id,
+            'khuyen_mai_id' => $request->input('khuyen_mai_id'),
+            'ma_khuyen_mai' => $request->input('ma_khuyen_mai'),
+            'giam_gia' => $request->input('giam_gia'),
+            'tong_sau_giam' => $request->input('tong_sau_giam')
         ]);
 
         $datVe = DatVe::with([
@@ -144,7 +280,29 @@ class ThanhToanController extends Controller
         //     $tongTienDoAn += $doAn->gia * $doAn->pivot->so_luong;
         // }
 
+        // Kiểm tra xem có khuyến mãi được áp dụng từ request hay không
         $tongThanhTien = intval($datVe->tong_tien);
+
+        // Nếu có thông tin khuyến mãi từ frontend, sử dụng số tiền đã giảm
+        if ($request->filled('tong_sau_giam')) {
+            $tongThanhTien = intval($request->tong_sau_giam);
+            Log::info('ZaloPay - Sử dụng tổng tiền sau giảm từ frontend: ' . $tongThanhTien);
+        }
+        // Nếu không có từ frontend, kiểm tra trong database xem có khuyến mãi không
+        else if ($datVe->khuyen_mai_id) {
+            $khuyenMai = \App\Models\KhuyenMai::find($datVe->khuyen_mai_id);
+            if ($khuyenMai) {
+                // Tính lại giảm giá
+                $giaGoc = $datVe->tong_tien; // Đây là số tiền đã được cập nhật trong checkCode
+                $tongThanhTien = $giaGoc; // Sử dụng số tiền đã giảm từ database
+
+                Log::info('ZaloPay - Tìm thấy khuyến mãi trong DB: ' . $khuyenMai->ma_khuyen_mai . ', số tiền: ' . $tongThanhTien);
+            } else {
+                Log::info('ZaloPay - Không tìm thấy thông tin khuyến mãi với ID: ' . $datVe->khuyen_mai_id);
+            }
+        } else {
+            Log::info('ZaloPay - Sử dụng tổng tiền từ database (không có khuyến mãi): ' . $tongThanhTien);
+        }
 
         $embedData = [
             'dat_ve_id' => $datVe->id,
@@ -216,7 +374,6 @@ class ThanhToanController extends Controller
         }
     }
 
-
     public function callBack(Request $request)
     {
         $result = [];
@@ -265,12 +422,41 @@ class ThanhToanController extends Controller
                         $datVe->ngay_thanh_toan = now();
                         $datVe->save();
 
+                        // Cập nhật lịch sử sử dụng khuyến mãi nếu có
+                        if ($datVe->khuyen_mai_id) {
+                            try {
+                                $khuyenMai = \App\Models\KhuyenMai::find($datVe->khuyen_mai_id);
+                                if ($khuyenMai) {
+                                    // Cập nhật số lần đã sử dụng
+                                    $khuyenMai->increment('so_lan_da_su_dung');
+
+                                    // Tạo lịch sử sử dụng khuyến mãi
+                                    \App\Models\LichSuSuDungKhuyenMai::create([
+                                        'khuyen_mai_id' => $khuyenMai->id,
+                                        'nguoi_dung_id' => $datVe->user_id,
+                                        'thoi_gian_su_dung' => now()
+                                    ]);
+
+                                    Log::info('ZaloPay callback - Đã cập nhật lịch sử khuyến mãi', [
+                                        'khuyen_mai_id' => $khuyenMai->id,
+                                        'ma_khuyen_mai' => $khuyenMai->ma_khuyen_mai,
+                                        'dat_ve_id' => $datVe->id
+                                    ]);
+                                }
+                            } catch (Exception $e) {
+                                Log::error('ZaloPay callback - Lỗi cập nhật khuyến mãi: ' . $e->getMessage());
+                            }
+                        }
+
                         foreach ($datVe->chiTietDatVes as $chiTiet) {
                             $ghe = $chiTiet->ghe;
                             if ($ghe) {
-                                Log::info("Đã cập nhật trạng thái ghế: " . $ghe->ma_ghe);
-                                $ghe->trang_thai = 'da_dat';
-                                $ghe->save();
+                                Log::info("Đã cập nhật trạng thái ghế (theo suất): " . $ghe->ma_ghe);
+
+                                // Cập nhật trạng thái trong bảng ghe_ngoi_suat_chieu
+                                GheNgoiSuatChieu::where('ghe_ngoi_id', $ghe->id)
+                                    ->where('suat_chieu_id', $datVe->suat_chieu_id)
+                                    ->update(['trang_thai' => 'da_dat']);
                             }
                         }
 
@@ -294,7 +480,7 @@ class ThanhToanController extends Controller
                                     $capBac = CapBacThe::find($nguoiDung->cap_bac_id);
 
                                     if ($capBac) {
-                                        // Tính điểm dựa trên phần trăm vé
+                                        // Tính điểm dựa trên phần trăm cấp bậc 
                                         $tongTien = $datVe->tong_tien;
                                         $phanTramVe = $capBac->phan_tram_ve;
                                         $diemCong = round($tongTien * $phanTramVe / 100);
@@ -317,7 +503,6 @@ class ThanhToanController extends Controller
                                             // =========
 
                                             $tongTienChiTieu = DatVe::where('user_id', $nguoiDung->id)->sum('tong_tien');
-                                            Log::info('tong chi tieu:' . $tongTienChiTieu);
                                             $capBacMoi = CapBacThe::where('tong_chi_tieu', '<=', $tongTienChiTieu)
                                                 ->orderByDesc('tong_chi_tieu')
                                                 ->first();
@@ -325,8 +510,6 @@ class ThanhToanController extends Controller
                                             if ($capBacMoi && $capBacMoi->id !== $nguoiDung->cap_bac_id) {
                                                 $nguoiDung->cap_bac_id = $capBacMoi->id;
                                                 $nguoiDung->save();
-
-                                                Log::info("Đã cập nhật cấp bậc mới cho người dùng ID {$nguoiDung->id}: {$capBacMoi->ten}");
                                             }
                                         }
                                     } else {
@@ -372,5 +555,62 @@ class ThanhToanController extends Controller
     public function ketQuaThanhToan(Request $request)
     {
         return redirect()->route('home')->with('success', 'Đặt vé thành công! Vé sẽ được gửi qua email.');
+    }
+
+    /**
+     * Hủy thanh toán và mở khóa ghế
+     */
+    public function huyThanhToan(Request $request, $datVeId)
+    {
+        if (!Auth::check()) {
+            return redirect()->route('login.form')->with('error', 'Vui lòng đăng nhập!');
+        }
+
+        $datVe = DatVe::with([
+            'gheNgois',
+            'suatChieu'
+        ])
+            ->where('id', $datVeId)
+            ->where('user_id', Auth::id())
+            ->where('trang_thai', 'Chờ thanh toán')
+            ->first();
+
+        if (!$datVe) {
+            return redirect()->route('home')->with('error', 'Không tìm thấy đơn đặt vé hoặc đơn đã được xử lý.');
+        }
+
+        try {
+            // Cập nhật trạng thái đơn đặt vé thành "Đã hủy"
+            $datVe->update([
+                'trang_thai' => 'Đã hủy',
+                'ghi_chu' => 'Hủy đơn vào lúc: ' . now()->format('d/m/Y H:i:s')
+            ]);
+
+            // Mở khóa tất cả ghế trong đơn đặt vé
+            foreach ($datVe->gheNgois as $ghe) {
+                try {
+                    DB::statement("
+                UPDATE ghe_ngoi_suat_chieu
+                SET trang_thai = 'trong', user_id = NULL
+                WHERE ghe_ngoi_id = ? AND suat_chieu_id = ?
+            ", [
+                        // dùng pivot nếu là belongsToMany
+                        $ghe->pivot->ghe_ngoi_id ?? $ghe->id,
+                        $datVe->suat_chieu_id
+                    ]);
+                } catch (\Exception $e) {
+                    Log::warning('Không thể mở khóa ghế ID: ' . ($ghe->pivot->ghe_ngoi_id ?? $ghe->id) . ' - ' . $e->getMessage());
+                }
+            }
+
+            if ($request->expectsJson()) {
+                return response()->json(['status' => 'success']);
+            }
+
+            return redirect()->route('home')->with('success', 'Đã hủy đơn đặt vé thành công. Ghế đã được mở khóa.');
+        } catch (Exception $e) {
+            Log::error('Lỗi khi hủy thanh toán: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Có lỗi xảy ra khi hủy đơn đặt vé. Vui lòng thử lại.');
+        }
     }
 }

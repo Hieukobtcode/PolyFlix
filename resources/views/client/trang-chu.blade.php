@@ -121,11 +121,17 @@
                     <img src="{{ asset('storage/' . $phim->poster) }}" alt="{{ $phim->ten_phim }}">
                     <div class="age-label">{{ $phim->do_tuoi }}</div>
                     <div class="overlay">
-                        <a href="{{ route('phim.chi-tiet', urlencode($phim->ten_phim)) }}#lich-chieu">
-                            <button class="btn buy">
-                                <i class="fa-solid fa-ticket"></i> Mua vé
-                            </button>
-                        </a>
+                        @php
+                            $user = Auth::user();
+                        @endphp
+
+                        @if (!$user || $user->vai_tro_id != 4)
+                            <a href="{{ route('phim.chi-tiet', urlencode($phim->ten_phim)) }}#lich-chieu">
+                                <button class="btn buy">
+                                    <i class="fa-solid fa-ticket"></i> Mua vé
+                                </button>
+                            </a>
+                        @endif
                         <button class="btn trailer" data-video="{{ $phim->trailer }}"><i class="fa-solid fa-video"></i>
                             Trailer</button>
                     </div>
@@ -138,20 +144,118 @@
     <a href="{{ route('phim.dang-chieu') }}" class="btn-see-more">
         <button class="btn-see">XEM THÊM</button>
     </a>
+    @php
+        $user = Auth::user();
+    @endphp
 
-    <div class="khuyen-mai">
-        <p>KHUYẾN MÃI</p>
-        <div class="img">
-            <img width="350px" src="{{ asset('khuyen-mai/c_student.png') }}" alt="">
-            <img width="350px" src="{{ asset('khuyen-mai/C_TEN.png') }}" alt="">
-            <img width="350px" src="{{ asset('khuyen-mai/monday_1_.jpg') }}" alt="">
-        </div>
-    </div>
+    <style>
+        .promotions-section {
+            padding: 50px 0;
+            background: linear-gradient(135deg, #3f2b96 0%, #454578 50%, #3b3b96 100%);
+            color: white;
+        }
 
-    <a href="{{ route('khuyen-mai.index') }}">
-        <button class="btn-km">TẤT CẢ ƯU ĐÃI</button>
-    </a>
+        .promotions-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            /* 2 cards per row on desktop */
+            gap: 25px;
+            margin-top: 30px;
+        }
 
+        .promotion-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .promotion-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+        }
+
+        .promotion-title {
+            font-size: 1.5rem;
+            /* Increased font size */
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .promotion-description {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-bottom: 15px;
+        }
+
+        .promo-code-wrapper {
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            padding: 10px;
+            margin: 20px 0;
+        }
+
+        .promo-code {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #f1c40f;
+            letter-spacing: 2px;
+        }
+
+        .promo-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .btn-promo {
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-weight: 600;
+            text-transform: uppercase;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-details {
+            background-color: transparent;
+            border: 2px solid #f1c40f;
+            color: #f1c40f;
+        }
+
+        .btn-details:hover {
+            background-color: #f1c40f;
+            color: #3f2b96;
+        }
+
+        .btn-copy {
+            background-color: #f1c40f;
+            color: #3f2b96;
+        }
+
+        .btn-copy:hover {
+            background-color: #e1b30a;
+        }
+
+        /* Responsive: 1 card per row on mobile */
+        @media (max-width: 768px) {
+            .promotions-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .promotion-title {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+
+    
     <div class="goc-dien-anh-wrapper">
         @include('client.partials.goc-dien-anh', [
             'phims' => $phims,
@@ -159,7 +263,6 @@
             'baiViet' => $baiViet ?? [],
         ])
     </div>
-
     <!-- Popup trailer -->
     <div id="trailerPopup"
         style="display:none; position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
@@ -273,5 +376,35 @@ background:rgba(0,0,0,0.7);z-index:998;">
 
             return 'https://www.youtube.com/embed/' + video_id;
         }
+
+        // Copy code functionality for promotions
+        document.querySelectorAll('.copy-code-home').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const code = this.dataset.code;
+                navigator.clipboard.writeText(code).then(() => {
+                    const originalText = this.innerHTML;
+                    this.innerHTML = '<i class="fas fa-check"></i> Đã sao chép!';
+                    this.style.backgroundColor = '#28a745';
+
+                    setTimeout(() => {
+                        this.innerHTML = originalText;
+                        this.style.backgroundColor = '';
+                    }, 2000);
+                });
+            });
+        });
+
+        // Hover effect for promotion cards
+        document.querySelectorAll('.promotion-card-home').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-10px) scale(1.05)';
+                this.style.boxShadow = '0 20px 40px rgba(0,0,0,0.3)';
+            });
+
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+                this.style.boxShadow = 'none';
+            });
+        });
     </script>
 @endsection

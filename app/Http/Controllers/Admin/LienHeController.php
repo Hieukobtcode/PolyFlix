@@ -7,9 +7,13 @@ use App\Models\LienHe;
 use App\Models\LienHeActivityLog;
 use App\Models\LienHeNote;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\View;
+use App\Mail\ContactReplyMail;
 
 
 class LienHeController extends Controller
@@ -338,22 +342,41 @@ class LienHeController extends Controller
     public function dashboard()
     {
         try {
+            $user = Auth::user();
+            $chiNhanhId = null;
+
+            // Kiểm tra vai trò và lấy chi_nhanh_id nếu là Admin Chi Nhánh
+            if ($user->vaiTro->ten_vai_tro === 'Admin Chi Nhánh') {
+                $chiNhanhManaged = $user->chiNhanhDangQuanLy;
+                if ($chiNhanhManaged) {
+                    $chiNhanhId = $chiNhanhManaged->id;
+                }
+            }
+
+            // Query cơ sở - Admin Chi Nhánh chỉ thấy liên hệ của chi nhánh đó (nếu có trường chi_nhanh_id)
+            $lienHeQuery = LienHe::query();
+            if ($chiNhanhId && Schema::hasColumn('lien_hes', 'chi_nhanh_id')) {
+                $lienHeQuery->where('chi_nhanh_id', $chiNhanhId);
+            }
+
             // Thống kê tổng quan
             $stats = [
-                'total' => LienHe::count(),
-                'pending' => LienHe::where('trang_thai', false)->count(),
-                'completed' => LienHe::where('trang_thai', true)->count(),
-                'high_priority' => LienHe::where('muc_do_uu_tien', 'cao')->count(),
+                'total' => $lienHeQuery->clone()->count(),
+                'pending' => $lienHeQuery->clone()->where('trang_thai', false)->count(),
+                'completed' => $lienHeQuery->clone()->where('trang_thai', true)->count(),
+                'high_priority' => $lienHeQuery->clone()->where('muc_do_uu_tien', 'cao')->count(),
             ];
 
             // Thống kê theo phân loại
-            $categoryStats = LienHe::select('phan_loai', DB::raw('count(*) as total'))
+            $categoryStats = $lienHeQuery->clone()
+                ->select('phan_loai', DB::raw('count(*) as total'))
                 ->whereNotNull('phan_loai')
                 ->groupBy('phan_loai')
                 ->get();
 
             // Thống kê theo nguồn gốc
-            $sourceStats = LienHe::select('nguon_goc', DB::raw('count(*) as total'))
+            $sourceStats = $lienHeQuery->clone()
+                ->select('nguon_goc', DB::raw('count(*) as total'))
                 ->whereNotNull('nguon_goc')
                 ->groupBy('nguon_goc')
                 ->get();
@@ -362,7 +385,7 @@ class LienHeController extends Controller
             $dateStats = [];
             for ($i = 6; $i >= 0; $i--) {
                 $date = now()->subDays($i)->format('Y-m-d');
-                $count = LienHe::whereDate('create_at', $date)->count();
+                $count = $lienHeQuery->clone()->whereDate('create_at', $date)->count();
                 $dateStats[$date] = $count;
             }
 
@@ -404,41 +427,46 @@ class LienHeController extends Controller
      */
     public function sendEmail(Request $request, LienHe $lienHe)
     {
+        // Debug log
+        Log::info('sendEmail method called', [
+            'lien_he_id' => $lienHe->id,
+            'request_data' => $request->all()
+        ]);
+
         $validated = $request->validate([
             'subject' => 'required|string|max:255',
             'message' => 'required|string',
         ]);
 
         try {
-            // Gửi email (giả lập)
-            // Mail::to($lienHe->email)->send(new ContactResponse($lienHe, $validated['subject'], $validated['message']));
+            // Gửi email bằng Mailable
+            Mail::to($lienHe->email)->send(new ContactReplyMail($validated['subject'], $validated['message']));
+
+            Log::info('Email sent successfully', [
+                'to' => $lienHe->email,
+                'subject' => $validated['subject']
+            ]);
 
             // Cập nhật trạng thái đã phản hồi
-            $lienHe->update(['da_phan_hoi' => true]);
+            $lienHe->da_phan_hoi = true;
+            $lienHe->save();
 
             // Ghi log hoạt động
             LienHeActivityLog::create([
                 'lien_he_id' => $lienHe->id,
                 'hanh_dong' => 'send_email',
-                'mo_ta' => 'Gửi email phản hồi',
+                'mo_ta' => "Đã gửi email phản hồi với tiêu đề: {$validated['subject']}",
                 'nguoi_thuc_hien' => 'Hệ thống',
-                'du_lieu_moi' => [
-                    'subject' => $validated['subject'],
-                    'message' => $validated['message'],
-                ],
-            ]);
-
-            // Thêm ghi chú về việc gửi email
-            LienHeNote::create([
-                'lien_he_id' => $lienHe->id,
-                'noi_dung' => "Đã gửi email phản hồi với tiêu đề: {$validated['subject']}",
-                'nguoi_tao' => 'Hệ thống',
             ]);
 
             return redirect()->route('admin.lien-he.show', $lienHe)
                 ->with('success', 'Email phản hồi đã được gửi thành công.');
         } catch (\Exception $e) {
-            return back()->withInput()->withErrors(['error' => 'Đã xảy ra lỗi khi gửi email: ' . $e->getMessage()]);
+            Log::error('Lỗi gửi email: ' . $e->getMessage(), [
+                'exception' => $e,
+                'lien_he_id' => $lienHe->id
+            ]);
+            return back()->withInput()->withErrors(['error' => 'Đã xảy ra lỗi khi gửi email. Vui lòng thử lại sau. Error: ' . $e->getMessage()]);
         }
     }
 

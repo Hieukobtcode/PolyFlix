@@ -4,6 +4,8 @@ namespace Illuminate\Support;
 
 use ArrayIterator;
 use Closure;
+use DateInterval;
+use DateTimeImmutable;
 use DateTimeInterface;
 use Generator;
 use Illuminate\Contracts\Support\CanBeEscapedWhenCastToString;
@@ -288,6 +290,19 @@ class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
     }
 
     /**
+     * Determine if an item is not contained in the enumerable, using strict comparison.
+     *
+     * @param  mixed  $key
+     * @param  mixed  $operator
+     * @param  mixed  $value
+     * @return bool
+     */
+    public function doesntContainStrict($key, $operator = null, $value = null)
+    {
+        return ! $this->containsStrict(...func_get_args());
+    }
+
+    /**
      * Cross join the given iterables, returning all possible permutations.
      *
      * @template TCrossJoinKey
@@ -304,7 +319,7 @@ class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
     /**
      * Count the number of items in the collection by a field or using a callback.
      *
-     * @param  (callable(TValue, TKey): array-key)|string|null  $countBy
+     * @param  (callable(TValue, TKey): array-key|\UnitEnum)|string|null  $countBy
      * @return static<array-key, int>
      */
     public function countBy($countBy = null)
@@ -317,7 +332,7 @@ class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
             $counts = [];
 
             foreach ($this as $key => $value) {
-                $group = $countBy($value, $key);
+                $group = enum_value($countBy($value, $key));
 
                 if (empty($counts[$group])) {
                     $counts[$group] = 0;
@@ -1748,6 +1763,42 @@ class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
                 yield $item;
             }
         });
+    }
+
+    /**
+     * Run the given callback every time the interval has passed.
+     *
+     * @return static<TKey, TValue>
+     */
+    public function withHeartbeat(DateInterval|int $interval, callable $callback)
+    {
+        $seconds = is_int($interval) ? $interval : $this->intervalSeconds($interval);
+
+        return new static(function () use ($seconds, $callback) {
+            $start = $this->now();
+
+            foreach ($this as $key => $value) {
+                $now = $this->now();
+
+                if (($now - $start) >= $seconds) {
+                    $callback();
+
+                    $start = $now;
+                }
+
+                yield $key => $value;
+            }
+        });
+    }
+
+    /**
+     * Get the total seconds from the given interval.
+     */
+    protected function intervalSeconds(DateInterval $interval): int
+    {
+        $start = new DateTimeImmutable();
+
+        return $start->add($interval)->getTimestamp() - $start->getTimestamp();
     }
 
     /**

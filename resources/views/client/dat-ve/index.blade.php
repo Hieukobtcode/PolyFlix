@@ -92,13 +92,62 @@
         .qty-btn:hover {
             background-color: #ffb300;
         }
+        /* Nút toggle gradient */
+        .btn-gradient {
+            background: linear-gradient(135deg, #ffee00, #ffbb00);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 18px;
+            font-weight: 600;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
 
+        .btn-gradient:hover {
+            background: linear-gradient(135deg, #6eb300, #69cc00);
+            transform: translateY(-2px);
+        }
+
+        /* Collapse */
+        .email-collapse {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease, padding 0.3s ease;
+            margin-top: 15px;
+
+            /* fix lỗi vạch trắng */
+            padding: 0;
+            border: none;
+        }
+
+        .email-collapse.show {
+            max-height: 80px;
+            padding: 5px 0;
+        }
+
+        /* Input đẹp */
+        .custom-input {
+            height: 42px;
+            border-radius: 8px;
+            border: 1px solid #ced4da;
+            padding: 8px 12px;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .custom-input:focus {
+            border-color: #00c6ff;
+            box-shadow: 0 0 6px rgba(0, 198, 255, 0.5);
+            outline: none;
+        }
         input[type="number"] {
             width: 45px;
             text-align: center;
             border: 1px solid #ccc;
             border-radius: 4px;
             background: #f7f7f7;
+        }
+        })->implode("\n") ! !
         }
     </style>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -155,21 +204,26 @@
                             <div class="row-label">{{ $hangGhe }}</div>
                             <div class="seats">
                                 @foreach ($ghes as $ghe)
+                                    @php
+                                        // trạng thái helper
+                                        $isMaintenance = ($ghe->trang_thai_mac_dinh ?? $ghe->trang_thai) === 'bao_tri';
+                                        $suatStatus = $ghe->trang_thai_theo_suat ?? 'trong'; // 'trong'|'da_chon'|'da_dat'
+                                        $isSuatBooked = in_array($suatStatus, ['da_chon', 'da_dat']);
+                                        $isAvailable =
+                                            !$ghe->da_dat && !$ghe->dang_duoc_chon && !$isMaintenance && !$isSuatBooked;
+                                        $loaiClass = \Illuminate\Support\Str::slug(
+                                            $ghe->loaiGhe->ten_loai_ghe ?? 'thuong',
+                                        );
+
+                                    @endphp
+                                    {{-- Hiển thị ghế --}}
                                     <div class="ghe-chieu
                                     {{-- Nếu ghế đang bảo trì --}}
-                                    {{ $ghe->trang_thai == 'bao_tri' ? 'maintenance' : '' }}
-
-                                    {{-- Nếu ghế đang được chính người dùng này chọn --}}
-                                    {{ $ghe->trang_thai == 'dang_chon' ? 'selected' : '' }}
-
-                                    {{-- Nếu ghế đang được người khác chọn (giữ tạm thời trong Redis) --}}
-                                    {{ $ghe->dang_duoc_chon && $ghe->trang_thai != 'dang_chon' ? 'selected-by-other' : '' }}
-
-                                    {{-- Nếu không rơi vào các trạng thái đặc biệt → available --}}
-                                    {{ !$ghe->da_dat && !$ghe->dang_duoc_chon && $ghe->trang_thai !== 'bao_tri' && $ghe->trang_thai !== 'dang_chon' ? 'available' : '' }}
-
-                                    {{-- Loại ghế (VIP, thường...) --}}
-                                    {{ \Illuminate\Support\Str::slug($ghe->loaiGhe->ten_loai_ghe ?? 'thuong') }}
+                                    {{ $isMaintenance ? 'maintenance' : '' }}
+                                    {{ $suatStatus === 'da_chon' ? 'booked' : '' }}
+                                    {{ $suatStatus === 'da_dat' ? 'reserved' : '' }}
+                                    {{ $isAvailable ? 'available' : '' }}
+                                    {{ $loaiClass }}
 
                                     {{-- Ghế đôi --}}
                                     {{ $ghe->loaiGhe->id == 12 ? 'ghe-doi' : '' }}"
@@ -179,9 +233,9 @@
                                         data-phu-thu-loai-ghe="{{ $ghe->phu_thu_loai_ghe }}"
                                         data-phu-thu-rap-phim="{{ $ghe->phu_thu_rap_phim }}"
                                         data-seat-type-id="{{ $ghe->loaiGhe->id }}"
-                                        @if ($ghe->trang_thai == 'bao_tri' || $ghe->da_dat) disabled @endif>
-                                        {{-- Hiển thị x nếu ghế đang bảo trì --}}
-                                        {{ $ghe->trang_thai == 'bao_tri' ? 'x' : $ghe->ma_ghe }}
+                                        @if ($isMaintenance || $isSuatBooked) disabled @endif>
+                                        {{-- Hiển thị "x" nếu ghế bị bảo trì (mặc định) hoặc bị giữ/đặt theo suất --}}
+                                        {{ $isMaintenance || $isSuatBooked ? 'x' : $ghe->ma_ghe }}
                                     </div>
                                 @endforeach
                             </div>
@@ -194,13 +248,15 @@
                 <div class="seat-legend-wrapper">
                     <div class="legend-column">
                         <div class="legend-item">
-                            <div class="seat-demo bg-available"></div><span>Ghế trống</span>
+                            <div class="seat-demo bg-available"></div><span>Checked</span>
                         </div>
                         <div class="legend-item">
                             <div class="seat-demo bg-selected"></div><span>Đã chọn</span>
                         </div>
                         <div class="legend-item">
-                            <div class="seat-demo seat-disabled"><i class="fas fa-times text-danger"></i></div><span>Không
+                            <div class="seat-demo seat-disabled">
+                                {{-- <i class="fas fa-times text-danger"></i> --}}
+                            </div><span>Không
                                 thể chọn</span>
                         </div>
                     </div>
@@ -253,10 +309,7 @@
                                 <div class="food-info">
                                     <h4>{{ $combo->ten_combo }}</h4>
                                     <p class="description">{{ $combo->mo_ta }}</p>
-                                    <p class="price" style="text-decoration: line-through; color: gray;">
-                                        {{ number_format($combo->gia) }}đ
-                                    </p>
-                                    <p class="price">{{ number_format($combo->gia_combo) }}đ</p>
+                                    <p class="price">{{ number_format($combo->gia) }}đ</p>
                                     <div class="quantity-control">
                                         <button type="button" class="qty-btn minus"
                                             data-target="combo-{{ $combo->id }}">-</button>
@@ -285,14 +338,30 @@
                         <h4>Đồ ăn & nước uống:</h4>
                         <div id="selected-food-list">Chưa chọn</div>
                     </div>
-                    <div id="pointView" style="display: none" class="point">
+                    {{-- <div id="pointView" style="display: none" class="point">
                         <input id="point" style="height: 35px; border-radius: 5px;" type="number">
                         <button id="btnPoint" class="btn btn-warning">Đổi điểm</button>
                         <p style="color: yellow;" class="text-muted">
-                            Số điểm hiện có: <span style="color: yellow;" id="diemHienCo"
-                                data-diem="{{ Auth::user()->diem }}">{{ number_format(Auth::user()->diem) }}</span>
+                        <h6>Số điểm hiện có: <span style="color: yellow;" id="diemHienCo"
+                                data-diem="{{ Auth::user()->diem }}">{{ number_format(Auth::user()->diem) }}</span></h6>
                         </p>
-                    </div>
+                    </div> --}}
+                    @auth
+                        @if (Auth::user()->vai_tro_id == 4)
+                            <br>
+                            <!-- Nút toggle -->
+                            <button id="btnToggleEmail" class="btn btn-gradient">Nhập email</button>
+
+                            <!-- Form nhập email -->
+                            <div id="emailView" class="email-collapse">
+                                <input id="email" name="email" type="email" class="form-control custom-input"
+                                    placeholder="Email người dùng">
+                            </div>
+                            <br>
+                        @endif
+                    @endauth
+
+
                     <div class="total-price">
                         <h4>Tổng tiền: <span id="total-amount">0đ</span></h4>
                     </div>

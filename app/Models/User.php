@@ -15,6 +15,7 @@ class User extends Authenticatable
     protected $fillable = [
         'cap_bac_id',
         'name',
+        'rap_id',
         'email',
         'password',
         'avatar',
@@ -76,5 +77,20 @@ class User extends Authenticatable
     public function chiNhanhDangQuanLy()
     {
         return $this->hasOne(ChiNhanh::class, 'quan_ly_id');
+    }
+
+    public function rapPhimDangQuanLy()
+    {
+        return $this->hasOne(RapPhim::class, 'quan_ly_id', 'id');
+    }
+
+    public function rapLamViec()
+    {
+        return $this->belongsTo(RapPhim::class, 'rap_id');
+    }
+
+    public function rapPhim()
+    {
+        return $this->belongsTo(RapPhim::class, 'rap_id');
     }
 }

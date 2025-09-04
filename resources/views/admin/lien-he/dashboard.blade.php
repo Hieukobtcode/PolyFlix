@@ -4,7 +4,39 @@
 @section('page-title', 'Dashboard liên hệ')
 @section('breadcrumb', 'Dashboard liên hệ')
 
+@section('styles')
+<style>
+    /* Điều chỉnh kích thước icon cho các nút trong trang liên hệ admin */
+    .btn .icon {
+        width: 16px !important;
+        height: 16px !important;
+    }
+    
+    .btn-sm .icon {
+        width: 14px !important;
+        height: 14px !important;
+    }
+    
+    .btn-lg .icon {
+        width: 18px !important;
+        height: 18px !important;
+    }
+    
+    /* Icon trong các card thống kê */
+    .icon-xl {
+        width: 40px !important;
+        height: 40px !important;
+    }
+    
+    /* Điều chỉnh khoảng cách giữa icon và text */
+    .btn .icon.me-2 {
+        margin-right: 6px !important;
+    }
+</style>
+@endsection
+
 @section('content')
+
     <div class="body flex-grow-1">
         <div class="container-lg px-4">
             <div class="row mb-4">

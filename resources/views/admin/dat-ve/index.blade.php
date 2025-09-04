@@ -31,33 +31,41 @@
 
                 <!-- Bộ lọc -->
                 <form method="GET" action="{{ route('admin.dat-ves.index') }}" class="row gy-3 gx-4 align-items-end mb-4">
-                    <!-- Chi nhánh -->
-                    <div class="col-md-3">
-                        <label class="form-label fw-semibold">Chi nhánh</label>
-                        <select name="chi_nhanh" class="form-select" onchange="this.form.submit()">
-                            <option value="">-- Tất cả chi nhánh --</option>
-                            @foreach ($chiNhanhs as $cn)
-                                <option value="{{ $cn->id }}" {{ request('chi_nhanh') == $cn->id ? 'selected' : '' }}>
-                                    {{ $cn->ten_chi_nhanh }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
 
-                    <!-- Rạp -->
-                    <div class="col-md-3">
-                        <label class="form-label fw-semibold">Rạp</label>
-                        <select name="rap" class="form-select" onchange="this.form.submit()">
-                            <option value="">-- Tất cả rạp --</option>
-                            @foreach ($chiNhanhs->flatMap->rapPhims as $rap)
-                                <option value="{{ $rap->id }}" {{ request('rap') == $rap->id ? 'selected' : '' }}>
-                                    {{ $rap->ten_rap }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
+                    {{-- Admin tổng (vai_tro_id == 1) mới được chọn chi nhánh --}}
+                    @if ($user->vai_tro_id == 1)
+                        <!-- Chi nhánh -->
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold">Chi nhánh</label>
+                            <select name="chi_nhanh" class="form-select" onchange="this.form.submit()">
+                                <option value="">-- Tất cả chi nhánh --</option>
+                                @foreach ($chiNhanhs as $cn)
+                                    <option value="{{ $cn->id }}"
+                                        {{ request('chi_nhanh') == $cn->id ? 'selected' : '' }}>
+                                        {{ $cn->ten_chi_nhanh }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                    @endif
 
-                    <!-- Phim -->
+                    {{-- Admin tổng (1) và Admin chi nhánh (2) được chọn rạp --}}
+                    @if (in_array($user->vai_tro_id, [1, 2]))
+                        <!-- Rạp -->
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold">Rạp</label>
+                            <select name="rap" class="form-select" onchange="this.form.submit()">
+                                <option value="">-- Tất cả rạp --</option>
+                                @foreach ($chiNhanhs->flatMap->rapPhims as $rap)
+                                    <option value="{{ $rap->id }}" {{ request('rap') == $rap->id ? 'selected' : '' }}>
+                                        {{ $rap->ten_rap }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                    @endif
+
+                    <!-- Phim (tất cả role đều được lọc phim) -->
                     <div class="col-md-3">
                         <label class="form-label fw-semibold">Phim</label>
                         <select name="phim" class="form-select" onchange="this.form.submit()">
@@ -69,7 +77,6 @@
                             @endforeach
                         </select>
                     </div>
-
                 </form>
 
                 @if ($datVes->count())
@@ -81,6 +88,7 @@
                                     <th>Mã vé</th>
                                     <th>Phim</th>
                                     <th>Thời gian đặt</th>
+                                    <th>Trạng thái</th>
                                     <th style="width: 10%">Thao tác</th>
                                 </tr>
                             </thead>
@@ -92,6 +100,26 @@
                                         <td>{{ $datVe->suatChieu->phim->ten_phim }}</td>
                                         <td>{{ $datVe->created_at->format('H:i d/m/Y') }}</td>
                                         <td>
+                                            @php
+                                                $statusClasses = [
+                                                    'Chờ thanh toán' => 'badge bg-warning text-dark',
+                                                    'Đã thanh toán' => 'badge bg-success',
+                                                    'Thanh toán thất bại' => 'badge bg-danger',
+                                                    'Chờ thanh toán tại quầy' => 'badge bg-info text-dark',
+                                                    'Đã hủy' => 'badge bg-danger',
+                                                    'Hết hạn' => 'badge bg-secondary',
+                                                    'Chưa xuất vé' => 'badge bg-primary',
+                                                    'Đã xuất vé' => 'badge bg-success',
+                                                ];
+
+                                                $class =
+                                                    $statusClasses[$datVe->trang_thai] ?? 'badge bg-light text-dark';
+                                            @endphp
+
+                                            <span class="{{ $class }}">{{ $datVe->trang_thai }}</span>
+                                        </td>
+
+                                        <td>
                                             <a href="{{ route('admin.dat-ve.show', ['id' => $datVe->id, 'ma_ve' => $datVe->ma_dat_ve]) }}"
                                                 class="btn btn-sm btn-outline-primary">
                                                 <i class="fas fa-eye"></i>
@@ -101,6 +129,10 @@
                                 @endforeach
                             </tbody>
                         </table>
+                    </div>
+                    {{-- ✅ Hiển thị phân trang --}}
+                    <div class="mt-3">
+                        {{ $datVes->links('pagination::bootstrap-5') }}
                     </div>
                 @else
                     <div class="alert alert-info mt-4 mb-0 rounded-3">

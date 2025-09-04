@@ -469,6 +469,35 @@
             display: block;
             border-radius: 12px;
         }
+
+        .btn.view-more {
+            background: linear-gradient(135deg, #ffd60a, #ff9f1c);
+            /* gradient vàng-cam nổi bật */
+            color: #1a1a1a;
+            /* chữ đen đậm */
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn.view-more:hover {
+            background: linear-gradient(135deg, #ffb703, #ff6d00);
+            /* hover sáng hơn */
+            transform: translateY(-2px);
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn.view-more i {
+            font-size: 16px;
+        }
     </style>
 @endsection
 
@@ -571,7 +600,11 @@
                                     @endforeach
                                 </details>
                             @endforeach
-                            <a href="{{ route('phim.chi-tiet', $item->id) }}" class="view-more">Xem thêm lịch chiếu</a>
+                            <a href="{{ route('phim.chi-tiet', urlencode($item->ten_phim)) }}#lich-chieu">
+                                <button class="btn view-more">
+                                    <i class="fa-solid fa-calendar-days"></i> Xem thêm lịch chiếu
+                                </button>
+                            </a>
                         @endif
                     </div>
 
@@ -664,7 +697,11 @@
 
                                 </details>
                             @endforeach
-                            <a href="{{ route('phim.chi-tiet', $item->id) }}" class="view-more">Xem thêm lịch chiếu</a>
+                            <a href="{{ route('phim.chi-tiet', urlencode($item->ten_phim)) }}#lich-chieu">
+                                <button class="btn view-more">
+                                    <i class="fa-solid fa-calendar-days"></i> Xem thêm lịch chiếu
+                                </button>
+                            </a>
                         @endif
                     </div>
 
@@ -762,7 +799,11 @@
                                     @endforeach
                                 </details>
                             @endforeach
-                            <a href="{{ route('phim.chi-tiet', $item->id) }}" class="view-more">Xem thêm lịch chiếu</a>
+                            <a href="{{ route('phim.chi-tiet', urlencode($item->ten_phim)) }}#lich-chieu">
+                                <button class="btn view-more">
+                                    <i class="fa-solid fa-calendar-days"></i> Xem thêm lịch chiếu
+                                </button>
+                            </a>
                         @endif
                     </div>
                 </div>
@@ -779,7 +820,7 @@
         </div>
     </div>
 
-    <a href="{{ route('khuyen-mai.index') }}">
+    <a href="{{ route('client.khuyen-mai.index') }}">
         <button class="btn-km">TẤT CẢ ƯU ĐÃI</button>
     </a>
 

@@ -438,6 +438,7 @@
     border-radius: 6px;
     border: 1px solid #ccc;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    color:#fff
 }
 
 /* Màu định sẵn cho trạng thái */
@@ -464,6 +465,7 @@
     color: #ffffff;
 }
 
+
 :root {
     --primary-gradient: linear-gradient(135deg, #1a0933 0%, #3c1a7a 100%);
     --accent-yellow: #ffeb3b;
@@ -473,9 +475,14 @@
     --max-width: 1200px;
 }
 
-.ghe-chieu.selected-by-other {
-    background-color: orange !important;
-}
-.ghe-chieu.selected-by-other.selected {
-    background-color: orange !important;
+.booked {
+    background-color: #adb5bd !important;
+    color: #fff !important;
+    border: 2px solid #6c757d !important;
+    box-shadow: 0 0 10px rgba(220, 53, 69, 0.5) !important;
+    transform: scale(1.05) !important;
+    transition: all 0.3s ease !important;
+    pointer-events: none; /* không thể click */
+    cursor: not-allowed;
+    font-weight: bold;
 }

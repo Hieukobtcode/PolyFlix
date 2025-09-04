@@ -11,6 +11,7 @@ use App\Models\RapPhim;
 use App\Models\Rating;
 use App\Models\ChiNhanh;
 use App\Models\SuatChieu;
+use App\Models\KhuyenMai;
 use Illuminate\Http\Request;
 use Hashids\Hashids;
 use Carbon\Carbon;
@@ -58,7 +59,13 @@ class TrangChuController extends Controller
                 ->get();
         }
 
-        return view('client.trang-chu', compact('phims', 'ratings', 'baiViet', 'banners', 'allPhims', 'tab'));
+        // Lấy khuyến mãi nổi bật
+        $khuyenMaisNoiBat = KhuyenMai::conHieuLuc()
+            ->orderBy('gia_tri_giam', 'desc')
+            ->limit(4)
+            ->get();
+
+        return view('client.trang-chu', compact('phims', 'ratings', 'baiViet', 'banners', 'allPhims', 'tab', 'khuyenMaisNoiBat'));
     }
 
     public function getChiNhanhs()
@@ -171,6 +178,15 @@ class TrangChuController extends Controller
         if (!$id) {
             abort(404, 'Mã không hợp lệ');
         }
+        // Nếu user là vai trò rạp (vai_tro_id = 4)
+        if (auth()->check() && auth()->user()->vai_tro_id == 4) {
+            $userRapId = auth()->user()->rap_id;
+
+            // Nếu user cố vào rạp khác thì chặn
+            if ($id != $userRapId) {
+                return redirect()->route('home')->with('error', 'Bạn không có quyền truy cập rạp này!');
+            }
+        }
 
         $rap = RapPhim::findOrFail($id);
 
@@ -190,6 +206,7 @@ class TrangChuController extends Controller
         $threeDaysLater = $today->copy()->addDays(3);
 
         $suatChieuTheoPhim = SuatChieu::whereIn('phim_id', $phimDangChieu->pluck('id'))
+            ->where('trang_thai', 'hoat_dong') // 👈 chỉ lấy suất hoạt động
             ->whereBetween('ngay_bat_dau', [$today, $threeDaysLater])
             ->whereHas('phongChieu', function ($query) use ($rap) {
                 $query->where('rap_phim_id', $rap->id);
@@ -203,6 +220,7 @@ class TrangChuController extends Controller
 
         foreach ($phimSapChieu as $phim) {
             $suatDacBiet = SuatChieu::where('phim_id', $phim->id)
+                ->where('trang_thai', 'hoat_dong') // 👈 thêm điều kiện trạng thái
                 ->whereHas('phongChieu', function ($query) use ($rap) {
                     $query->where('rap_phim_id', $rap->id);
                 })

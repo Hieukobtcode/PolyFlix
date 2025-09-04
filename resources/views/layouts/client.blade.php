@@ -277,42 +277,92 @@
             <div class="nav1">
                 <div class="list-nav">
                     <div class="rap-wrapper">
-                        <div class="rap">
-                            <i class="fa-solid fa-location-dot"></i>
-                            <p>Chọn rạp</p>
-                        </div>
+                        @auth
 
-                        <div class="rap-dropdown">
-                            <ul class="chi-nhanh-list">
-                                @foreach ($rapPhims as $chiNhanhId => $dsRap)
+
+                            @if (Auth::user()->vai_tro_id == 4)
+                                <ul class="chi-nhanh-list">
                                     <li class="has-submenu">
-                                        {{ $dsRap->first()->chiNhanh->ten_chi_nhanh }}
-                                        <ul class="rap-submenu">
-                                            @foreach ($dsRap as $rap)
-                                                <li>
-                                                    <a
-                                                        href="{{ route('showrap', \App\Helpers\IdFormatter::uuidify($rap->id)) }}">
-                                                        {{ $rap->ten_rap }}
-                                                    </a>
-                                                </li>
-                                            @endforeach
-                                        </ul>
+                                        <a
+                                            href="{{ route('showrap', \App\Helpers\IdFormatter::uuidify(Auth::user()->rapPhim->id)) }}">
+                                            {{ Auth::user()->rapPhim->ten_rap }}
+                                        </a>
                                     </li>
-                                @endforeach
-                            </ul>
+                                </ul>
+                            @else
+                                <div class="rap">
+                                    <i class="fa-solid fa-location-dot"></i>
+                                    <p>Chọn rạp</p>
+                                </div>
 
-                        </div>
+                                <div class="rap-dropdown">
+                                    <ul class="chi-nhanh-list">
+                                        @foreach ($rapPhims as $chiNhanhId => $dsRap)
+                                            <li class="has-submenu">
+                                                {{ $dsRap->first()->chiNhanh->ten_chi_nhanh }}
+                                                <ul class="rap-submenu">
+                                                    @foreach ($dsRap as $rap)
+                                                        <li>
+                                                            <a
+                                                                href="{{ route('showrap', \App\Helpers\IdFormatter::uuidify($rap->id)) }}">
+                                                                {{ $rap->ten_rap }}
+                                                            </a>
+                                                        </li>
+                                                    @endforeach
+                                                </ul>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+
+                                </div>
+                            @endif
+                        @endauth
+                        @guest
+                            <div class="rap">
+                                <i class="fa-solid fa-location-dot"></i>
+                                <p>Chọn rạp</p>
+                            </div>
+
+                            <div class="rap-dropdown">
+                                <ul class="chi-nhanh-list">
+                                    @foreach ($rapPhims as $chiNhanhId => $dsRap)
+                                        <li class="has-submenu">
+                                            {{ $dsRap->first()->chiNhanh->ten_chi_nhanh }}
+                                            <ul class="rap-submenu">
+                                                @foreach ($dsRap as $rap)
+                                                    <li>
+                                                        <a
+                                                            href="{{ route('showrap', \App\Helpers\IdFormatter::uuidify($rap->id)) }}">
+                                                            {{ $rap->ten_rap }}
+                                                        </a>
+                                                    </li>
+                                                @endforeach
+                                            </ul>
+                                        </li>
+                                    @endforeach
+                                </ul>
+
+                            </div>
+                        @endguest
                     </div>
                 </div>
                 <div class="nav2">
                     <ul>
-                        <li>
-                            <a href="{{ route('khuyen-mai.index') }}" style="text-decoration: none; color: inherit;">
-                                Khuyến mãi
-                            </a>
-                        </li>
-                        <li><a href="{{ route('client.bai-viet') }}">Góc điện ảnh</a></li>
-                        <li><a href="{{ route('client.lien-he') }}">Liên hệ</a></li>
+                        @php
+                            $user = Auth::user();
+                        @endphp
+
+                        {{-- Chỉ ẩn menu này khi đăng nhập và vai_tro_id == 4 --}}
+                        @if (!$user || $user->vai_tro_id != 4)
+                            <li>
+                                <a href="{{ route('client.khuyen-mai.index') }}"
+                                    style="text-decoration: none; color: inherit;">
+                                    Khuyến mãi
+                                </a>
+                            </li>
+                            <li><a href="{{ route('client.bai-viet') }}">Góc điện ảnh</a></li>
+                            <li><a href="{{ route('client.lien-he') }}">Liên hệ</a></li>
+                        @endif
                     </ul>
                 </div>
             </div>
@@ -381,5 +431,49 @@
 </body>
 
 </html>
+{{-- Global Navigation Script --}}
+<script>
+// Global function to clear all notifications and popups
+window.clearAllNotifications = function() {
+    // Remove custom notifications
+    document.querySelectorAll('.custom-notification').forEach(n => n.remove());
+
+    // Remove debug notifications
+    document.querySelectorAll('[style*="position: fixed"][style*="z-index: 99999"]').forEach(n => n.remove());
+
+    // Close SweetAlert toasts
+    if (typeof Swal !== 'undefined') {
+        Swal.close();
+    }
+
+    console.log('🧹 Global notifications cleared');
+};
+
+// Clear notifications on page navigation
+window.addEventListener('beforeunload', function() {
+    if (typeof window.clearAllNotifications === 'function') {
+        window.clearAllNotifications();
+    }
+});
+
+// Clear notifications when clicking navigation links
+document.addEventListener('DOMContentLoaded', function() {
+    // Clear notifications when clicking any navigation link
+    document.querySelectorAll('a[href]').forEach(link => {
+        link.addEventListener('click', function(e) {
+            // Don't clear for same-page anchors
+            if (!this.getAttribute('href').startsWith('#')) {
+                setTimeout(() => {
+                    if (typeof window.clearAllNotifications === 'function') {
+                        window.clearAllNotifications();
+                    }
+                }, 10);
+            }
+        });
+    });
+});
+</script>
+
 {{-- JS --}}
 @yield('scripts')
+@stack('scripts')

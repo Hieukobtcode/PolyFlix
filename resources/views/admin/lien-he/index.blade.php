@@ -1,5 +1,30 @@
 @extends('layouts.admin')
 
+@section('styles')
+<style>
+    /* Điều chỉnh kích thước icon cho các nút trong trang liên hệ admin */
+    .btn .icon {
+        width: 16px !important;
+        height: 16px !important;
+    }
+    
+    .btn-sm .icon {
+        width: 14px !important;
+        height: 14px !important;
+    }
+    
+    .btn-lg .icon {
+        width: 18px !important;
+        height: 18px !important;
+    }
+    
+    /* Điều chỉnh khoảng cách giữa icon và text */
+    .btn .icon.me-2 {
+        margin-right: 6px !important;
+    }
+</style>
+@endsection
+
 @section('content')
     <div class="container-fluid">
         <!-- Thống kê tổng quan -->
